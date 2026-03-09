@@ -885,6 +885,24 @@
     margin-right: 4px;
     font-weight: 500;
   }
+  .followup-tl-rounds { font-size: 10px; color: var(--color-text-4); margin-left: 4px; }
+  .followup-tl-item.clickable { cursor: pointer; padding: 4px; margin: -4px; border-radius: 4px; transition: background 100ms; }
+  .followup-tl-item.clickable:hover { background: var(--color-fill-hover); }
+  /* Mobile chat records */
+  .mobile-chat-list { padding: 0 16px 12px; }
+  .mobile-chat-date { font-size: 11px; color: var(--color-text-4); text-align: center; margin: 12px 0 8px; position: relative; }
+  .mobile-chat-date:first-child { margin-top: 4px; }
+  .mobile-chat-date::before, .mobile-chat-date::after { content: ''; position: absolute; top: 50%; height: 1px; background: var(--color-border-default); width: calc(50% - 40px); }
+  .mobile-chat-date::before { left: 0; }
+  .mobile-chat-date::after { right: 0; }
+  .mobile-chat-msg { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 8px; }
+  .mobile-chat-msg-me { flex-direction: row-reverse; }
+  .mobile-chat-avatar { width: 26px; height: 26px; border-radius: 4px; flex-shrink: 0; background: var(--color-primary-2); color: var(--color-primary-7); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+  .mobile-chat-bubble { max-width: 65%; padding: 6px 10px; background: var(--color-fill-1); border: 1px solid var(--color-border-default); border-radius: 2px 8px 8px 8px; font-size: 12px; color: var(--color-text-1); line-height: 18px; }
+  .mobile-chat-bubble-me { background: #D4F5EC; border-color: #B8E8DA; border-radius: 8px 2px 8px 8px; }
+  .mobile-chat-time { font-size: 10px; color: var(--color-text-4); margin-top: 2px; flex-shrink: 0; }
+  @keyframes chatDateFlash { 0% { background: var(--color-primary-1); } 100% { background: transparent; } }
+  .chat-date-highlight { animation: chatDateFlash 1.5s ease forwards; border-radius: 4px; padding: 2px 8px; margin-left: -8px; margin-right: -8px; }
 
   /* ===== 新人进度 ===== */
   .newcomer-progress {
@@ -1262,7 +1280,7 @@
     </div>
     <div class="scene-label">场景1：用户画像</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-readonly>
+    <div class="prd-panel" data-prd-key="delivery-s1">
       <div class="prd-title">交付-场景1 · 用户画像</div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">会员身份卡片</div>
@@ -1519,7 +1537,7 @@
     </div>
     <div class="scene-label">场景2：客户动态</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s2" data-prd-readonly>
+    <div class="prd-panel" data-prd-key="delivery-s2">
       <div class="prd-title">交付-场景2 · 行为动态</div>
       <div class="prd-card" style="--accent: #FF7D00;">
         <div class="prd-card-title">Option C 两级筛选</div>
@@ -1608,39 +1626,307 @@
 
         <div class="divider-thick"></div>
 
-        <!-- 沟通时间轴 -->
+        <!-- 沟通时间轴（近1个月，每日有对话则AI汇总） -->
         <div class="section-header">
           <span class="section-title">沟通时间轴</span>
+          <span class="section-action" style="color: var(--color-text-4); font-size: 11px;">近30天</span>
         </div>
         <div class="followup-timeline">
-          <div class="followup-tl-item">
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-19')">
             <div class="followup-tl-left">
               <div class="followup-tl-dot active"></div>
               <div class="followup-tl-line"></div>
             </div>
             <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-16</div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论 AI 视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
+              <div class="followup-tl-meta">2025-12-19 <span class="followup-tl-rounds">· 2轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户咨询航海打卡规则，确认了AI视频变现航海的提交格式。交流较简短，用户情绪积极。</div>
             </div>
           </div>
-          <div class="followup-tl-item">
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-16')">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
             </div>
             <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-01</div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。</div>
+              <div class="followup-tl-meta">2025-12-16 <span class="followup-tl-rounds">· 3轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论AI视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
             </div>
           </div>
-          <div class="followup-tl-item">
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-12')">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-12 <span class="followup-tl-rounds">· 4轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户主动分享了第一条AI视频的数据（播放量200+），询问如何优化封面和标题。推荐了爆款标题公式。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-08')">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-08 <span class="followup-tl-rounds">· 5轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户询问AI视频工具推荐，对比了剪映和CapCut。最终选择剪映，沟通较深入。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-01')">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-01 <span class="followup-tl-rounds">· 6轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次深入沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。引导加入航海。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-11-25')">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-11-25 <span class="followup-tl-rounds">· 2轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>新人入圈引导，发送了欢迎消息和新手任务说明。用户回复了基本信息。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-11-20')">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
             </div>
             <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-11-15</div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>新人首次沟通，收集作业信息，推荐了航海项目。</div>
+              <div class="followup-tl-meta">2025-11-20 <span class="followup-tl-rounds">· 1轮对话</span></div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次触达，用户咨询会员权益，简短回复后未继续。</div>
             </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 聊天记录 -->
+        <div class="section-header">
+          <span class="section-title">聊天记录</span>
+        </div>
+        <div class="mobile-chat-list">
+          <div class="mobile-chat-date" id="chatDate-2025-12-19">12-19</div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">潇墨，航海打卡是每天都要提交吗？</div>
+            <div class="mobile-chat-time">15:02</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">是的，每天提交一次打卡记录就行，格式按模板来～</div>
+            <div class="mobile-chat-time">15:05</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">好的明白了，AI视频变现航海的提交格式是什么？</div>
+            <div class="mobile-chat-time">15:08</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">格式：【日期】+视频链接+当日数据截图，发到航海群就行👍</div>
+            <div class="mobile-chat-time">15:10</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-12-16">12-16</div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">最近在想AI视频的方向，但是卡在选题上了</div>
+            <div class="mobile-chat-time">10:30</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">选题确实是关键！推荐你看下小红书案例库，里面有很多爆款选题参考</div>
+            <div class="mobile-chat-time">10:35</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">好的，那个案例库在哪里找？</div>
+            <div class="mobile-chat-time">10:38</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">在精华区第3个板块，我把链接发你</div>
+            <div class="mobile-chat-time">10:40</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] 小红书AI视频爆款选题库</div>
+            <div class="mobile-chat-time">10:41</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">收到！我跟着航海节奏走试试</div>
+            <div class="mobile-chat-time">10:45</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-12-12">12-12</div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">潇墨！我第一条AI视频发了，播放量200多，算什么水平？</div>
+            <div class="mobile-chat-time">16:20</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">很不错的起步！新号200+已经超过大部分人了🎉</div>
+            <div class="mobile-chat-time">16:25</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">怎么优化封面和标题呀？感觉还能更好</div>
+            <div class="mobile-chat-time">16:28</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">封面建议用对比图or数字冲击，标题用"3个方法/技巧"这种爆款公式</div>
+            <div class="mobile-chat-time">16:32</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">明白了，这几天按这个思路优化试试</div>
+            <div class="mobile-chat-time">16:35</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">加油💪有数据变化随时交流</div>
+            <div class="mobile-chat-time">16:36</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">好的谢谢！</div>
+            <div class="mobile-chat-time">16:38</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">不客气～期待你下一条视频的数据🔥</div>
+            <div class="mobile-chat-time">16:39</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-12-08">12-08</div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">想做AI视频，剪映和CapCut哪个好用？</div>
+            <div class="mobile-chat-time">14:10</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">国内推荐剪映，AI功能更强。CapCut更适合海外发布</div>
+            <div class="mobile-chat-time">14:15</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">那我先用剪映，AI功能具体有哪些？</div>
+            <div class="mobile-chat-time">14:18</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">AI文案、AI配音、智能剪辑都有，建议从AI配音开始上手</div>
+            <div class="mobile-chat-time">14:22</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">好的，还有什么注意事项吗</div>
+            <div class="mobile-chat-time">14:25</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">注意原创度，别直接搬运。航海群里有详细教程</div>
+            <div class="mobile-chat-time">14:28</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">了解，那我先去看教程</div>
+            <div class="mobile-chat-time">14:30</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">好的👍有问题随时问</div>
+            <div class="mobile-chat-time">14:31</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">嗯嗯，最后问下，配音用哪个音色比较好？</div>
+            <div class="mobile-chat-time">14:35</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">「知识博主」那个音色最自然，热门视频大多用这个</div>
+            <div class="mobile-chat-time">14:38</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-12-01">12-01</div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">峰哥你好～我是你的专属交付官潇墨，想了解下你目前的情况</div>
+            <div class="mobile-chat-time">09:30</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">你好！我是做自由职业的，之前在互联网公司</div>
+            <div class="mobile-chat-time">10:00</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">互联网背景很有优势！目前有什么赚钱方向吗？</div>
+            <div class="mobile-chat-time">10:05</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">自媒体变现想试试，但还没找到具体方向</div>
+            <div class="mobile-chat-time">10:10</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">推荐你了解下AI视频变现航海，很适合你的背景</div>
+            <div class="mobile-chat-time">10:15</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">好的我去看看，航海怎么参加？</div>
+            <div class="mobile-chat-time">10:20</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">在社群精华区有报名入口，我把链接发你</div>
+            <div class="mobile-chat-time">10:22</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] AI视频变现航海报名</div>
+            <div class="mobile-chat-time">10:23</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">收到，我先看下，有问题再找你</div>
+            <div class="mobile-chat-time">10:30</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">好的，随时沟通～</div>
+            <div class="mobile-chat-time">10:31</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">对了还想问下，航海一般持续多久？</div>
+            <div class="mobile-chat-time">11:00</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">通常21天一期，有导师带着走，节奏不会太紧张</div>
+            <div class="mobile-chat-time">11:05</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-11-25">11-25</div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">峰哥欢迎加入生财有术！我是你的专属交付官～</div>
+            <div class="mobile-chat-time">10:00</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] 新手任务指南</div>
+            <div class="mobile-chat-time">10:01</div>
+          </div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">你好！谢谢，我叫李峰，坐标深圳</div>
+            <div class="mobile-chat-time">11:20</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">欢迎峰哥！建议先完成新手任务，有问题随时找我😊</div>
+            <div class="mobile-chat-time">11:25</div>
+          </div>
+
+          <div class="mobile-chat-date" id="chatDate-2025-11-20">11-20</div>
+          <div class="mobile-chat-msg">
+            <div class="mobile-chat-avatar">峰</div>
+            <div class="mobile-chat-bubble">你好，想了解下会员权益</div>
+            <div class="mobile-chat-time">09:00</div>
+          </div>
+          <div class="mobile-chat-msg mobile-chat-msg-me">
+            <div class="mobile-chat-bubble mobile-chat-bubble-me">你好！会员权益包含精华帖、航海活动、线下聚会等，详情可以看这里～ [链接]</div>
+            <div class="mobile-chat-time">09:15</div>
           </div>
         </div>
 
@@ -1648,7 +1934,7 @@
     </div>
     <div class="scene-label">场景3：沟通记录</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s3" data-prd-readonly>
+    <div class="prd-panel" data-prd-key="delivery-s3">
       <div class="prd-title">交付-场景3 · 沟通记录</div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">AI 聊天总结</div>
@@ -1698,14 +1984,13 @@
 
       <div class="sidebar-body">
         <!-- 身份卡片 -->
-        <div class="identity-card">
+        <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar" style="opacity: 0.7;">赵</div>
-          <div class="identity-info">
+          <div class="identity-info" style="flex: 1; min-width: 0;">
             <div class="identity-name-row">
               <span class="identity-nickname">赵明远</span>
               <span class="identity-star-id">NO.31205</span>
             </div>
-            <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
             <div class="identity-meta">
               <span>深圳</span>
               <span class="sep">·</span>
@@ -1713,33 +1998,18 @@
               <span class="sep">·</span>
               <span>电商</span>
             </div>
+            <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
           </div>
         </div>
 
         <!-- 身份 & 阶段标签 -->
         <div class="status-tags-bar">
           <span class="status-tag tag-trial">增长期</span>
+          <span class="status-tag" style="background: var(--color-danger-1); color: var(--color-danger-6); border-color: var(--color-danger-2);">续费期</span>
         </div>
 
-        <div class="divider"></div>
-
-        <!-- 企微标签 -->
-        <div class="section-header" style="padding-bottom: 4px;">
-          <span class="section-title">标签</span>
-          <span class="section-action">管理标签 ›</span>
-        </div>
-        <div class="tags-section">
-          <div class="tags-row">
-            <span class="tag-chip tag-renew">续费期</span>
-            <span class="tag-chip tag-interest">电商</span>
-            <span class="tag-chip tag-interest">出海</span>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- AI 画像总结（流失预警 - 全宽无边框） -->
-        <div style="background: #FFEDE8; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+        <!-- AI 画像总结（流失预警 — 红色风格） -->
+        <div style="margin: 0 16px 12px; padding: 16px; background: #FFEDE8; border: 1px solid var(--color-danger-2); border-radius: var(--radius-card); display: flex; flex-direction: column; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--color-danger-6); display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 700; flex-shrink: 0;">AI</div>
             <span style="font-size: 14px; font-weight: 700; color: var(--color-danger-6);">画像总结 · 流失预警</span>
@@ -1747,33 +2017,93 @@
           <div style="font-size: 12px; color: var(--color-text-2); line-height: 1.5;">该用户近半月无任何社区活跃行为，上次沟通中对续费持犹豫态度。用户为电商创业者，曾参与出海航海1次但未完成打卡。建议主动触达了解近况，推荐电商相关精华内容或活动，降低流失风险。</div>
         </div>
 
+        <div class="divider-thick"></div>
+
+        <!-- 关键指标（2列） -->
+        <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="metric-item">
+            <span class="metric-label">会员到期时间</span>
+            <span class="metric-value" style="color: var(--color-danger-6);">2026-01-05</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">最近跟进</span>
+            <span class="metric-value" style="color: var(--color-danger-6);">15天前</span>
+          </div>
+        </div>
+
+        <!-- 新人进度 -->
+        <div class="section-header">
+          <span class="section-title">新人进度</span>
+        </div>
+        <div class="newcomer-progress">
+          <div class="newcomer-header">
+            <span class="newcomer-icon">🎯</span>
+            <span class="newcomer-title">作业关键信息</span>
+            <span class="newcomer-stage-badge">增长期</span>
+          </div>
+          <div class="newcomer-grid">
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">方向 & 赛道</span>
+              <span class="newcomer-field-value">跨境电商、出海</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">当前状态</span>
+              <span class="newcomer-field-value">增长瓶颈期</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">优势</span>
+              <span class="newcomer-field-value">有电商运营经验，年营收500W+</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">短板</span>
+              <span class="newcomer-field-value">流量获取依赖付费，缺少私域体系</span>
+            </div>
+            <div class="newcomer-field full-width">
+              <span class="newcomer-field-label">目标 & 展望</span>
+              <span class="newcomer-field-value">搭建私域流量体系，降低获客成本</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 高频参与项目 -->
+        <div class="section-header">
+          <span class="section-title">高频参与项目</span>
+        </div>
+        <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+          <span class="tag-chip tag-interest">出海电商 ×1</span>
+        </div>
+
         <div class="divider"></div>
 
-        <!-- 活跃度快照（预警） -->
-        <div class="section-header">
-          <span class="section-title">活跃度</span>
-          <span class="section-action">查看详情 ›</span>
+        <!-- 客户标签（3组） -->
+        <div class="section-header" style="padding-bottom: 4px;">
+          <span class="section-title">客户标签</span>
         </div>
-        <div class="metrics-grid metrics-5col">
-          <div class="metric-item metric-center metric-danger">
-            <span class="metric-value danger">15</span>
-            <span class="metric-label">连续沉默天数</span>
+        <div class="tags-section" style="display: flex; flex-direction: column; gap: 10px; padding: 0 16px 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">企微标签</span>
+            <div class="tags-row">
+              <span class="tag-chip tag-renew">续费期</span>
+              <span class="tag-chip tag-base">电商</span>
+              <span class="tag-chip tag-base">出海</span>
+            </div>
           </div>
-          <div class="metric-item metric-center metric-danger">
-            <span class="metric-value danger">2</span>
-            <span class="metric-label">本月活跃天数</span>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">行为标签</span>
+            <div class="tags-row">
+              <span class="tag-chip" style="background: var(--color-danger-1); color: var(--color-danger-6);">沉默用户</span>
+              <span class="tag-chip tag-interest">航海未完成</span>
+            </div>
           </div>
-          <div class="metric-item metric-center">
-            <span class="metric-value">1</span>
-            <span class="metric-label">发帖</span>
-          </div>
-          <div class="metric-item metric-center">
-            <span class="metric-value">1</span>
-            <span class="metric-label">航海</span>
-          </div>
-          <div class="metric-item metric-center">
-            <span class="metric-value">0</span>
-            <span class="metric-label">聚会</span>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">属性标签</span>
+            <div class="tags-row">
+              <span class="tag-chip tag-identity">跨境电商</span>
+              <span class="tag-chip tag-identity">年营收500W+</span>
+              <span class="tag-chip" style="background: transparent; border: 1px solid var(--color-primary-6); color: var(--color-primary-6);">+ 添加</span>
+            </div>
           </div>
         </div>
 
@@ -1782,7 +2112,7 @@
         <!-- 最近跟进（较久远） -->
         <div class="section-header">
           <span class="section-title">最近跟进</span>
-          <span class="section-action">查看全部 ›</span>
+          <span class="section-action" style="color: var(--color-primary-6); font-size: 12px;">更多请前往CRM后台查看</span>
         </div>
         <div class="followup-timeline">
           <div class="followup-tl-item">
@@ -1816,7 +2146,7 @@
     </div>
     <div class="scene-label">场景4：预警态</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-readonly>
+    <div class="prd-panel" data-prd-key="delivery-s4">
       <div class="prd-title">交付-场景4 · 预警态</div>
       <div class="prd-card" style="--accent: #F54A45;">
         <div class="prd-card-title">预警触发条件</div>
@@ -1956,6 +2286,19 @@ AI 画像总结 → 红色渐变「流失预警」风格
       list.style.display = hasVisible ? '' : 'none';
     });
   }
+  // 点击沟通时间轴条目，滚动到对应日期的聊天记录
+  function scrollToChatDate(date) {
+    var el = document.getElementById('chatDate-' + date);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.chat-date-highlight').forEach(function(e) {
+      e.classList.remove('chat-date-highlight');
+    });
+    void el.offsetWidth;
+    el.classList.add('chat-date-highlight');
+    setTimeout(function() { el.classList.remove('chat-date-highlight'); }, 1500);
+  }
+
   // AI Chat Summary — click to generate
   function generateChatAiSummary() {
     var btn = document.getElementById('chatAiGenBtn');

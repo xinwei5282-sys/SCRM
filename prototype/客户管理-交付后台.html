@@ -1773,6 +1773,11 @@
   .chat-tl-tag.tag-invite { background: #F3EEFF; color: #8B5CF6; }
   .chat-tl-tag.tag-confirm { background: var(--color-success-1); color: var(--color-success-6); }
   .chat-tl-desc { font-size: 12px; color: var(--color-text-2); flex: 1; line-height: 18px; }
+  .chat-tl-rounds { font-size: 11px; color: var(--color-text-4); white-space: nowrap; flex-shrink: 0; margin-left: auto; }
+  .chat-tl-item.clickable { cursor: pointer; padding: 4px 6px; margin-left: -6px; margin-right: -6px; border-radius: 4px; transition: background 100ms; }
+  .chat-tl-item.clickable:hover { background: var(--color-fill-hover); }
+  @keyframes chatDateFlash { 0% { background: var(--color-primary-1); } 100% { background: transparent; } }
+  .chat-date-highlight { animation: chatDateFlash 1.5s ease forwards; border-radius: 4px; padding: 2px 8px; margin-left: -8px; margin-right: -8px; }
 
   .chat-record-list { padding: 16px 20px; }
   .chat-date-divider {
@@ -3565,48 +3570,54 @@
               <span class="chat-timeline-count">近30天 · 共8次沟通</span>
             </div>
             <div class="chat-timeline-list">
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-03-08')">
                 <div class="chat-tl-dot dot-inquiry"></div>
                 <div class="chat-tl-date">03-08</div>
                 <span class="chat-tl-tag tag-inquiry">客户咨询</span>
                 <div class="chat-tl-desc">咨询航海活动报名及AI视频项目</div>
+                <span class="chat-tl-rounds">2轮</span>
               </div>
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-03-06')">
                 <div class="chat-tl-dot dot-renew"></div>
                 <div class="chat-tl-date">03-06</div>
                 <span class="chat-tl-tag tag-renew">续费沟通</span>
                 <div class="chat-tl-desc">讨论续费优惠方案，预留线下聚会名额</div>
+                <span class="chat-tl-rounds">3轮</span>
               </div>
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-03-03')">
                 <div class="chat-tl-dot dot-push"></div>
                 <div class="chat-tl-date">03-03</div>
                 <span class="chat-tl-tag tag-push">内容推送</span>
                 <div class="chat-tl-desc">推送第12周精华帖合集，客户反馈正面</div>
+                <span class="chat-tl-rounds">2轮</span>
               </div>
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-02-25')">
                 <div class="chat-tl-dot dot-care"></div>
                 <div class="chat-tl-date">02-25</div>
                 <span class="chat-tl-tag tag-care">主动关怀</span>
                 <div class="chat-tl-desc">月度回访，了解副业进展情况</div>
+                <span class="chat-tl-rounds">2轮</span>
               </div>
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-02-15')">
                 <div class="chat-tl-dot dot-invite"></div>
                 <div class="chat-tl-date">02-15</div>
                 <span class="chat-tl-tag tag-invite">活动邀约</span>
                 <div class="chat-tl-desc">邀请参加深圳线下聚会</div>
+                <span class="chat-tl-rounds">1轮</span>
               </div>
-              <div class="chat-tl-item">
+              <div class="chat-tl-item clickable" onclick="scrollToChatDate('2026-01-20')">
                 <div class="chat-tl-dot dot-confirm"></div>
                 <div class="chat-tl-date">01-20</div>
                 <span class="chat-tl-tag tag-confirm">续费确认</span>
                 <div class="chat-tl-desc">完成第3次续费，鱼丸 580</div>
+                <span class="chat-tl-rounds">1轮</span>
               </div>
             </div>
           </div>
 
           <!-- 聊天记录列表 -->
           <div class="chat-record-list">
-            <div class="chat-date-divider">2026-03-08</div>
+            <div class="chat-date-divider" id="chatDate-2026-03-08">2026-03-08</div>
             <div class="chat-msg chat-msg-them">
               <div class="chat-avatar">峰</div>
               <div class="chat-bubble">潇墨你好，想问下第7期的航海活动什么时候开始报名？</div>
@@ -3625,7 +3636,7 @@
               <div class="chat-bubble chat-bubble-me">有的！上期AI视频变现航海反响很好，这期还会有。我帮你留意名额👍</div>
               <div class="chat-time">14:30</div>
             </div>
-            <div class="chat-date-divider">2026-03-06</div>
+            <div class="chat-date-divider" id="chatDate-2026-03-06">2026-03-06</div>
             <div class="chat-msg chat-msg-them">
               <div class="chat-avatar">峰</div>
               <div class="chat-bubble">潇墨，我的会员明年3月到期，续费有什么优惠吗？</div>
@@ -3649,7 +3660,7 @@
               <div class="chat-bubble">太好了，帮我留一个！谢谢🙏</div>
               <div class="chat-time">10:30</div>
             </div>
-            <div class="chat-date-divider">2026-03-03</div>
+            <div class="chat-date-divider" id="chatDate-2026-03-03">2026-03-03</div>
             <div class="chat-msg chat-msg-me">
               <div class="chat-bubble chat-bubble-me">峰哥，这周的精华帖合集整理好了，发你看看有没有感兴趣的内容～</div>
               <div class="chat-time">09:00</div>
@@ -3663,6 +3674,45 @@
               <div class="chat-bubble">收到，感谢整理！那篇AI工具的文章写得很好</div>
               <div class="chat-time">12:40</div>
             </div>
+            <div class="chat-date-divider" id="chatDate-2026-02-25">2026-02-25</div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">峰哥，月度回访～最近副业进展怎么样？</div>
+              <div class="chat-time">10:00</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">还行，在研究AI工具，慢慢找感觉</div>
+              <div class="chat-time">10:30</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">加油💪有什么需要帮忙的随时说</div>
+              <div class="chat-time">10:35</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">好的谢谢关心！</div>
+              <div class="chat-time">10:40</div>
+            </div>
+            <div class="chat-date-divider" id="chatDate-2026-02-15">2026-02-15</div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">峰哥，深圳线下聚会3月初举办，有兴趣参加吗？</div>
+              <div class="chat-time">14:00</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">可以呀！在哪里举办？</div>
+              <div class="chat-time">14:30</div>
+            </div>
+            <div class="chat-date-divider" id="chatDate-2026-01-20">2026-01-20</div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">续费完成了，鱼丸580扣了</div>
+              <div class="chat-time">09:00</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">收到！欢迎续费～新一期权益已开通，有问题随时找我😊</div>
+              <div class="chat-time">09:10</div>
+            </div>
           </div>
         </div><!-- /tab-panel chat -->
 
@@ -3672,7 +3722,7 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260309c" data-prd-readonly data-prd-view="list">
+<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260309c" data-prd-view="list">
   <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
 
   <!-- Section 1: 概述 -->
@@ -4246,6 +4296,21 @@ var ds = document.querySelector('.detail-sidebar');
 if (ds) ds.addEventListener('click', function() { scrollToPrd('prd-s7'); });
 var _origOpen = openDetail;
 openDetail = function() { _origOpen(); setTimeout(function() { scrollToPrd('prd-s6'); }, 100); };
+
+// 点击沟通时间轴条目，滚动到对应日期的聊天记录
+function scrollToChatDate(date) {
+  var el = document.getElementById('chatDate-' + date);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // 移除之前的高亮
+  document.querySelectorAll('.chat-date-highlight').forEach(function(e) {
+    e.classList.remove('chat-date-highlight');
+  });
+  // 添加高亮闪烁
+  void el.offsetWidth; // force reflow
+  el.classList.add('chat-date-highlight');
+  setTimeout(function() { el.classList.remove('chat-date-highlight'); }, 1500);
+}
 </script>
 <script src="prd-editor.js"></script>
 
