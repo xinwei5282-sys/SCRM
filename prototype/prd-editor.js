@@ -650,6 +650,9 @@
   // ================================================================
 
   function initPanel(panel) {
+    // Read-only mode: skip all editing features
+    if (panel.hasAttribute('data-prd-readonly')) return;
+
     var mode = detectMode(panel);
     var handler = mode === 'section' ? SectionMode : CardMode;
 
