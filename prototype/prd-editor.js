@@ -18,9 +18,12 @@
  *   - 板块之间插入新板块
  *   - 板块/条目删除
  *   - 重置为原始内容
+ *
+ * 只读开关：改为 false 可编辑，true 为只读（发布时设为 true）
  */
 (function() {
   'use strict';
+  var PRD_READONLY = true; // ← 切换：true=只读  false=可编辑
 
   // ================================================================
   //  工具函数
@@ -651,7 +654,7 @@
 
   function initPanel(panel) {
     // Read-only mode: skip all editing features
-    if (panel.hasAttribute('data-prd-readonly')) return;
+    if (PRD_READONLY || panel.hasAttribute('data-prd-readonly')) return;
 
     var mode = detectMode(panel);
     var handler = mode === 'section' ? SectionMode : CardMode;
