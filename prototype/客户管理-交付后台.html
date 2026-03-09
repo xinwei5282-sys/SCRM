@@ -1,0 +1,4253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客户管理 - 交付侧数据扩展原型</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-group-title {
+    padding: 8px 16px 4px;
+    font-size: 12px;
+    color: var(--color-text-4);
+    text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  /* Header */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Page Title */
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+
+  /* ======== Search Filters ======== */
+  .filter-area {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-row:last-child { margin-bottom: 0; }
+
+  .filter-item {
+    position: relative;
+  }
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover {
+    border-color: var(--color-border-hover);
+  }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .filter-input::placeholder { color: var(--color-text-4); }
+  .filter-input.wide { min-width: 220px; }
+  .filter-input.date-range { min-width: 260px; }
+
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+
+  /* NEW tag for delivery fields */
+  .new-badge {
+    position: relative;
+  }
+  .new-badge::after {
+    content: 'NEW';
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--color-accent-orange-6);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    line-height: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* Buttons */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+  .btn-text {
+    background: none;
+    color: var(--color-primary-6);
+    padding: 0 4px;
+  }
+  .btn-text:hover { color: var(--color-primary-7); }
+  .btn-sync {
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    border: 1px solid var(--color-border-default);
+  }
+
+  /* ======== Table ======== */
+  .table-wrapper {
+    overflow-x: auto;
+    position: relative;
+  }
+  .data-table {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .data-table tr:hover td {
+    background: var(--color-fill-hover);
+  }
+
+  /* Column group headers */
+  .col-group-header {
+    text-align: center !important;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .col-group-header.sales {
+    background: var(--color-fill-3) !important;
+    border-bottom: 2px solid var(--color-border-default);
+  }
+  .col-group-header.delivery {
+    background: var(--color-primary-1) !important;
+    color: var(--color-primary-6) !important;
+    border-bottom: 2px solid var(--color-primary-2);
+  }
+
+  /* Delivery columns */
+  .data-table tr:hover td {
+    background: var(--color-fill-hover);
+  }
+
+  /* Sticky columns */
+  .data-table th.sticky-left,
+  .data-table td.sticky-left {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--color-fill-1);
+  }
+  .data-table th.sticky-left {
+    background: var(--color-fill-3);
+    z-index: 4;
+  }
+  .data-table th.sticky-left-2,
+  .data-table td.sticky-left-2 {
+    position: sticky;
+    left: 50px;
+    z-index: 3;
+    background: var(--color-fill-1);
+  }
+  .data-table th.sticky-left-2 {
+    background: var(--color-fill-3);
+    z-index: 4;
+  }
+  .data-table th.sticky-right,
+  .data-table td.sticky-right {
+    position: sticky;
+    right: 0;
+    z-index: 3;
+    background: var(--color-fill-1);
+  }
+  .data-table th.sticky-right {
+    background: var(--color-fill-3);
+    z-index: 4;
+  }
+
+  /* Cell helpers */
+  .customer-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .customer-avatar svg { width: 18px; height: 18px; color: var(--color-text-4); }
+  .customer-name { font-weight: 500; color: var(--color-text-1); display: flex; align-items: center; gap: 3px; }
+  .customer-name-link { color: var(--color-text-1); cursor: pointer; text-decoration: none; }
+  .customer-name-link:hover { color: var(--color-primary-6); }
+  .customer-name .icon-external { width: 12px; height: 12px; color: var(--color-text-4); flex-shrink: 0; opacity: 0; transition: opacity 100ms; }
+  .customer-info:hover .icon-external { opacity: 1; color: var(--color-primary-6); }
+  .customer-phone { font-size: 12px; color: var(--color-text-3); }
+
+  /* Tags / Badges */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-default {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .tag-primary {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-success {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-warning {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .tag-danger {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+  .tag-info {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .tag-muted {
+    background: #F2F3F5;
+    color: #757980;
+  }
+  .tag-orange {
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+  }
+  /* 所属阶段标签 */
+  .tag-stage {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    border: 1px solid var(--color-primary-2);
+  }
+  /* 会员身份标签 — 每种身份不同颜色 */
+  .tag-role-zuju { /* 组局官 */
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+    border: 1px solid var(--color-accent-orange-2);
+  }
+  .tag-role-zhongcao { /* 种草官 */
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+    border: 1px solid var(--color-success-2);
+  }
+  .tag-role-jiaolian { /* 航海教练 */
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+    border: 1px solid var(--color-info-2);
+  }
+  .tag-role-zhiyuan { /* 志愿者 */
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+    border: 1px solid var(--color-warning-2);
+  }
+  .tag-role-chuanshu { /* 传术师 */
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+    border: 1px solid var(--color-danger-2);
+  }
+  .tag-role-hanghj { /* 航海家 */
+    background: #F0FCFC;
+    color: #008C90;
+    border: 1px solid #B3F6EE;
+  }
+
+  /* Customer type badges */
+  .type-guanwang {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .type-hanghai {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .type-shenhai {
+    background: #FFF7E9;
+    color: #D25F00;
+  }
+
+  /* Friend status */
+  .friend-ok { color: var(--color-success-6); }
+  .friend-deleted { color: var(--color-danger-6); }
+  .friend-none { color: var(--color-text-4); }
+
+  /* Group chip */
+  .group-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    color: var(--color-text-2);
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ======== Pagination ======== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .pagination-bar .total { margin-right: 8px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active {
+    background: var(--color-primary-6);
+    color: white;
+    border-color: var(--color-primary-6);
+  }
+  .page-btn.disabled {
+    color: var(--color-text-4);
+    cursor: not-allowed;
+    border-color: var(--color-border-default);
+  }
+  .page-size-select {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 6px;
+    font-size: 13px;
+    outline: none;
+  }
+  .page-jump {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .page-jump input {
+    width: 40px;
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    text-align: center;
+    font-size: 13px;
+    outline: none;
+  }
+
+  /* ======== Legend ======== */
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+  .legend-dot.sales { background: var(--color-info-1); border: 1px solid rgba(50,124,251,0.3); }
+  .legend-dot.delivery { background: var(--color-primary-1); border: 1px solid rgba(54,165,144,0.3); }
+
+  /* ======== Modal / Dialog ======== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+  }
+  .modal-overlay.show { display: block; }
+  .modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card) 0 0 var(--radius-card);
+    width: 1280px;
+    max-width: calc(100vw - 80px);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    animation: drawerIn 250ms ease-out;
+    z-index: 401;
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .modal-overlay.hiding .modal {
+    animation: drawerOut 200ms ease-in forwards;
+  }
+  @keyframes drawerOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-close:hover { background: var(--color-fill-hover); }
+  .modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    min-height: 0;
+  }
+
+  /* Detail Layout */
+  .detail-sidebar {
+    width: 340px;
+    min-width: 340px;
+    border-right: 1px solid var(--color-border-default);
+    padding: 24px;
+    overflow-y: auto;
+    overflow-y: auto;
+  }
+  .detail-main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Detail Sidebar Content */
+  .detail-avatar-area {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .detail-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .detail-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+  .detail-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .detail-name-link:hover { color: var(--color-primary-6); }
+  .detail-name-link .icon-external { width: 14px; height: 14px; color: var(--color-text-4); opacity: 0; transition: opacity 100ms; }
+  .detail-name-link:hover .icon-external { opacity: 1; color: var(--color-primary-6); }
+  .detail-note { font-size: 12px; color: var(--color-text-3); margin-bottom: 8px; }
+  .detail-tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .detail-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .detail-label-group { margin-bottom: 12px; }
+  .detail-label-title {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-bottom: 6px;
+  }
+  .detail-tags-list { display: flex; gap: 6px; flex-wrap: wrap; }
+  .detail-tag {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--color-border-default);
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-text-2);
+    background: var(--color-fill-1);
+  }
+  /* AI Profile Summary Card */
+  .ai-summary-card {
+    background: var(--color-ai-surface-bg, #F0FCFC);
+    border: 1px solid rgba(0, 203, 208, 0.2);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .ai-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .ai-summary-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-ai-brand, #00CBD0);
+  }
+  .ai-summary-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ai-text-1, #008C90);
+  }
+  .ai-summary-badge {
+    font-size: 10px;
+    height: 16px;
+    padding: 0 5px;
+    border-radius: 4px;
+    background: rgba(0, 203, 208, 0.12);
+    color: var(--color-ai-brand, #00CBD0);
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+  }
+  .ai-summary-empty {
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+  .ai-summary-empty-text {
+    font-size: 12px;
+    color: var(--color-text-4);
+    margin-bottom: 12px;
+  }
+  .ai-summary-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 6px;
+    border: none;
+    background: linear-gradient(135deg, #00CBD0, #008C90);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .ai-summary-generate-btn:hover {
+    opacity: 0.9;
+  }
+  .ai-summary-generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .ai-summary-generate-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  @keyframes ai-sparkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .ai-summary-generating .ai-summary-icon {
+    animation: ai-sparkle 1s ease-in-out infinite;
+  }
+  .ai-summary-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: var(--color-ai-brand, #00CBD0);
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    animation: ai-cursor-blink 0.6s step-end infinite;
+  }
+  @keyframes ai-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .ai-summary-body {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--color-text-2);
+  }
+  .ai-summary-body .ai-highlight {
+    color: var(--color-ai-text-1, #008C90);
+    font-weight: 500;
+  }
+  .ai-summary-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .ai-summary-tag {
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 203, 208, 0.1);
+    color: var(--color-ai-text-1, #008C90);
+    border: 1px solid rgba(0, 203, 208, 0.15);
+  }
+  .ai-summary-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 203, 208, 0.12);
+  }
+  .ai-summary-time {
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .ai-summary-refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--color-ai-brand, #00CBD0);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .ai-summary-refresh:hover {
+    background: rgba(0, 203, 208, 0.08);
+  }
+  .ai-summary-refresh svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Newcomer Progress Card */
+  .newcomer-progress {
+    padding: 14px;
+    background: var(--color-fill-2);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-default);
+    margin-bottom: 16px;
+  }
+  .newcomer-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .newcomer-icon {
+    font-size: 14px;
+  }
+  .newcomer-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .newcomer-stage-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+    padding: 1px 8px;
+    border-radius: 4px;
+  }
+  .newcomer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .newcomer-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .newcomer-field.full-width {
+    grid-column: 1 / -1;
+  }
+  .newcomer-field-label {
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .newcomer-field-value {
+    font-size: 13px;
+    color: var(--color-text-2);
+    line-height: 18px;
+  }
+
+  /* High-Frequency Projects */
+  .freq-projects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .freq-project-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .freq-project-tag .freq-count {
+    margin-left: 4px;
+    opacity: 0.7;
+  }
+
+  .detail-group-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .detail-group-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: var(--color-fill-3);
+    flex-shrink: 0;
+  }
+  .detail-group-name { font-size: 13px; font-weight: 500; }
+  .detail-group-count { font-size: 12px; color: var(--color-text-3); }
+
+  /* Detail Tabs */
+  .detail-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border-default);
+    padding: 0 20px;
+  }
+  .detail-tab {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    white-space: nowrap;
+  }
+  .detail-tab:hover { color: var(--color-text-1); }
+  .detail-tab.active {
+    color: var(--color-primary-6);
+    border-bottom-color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
+  /* Tab Panels */
+  .tab-panel { display: none; flex: 1; overflow-y: auto; }
+  .tab-panel.active { display: block; }
+
+  /* Timeline */
+  .timeline-container { padding: 20px; }
+  .timeline-date {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    padding-left: 20px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 18px;
+    bottom: -38px;
+    width: 1px;
+    background: var(--color-border-default);
+  }
+  .timeline-item:last-child::before { display: none; }
+  .timeline-item.timeline-day-last::before { display: none; }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-border-default);
+    flex-shrink: 0;
+    margin-top: 6px;
+    position: absolute;
+    left: 0;
+  }
+  .timeline-dot.dot-blue { background: var(--color-info-6); }
+  .timeline-dot.dot-green { background: var(--color-success-6); }
+  .timeline-dot.dot-orange { background: var(--color-accent-orange-6); }
+  .timeline-dot.dot-teal { background: var(--color-primary-6); }
+  .timeline-dot.dot-danger { background: var(--color-danger-6); }
+  .timeline-card {
+    flex: 1;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-btn);
+    padding: 10px 14px;
+  }
+  .timeline-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .timeline-desc {
+    font-size: 13px;
+    color: var(--color-text-3);
+    line-height: 20px;
+  }
+  .timeline-time {
+    font-size: 12px;
+    color: var(--color-text-4);
+    white-space: nowrap;
+    margin-top: 4px;
+    position: absolute;
+    left: 20px;
+    top: -18px;
+  }
+  .timeline-item:first-of-type .timeline-time { position: static; margin-bottom: 0; }
+  /* Fix: put time above card */
+  .timeline-item {
+    flex-direction: column;
+    padding-left: 24px;
+  }
+  .timeline-time {
+    position: static;
+    margin-bottom: 4px;
+  }
+  .timeline-dot {
+    left: 0;
+    top: 22px;
+  }
+  .timeline-item::before {
+    top: 34px;
+  }
+  .timeline-desc .hl {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .timeline-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--color-info-6);
+    background: var(--color-info-1);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    font-weight: 500;
+  }
+  .timeline-duration::before {
+    content: '⏱';
+    font-size: 10px;
+  }
+
+  /* Activity Source Grid (一级筛选) */
+  .activity-source-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .activity-source-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 10px;
+    background: var(--color-fill-2);
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    transition: all 100ms;
+    border: 1.5px solid transparent;
+  }
+  .activity-source-item:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .activity-source-item.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .activity-source-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: 22px;
+  }
+  .activity-source-item.active .activity-source-value {
+    color: var(--color-primary-6);
+  }
+  .activity-source-label {
+    font-size: 11px;
+    color: var(--color-text-3);
+  }
+  .activity-source-item.active .activity-source-label {
+    color: var(--color-primary-7);
+  }
+  /* Activity Sub Filter Bar (二级筛选) */
+  .activity-sub-bar {
+    display: none;
+    gap: 6px;
+    padding: 6px 20px 2px;
+    overflow-x: auto;
+  }
+  .activity-sub-bar.visible {
+    display: flex;
+  }
+  .activity-sub-bar::-webkit-scrollbar { display: none; }
+  .activity-sub-chip {
+    flex-shrink: 0;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 11px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition: all 100ms;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-family: inherit;
+  }
+  .activity-sub-chip:hover {
+    border-color: var(--color-border-hover);
+    color: var(--color-text-2);
+  }
+  .activity-sub-chip.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .activity-sub-chip .chip-count {
+    font-weight: 600;
+  }
+
+  /* 积分记录 */
+  .points-container { display: flex; flex-direction: column; }
+  .points-summary {
+    display: flex; gap: 12px; padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .points-card {
+    flex: 1; padding: 12px 14px; border-radius: 8px;
+    border: 1px solid var(--color-border-default); background: var(--color-fill-1);
+  }
+  .points-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .points-card-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .points-card-icon.icon-longzhu { background: linear-gradient(135deg, #FF7D00, #D25F00); color: #fff; }
+  .points-card-icon.icon-shuzhi { background: linear-gradient(135deg, #327CFB, #085EF0); color: #fff; }
+  .points-card-icon.icon-suipian { background: linear-gradient(135deg, #36A590, #14796D); color: #fff; }
+  .points-card-name { font-size: 12px; color: var(--color-text-3); }
+  .points-card-value { font-size: 22px; font-weight: 700; color: var(--color-text-1); line-height: 1; }
+  .points-card-sub { font-size: 11px; color: var(--color-text-4); margin-top: 4px; }
+  .points-card-sub span { margin-right: 8px; }
+  .points-card-sub .pts-in { color: var(--color-success-6); }
+  .points-card-sub .pts-out { color: var(--color-danger-6); }
+  .points-filter {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-bottom: 1px solid var(--color-border-default);
+  }
+  .points-filter-label { font-size: 12px; color: var(--color-text-3); }
+  .points-filter select {
+    height: 28px; border: 1px solid var(--color-border-default);
+    border-radius: 6px; font-size: 12px; padding: 0 8px; color: var(--color-text-1);
+    background: var(--color-fill-1);
+  }
+  .points-table-wrap { overflow-x: auto; }
+  .points-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .points-table th {
+    background: var(--color-fill-3); font-weight: 600; text-align: left;
+    padding: 8px 12px; white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default); color: var(--color-text-2);
+  }
+  .points-table td {
+    padding: 10px 12px; border-bottom: 1px solid var(--color-border-default);
+    white-space: nowrap; vertical-align: middle;
+  }
+  .points-table tr:hover td { background: var(--color-fill-hover); }
+  .pts-type-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  }
+  .pts-type-tag.type-longzhu { background: var(--color-accent-orange-1); color: var(--color-accent-orange-6); }
+  .pts-type-tag.type-shuzhi { background: var(--color-info-1); color: var(--color-info-6); }
+  .pts-type-tag.type-suipian { background: var(--color-primary-1); color: var(--color-primary-6); }
+  .pts-amount-in { color: var(--color-success-6); font-weight: 600; }
+  .pts-amount-out { color: var(--color-danger-6); font-weight: 600; }
+
+  /* Orders */
+  .orders-container { display: flex; flex-direction: column; }
+  .orders-note {
+    padding: 12px 20px;
+    font-size: 12px;
+    color: var(--color-text-3);
+    background: var(--color-fill-2);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .orders-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    overflow-x: auto;
+  }
+  .orders-tab {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  .orders-tab:hover { color: var(--color-text-1); }
+  .orders-tab.active {
+    color: var(--color-primary-6);
+    border-bottom-color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .orders-table-wrap { overflow-x: auto; }
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .orders-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+  }
+  .orders-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .orders-table tr:hover td { background: var(--color-fill-hover); }
+  .order-product-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .order-product-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    background: var(--color-fill-3);
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  .changes-container { display: flex; flex-direction: column; }
+
+  /* Detail Profile Table */
+  .profile-table {
+    width: 100%;
+    padding: 16px 20px;
+  }
+  .profile-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .profile-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+    font-weight: 500;
+    width: 140px;
+    border: 1px solid var(--color-border-default);
+    white-space: nowrap;
+  }
+  .profile-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--color-border-default);
+    color: var(--color-text-1);
+  }
+  .profile-table .section-header {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  .profile-table .section-header-sales {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+    font-weight: 600;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  /* Profile Inline Edit */
+  .profile-editable {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--color-text-4);
+    padding: 0;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.1s, background 0.1s;
+  }
+  .profile-editable:hover .profile-edit-btn {
+    opacity: 1;
+  }
+  .profile-edit-btn:hover {
+    color: var(--color-primary-6);
+    background: var(--color-fill-3);
+  }
+  .profile-edit-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .profile-edit-form {
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .profile-edit-form.editing {
+    display: inline-flex;
+  }
+  .profile-edit-input,
+  .profile-edit-select {
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    min-width: 100px;
+  }
+  .profile-edit-input:focus,
+  .profile-edit-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .profile-save-btn,
+  .profile-cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .profile-save-btn {
+    background: var(--color-primary-6);
+    color: #fff;
+  }
+  .profile-save-btn:hover {
+    opacity: 0.9;
+  }
+  .profile-cancel-btn {
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+  }
+  .profile-cancel-btn:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .profile-save-btn svg,
+  .profile-cancel-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Modal Footer */
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: rgba(242, 245, 247, 0.5);
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    font-size: 12px;
+    color: var(--color-text-4);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .scroll-hint svg { flex-shrink: 0; }
+
+  /* ======== Responsive ======== */
+  .filter-select.sm { min-width: 130px; }
+  .filter-select.md { min-width: 150px; }
+
+  /* Row grouping visual */
+  .row-group-first td { border-top: 2px solid var(--color-border-default); }
+  .row-group-sub td { border-top: none; }
+  .row-group-sub .customer-info { opacity: 1; }
+  .row-group-sub .col-common { color: var(--color-text-4); }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+
+  /* PRD annotations - inline markers */
+  .prd-note {
+    display: none;
+    position: absolute;
+    right: -320px;
+    top: 0;
+    width: 300px;
+    z-index: 10;
+  }
+  body.prd-on .prd-note { display: block; }
+
+  .prd-note-inner {
+    background: #FFFDF7;
+    border: 1px solid #F0E6CC;
+    border-left: 3px solid var(--color-accent-orange-6);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--color-text-2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .prd-note-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-accent-orange-6);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #F0E6CC;
+  }
+  .prd-note-title.green { color: var(--color-primary-6); }
+  .prd-note-title.blue { color: var(--color-info-6); }
+  .prd-field {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 3px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .prd-field-label {
+    color: var(--color-text-3);
+    white-space: nowrap;
+    min-width: 60px;
+  }
+  .prd-field-value { color: var(--color-text-1); }
+  .prd-divider {
+    height: 1px;
+    background: #F0E6CC;
+    margin: 8px 0;
+  }
+  .prd-text {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-2);
+    margin-bottom: 3px;
+  }
+  .prd-text em {
+    font-style: normal;
+    color: var(--color-accent-orange-6);
+    font-weight: 500;
+  }
+  .prd-text.muted { color: var(--color-text-3); }
+
+  /* PRD Right Panel (fixed) */
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+  body.prd-on .modal { right: 380px; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  /* PRD context filtering */
+  .prd-panel[data-prd-view="list"] .prd-section[data-prd-context="detail"] { display: none; }
+  .prd-panel[data-prd-view="detail"] .prd-section[data-prd-context="list"] { display: none; }
+  .prd-context-hint { font-size: 12px; color: var(--color-text-3); margin-bottom: 12px; padding: 6px 10px; background: #FFF5E6; border-radius: 6px; text-align: center; }
+  .prd-section.prd-active { background: #FFF8EE; border-radius: 8px; box-shadow: 0 0 0 2px var(--color-accent-orange-6); transition: box-shadow 0.3s, background 0.3s; }
+  /* clickable areas cursor hint */
+  .filter-area, .data-table thead, .data-table tbody tr { cursor: pointer; }
+
+  /* ===== 跟进表单 ===== */
+  .followup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .followup-header .btn-add-followup {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--radius-btn);
+    border: none;
+    background: var(--color-primary-6);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .followup-header .btn-add-followup:hover {
+    background: rgba(54, 165, 144, 0.9);
+  }
+  .followup-form {
+    padding: 16px 20px;
+    background: var(--color-fill-2);
+    border-bottom: 1px solid var(--color-border-default);
+    display: none;
+  }
+  .followup-form.active { display: block; }
+  .followup-form .form-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .followup-form .form-close {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--color-text-3);
+    border-radius: var(--radius-xs);
+  }
+  .followup-form .form-close:hover { background: var(--color-fill-3-hover); }
+  .followup-form .form-group { margin-bottom: 12px; }
+  .followup-form .form-label {
+    font-size: 12px; color: var(--color-text-3);
+    margin-bottom: 4px; display: flex; align-items: center; gap: 2px;
+  }
+  .followup-form .form-label .required { color: var(--color-danger-6); }
+  .followup-form .form-methods { display: flex; gap: 6px; flex-wrap: wrap; }
+  .followup-form .method-chip {
+    height: 28px; padding: 0 10px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 12px; color: var(--color-text-2);
+    cursor: pointer; transition: all 0.1s; font-family: inherit;
+  }
+  .followup-form .method-chip:hover { border-color: var(--color-border-hover); }
+  .followup-form .method-chip.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6); font-weight: 500;
+  }
+  .followup-form .form-textarea {
+    width: 100%; height: 80px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 8px 10px; font-size: 13px; font-family: inherit;
+    resize: none; color: var(--color-text-1); line-height: 20px;
+    transition: border-color 0.15s; box-sizing: border-box;
+  }
+  .followup-form .form-textarea::placeholder { color: var(--color-text-4); }
+  .followup-form .form-textarea:focus {
+    outline: none; border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .followup-form .form-inline-row { display: flex; gap: 10px; }
+  .followup-form .form-inline-row .form-group { flex: 1; }
+  .followup-form .form-select,
+  .followup-form .form-input {
+    width: 100%; height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px; font-size: 13px; font-family: inherit;
+    color: var(--color-text-1); background: var(--color-fill-1);
+    transition: border-color 0.15s; box-sizing: border-box;
+  }
+  .followup-form .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23757980' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  .followup-form .form-select:focus,
+  .followup-form .form-input:focus {
+    outline: none; border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .followup-form .form-actions {
+    display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px;
+  }
+  .followup-form .form-btn {
+    height: 32px; padding: 0 16px;
+    border-radius: var(--radius-btn); border: none;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: inherit; transition: all 0.1s;
+  }
+  .followup-form .form-btn.btn-submit { background: var(--color-primary-6); color: white; }
+  .followup-form .form-btn.btn-submit:hover { background: rgba(54, 165, 144, 0.9); }
+  .followup-form .form-btn.btn-cancel { background: var(--color-fill-3); color: var(--color-text-2); }
+  .followup-form .form-btn.btn-cancel:hover { background: var(--color-fill-3-hover); }
+  .followup-form .char-count { font-size: 11px; color: var(--color-text-4); text-align: right; margin-top: 2px; }
+
+  /* ===== 聊天记录 ===== */
+  .chat-ai-area { padding: 16px 20px; border-bottom: 1px solid var(--color-border-default); }
+  .ai-chat-generate-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 36px; padding: 0 20px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-primary-6);
+    background: var(--color-fill-1);
+    color: var(--color-primary-6);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+    transition: all 100ms;
+  }
+  .ai-chat-generate-btn:hover { background: var(--color-primary-1); }
+  .ai-chat-generate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .ai-chat-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: linear-gradient(135deg, #00CBD0, #36A590);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 10px; font-weight: 700;
+  }
+  .ai-chat-summary-card {
+    margin-top: 12px; padding: 14px 16px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+    display: none;
+  }
+  .ai-chat-summary-card.visible { display: block; animation: fadeIn 300ms ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .ai-chat-summary-header {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+  }
+  .ai-chat-summary-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: linear-gradient(135deg, #00CBD0, #36A590);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 10px; font-weight: 700;
+  }
+  .ai-chat-summary-label { font-size: 13px; font-weight: 600; color: var(--color-primary-7); }
+  .ai-chat-summary-actions { margin-left: auto; display: flex; gap: 8px; }
+  .ai-chat-action-btn {
+    font-size: 12px; color: var(--color-primary-6); cursor: pointer;
+    background: none; border: none; font-family: inherit;
+  }
+  .ai-chat-action-btn:hover { color: var(--color-primary-7); }
+  .ai-chat-summary-text { font-size: 13px; color: var(--color-text-2); line-height: 22px; }
+  .ai-chat-summary-text p { margin: 0 0 4px; }
+  .ai-chat-summary-text p:last-child { margin-bottom: 0; }
+
+  /* 沟通时间轴 */
+  .chat-timeline { padding: 16px 20px; border-bottom: 1px solid var(--color-border-default); }
+  .chat-timeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .chat-timeline-title { font-size: 13px; font-weight: 600; color: var(--color-text-1); }
+  .chat-timeline-count { font-size: 12px; color: var(--color-text-4); }
+  .chat-timeline-list { position: relative; padding-left: 20px; }
+  .chat-timeline-list::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1.5px; background: var(--color-border-default); }
+  .chat-tl-item { position: relative; display: flex; align-items: flex-start; gap: 10px; padding-bottom: 14px; }
+  .chat-tl-item:last-child { padding-bottom: 0; }
+  .chat-tl-dot { position: absolute; left: -20px; top: 5px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; flex-shrink: 0; z-index: 1; }
+  .chat-tl-dot.dot-inquiry { background: var(--color-info-6); }
+  .chat-tl-dot.dot-renew { background: var(--color-accent-orange-6); }
+  .chat-tl-dot.dot-push { background: var(--color-primary-6); }
+  .chat-tl-dot.dot-care { background: var(--color-success-6); }
+  .chat-tl-dot.dot-invite { background: #8B5CF6; }
+  .chat-tl-dot.dot-confirm { background: var(--color-success-6); }
+  .chat-tl-date { font-size: 11px; color: var(--color-text-4); white-space: nowrap; min-width: 62px; padding-top: 1px; }
+  .chat-tl-tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .chat-tl-tag.tag-inquiry { background: var(--color-info-1); color: var(--color-info-6); }
+  .chat-tl-tag.tag-renew { background: var(--color-accent-orange-1); color: var(--color-accent-orange-6); }
+  .chat-tl-tag.tag-push { background: var(--color-primary-1); color: var(--color-primary-6); }
+  .chat-tl-tag.tag-care { background: var(--color-success-1); color: var(--color-success-6); }
+  .chat-tl-tag.tag-invite { background: #F3EEFF; color: #8B5CF6; }
+  .chat-tl-tag.tag-confirm { background: var(--color-success-1); color: var(--color-success-6); }
+  .chat-tl-desc { font-size: 12px; color: var(--color-text-2); flex: 1; line-height: 18px; }
+
+  .chat-record-list { padding: 16px 20px; }
+  .chat-date-divider {
+    text-align: center; font-size: 11px; color: var(--color-text-4);
+    margin: 16px 0 12px; position: relative;
+  }
+  .chat-date-divider::before, .chat-date-divider::after {
+    content: ''; position: absolute; top: 50%; height: 1px;
+    background: var(--color-border-default); width: calc(50% - 50px);
+  }
+  .chat-date-divider::before { left: 0; }
+  .chat-date-divider::after { right: 0; }
+  .chat-record-list .chat-date-divider:first-child { margin-top: 0; }
+  .chat-msg { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+  .chat-msg-me { flex-direction: row-reverse; }
+  .chat-avatar {
+    width: 32px; height: 32px; border-radius: 4px; flex-shrink: 0;
+    background: var(--color-primary-2); color: var(--color-primary-7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+  }
+  .chat-bubble {
+    max-width: 60%; padding: 8px 12px;
+    background: var(--color-fill-1); border: 1px solid var(--color-border-default);
+    border-radius: 2px 8px 8px 8px;
+    font-size: 13px; color: var(--color-text-1); line-height: 20px;
+  }
+  .chat-bubble-me {
+    background: #D4F5EC; border-color: #B8E8DA;
+    border-radius: 8px 2px 8px 8px;
+  }
+  .chat-time { font-size: 11px; color: var(--color-text-4); margin-top: 4px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle Button -->
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="layout">
+  <!-- ======== Sidebar ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">lgoo</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item">
+        <span>首页</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item" style="font-weight:600; color: var(--color-text-1);">
+        <span>客户</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-sub">
+        <div class="menu-item active">客户管理</div>
+        <div class="menu-item">会员管理</div>
+      </div>
+      <div class="menu-item">
+        <span>内容</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ======== Main ======== -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">M</div>
+        <span style="font-size:13px; color: var(--color-text-2);">momo.zxy</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="page-card">
+        <!-- Page Title -->
+        <div class="page-title-bar">
+          <h1 class="page-title">客户管理</h1>
+        </div>
+
+        <!-- ======== Search Filters ======== -->
+        <div class="filter-area">
+          <div class="filter-row">
+            <input class="filter-input wide" type="text" placeholder="昵称/手机号/星球编号">
+<select class="filter-select sm">
+              <option value="">好友状态</option>
+              <option>双向好友</option>
+              <option>客户删除</option>
+              <option>双向删除</option>
+            </select>
+            <select class="filter-select sm">
+              <option value="">鱼丸</option>
+              <option>鱼丸120</option>
+            </select>
+            <select class="filter-select sm">
+              <option value="">标签</option>
+              <option>官网体验会员</option>
+              <option>视频号</option>
+            </select>
+            <div class="filter-item new-badge">
+              <select class="filter-select sm">
+                <option value="">客户类型</option>
+                <option>官网会员</option>
+                <option>航海会员</option>
+                <option>深海圈会员</option>
+              </select>
+            </div>
+            <div class="filter-item new-badge">
+              <select class="filter-select sm">
+                <option value="">专属服务</option>
+                <option>潇墨</option>
+                <option>李李</option>
+                <option>麻球</option>
+                <option>乔溪</option>
+              </select>
+            </div>
+            <div class="filter-item new-badge">
+              <select class="filter-select sm">
+                <option value="">会员状态</option>
+                <option>在期</option>
+                <option>往期</option>
+                <option>待续费</option>
+                <option>过期</option>
+                <option>体验营圈友</option>
+              </select>
+            </div>
+            <div class="filter-item new-badge">
+              <select class="filter-select sm">
+                <option value="">会员身份</option>
+                <option>组局官</option>
+                <option>种草官</option>
+                <option>航海教练</option>
+                <option>志愿者</option>
+                <option>传术师</option>
+                <option>航海家</option>
+              </select>
+            </div>
+            <div class="filter-item new-badge">
+              <select class="filter-select sm">
+                <option value="">所属阶段</option>
+                <option>新手期</option>
+                <option>探索期</option>
+                <option>增长期</option>
+                <option>放大期</option>
+              </select>
+            </div>
+            <div class="filter-item new-badge">
+              <input class="filter-input" type="text" placeholder="会员到期时间（开始）~ （结束）" style="min-width:240px;">
+            </div>
+            <input class="filter-input date-range" type="text" placeholder="添加时间（开始）~  添加时间（结束）">
+            <input class="filter-input date-range" type="text" placeholder="最近跟进时间（开始）~  最近跟进时间（结束）">
+            <div class="filter-actions">
+              <button class="btn btn-primary">查询</button>
+              <button class="btn btn-secondary">清空</button>
+              <button class="btn btn-outline">导出</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======== Data Table ======== -->
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:80px;">星球ID</th>
+                <th style="width:180px;">客户信息</th>
+                <th style="width:90px; text-align:center;">客户类型</th>
+                <th class="col-delivery">所属阶段</th>
+                <th class="col-delivery">会员身份</th>
+                <th>鱼丸</th>
+                <th class="col-delivery">专属服务</th>
+                <th>好友状态</th>
+                <th class="col-delivery">会员状态</th>
+                <th class="col-delivery">加入时间</th>
+                <th class="col-delivery">会员到期</th>
+                <th class="col-delivery">会员年限</th>
+                <th>标签</th>
+                <th class="sticky-right" style="width:100px; text-align:center;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- ===== 客户1: 张晓峰 — 3行 (销售 + 官网交付 + 航海家交付) ===== -->
+              <tr class="row-group-first">
+                <td>87191</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">138****2736</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span></td>
+                <td>鱼丸 580</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2024-02-15</td>
+                <td class="col-delivery">2027-03-15</td>
+                <td class="col-delivery"><strong>3年</strong></td>
+                <td><span class="tag tag-default">高净值客户</span> <span class="tag tag-default">续费3次</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>87191</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">138****2736</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
+                <td>鱼丸 320</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-muted">过期</span></td>
+                <td class="col-delivery">2024-06-20</td>
+                <td class="col-delivery">2025-06-20</td>
+                <td class="col-delivery"><strong>1年</strong></td>
+                <td><span class="tag tag-default">高净值客户</span> <span class="tag tag-default">续费3次</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>87191</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">138****2736</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-shenhai">深海圈会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
+                <td class="col-delivery">—</td>
+                <td>鱼丸 150</td>
+
+                <td class="col-delivery"><strong>李李</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-info">体验营圈友</span></td>
+                <td class="col-delivery">2025-03-10</td>
+                <td class="col-delivery">2026-03-10</td>
+                <td class="col-delivery"><strong>1年</strong></td>
+                <td><span class="tag tag-default">高净值客户</span> <span class="tag tag-default">续费3次</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+
+              <!-- ===== 客户2: 刘美琪 — 2行 (销售 + 官网交付) ===== -->
+              <tr class="row-group-first">
+                <td>65208</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">186****0413</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">探索期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-zhongcao">种草官</span></td>
+                <td>鱼丸 230</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-deleted">客户删除</span></td>
+                <td class="col-delivery"><span class="tag tag-danger">过期</span></td>
+                <td class="col-delivery">2024-11-30</td>
+                <td class="col-delivery">2025-11-30</td>
+                <td class="col-delivery"><strong>2年</strong></td>
+                <td><span class="tag tag-default">9体137</span> <span class="tag tag-default">官网体验</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>65208</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">186****0413</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">探索期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
+                <td>鱼丸 85</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-deleted">客户删除</span></td>
+                <td class="col-delivery"><span class="tag tag-warning">待续费</span></td>
+                <td class="col-delivery">2024-03-30</td>
+                <td class="col-delivery">2026-03-30</td>
+                <td class="col-delivery"><strong>2年</strong></td>
+                <td><span class="tag tag-default">9体137</span> <span class="tag tag-default">官网体验</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+
+              <!-- ===== 客户3: 王大锤 — 仅销售行 ===== -->
+              <tr class="row-group-first">
+                <td>54093</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">大锤日记</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">159****8821</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">新手期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-zhiyuan">志愿者</span></td>
+                <td>鱼丸 45</td>
+                <td class="col-delivery"><strong>麻球</strong></td>
+                <td><span class="friend-deleted">双向删除</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2025-08-20</td>
+                <td class="col-delivery">2026-08-20</td>
+                <td class="col-delivery"><strong>1年</strong></td>
+                <td></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+
+              <!-- ===== 客户4: 赵小云 — 2行 (销售 + 官网交付) ===== -->
+              <tr class="row-group-first">
+                <td>76218</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">177****6655</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-zuju">组局官</span> <span class="tag tag-role-chuanshu">传术师</span></td>
+                <td>鱼丸 1,200</td>
+                <td class="col-delivery"><strong>麻球</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2022-06-08</td>
+                <td class="col-delivery">2027-06-08</td>
+                <td class="col-delivery"><strong>5年</strong></td>
+                <td><span class="tag tag-default">KOL</span> <span class="tag tag-default">老会员</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>76218</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">177****6655</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
+                <td>鱼丸 460</td>
+                <td class="col-delivery"><strong>麻球</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-muted">过期</span></td>
+                <td class="col-delivery">2022-12-08</td>
+                <td class="col-delivery">2025-12-08</td>
+                <td class="col-delivery"><strong>5年</strong></td>
+                <td><span class="tag tag-default">KOL</span> <span class="tag tag-default">老会员</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+
+              <!-- ===== 客户5: 李强 — 仅销售行 ===== -->
+              <tr class="row-group-first">
+                <td>43127</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">强哥电商笔记</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">135****9074</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">新手期</span></td>
+                <td class="col-delivery">—</td>
+                <td>鱼丸 90</td>
+
+                <td class="col-delivery"><strong>李李</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-warning">待续费</span></td>
+                <td class="col-delivery">2025-04-01</td>
+                <td class="col-delivery">2026-04-01</td>
+                <td class="col-delivery"><strong>1年</strong></td>
+                <td><span class="tag tag-default">10体待转化</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+
+              <!-- ===== 客户6: 孙婉清 — 3行 (销售 + 官网交付 + 航海家交付) ===== -->
+              <tr class="row-group-first">
+                <td>91482</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">152****3318</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span> <span class="tag tag-role-zhiyuan">志愿者</span></td>
+                <td>鱼丸 350</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2024-12-25</td>
+                <td class="col-delivery">2026-12-25</td>
+                <td class="col-delivery"><strong>2年</strong></td>
+                <td><span class="tag tag-default">活跃用户</span> <span class="tag tag-default">航海家</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>91482</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">152****3318</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
+                <td>鱼丸 200</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2025-01-10</td>
+                <td class="col-delivery">2026-12-25</td>
+                <td class="col-delivery"><strong>2年</strong></td>
+                <td><span class="tag tag-default">活跃用户</span> <span class="tag tag-default">航海家</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <tr class="row-group-sub">
+                <td>91482</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+                    </div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone">152****3318</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-shenhai">深海圈会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery">—</td>
+                <td>鱼丸 120</td>
+
+                <td class="col-delivery"><strong>李李</strong></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-info">体验营圈友</span></td>
+                <td class="col-delivery">2025-12-25</td>
+                <td class="col-delivery">2026-12-25</td>
+                <td class="col-delivery"><strong>1年</strong></td>
+                <td><span class="tag tag-default">活跃用户</span> <span class="tag tag-default">航海家</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+          <span class="total">共 400 条记录</span>
+          <button class="page-btn disabled">&lt;</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">4</button>
+          <button class="page-btn">5</button>
+          <button class="page-btn">&gt;</button>
+          <select class="page-size-select">
+            <option>5条/页</option>
+            <option>10条/页</option>
+            <option>20条/页</option>
+          </select>
+          <div class="page-jump">
+            跳至 <input type="text" value="5"> 页
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Detail Modal ======== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">客户详情</span>
+      <button class="modal-close" onclick="closeDetail()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Left Sidebar -->
+      <div class="detail-sidebar">
+        <div class="detail-avatar-area">
+          <div class="detail-avatar">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
+          </div>
+          <div>
+            <div class="detail-name">峰哥聊副业 <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
+            <div class="detail-note">备注：副业达人</div>
+            <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
+              <span class="tag tag-role-chuanshu" style="font-size:11px; height:18px;">传术师</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 画像总结 -->
+        <div class="ai-summary-card" id="aiSummaryCard">
+          <div class="ai-summary-header">
+            <svg class="ai-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+            <span class="ai-summary-title">AI 画像总结</span>
+          </div>
+          <!-- 初始空状态 -->
+          <div class="ai-summary-empty" id="aiSummaryEmpty">
+            <div class="ai-summary-empty-text">基于客户全维度数据，AI 自动生成客户画像分析</div>
+            <button class="ai-summary-generate-btn" onclick="generateAiSummary()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              生成画像总结
+            </button>
+          </div>
+          <!-- 生成后的内容（初始隐藏） -->
+          <div class="ai-summary-result" id="aiSummaryResult" style="display:none;">
+            <div class="ai-summary-body" id="aiSummaryBody"></div>
+            <div class="ai-summary-tags" id="aiSummaryTags" style="display:none;">
+              <span class="ai-summary-tag">高活跃度</span>
+              <span class="ai-summary-tag">高续费意愿</span>
+              <span class="ai-summary-tag">内容创作者</span>
+              <span class="ai-summary-tag">AI赛道偏好</span>
+            </div>
+            <div class="ai-summary-footer" id="aiSummaryFooter" style="display:none;">
+              <span class="ai-summary-time"></span>
+              <button class="ai-summary-refresh" onclick="generateAiSummary()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                重新生成
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新人进度 -->
+        <div class="detail-section-title">新人进度</div>
+        <div class="newcomer-progress">
+          <div class="newcomer-header">
+            <span class="newcomer-icon">🎯</span>
+            <span class="newcomer-title">作业关键信息</span>
+            <span class="newcomer-stage-badge">放大期</span>
+          </div>
+          <div class="newcomer-grid">
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">方向 & 赛道</span>
+              <span class="newcomer-field-value">AI视频、自媒体</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">当前状态</span>
+              <span class="newcomer-field-value">稳定产出中</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">优势</span>
+              <span class="newcomer-field-value">有剪辑基础，执行力强，连续3次航海</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">短板</span>
+              <span class="newcomer-field-value">缺少变现路径认知</span>
+            </div>
+            <div class="newcomer-field full-width">
+              <span class="newcomer-field-label">目标 & 展望</span>
+              <span class="newcomer-field-value">实现航海变现 1000 元，建立稳定的视频创作流程</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 高频参与项目 -->
+        <div class="detail-section-title">高频参与项目</div>
+        <div class="freq-projects">
+          <span class="freq-project-tag">AI视频变现<span class="freq-count">×3</span></span>
+          <span class="freq-project-tag">小红书运营<span class="freq-count">×1</span></span>
+          <span class="freq-project-tag">视频号起号<span class="freq-count">×1</span></span>
+        </div>
+
+        <div class="detail-section-title">客户标签</div>
+        <div class="detail-label-group">
+          <div class="detail-label-title">企微标签</div>
+          <div class="detail-label-group">
+            <div class="detail-label-title" style="font-size:11px; color:var(--color-text-4);">官网会员标签</div>
+            <div class="detail-tags-list">
+              <span class="detail-tag">高净值客户</span>
+              <span class="detail-tag">续费3次</span>
+              <span class="detail-tag" style="color:var(--color-primary-6); border-color: var(--color-primary-2); cursor:pointer;">+ 添加标签</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-label-group">
+          <div class="detail-label-title">行为标签</div>
+          <div class="detail-tags-list">
+            <span class="detail-tag">活跃用户</span>
+            <span class="detail-tag">内容创作者</span>
+          </div>
+        </div>
+        <div class="detail-label-group">
+          <div class="detail-label-title">属性标签</div>
+          <div class="detail-tags-list">
+            <span class="detail-tag">自由职业</span>
+          </div>
+        </div>
+
+        <div class="detail-section-title">所在群聊</div>
+        <div style="display:flex; gap:12px; margin-bottom:10px; font-size:13px;">
+          <span style="color:var(--color-primary-6); font-weight:500; border-bottom:2px solid var(--color-primary-6); padding-bottom:4px; cursor:pointer;">企微</span>
+          <span style="color:var(--color-text-3); cursor:pointer;">个微</span>
+        </div>
+        <div style="display:flex; gap:8px; margin-bottom:10px; font-size:12px;">
+          <span style="color:var(--color-primary-6); font-weight:500;">官网</span>
+          <span style="color:var(--color-text-3);">航海家</span>
+          <span style="color:var(--color-text-3);">深海圈</span>
+        </div>
+        <div class="detail-group-item">
+          <div class="detail-group-avatar"></div>
+          <div>
+            <div class="detail-group-name">生财7期-03群</div>
+            <div class="detail-group-count">群聊人数：100人</div>
+          </div>
+        </div>
+        <div class="detail-group-item">
+          <div class="detail-group-avatar"></div>
+          <div>
+            <div class="detail-group-name">生财7期-VIP群</div>
+            <div class="detail-group-count">群聊人数：50人</div>
+          </div>
+        </div>
+        <div class="detail-group-item" style="opacity:0.5;">
+          <div class="detail-group-avatar"></div>
+          <div>
+            <div class="detail-group-name">航海家2期-01群 <span style="font-size:10px; color:var(--color-text-4);">已退群</span></div>
+            <div class="detail-group-count">群聊人数：80人</div>
+          </div>
+        </div>
+        <div class="detail-group-item">
+          <div class="detail-group-avatar"></div>
+          <div>
+            <div class="detail-group-name">深海圈体验-03群</div>
+            <div class="detail-group-count">群聊人数：60人</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Main -->
+      <div class="detail-main">
+        <div class="detail-tabs">
+          <div class="detail-tab active" data-tab="profile">客户档案</div>
+          <div class="detail-tab" data-tab="followup">跟进记录</div>
+          <div class="detail-tab" data-tab="activity">客户动态</div>
+          <div class="detail-tab" data-tab="points">积分记录</div>
+          <div class="detail-tab" data-tab="orders">订单列表</div>
+          <div class="detail-tab" data-tab="changes">变更记录</div>
+          <div class="detail-tab" data-tab="chat">聊天记录</div>
+        </div>
+        <div class="tab-panel active" data-panel="profile">
+        <div class="profile-table">
+          <table>
+            <!-- ===== 1. 基础信息 ===== -->
+            <tr><td class="section-header" colspan="4">基础信息</td></tr>
+            <tr>
+              <th>客户ID</th><td>188123</td>
+              <th>星球编号</th><td>87191</td>
+            </tr>
+            <tr>
+              <th>星球昵称</th><td>峰哥聊副业</td>
+              <th>性别</th><td>男</td>
+            </tr>
+            <tr>
+              <th>手机号</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">138****2736</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="13812342736">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+              <th>微信号</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">fengge_fuye</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="fengge_fuye">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+
+            <!-- ===== 2. 个人信息 ===== -->
+            <tr><td class="section-header" colspan="4">个人信息</td></tr>
+            <tr>
+              <th>城市</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">深圳</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="深圳" style="width:80px;">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+              <th>职业</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">自由职业</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="自由职业">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>岗位方向</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">独立开发者</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="独立开发者">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+              <th>参加工作年限</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">5</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="5" style="width:60px;">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>年收入/万元</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value">30</span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <input type="text" class="profile-edit-input" value="30" style="width:60px;">
+                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+              <th>感兴趣的领域</th>
+              <td><span class="tag tag-default" style="margin:1px 2px;">AI应用</span> <span class="tag tag-default" style="margin:1px 2px;">短视频</span> <span class="tag tag-default" style="margin:1px 2px;">知识付费</span> <span class="tag tag-default" style="margin:1px 2px;">电商</span></td>
+            </tr>
+            <tr>
+              <th>个人介绍</th>
+              <td colspan="3" style="line-height:20px;">5年副业经验，专注AI视频创作和自媒体运营。曾在某互联网公司从事产品工作，2023年开始全职做独立开发者。</td>
+            </tr>
+            <tr>
+              <th>加入原因</th>
+              <td colspan="3" style="line-height:20px;">希望学习更多变现方法，认识同频的人，找到适合自己的副业赛道</td>
+            </tr>
+            <tr>
+              <th>提供资源</th>
+              <td colspan="3"><span class="tag tag-default" style="margin:1px 2px;">AI视频制作</span> <span class="tag tag-default" style="margin:1px 2px;">短视频剪辑</span> <span class="tag tag-default" style="margin:1px 2px;">产品设计经验</span></td>
+            </tr>
+            <tr>
+              <th>需要资源</th>
+              <td colspan="3"><span class="tag tag-default" style="margin:1px 2px;">流量渠道</span> <span class="tag tag-default" style="margin:1px 2px;">变现指导</span> <span class="tag tag-default" style="margin:1px 2px;">供应链资源</span></td>
+            </tr>
+
+            <!-- ===== 3. 会员信息 ===== -->
+            <tr><td class="section-header" colspan="4">会员信息</td></tr>
+            <tr>
+              <th>会员类型</th><td>官网会员</td>
+              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
+            </tr>
+            <tr>
+              <th>会员到期时间</th><td>2027-03-15</td>
+              <th>加入方式</th><td>续费</td>
+            </tr>
+            <tr>
+              <th>加入金额</th><td>¥3,365.00</td>
+              <th>续费次数</th><td>3</td>
+            </tr>
+            <tr>
+              <th>是否领取体验卡</th><td>是</td>
+              <th>领取体验卡时间</th><td>2024-01-12 09:00</td>
+            </tr>
+
+            <!-- ===== 4. 交付服务 ===== -->
+            <tr><td class="section-header" colspan="4">交付服务</td></tr>
+            <tr>
+              <th>专属服务</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value"><strong>潇墨</strong></span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <select class="profile-edit-select">
+                    <option value="潇墨" selected>潇墨（鱼丸 580）</option>
+                    <option value="潇墨-320">潇墨（鱼丸 320）</option>
+                    <option value="李李">李李（鱼丸 150）</option>
+                  </select>
+                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+              <th>企微好友状态</th><td><span class="friend-ok">双向好友</span></td>
+            </tr>
+            <tr>
+              <th>首次添加交付时间</th><td>2024-02-15 10:22</td>
+              <th>入群时间</th><td>2024-02-15 11:00</td>
+            </tr>
+            <tr>
+              <th>是否进入个微群聊</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">是</span></td>
+              <th>是否进入企微群聊</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">是</span></td>
+            </tr>
+          </table>
+        </div>
+        </div><!-- /tab-panel profile -->
+
+        <!-- ===== 跟进记录 ===== -->
+        <div class="tab-panel" data-panel="followup">
+          <div class="followup-header">
+            <span style="font-size:13px; color:var(--color-text-3);">共 5 条跟进记录</span>
+            <button class="btn-add-followup" onclick="toggleFollowupForm()">✚ 写跟进</button>
+          </div>
+          <!-- 跟进表单（展开态） -->
+          <div class="followup-form" id="followupFormDetail">
+            <div class="form-title">
+              <span>写跟进</span>
+              <div class="form-close" onclick="toggleFollowupForm()">✕</div>
+            </div>
+            <div class="form-group">
+              <div class="form-label"><span class="required">*</span> 跟进方式</div>
+              <div class="form-methods">
+                <button class="method-chip selected" onclick="selectFollowupMethod(this)">企微消息</button>
+                <button class="method-chip" onclick="selectFollowupMethod(this)">电话</button>
+                <button class="method-chip" onclick="selectFollowupMethod(this)">面谈</button>
+                <button class="method-chip" onclick="selectFollowupMethod(this)">微信沟通</button>
+                <button class="method-chip" onclick="selectFollowupMethod(this)">其他</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-label"><span class="required">*</span> 跟进内容</div>
+              <textarea class="form-textarea" placeholder="请输入跟进内容（1-500字）" maxlength="500" oninput="this.nextElementSibling.textContent=this.value.length+'/500'"></textarea>
+              <div class="char-count">0/500</div>
+            </div>
+            <div class="form-inline-row">
+              <div class="form-group">
+                <div class="form-label">下次跟进</div>
+                <input type="date" class="form-input" min="2026-03-09">
+              </div>
+              <div class="form-group" style="flex:0 0 auto;">
+                <div class="form-label">&nbsp;</div>
+                <div class="form-actions">
+                  <button class="form-btn btn-cancel" onclick="toggleFollowupForm()">取消</button>
+                  <button class="form-btn btn-submit" onclick="toggleFollowupForm()">提交</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-container">
+            <div class="timeline-date">2026-03-08</div>
+            <div class="timeline-item timeline-item-new">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-card">
+                <div class="timeline-title">打标签</div>
+                <div class="timeline-desc">潇墨给用户打了「高净值客户」「续费3次」标签</div>
+              </div>
+              <div class="timeline-time">16:22:15</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <div class="timeline-title">1V1跟进</div>
+                <div class="timeline-desc">潇墨在企微上主动跟进客户，提醒会员权益使用情况</div>
+              </div>
+              <div class="timeline-time">14:30:42</div>
+            </div>
+            <div class="timeline-date">2026-03-05</div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <div class="timeline-title">企微群发</div>
+                <div class="timeline-desc">通过企业微信群发「生财7期第12周精华帖合集」</div>
+              </div>
+              <div class="timeline-time">10:00:00</div>
+            </div>
+            <div class="timeline-date">2026-02-20</div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <div class="timeline-title">客户等级</div>
+                <div class="timeline-desc">潇墨将客户等级调整为 S 级</div>
+              </div>
+              <div class="timeline-time">09:15:33</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <div class="timeline-title">1V1跟进</div>
+                <div class="timeline-desc">潇墨在企微上主动跟进客户，确认第3次续费成功并引导入群</div>
+              </div>
+              <div class="timeline-time">09:02:18</div>
+            </div>
+          </div>
+        </div><!-- /tab-panel followup -->
+
+        <!-- ===== 客户动态 ===== -->
+        <div class="tab-panel" data-panel="activity">
+          <!-- 一级筛选：按来源平台（4列网格） -->
+          <div class="activity-source-grid">
+            <div class="activity-source-item" data-filter="community" data-subs='[{"label":"发帖","value":"5","filter":"community-post"},{"label":"阅读","value":"32","filter":"community-read"},{"label":"评论","value":"18","filter":"community-comment"},{"label":"点赞","value":"40","filter":"community-like"},{"label":"投锚","value":"4","filter":"community-anchor"},{"label":"收藏","value":"12","filter":"community-collect"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">111</span>
+              <span class="activity-source-label">官网社区</span>
+            </div>
+            <div class="activity-source-item" data-filter="circle" data-subs='[{"label":"发帖","value":"3","filter":"circle-post"},{"label":"阅读","value":"8","filter":"circle-read"},{"label":"评论","value":"5","filter":"circle-comment"},{"label":"点赞","value":"5","filter":"circle-like"},{"label":"投锚","value":"2","filter":"circle-anchor"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">23</span>
+              <span class="activity-source-label">深海圈</span>
+            </div>
+            <div class="activity-source-item" data-filter="voyage" data-subs='[{"label":"上船","value":"2","filter":"voyage-join"},{"label":"下船","value":"1","filter":"voyage-leave"},{"label":"打卡","value":"2","filter":"voyage-checkin"},{"label":"打卡失败","value":"1","filter":"voyage-fail"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">5</span>
+              <span class="activity-source-label">航海</span>
+            </div>
+            <div class="activity-source-item" data-filter="gathering" data-subs='[{"label":"发起","value":"1","filter":"gathering-create"},{"label":"取消","value":"1","filter":"gathering-cancel"},{"label":"导入嘉宾","value":"1","filter":"gathering-import"},{"label":"报名","value":"2","filter":"gathering-signup"},{"label":"退出","value":"1","filter":"gathering-quit"},{"label":"签到","value":"2","filter":"gathering-checkin"},{"label":"反馈","value":"2","filter":"gathering-feedback"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">10</span>
+              <span class="activity-source-label">聚会</span>
+            </div>
+          </div>
+
+          <!-- 二级子筛选条（chips 横滑） -->
+          <div class="activity-sub-bar" id="activitySubBar"></div>
+
+          <!-- 行为时间线 -->
+          <div class="timeline-container activity-timeline">
+            <!-- 今天 -->
+            <div class="timeline-date">今天 · 2026-03-09</div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">14:32</div>
+              <div class="timeline-card">
+                <div class="timeline-title">阅读内容</div>
+                <div class="timeline-desc">阅读了 <span class="hl">#AI视频</span>「如何用AI做短视频月入过万」</div>
+                <span class="timeline-duration">8min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-collect community">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">14:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">收藏</div>
+                <div class="timeline-desc">收藏了「2026小红书运营指南 · 从0到1」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-post community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">10:05</div>
+              <div class="timeline-card">
+                <div class="timeline-title">表单填写</div>
+                <div class="timeline-desc">填写了表单「体验营课前调研问卷」</div>
+              </div>
+            </div>
+
+            <!-- 昨天 -->
+            <div class="timeline-date">昨天 · 2026-03-08</div>
+            <div class="timeline-item" data-activity="voyage-checkin voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-time">21:15</div>
+              <div class="timeline-card">
+                <div class="timeline-title">航海打卡 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">AI视频赛道</span></div>
+                <div class="timeline-desc">在 <span class="hl">#AI视频变现航海</span> 打卡了「Day 12 · 完成第三个AI视频剪辑」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="voyage-checkin voyage-fail voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-time">20:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">航海打卡 <span class="tag" style="font-size:10px; height:16px; margin-left:4px; background:var(--color-danger-1); color:var(--color-danger-6); border:1px solid var(--color-danger-2);">打卡失败</span> <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:2px;">小红书赛道</span></div>
+                <div class="timeline-desc">在 <span class="hl">#小红书起号航海</span> 打卡了「Day 8 · 发布第一篇笔记」，审核未通过</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-comment community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">18:40</div>
+              <div class="timeline-card">
+                <div class="timeline-title">发表评论</div>
+                <div class="timeline-desc">在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了，剪辑效率提升很多」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">17:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「独立开发者接单指南」</div>
+                <span class="timeline-duration">6min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">17:22</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈评论</div>
+                <div class="timeline-desc">在深海圈评论了「独立开发者接单指南」：感谢分享，很有启发</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">17:18</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈点赞</div>
+                <div class="timeline-desc">在深海圈点赞了「独立开发者接单指南」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">11:45</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「私域流量变现的3种高效模型」</div>
+                <span class="timeline-duration">12min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">10:15</div>
+              <div class="timeline-card">
+                <div class="timeline-title">阅读内容</div>
+                <div class="timeline-desc">阅读了 <span class="hl">#自媒体变现</span>「小红书起号的5个关键动作」</div>
+                <span class="timeline-duration">5min</span>
+              </div>
+            </div>
+
+            <!-- 更早 -->
+            <div class="timeline-date">2026-03-07</div>
+            <div class="timeline-item" data-activity="voyage-join voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-time">10:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">上船 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">AI视频赛道</span></div>
+                <div class="timeline-desc">报名参加了 <span class="hl">AI视频变现</span> 航海（第2次）</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">21:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「月入10万的副业思维模型」</div>
+                <span class="timeline-duration">9min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">21:10</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈点赞</div>
+                <div class="timeline-desc">在深海圈点赞了「月入10万的副业思维模型」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">19:50</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「自媒体矩阵搭建实战」</div>
+                <span class="timeline-duration">7min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-anchor community">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-time">20:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">投锚</div>
+                <div class="timeline-desc">给 <span class="hl">#实操复盘</span>「我的AI视频制作之路」投了锚</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">20:15</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈评论</div>
+                <div class="timeline-desc">在深海圈评论了「自媒体矩阵搭建实战」：这套方法论我也在用，效果不错</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-anchor circle">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-time">15:40</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈投锚</div>
+                <div class="timeline-desc">在深海圈给「自媒体矩阵搭建实战」投了锚</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-post community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">09:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">发表内容</div>
+                <div class="timeline-desc">发表了 <span class="hl">#实操复盘</span>「我的第3年续费心得：从小白到月入5万」</div>
+              </div>
+            </div>
+
+            <div class="timeline-date">2026-03-05</div>
+            <div class="timeline-item" data-activity="voyage-leave voyage">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-time">18:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">下船 <span class="tag" style="font-size:10px; height:16px; margin-left:4px; background:var(--color-danger-1); color:var(--color-danger-6); border:1px solid var(--color-danger-2);">小红书赛道</span></div>
+                <div class="timeline-desc">退出了 <span class="hl">小红书起号</span> 航海，原因：时间冲突</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-post circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">16:45</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈发帖</div>
+                <div class="timeline-desc">在深海圈发表了「副业赚钱实操复盘：3个月从0到月入2万」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">15:35</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「知识付费产品定价策略」</div>
+                <span class="timeline-duration">10min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">15:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈评论</div>
+                <div class="timeline-desc">在深海圈评论了「知识付费产品定价策略」：定价确实是门学问，学到了</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">15:25</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈点赞</div>
+                <div class="timeline-desc">在深海圈点赞了「知识付费产品定价策略」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">15:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈点赞</div>
+                <div class="timeline-desc">在深海圈点赞了「社群运营30天冷启动方法论」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">15:15</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「社群运营30天冷启动方法论」</div>
+                <span class="timeline-duration">8min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">15:10</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈评论</div>
+                <div class="timeline-desc">在深海圈评论了「社群运营30天冷启动方法论」：这个框架很清晰，已收藏</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">10:35</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈阅读</div>
+                <div class="timeline-desc">在深海圈阅读了「高客单转化漏斗拆解」</div>
+                <span class="timeline-duration">11min</span>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-post circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">10:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈发帖</div>
+                <div class="timeline-desc">在深海圈发表了「AI工具测评：5款视频生成工具横向对比」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-anchor circle">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-time">10:15</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈投锚</div>
+                <div class="timeline-desc">在深海圈给「高客单转化漏斗拆解」投了锚</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">10:10</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈点赞</div>
+                <div class="timeline-desc">在深海圈点赞了「高客单转化漏斗拆解」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">10:05</div>
+              <div class="timeline-card">
+                <div class="timeline-title">深海圈评论</div>
+                <div class="timeline-desc">在深海圈评论了「高客单转化漏斗拆解」：这个漏斗模型很实用，已经在项目中落地了</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="voyage-join voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-time">14:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">上船 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">视频号赛道</span></div>
+                <div class="timeline-desc">报名参加了 <span class="hl">视频号起号</span> 航海（第1次）</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-signup gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">11:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会报名</div>
+                <div class="timeline-desc">报名了「深圳站 · 生财有术线下聚会」</div>
+              </div>
+            </div>
+
+            <div class="timeline-date">2026-03-02</div>
+            <div class="timeline-item" data-activity="gathering-create gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">15:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">发起聚会 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">组局官</span></div>
+                <div class="timeline-desc">发起了「深圳站 · 生财有术线下聚会」，预计人数 30 人</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-import gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">16:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">导入嘉宾 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">组局官</span></div>
+                <div class="timeline-desc">为「深圳站 · 生财有术线下聚会」导入了 5 位嘉宾</div>
+              </div>
+            </div>
+
+            <div class="timeline-date">2026-02-25</div>
+            <div class="timeline-item" data-activity="gathering-checkin gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">14:05</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会签到</div>
+                <div class="timeline-desc">在「杭州站 · AI副业交流聚会」完成签到</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-feedback gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">18:20</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会反馈 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">嘉宾</span></div>
+                <div class="timeline-desc">填写了「杭州站 · AI副业交流聚会」反馈：活动组织很好，认识了很多同频的人</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-signup gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">10:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会报名</div>
+                <div class="timeline-desc">报名了「杭州站 · AI副业交流聚会」</div>
+              </div>
+            </div>
+
+            <div class="timeline-date">2026-02-18</div>
+            <div class="timeline-item" data-activity="gathering-cancel gathering">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-time">09:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">取消聚会 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">组局官</span></div>
+                <div class="timeline-desc">取消了「上海站 · 自媒体变现私享会」，原因：场地临时不可用</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-quit gathering">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-time">11:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">退出聚会</div>
+                <div class="timeline-desc">退出了「北京站 · 知识付费圆桌会」，原因：时间冲突</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-checkin gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">14:10</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会签到</div>
+                <div class="timeline-desc">在「广州站 · 生财圈友见面会」完成签到</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-feedback gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">20:00</div>
+              <div class="timeline-card">
+                <div class="timeline-title">聚会反馈 <span class="tag tag-stage" style="font-size:10px; height:16px; margin-left:4px;">组局官</span></div>
+                <div class="timeline-desc">填写了「广州站 · 生财圈友见面会」反馈：到场率85%，整体效果不错</div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /tab-panel activity -->
+
+        <!-- ===== 积分记录 ===== -->
+        <div class="tab-panel" data-panel="points">
+          <div class="points-container">
+            <!-- 积分概览卡片 -->
+            <div class="points-summary">
+              <div class="points-card">
+                <div class="points-card-header">
+                  <div class="points-card-icon icon-longzhu">珠</div>
+                  <span class="points-card-name">龙珠</span>
+                </div>
+                <div class="points-card-value">1,280</div>
+                <div class="points-card-sub">
+                  <span class="pts-in">+2,450 获取</span>
+                  <span class="pts-out">-1,170 消耗</span>
+                </div>
+              </div>
+              <div class="points-card">
+                <div class="points-card-header">
+                  <div class="points-card-icon icon-shuzhi">值</div>
+                  <span class="points-card-name">术值</span>
+                </div>
+                <div class="points-card-value">3,650</div>
+                <div class="points-card-sub">
+                  <span class="pts-in">+4,200 获取</span>
+                  <span class="pts-out">-550 消耗</span>
+                </div>
+              </div>
+              <div class="points-card">
+                <div class="points-card-header">
+                  <div class="points-card-icon icon-suipian">碎</div>
+                  <span class="points-card-name">碎片</span>
+                </div>
+                <div class="points-card-value">86</div>
+                <div class="points-card-sub">
+                  <span class="pts-in">+120 获取</span>
+                  <span class="pts-out">-34 消耗</span>
+                </div>
+              </div>
+            </div>
+            <!-- 筛选栏 -->
+            <div class="points-filter">
+              <span class="points-filter-label">积分类型</span>
+              <select>
+                <option>全部</option>
+                <option>龙珠</option>
+                <option>术值</option>
+                <option>碎片</option>
+              </select>
+              <span class="points-filter-label" style="margin-left:8px;">变动方向</span>
+              <select>
+                <option>全部</option>
+                <option>获取</option>
+                <option>消耗</option>
+              </select>
+            </div>
+            <!-- 积分明细表 -->
+            <div class="points-table-wrap">
+              <table class="points-table">
+                <thead>
+                  <tr>
+                    <th>时间</th>
+                    <th>积分类型</th>
+                    <th>变动</th>
+                    <th>余额</th>
+                    <th>来源/用途</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2026-03-08 14:30</td>
+                    <td><span class="pts-type-tag type-longzhu">龙珠</span></td>
+                    <td><span class="pts-amount-in">+50</span></td>
+                    <td>1,280</td>
+                    <td>航海打卡奖励</td>
+                    <td>AI视频变现 第7期 · 连续打卡7天</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-07 09:15</td>
+                    <td><span class="pts-type-tag type-shuzhi">术值</span></td>
+                    <td><span class="pts-amount-in">+120</span></td>
+                    <td>3,650</td>
+                    <td>精华帖奖励</td>
+                    <td>《AI工具实操分享》被评为精华</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-06 16:42</td>
+                    <td><span class="pts-type-tag type-suipian">碎片</span></td>
+                    <td><span class="pts-amount-in">+5</span></td>
+                    <td>86</td>
+                    <td>每日签到</td>
+                    <td>连续签到30天额外奖励</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-05 11:20</td>
+                    <td><span class="pts-type-tag type-longzhu">龙珠</span></td>
+                    <td><span class="pts-amount-out">-200</span></td>
+                    <td>1,230</td>
+                    <td>兑换商品</td>
+                    <td>兑换「生财有术定制周边礼盒」</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-04 08:30</td>
+                    <td><span class="pts-type-tag type-shuzhi">术值</span></td>
+                    <td><span class="pts-amount-in">+30</span></td>
+                    <td>3,530</td>
+                    <td>发帖奖励</td>
+                    <td>社区发帖《视频号变现复盘》</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-03 20:10</td>
+                    <td><span class="pts-type-tag type-suipian">碎片</span></td>
+                    <td><span class="pts-amount-out">-10</span></td>
+                    <td>81</td>
+                    <td>碎片合成</td>
+                    <td>10碎片合成1龙珠</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-03 20:10</td>
+                    <td><span class="pts-type-tag type-longzhu">龙珠</span></td>
+                    <td><span class="pts-amount-in">+1</span></td>
+                    <td>1,430</td>
+                    <td>碎片合成</td>
+                    <td>碎片合成龙珠</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-02 15:00</td>
+                    <td><span class="pts-type-tag type-shuzhi">术值</span></td>
+                    <td><span class="pts-amount-out">-500</span></td>
+                    <td>3,500</td>
+                    <td>活动报名</td>
+                    <td>深圳线下聚会报名扣除</td>
+                  </tr>
+                  <tr>
+                    <td>2026-03-01 10:00</td>
+                    <td><span class="pts-type-tag type-longzhu">龙珠</span></td>
+                    <td><span class="pts-amount-in">+100</span></td>
+                    <td>1,429</td>
+                    <td>续费奖励</td>
+                    <td>第3次续费额外奖励龙珠</td>
+                  </tr>
+                  <tr>
+                    <td>2026-02-28 09:00</td>
+                    <td><span class="pts-type-tag type-suipian">碎片</span></td>
+                    <td><span class="pts-amount-in">+3</span></td>
+                    <td>91</td>
+                    <td>每日签到</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /tab-panel points -->
+
+        <!-- ===== 订单列表 ===== -->
+        <div class="tab-panel" data-panel="orders">
+          <div class="orders-container">
+            <div class="orders-note">将表单的订单也整合进来，表单只有已完成和已关闭2个状态</div>
+            <div class="orders-tabs">
+              <span class="orders-tab active">全部 (5)</span>
+              <span class="orders-tab">待付款 (0)</span>
+              <span class="orders-tab">已付款 (1)</span>
+              <span class="orders-tab">已收货 (0)</span>
+              <span class="orders-tab">已完成 (4)</span>
+              <span class="orders-tab">已取消 (0)</span>
+              <span class="orders-tab">已关闭 (0)</span>
+            </div>
+            <div class="orders-table-wrap">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th>订单编号</th>
+                    <th>商品信息</th>
+                    <th>订单状态</th>
+                    <th>下单人</th>
+                    <th>金额</th>
+                    <th>实付金额</th>
+                    <th>退款状态</th>
+                    <th>退款金额</th>
+                    <th>下单时间</th>
+                    <th>付款时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2602150032</td>
+                    <td class="order-product"><div class="order-product-inner"><span class="order-product-img"></span><span>生财有术第9年会员<br><small style="color:var(--color-text-4);">续费（第3次）</small></span></div></td>
+                    <td><span class="tag tag-success">已付款</span></td>
+                    <td>峰哥聊副业</td>
+                    <td>¥3,365.00</td>
+                    <td>¥3,365.00</td>
+                    <td>未退款</td>
+                    <td>—</td>
+                    <td>2026-02-15</td>
+                    <td>2026-02-15</td>
+                  </tr>
+                  <tr>
+                    <td>2406100021</td>
+                    <td class="order-product"><div class="order-product-inner"><span class="order-product-img"></span><span>航海家2期会员<br><small style="color:var(--color-text-4);">新增</small></span></div></td>
+                    <td><span class="tag tag-info">已完成</span></td>
+                    <td>峰哥聊副业</td>
+                    <td>¥3,365.00</td>
+                    <td>¥3,365.00</td>
+                    <td>未退款</td>
+                    <td>—</td>
+                    <td>2024-06-10</td>
+                    <td>2024-06-10</td>
+                  </tr>
+                  <tr>
+                    <td>2501120015</td>
+                    <td class="order-product"><div class="order-product-inner"><span class="order-product-img"></span><span>生财有术第8年会员<br><small style="color:var(--color-text-4);">续费（第2次）</small></span></div></td>
+                    <td><span class="tag tag-info">已完成</span></td>
+                    <td>峰哥聊副业</td>
+                    <td>¥3,365.00</td>
+                    <td>¥3,365.00</td>
+                    <td>未退款</td>
+                    <td>—</td>
+                    <td>2025-01-12</td>
+                    <td>2025-01-12</td>
+                  </tr>
+                  <tr>
+                    <td>2401110008</td>
+                    <td class="order-product"><div class="order-product-inner"><span class="order-product-img"></span><span>生财有术第7年会员<br><small style="color:var(--color-text-4);">续费（第1次）</small></span></div></td>
+                    <td><span class="tag tag-info">已完成</span></td>
+                    <td>峰哥聊副业</td>
+                    <td>¥3,365.00</td>
+                    <td>¥3,365.00</td>
+                    <td>未退款</td>
+                    <td>—</td>
+                    <td>2024-01-11</td>
+                    <td>2024-01-11</td>
+                  </tr>
+                  <tr>
+                    <td>2301050003</td>
+                    <td class="order-product"><div class="order-product-inner"><span class="order-product-img"></span><span>生财有术第6年会员<br><small style="color:var(--color-text-4);">新增</small></span></div></td>
+                    <td><span class="tag tag-info">已完成</span></td>
+                    <td>峰哥聊副业</td>
+                    <td>¥2,865.00</td>
+                    <td>¥2,865.00</td>
+                    <td>未退款</td>
+                    <td>—</td>
+                    <td>2023-01-05</td>
+                    <td>2023-01-05</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /tab-panel orders -->
+
+        <!-- ===== 变更记录 ===== -->
+        <div class="tab-panel" data-panel="changes">
+          <div class="changes-container">
+            <div style="padding:16px 20px 0;">
+              <select class="filter-select" style="min-width:120px;">
+                <option>全部</option>
+                <option>官网会员</option>
+                <option>体验会员</option>
+                <option>深海圈</option>
+                <option>航海家</option>
+              </select>
+            </div>
+            <div class="orders-table-wrap">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th>会员类型</th>
+                    <th>加入方式</th>
+                    <th>会员状态</th>
+                    <th>加入金额</th>
+                    <th>结束时间</th>
+                    <th>开始时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>官网会员</td>
+                    <td>续费</td>
+                    <td><span class="tag tag-success">在期</span></td>
+                    <td>¥3,365.00</td>
+                    <td>2026-02-15 10:00:00</td>
+                    <td>2027-03-15 10:00:00</td>
+                  </tr>
+                  <tr>
+                    <td>官网会员</td>
+                    <td>续费</td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥3,365.00</td>
+                    <td>2025-01-12 12:00:01</td>
+                    <td>2026-02-15 12:00:01</td>
+                  </tr>
+                  <tr>
+                    <td>官网会员</td>
+                    <td>续费</td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥3,365.00</td>
+                    <td>2024-01-11 08:38:00</td>
+                    <td>2025-01-12 08:38:00</td>
+                  </tr>
+                  <tr>
+                    <td>官网会员</td>
+                    <td>新增</td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥2,865.00</td>
+                    <td>2023-01-05 15:30:00</td>
+                    <td>2024-01-11 15:30:00</td>
+                  </tr>
+                  <tr>
+                    <td>航海会员</td>
+                    <td>新增</td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥3,365.00</td>
+                    <td>2024-06-10 14:30:00</td>
+                    <td>2025-06-20 14:30:00</td>
+                  </tr>
+                  <tr>
+                    <td>深海圈会员</td>
+                    <td>新增</td>
+                    <td><span class="tag tag-success">在期</span></td>
+                    <td>¥0.00</td>
+                    <td>2025-03-01 09:15:00</td>
+                    <td>—</td>
+                  </tr>
+                  <tr>
+                    <td>体验会员</td>
+                    <td>新增</td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥0.00</td>
+                    <td>2022-12-01 09:00:00</td>
+                    <td>2023-01-01 09:00:00</td>
+                  </tr>
+                  <tr>
+                    <td>航海会员</td>
+                    <td><span style="color:var(--color-danger-6);">退出</span></td>
+                    <td><span class="tag tag-muted">过期</span></td>
+                    <td>¥3,365.00</td>
+                    <td>2025-04-15 16:20:00</td>
+                    <td>2025-06-20 14:30:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /tab-panel changes -->
+
+        <!-- ===== 聊天记录 ===== -->
+        <div class="tab-panel" data-panel="chat">
+          <!-- AI 聊天总结 -->
+          <div class="chat-ai-area">
+            <button class="ai-chat-generate-btn" id="aiChatBtn" onclick="generateChatSummary()">
+              <span class="ai-chat-icon">AI</span> 生成聊天记录总结
+            </button>
+            <div class="ai-chat-summary-card" id="aiChatSummary">
+              <div class="ai-chat-summary-header">
+                <div class="ai-chat-summary-icon">AI</div>
+                <span class="ai-chat-summary-label">聊天记录总结</span>
+                <div class="ai-chat-summary-actions">
+                  <button class="ai-chat-action-btn" onclick="generateChatSummary()">重新生成</button>
+                  <button class="ai-chat-action-btn">复制</button>
+                </div>
+              </div>
+              <div class="ai-chat-summary-text">
+                <p><strong>近7天沟通摘要：</strong></p>
+                <p>1. 客户对第7期会员权益使用情况咨询较多，主要关注「航海活动」和「线下聚会」参与资格</p>
+                <p>2. 3月6日客户主动询问续费优惠政策，表达了续费意向，关注是否有老会员专属折扣</p>
+                <p>3. 3月8日沟通中客户提到正在做AI视频相关副业项目，希望了解更多AI工具推荐</p>
+                <p><strong>建议跟进：</strong>推送老会员续费优惠方案，同时推荐AI视频变现航海活动</p>
+              </div>
+            </div>
+          </div>
+          <!-- 沟通时间轴 -->
+          <div class="chat-timeline">
+            <div class="chat-timeline-header">
+              <span class="chat-timeline-title">沟通时间轴</span>
+              <span class="chat-timeline-count">近30天 · 共8次沟通</span>
+            </div>
+            <div class="chat-timeline-list">
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-inquiry"></div>
+                <div class="chat-tl-date">03-08</div>
+                <span class="chat-tl-tag tag-inquiry">客户咨询</span>
+                <div class="chat-tl-desc">咨询航海活动报名及AI视频项目</div>
+              </div>
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-renew"></div>
+                <div class="chat-tl-date">03-06</div>
+                <span class="chat-tl-tag tag-renew">续费沟通</span>
+                <div class="chat-tl-desc">讨论续费优惠方案，预留线下聚会名额</div>
+              </div>
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-push"></div>
+                <div class="chat-tl-date">03-03</div>
+                <span class="chat-tl-tag tag-push">内容推送</span>
+                <div class="chat-tl-desc">推送第12周精华帖合集，客户反馈正面</div>
+              </div>
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-care"></div>
+                <div class="chat-tl-date">02-25</div>
+                <span class="chat-tl-tag tag-care">主动关怀</span>
+                <div class="chat-tl-desc">月度回访，了解副业进展情况</div>
+              </div>
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-invite"></div>
+                <div class="chat-tl-date">02-15</div>
+                <span class="chat-tl-tag tag-invite">活动邀约</span>
+                <div class="chat-tl-desc">邀请参加深圳线下聚会</div>
+              </div>
+              <div class="chat-tl-item">
+                <div class="chat-tl-dot dot-confirm"></div>
+                <div class="chat-tl-date">01-20</div>
+                <span class="chat-tl-tag tag-confirm">续费确认</span>
+                <div class="chat-tl-desc">完成第3次续费，鱼丸 580</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 聊天记录列表 -->
+          <div class="chat-record-list">
+            <div class="chat-date-divider">2026-03-08</div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">潇墨你好，想问下第7期的航海活动什么时候开始报名？</div>
+              <div class="chat-time">14:22</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">峰哥好！航海活动预计3月中旬开放报名，到时候我第一时间通知你～</div>
+              <div class="chat-time">14:25</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">好的，我最近在做AI视频项目，有相关的航海活动吗？</div>
+              <div class="chat-time">14:28</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">有的！上期AI视频变现航海反响很好，这期还会有。我帮你留意名额👍</div>
+              <div class="chat-time">14:30</div>
+            </div>
+            <div class="chat-date-divider">2026-03-06</div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">潇墨，我的会员明年3月到期，续费有什么优惠吗？</div>
+              <div class="chat-time">10:15</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">峰哥，老会员续费有专属优惠的，具体方案下周会公布，我到时候发你～</div>
+              <div class="chat-time">10:22</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">好的，期待！另外想问下线下聚会深圳站还有名额吗？</div>
+              <div class="chat-time">10:25</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">深圳站还有少量名额，我帮你预留一个？</div>
+              <div class="chat-time">10:28</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">太好了，帮我留一个！谢谢🙏</div>
+              <div class="chat-time">10:30</div>
+            </div>
+            <div class="chat-date-divider">2026-03-03</div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">峰哥，这周的精华帖合集整理好了，发你看看有没有感兴趣的内容～</div>
+              <div class="chat-time">09:00</div>
+            </div>
+            <div class="chat-msg chat-msg-me">
+              <div class="chat-bubble chat-bubble-me">[链接] 生财7期第12周精华帖合集</div>
+              <div class="chat-time">09:01</div>
+            </div>
+            <div class="chat-msg chat-msg-them">
+              <div class="chat-avatar">峰</div>
+              <div class="chat-bubble">收到，感谢整理！那篇AI工具的文章写得很好</div>
+              <div class="chat-time">12:40</div>
+            </div>
+          </div>
+        </div><!-- /tab-panel chat -->
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PRD Annotation Panel ======== -->
+<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260309c" data-prd-view="list">
+  <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
+
+  <!-- Section 1: 概述 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-label">背景</div>
+    <div class="prd-item">现有客户管理页仅展示<strong>销售侧</strong>数据，交付组通过企微与客户建立的好友关系数据无法在同一页面查看</div>
+    <div class="prd-item">销售无法快速了解客户的交付进度和会员状态</div>
+    <div class="prd-item">管理层无法在一个视图中掌握客户全生命周期数据</div>
+    <div class="prd-label">目标</div>
+    <div class="prd-item">在现有列表页和详情弹窗中<strong>增加交付侧数据展示</strong></div>
+    <div class="prd-item">以<strong>企微好友关系（1V1）</strong>为数据维度</div>
+    <div class="prd-item">实现销售 + 交付数据的统一视图</div>
+    <div class="prd-label">核心设计原则</div>
+    <div class="prd-item"><strong>一客户多行</strong>：同一客户可能有多条企微好友关系（销售 + 官网交付 + 航海家交付），每条关系展开为独立行</div>
+    <div class="prd-item"><strong>列表精简</strong>：交付侧仅在列表展示关键字段，完整数据在详情抽屉查看</div>
+  </div>
+
+  <!-- Section 2: 数据模型 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s2">
+    <div class="prd-section-title green">2. 数据模型</div>
+    <div class="prd-label">企微好友关系类型</div>
+    <div class="prd-item"><strong>销售</strong> — 客户与销售企微号的好友关系，对应「专属销售」字段</div>
+    <div class="prd-item"><strong>官网交付</strong> — 客户与官网交付企微号的好友关系，对应「专属服务」字段</div>
+    <div class="prd-item"><strong>深海圈</strong> — 客户与深海圈企微号的好友关系，对应「专属服务」字段</div>
+    <div class="prd-item">官网和深海圈由<em>不同交付人员</em>负责</div>
+    <div class="prd-label">好友状态（通用字段）</div>
+    <div class="prd-item">好友状态<strong>不区分销售/交付</strong>，统一描述该条企微好友关系的当前状态</div>
+    <div class="prd-item">状态值：双向好友 / 客户删除 / 双向删除</div>
+  </div>
+
+  <!-- Section 3: 搜索区 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s3">
+    <div class="prd-section-title orange">3. 搜索区（共 3 行）</div>
+    <div class="prd-label">第 1 行</div>
+    <div class="prd-item">昵称/手机号/星球编号 — 文本输入，昵称模糊搜索；手机号/星球编号精确搜索</div>
+    <div class="prd-item">好友状态 — 下拉：好友 / 客户删除 / 双向删除</div>
+    <div class="prd-item">鱼丸：根据当前角色显示对应的选项，如果数据权限只允许查看自己，鱼丸的搜索字段不显示，列表默认显示全部自己的鱼丸账号</div>
+    <div class="prd-item">标签：点击后打开标签的弹窗</div>
+    <div class="prd-item"><strong>客户类型</strong> — 下拉：官网会员 / 航海会员 / 深海圈会员（一个客户可能有多个身份）根据岗位角色权限显示可以下拉的选项</div>
+    <div class="prd-item"><strong>所属阶段</strong> <span class="prd-tag-new">NEW</span> — 下拉单选：新手期 / 探索期 / 增长期 / 放大期</div>
+    <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 下拉多选：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家（允许多个）</div>
+    <div class="prd-item"><strong>专属服务</strong> — 下拉：交付人员列表</div>
+    <div class="prd-item"><strong>会员状态</strong> — 下拉：在期/往期/待/过期/待续费/体验营</div>
+    <div class="prd-item"><strong>会员到期时间</strong> — 日期范围，筛选即将到期/已过期客户</div>
+    <div class="prd-item"><strong>添加时间</strong> — 日期范围，筛选客户添加企微的时间段</div>
+    <div class="prd-item"><strong>最近跟进时间</strong> — 日期范围，筛选最近跟进过的客户</div>
+    <div class="prd-label">已删除搜索项</div>
+    <div class="prd-item" style="text-decoration:line-through; color:var(--color-text-4);">客户状态 / 专属销售 / 客户等级 / 体验营期数 / 是否领取体验卡 / 客户来源</div>
+  </div>
+
+  <!-- Section 4: 表格列 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s4">
+    <div class="prd-section-title green">4. 表格列定义</div>
+    <div class="prd-label">完整列清单（按显示顺序）</div>
+    <div class="prd-item"><strong>星球ID</strong> — 展示星球编号</div>
+    <div class="prd-item"><strong>客户信息</strong> — 头像 + 微信昵称 + 手机号脱敏；手机号hover显示眼睛，点击展开；<strong>点击昵称跳转官网社区个人主页</strong>（新窗口），hover 显示外链图标 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item"><strong>客户类型</strong>（原「关系类型」改名）— 标签：官网会员（蓝）/ 航海会员（绿）/ 深海圈会员（橙）</div>
+    <div class="prd-item"><strong>所属阶段</strong> <span class="prd-tag-new">NEW</span> — 单选。枚举值：新手期 / 探索期 / 增长期 / 放大期</div>
+    <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 允许多个，逗号分隔。枚举值：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家</div>
+    <div class="prd-item"><strong>鱼丸</strong> — 原有字段，显示鱼丸账号名称</div>
+    <div class="prd-item"><strong>专属服务</strong> <span class="prd-tag-new">NEW</span> — 交付人员名</div>
+    <div class="prd-item"><strong>好友状态</strong> — 通用字段，该行企微好友关系的状态（双向好友/客户删除/双向删除）</div>
+    <div class="prd-item"><strong>会员状态</strong> <span class="prd-tag-new">NEW</span> — 在期/过期/待续费/体验营圈友</div>
+    <div class="prd-item"><strong>加入时间</strong> <span class="prd-tag-new">NEW</span> — 会员加入日期</div>
+    <div class="prd-item"><strong>会员到期</strong> <span class="prd-tag-new">NEW</span> — 会员到期日期</div>
+    <div class="prd-item"><strong>会员年限</strong> <span class="prd-tag-new">NEW</span> — 会员总年限（如 1年、3年、5年）</div>
+    <div class="prd-item"><strong>标签</strong> — 原有字段</div>
+    <div class="prd-item"><strong>操作</strong> — 详情、打标签（<strong>操作列右侧固定</strong>）</div>
+    <div class="prd-label">已移除的列</div>
+    <div class="prd-item" style="text-decoration:line-through; color:var(--color-text-4);">客户等级 / 客户来源 / 客户状态 / 专属销售</div>
+  </div>
+
+  <!-- Section 5: 客户详情抽屉 -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s5">
+    <div class="prd-section-title blue">5. 客户详情（右侧抽屉）</div>
+    <div class="prd-label">交互方式</div>
+    <div class="prd-item">触发：点击列表「详情」按钮</div>
+    <div class="prd-item">形式：右侧抽屉（Drawer），宽度 <strong>900px</strong></div>
+    <div class="prd-item">动画：打开从右滑入 250ms ease-out；关闭向右滑出 200ms ease-in</div>
+    <div class="prd-item">遮罩：黑色 80%，点击遮罩关闭</div>
+    <div class="prd-label">布局结构</div>
+    <div class="prd-item"><strong>左侧边栏 300px</strong> — 客户头像/标签/群聊，独立滚动</div>
+    <div class="prd-item"><strong>右侧主区 自适应</strong> — Tab 页内容，独立滚动</div>
+  </div>
+
+  <!-- Section 6: 详情 — 左侧边栏 -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s6">
+    <div class="prd-section-title blue">6. 详情左侧边栏</div>
+    <div class="prd-label">客户概要</div>
+    <div class="prd-item">头像（56×56px, 圆角 8px）+ 昵称（16px 加粗）+ 会员状态 Tag（在期/往期/待续费/过期/体验营圈友）</div>
+    <div class="prd-item">备注（12px 灰色）</div>
+    <div class="prd-item"><strong>所属阶段</strong> <span class="prd-tag-new">NEW</span> — 显示当前客户阶段：新手期 / 探索期 / 增长期 / 放大期</div>
+    <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 允许多个，显示：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家</div>
+    <div class="prd-label">AI 画像总结 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">基于客户全维度数据（会员信息、行为动态、订单、标签等）由 AI 自动生成的<strong>客户画像摘要</strong></div>
+    <div class="prd-item">样式：AI 品牌色系（#00CBD0 湖蓝背景 + 边框），区分普通信息区块</div>
+    <div class="prd-item"><strong>初始态</strong>：空状态，显示说明文字 + 渐变色「生成画像总结」按钮（sparkle 图标）</div>
+    <div class="prd-item"><strong>生成中</strong>：按钮隐藏，sparkle 图标闪烁动画；正文区逐字打印（streaming），光标闪烁，关键词高亮显示</div>
+    <div class="prd-item"><strong>生成完成</strong>：正文内容 + AI 标签（高活跃度、高续费意愿、AI赛道偏好等）渐入 + 底部显示生成时间</div>
+    <div class="prd-item">支持手动<strong>「重新生成」</strong>按钮（带旋转动画），重新执行生成流程</div>
+    <div class="prd-label">新人进度 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item"><strong>作业关键信息</strong>卡片 — 浅灰背景容器，右上角显示当前阶段徽章（橙色）</div>
+    <div class="prd-item">2列网格字段：方向&赛道 / 当前状态 / 优势 / 短板 / 目标&展望（跨两列）</div>
+    <div class="prd-item">数据来源：客户新人作业表单提交的关键信息，由交付人员维护更新</div>
+    <div class="prd-label">高频参与项目 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">展示客户参与频次最高的航海/活动项目，蓝色标签样式，附带参与次数（×N）</div>
+    <div class="prd-item">数据来源：系统自动统计客户的航海报名、活动参与记录</div>
+    <div class="prd-label">客户标签（3 组）</div>
+    <div class="prd-item"><strong>企微标签</strong> — 可删除（×）、可添加（+ 添加标签）</div>
+    <div class="prd-item"><strong>行为标签</strong> — 系统自动打标，只读</div>
+    <div class="prd-item"><strong>属性标签</strong> — 用户属性标签，只读</div>
+    <div class="prd-label">所在群聊</div>
+    <div class="prd-item">一级 Tab：企微 / 个微</div>
+    <div class="prd-item">二级分类：官网 / 航海家 / 深海圈</div>
+    <div class="prd-item">展示：群头像 + 群名 + 群聊人数</div>
+  </div>
+
+  <!-- Section 7: 客户档案 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s7">
+    <div class="prd-section-title green">7. 客户档案 Tab</div>
+    <div class="prd-item">以四栏表格（th-td-th-td）展示，按分组用 section-header 分隔</div>
+    <div class="prd-label">1. 基础信息</div>
+    <div class="prd-item">客户ID / 星球编号 / 星球昵称 / 性别</div>
+    <div class="prd-item"><strong>手机号</strong>（脱敏，<span class="prd-tag-new">可编辑</span>）/ <strong>微信号</strong>（<span class="prd-tag-new">可编辑</span>）</div>
+    <div class="prd-label">2. 个人信息</div>
+    <div class="prd-item"><strong>城市</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>职业</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>岗位方向</strong>（<span class="prd-tag-new">可编辑</span>）</div>
+    <div class="prd-item"><strong>参加工作年限</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>年收入</strong>（<span class="prd-tag-new">可编辑</span>）</div>
+    <div class="prd-item"><strong>感兴趣的领域</strong> <span class="prd-tag-new">NEW</span> — 以标签形式展示，如 AI应用、短视频、知识付费、电商</div>
+    <div class="prd-item"><strong>个人介绍</strong> <span class="prd-tag-new">NEW</span> — 全宽展示（colspan=3），来自星球个人简介</div>
+    <div class="prd-item"><strong>加入原因</strong> <span class="prd-tag-new">NEW</span> — 全宽展示，来自星球加入原因</div>
+    <div class="prd-item"><strong>提供资源</strong> <span class="prd-tag-new">NEW</span> — 以标签形式展示，如 AI视频制作、短视频剪辑</div>
+    <div class="prd-item"><strong>需要资源</strong> <span class="prd-tag-new">NEW</span> — 以标签形式展示，如 流量渠道、变现指导</div>
+    <div class="prd-label">3. 会员信息</div>
+    <div class="prd-item">会员类型 / 会员状态 / 会员到期时间 / 加入方式 / <strong>加入金额</strong>（取值：最近一次会员订单的金额）/ 续费次数</div>
+    <div class="prd-item">是否领取体验卡 / 领取体验卡时间</div>
+    <div class="prd-label">4. 交付服务</div>
+    <div class="prd-item"><strong>专属服务</strong>（<span class="prd-tag-new">可编辑</span>）— 下拉选项仅显示该客户已添加的鱼丸对应的专属服务人员，格式：「人员名（鱼丸 XXX）」</div>
+    <div class="prd-item">企微好友状态 / 首次添加交付时间 / 入群时间</div>
+    <div class="prd-item"><strong>是否进入个微群聊</strong> — 是/否（只要在任意一个个微群聊则显示"是"）/ <strong>是否进入企微群聊</strong> — 是/否</div>
+    <div class="prd-label">编辑交互</div>
+    <div class="prd-item">hover 字段显示铅笔图标 → 点击进入行内编辑模式 → 确认/取消按钮保存</div>
+    <div class="prd-item">文本字段：行内 input 输入；专属服务：下拉 select，选项来源为客户已添加鱼丸的专属服务人员</div>
+  </div>
+
+  <!-- Section 8: 跟进记录 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s8">
+    <div class="prd-section-title orange">8. 跟进记录 Tab</div>
+    <div class="prd-item">以<strong>时间线</strong>形式展示，按日期分组</div>
+    <div class="prd-item">每条：时间（HH:mm:ss）+ 标题（加粗）+ 描述</div>
+    <div class="prd-item">最新一条圆点为蓝色，其余灰色</div>
+    <div class="prd-label">记录类型</div>
+    <div class="prd-item"><strong>打标签</strong> — {员工}给用户打了/移除了{标签}</div>
+    <div class="prd-item"><strong>客户等级</strong> — {员工}给客户打上{X}级客户</div>
+    <div class="prd-item"><strong>1V1跟进</strong> — {员工}在微信上主动跟进客户</div>
+    <div class="prd-item"><strong>企微群发</strong> — 通过企业微信群发用户触达</div>
+    <div class="prd-item"><strong>客户删除/添加企业成员</strong></div>
+    <div class="prd-label">手动添加跟进 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">顶部「✚ 写跟进」按钮，点击展开表单</div>
+    <div class="prd-item">必填：<strong>跟进方式</strong>（企微消息/电话/面谈/微信沟通/其他）+ <strong>跟进内容</strong>（1-500字）</div>
+    <div class="prd-item">选填：<strong>下次跟进日期</strong></div>
+    <div class="prd-item">提交后刷新跟进记录列表，新记录插入最顶部</div>
+  </div>
+
+  <!-- Section 9: 客户动态 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s9">
+    <div class="prd-section-title orange">9. 客户动态 Tab</div>
+    <div class="prd-item">以<strong>时间线</strong>形式展示（结构同跟进记录），记录客户自主行为</div>
+    <div class="prd-label">一级筛选（按来源平台，4列网格）</div>
+    <div class="prd-item"><strong>官网社区</strong> — 发帖/阅读/评论/点赞/投锚/收藏</div>
+    <div class="prd-item"><strong>深海圈</strong> — 发帖/阅读/评论/点赞/投锚</div>
+    <div class="prd-item"><strong>航海</strong> — 上船（参与航海）/ 下船（退出航海）/ 打卡 / 打卡失败；附带项目类型标签（AI视频、小红书、视频号赛道等）</div>
+    <div class="prd-item"><strong>聚会</strong> — 组局官：发起聚会/取消聚会/导入嘉宾；圈友：报名/退出/签到/填写反馈；填写反馈需标记角色（嘉宾/组局官），圈友不标记</div>
+    <div class="prd-item">每格显示累计数量，点击筛选时间线</div>
+    <div class="prd-label">二级筛选（按行为子项，chips横滑）</div>
+    <div class="prd-item">全部 + 各子行为（含数量），单选切换，再次点击取消</div>
+    <div class="prd-item">子行为项因一级筛选而变化</div>
+    <div class="prd-label">时间线规则</div>
+    <div class="prd-item">按日期分组倒序：今天 / 昨天 / 具体日期</div>
+    <div class="prd-item">圆点颜色按来源：蓝色=社区阅读/发帖，橙色=航海相关，绿色=收藏/聚会，灰色=评论</div>
+    <div class="prd-item">每条含：类型圆点 + 行为标题 + 时间 + 内容摘要（可选阅读时长）</div>
+  </div>
+
+  <!-- Section 10: 积分记录 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s10">
+    <div class="prd-section-title orange">10. 积分记录 Tab <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">展示客户的积分获取和消耗明细，位于「客户动态」Tab 之后</div>
+    <div class="prd-label">积分类型</div>
+    <div class="prd-item"><strong>龙珠</strong>（橙色图标）— 核心积分，可兑换商品/特权</div>
+    <div class="prd-item"><strong>术值</strong>（蓝色图标）— 活跃度积分，发帖/精华/活动等行为获取</div>
+    <div class="prd-item"><strong>碎片</strong>（绿色图标）— 签到/日常任务获取，可合成龙珠</div>
+    <div class="prd-label">积分概览卡片</div>
+    <div class="prd-item">顶部 3 张并排卡片，每张显示：图标 + 积分类型名 + 当前余额（大号数字）+ 累计获取/消耗统计</div>
+    <div class="prd-item">获取用绿色（+N），消耗用红色（-N）</div>
+    <div class="prd-label">筛选栏</div>
+    <div class="prd-item"><strong>积分类型</strong>下拉：全部 / 龙珠 / 术值 / 碎片</div>
+    <div class="prd-item"><strong>变动方向</strong>下拉：全部 / 获取 / 消耗</div>
+    <div class="prd-label">积分明细表</div>
+    <div class="prd-item">表格列：时间 / 积分类型（彩色标签）/ 变动（绿+红-）/ 余额 / 来源/用途 / 备注</div>
+    <div class="prd-item">按时间倒序排列</div>
+    <div class="prd-label">来源/用途枚举</div>
+    <div class="prd-item">获取：航海打卡奖励 / 精华帖奖励 / 发帖奖励 / 每日签到 / 续费奖励 / 碎片合成 / 活动参与奖励</div>
+    <div class="prd-item">消耗：兑换商品 / 活动报名 / 碎片合成（碎片消耗）/ 特权购买</div>
+  </div>
+
+  <!-- Section 11: 订单列表 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s11">
+    <div class="prd-section-title green">11. 订单列表 Tab</div>
+    <div class="prd-label">子 Tab 筛选</div>
+    <div class="prd-item">全部(N) / 待付款(N) / 已付款(N) / 已收货(N) / 已完成(N) / 已取消(N) / 已关闭(N)</div>
+    <div class="prd-item">表单订单整合进来，只有「已完成」和「已关闭」两个状态</div>
+    <div class="prd-label">订单表格列</div>
+    <div class="prd-item">订单编号 / 商品信息（图+名称）/ 订单状态（Tag）</div>
+    <div class="prd-item">下单人 / 金额 / 实付金额</div>
+    <div class="prd-item">退款状态（未退款 / 全额退款-红 / 部分退款-橙）/ 退款金额</div>
+    <div class="prd-item">下单时间 / 付款时间</div>
+  </div>
+
+  <!-- Section 12: 变更记录 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s12">
+    <div class="prd-section-title green">12. 变更记录 Tab</div>
+    <div class="prd-item">筛选：会员类型下拉（全部 / 官网会员 / 体验会员 / 深海圈 / 航海家）</div>
+    <div class="prd-label">变更表格列</div>
+    <div class="prd-item">会员类型 / 加入方式（新增/续费）/ 会员状态（在期-绿 / 已过期-红）</div>
+    <div class="prd-item">加入金额 / 结束时间 / 开始时间</div>
+  </div>
+
+  <!-- Section 13: 聊天记录 Tab -->
+  <div class="prd-section" data-prd-context="detail" id="prd-s13">
+    <div class="prd-section-title blue">13. 聊天记录 Tab</div>
+    <div class="prd-item">展示企微聊天记录（需企微会话存档权限）</div>
+    <div class="prd-label">AI 聊天记录总结</div>
+    <div class="prd-item">顶部显示「AI 生成聊天记录总结」按钮，点击后生成</div>
+    <div class="prd-item">生成过程：按钮文案变为「生成中...」+ 禁用态，1.5s 后展示总结卡片</div>
+    <div class="prd-item">总结卡片：渐变紫色头部 + AI 图标 + 标题「聊天记录总结」+ 正文内容</div>
+    <div class="prd-item">支持「重新生成」操作</div>
+    <div class="prd-label">沟通时间轴 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">位于 AI 总结区域下方、聊天记录列表上方，提供沟通历史的结构化概览</div>
+    <div class="prd-item">头部显示标题「沟通时间轴」+ 统计文字「近30天 · 共N次沟通」</div>
+    <div class="prd-item">垂直时间轴，左侧连接线 + 彩色圆点，每条显示：日期 + 类型标签 + 摘要描述</div>
+    <div class="prd-item">沟通类型及颜色：<strong>客户咨询</strong>（蓝）/ <strong>续费沟通</strong>（橙）/ <strong>内容推送</strong>（绿/主色）/ <strong>主动关怀</strong>（绿）/ <strong>活动邀约</strong>（紫）/ <strong>续费确认</strong>（绿）</div>
+    <div class="prd-item">数据来源：基于聊天记录自动提取关键沟通事件，按时间倒序排列</div>
+    <div class="prd-label">聊天记录列表</div>
+    <div class="prd-item">按日期分组，日期分割线居中显示</div>
+    <div class="prd-item">对方消息左对齐（头像 + 气泡），我方消息右对齐（气泡 + 头像）</div>
+    <div class="prd-item">气泡样式：对方浅灰底，我方主色底白字</div>
+  </div>
+
+  <!-- Section 14: 非功能需求 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s14">
+    <div class="prd-section-title red">14. 非功能需求</div>
+    <div class="prd-item"><strong>性能</strong>：列表页首屏加载 &lt; 2s（含交付数据联表查询）</div>
+    <div class="prd-item"><strong>排序</strong>：列表按添加时间倒序排列（最新添加的客户排在最前）</div>
+    <div class="prd-item"><strong>分页</strong>：默认 5 条/页，支持 10/20 条/页切换</div>
+    <div class="prd-item"><strong>导出</strong>：导出 Excel 需包含交付侧新增字段</div>
+    <div class="prd-item"><strong>权限</strong>：交付侧字段的查看权限需与销售侧独立控制（待定）</div>
+  </div>
+
+</div><!-- /prd-panel -->
+
+<script>
+function setPrdView(view) {
+  var panel = document.querySelector('.prd-panel');
+  var hint = document.getElementById('prdContextHint');
+  panel.setAttribute('data-prd-view', view);
+  hint.textContent = view === 'detail' ? '当前：详情页' : '当前：列表页';
+}
+function toggleFollowupForm() {
+  var form = document.getElementById('followupFormDetail');
+  form.classList.toggle('active');
+}
+function selectFollowupMethod(btn) {
+  btn.parentElement.querySelectorAll('.method-chip').forEach(function(c) { c.classList.remove('selected'); });
+  btn.classList.add('selected');
+}
+// Chat AI Summary — click to generate
+function generateChatSummary() {
+  var btn = document.getElementById('aiChatBtn');
+  var card = document.getElementById('aiChatSummary');
+  if (btn.disabled) return;
+  btn.innerHTML = '<span class="ai-chat-icon">AI</span> 生成中...';
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  setTimeout(function() {
+    card.classList.add('visible');
+    btn.style.display = 'none';
+  }, 1500);
+}
+// AI Summary — streaming generation
+var aiGenerating = false;
+function generateAiSummary() {
+  if (aiGenerating) return;
+  aiGenerating = true;
+  var card = document.getElementById('aiSummaryCard');
+  var empty = document.getElementById('aiSummaryEmpty');
+  var result = document.getElementById('aiSummaryResult');
+  var body = document.getElementById('aiSummaryBody');
+  var tags = document.getElementById('aiSummaryTags');
+  var footer = document.getElementById('aiSummaryFooter');
+  // Hide empty / reset result
+  empty.style.display = 'none';
+  result.style.display = '';
+  tags.style.display = 'none';
+  footer.style.display = 'none';
+  body.innerHTML = '<span class="ai-summary-cursor"></span>';
+  card.classList.add('ai-summary-generating');
+  // Simulated AI content segments (plain text + highlight spans)
+  var segments = [
+    { text: '该客户为', delay: 0 },
+    { text: '3年老会员', highlight: true },
+    { text: '，处于' },
+    { text: '放大期', highlight: true },
+    { text: '阶段，续费意愿强（已续费3次）。' },
+    { text: '\n' },
+    { text: '近期活跃度高，主要参与' },
+    { text: 'AI视频', highlight: true },
+    { text: '和' },
+    { text: '小红书', highlight: true },
+    { text: '方向的航海项目，内容产出稳定。' },
+    { text: '\n' },
+    { text: '职业为自由职业/独立开发者，年收入30万，属于' },
+    { text: '高净值客户', highlight: true },
+    { text: '。' },
+    { text: '\n' },
+    { text: '当前有1个航海打卡失败记录需关注。建议持续跟进航海进展，引导参与更多高阶活动。' }
+  ];
+  // Flatten to chars with metadata
+  var chars = [];
+  segments.forEach(function(seg) {
+    if (seg.text === '\n') {
+      chars.push({ ch: '\n', highlight: false });
+    } else {
+      for (var i = 0; i < seg.text.length; i++) {
+        chars.push({ ch: seg.text[i], highlight: !!seg.highlight, first: i === 0 && !!seg.highlight, last: i === seg.text.length - 1 && !!seg.highlight });
+      }
+    }
+  });
+  var idx = 0;
+  var currentSpan = null; // track current highlight span directly
+  var cursor = body.querySelector('.ai-summary-cursor');
+  function typeNext() {
+    if (idx >= chars.length) {
+      // Done — remove cursor, show tags + footer
+      if (cursor) cursor.remove();
+      card.classList.remove('ai-summary-generating');
+      tags.style.display = '';
+      tags.style.opacity = '0';
+      tags.style.transition = 'opacity 0.3s';
+      setTimeout(function() { tags.style.opacity = '1'; }, 50);
+      footer.style.display = '';
+      footer.style.opacity = '0';
+      footer.style.transition = 'opacity 0.3s';
+      setTimeout(function() { footer.style.opacity = '1'; }, 100);
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      footer.querySelector('.ai-summary-time').textContent = '生成于 ' + now.toISOString().split('T')[0] + ' ' + h + ':' + m;
+      aiGenerating = false;
+      return;
+    }
+    var c = chars[idx];
+    if (c.ch === '\n') {
+      idx++;
+      setTimeout(typeNext, 80);
+      return;
+    }
+    if (c.first) {
+      currentSpan = document.createElement('span');
+      currentSpan.className = 'ai-highlight';
+      body.insertBefore(currentSpan, cursor);
+    }
+    var textNode = document.createTextNode(c.ch);
+    if (currentSpan) {
+      currentSpan.appendChild(textNode);
+    } else {
+      body.insertBefore(textNode, cursor);
+    }
+    if (c.last) {
+      currentSpan = null;
+    }
+    idx++;
+    var delay = 18 + Math.random() * 14;
+    if ('，。、！？；：'.indexOf(c.ch) !== -1) delay = 60 + Math.random() * 40;
+    setTimeout(typeNext, delay);
+  }
+  setTimeout(typeNext, 600);
+}
+
+// Profile inline edit
+function startEditField(btn) {
+  var td = btn.closest('td');
+  td.querySelector('.profile-editable').style.display = 'none';
+  td.querySelector('.profile-edit-form').classList.add('editing');
+  var input = td.querySelector('.profile-edit-input') || td.querySelector('.profile-edit-select');
+  if (input) input.focus();
+}
+function saveEditField(btn, type) {
+  var td = btn.closest('td');
+  var valueEl = td.querySelector('.profile-value');
+  if (type === 'select') {
+    var sel = td.querySelector('.profile-edit-select');
+    var text = sel.options[sel.selectedIndex].text;
+    var name = text.replace(/（.*）/, '');
+    valueEl.innerHTML = '<strong>' + name + '</strong>';
+  } else {
+    var input = td.querySelector('.profile-edit-input');
+    valueEl.textContent = input.value;
+  }
+  td.querySelector('.profile-edit-form').classList.remove('editing');
+  td.querySelector('.profile-editable').style.display = '';
+}
+function cancelEditField(btn) {
+  var td = btn.closest('td');
+  td.querySelector('.profile-edit-form').classList.remove('editing');
+  td.querySelector('.profile-editable').style.display = '';
+}
+
+function openDetail() {
+  var el = document.getElementById('detailModal');
+  el.classList.remove('hiding');
+  el.classList.add('show');
+  setPrdView('detail');
+}
+function closeDetail() {
+  var el = document.getElementById('detailModal');
+  el.classList.add('hiding');
+  setTimeout(function() {
+    el.classList.remove('show', 'hiding');
+  }, 200);
+  setPrdView('list');
+}
+// Close drawer on overlay click (but not on drawer itself)
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDetail();
+});
+// Tab switching with content panels
+document.querySelectorAll('.detail-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    var tabId = this.getAttribute('data-tab');
+    // Switch tab active state
+    this.parentElement.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    // Switch panel visibility
+    var main = this.closest('.detail-main');
+    main.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    var panel = main.querySelector('[data-panel="' + tabId + '"]');
+    if (panel) panel.classList.add('active');
+  });
+});
+// Orders sub-tab switching
+document.querySelectorAll('.orders-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.orders-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Activity two-level filter (交付组模式)
+function toggleSourceFilterPC(el) {
+  var isActive = el.classList.contains('active');
+  var grid = el.closest('.activity-source-grid');
+  grid.querySelectorAll('.activity-source-item').forEach(function(m) {
+    m.classList.remove('active');
+  });
+  var subBar = document.getElementById('activitySubBar');
+  subBar.innerHTML = '';
+  subBar.classList.remove('visible');
+  if (!isActive) el.classList.add('active');
+  var filterVal = el.classList.contains('active') ? el.getAttribute('data-filter') : null;
+  var subsData = el.getAttribute('data-subs');
+  if (filterVal && subsData) {
+    var subs = JSON.parse(subsData);
+    var allChip = document.createElement('button');
+    allChip.className = 'activity-sub-chip active';
+    allChip.setAttribute('data-sub-filter', '');
+    allChip.innerHTML = '全部';
+    allChip.onclick = function() { toggleSubFilterPC(this, filterVal); };
+    subBar.appendChild(allChip);
+    subs.forEach(function(s) {
+      var chip = document.createElement('button');
+      chip.className = 'activity-sub-chip';
+      chip.setAttribute('data-sub-filter', s.filter);
+      chip.innerHTML = s.label + ' <span class="chip-count">' + s.value + '</span>';
+      chip.onclick = function() { toggleSubFilterPC(this, filterVal); };
+      subBar.appendChild(chip);
+    });
+    subBar.classList.add('visible');
+  }
+  applyActivityFilter(filterVal, null);
+}
+function toggleSubFilterPC(chip, parentFilter) {
+  var subBar = chip.closest('.activity-sub-bar');
+  subBar.querySelectorAll('.activity-sub-chip').forEach(function(c) { c.classList.remove('active'); });
+  chip.classList.add('active');
+  var subVal = chip.getAttribute('data-sub-filter');
+  applyActivityFilter(parentFilter, subVal || null);
+}
+function applyActivityFilter(sourceFilter, subFilter) {
+  var container = document.querySelector('[data-panel="activity"] .activity-timeline');
+  if (!container) return;
+  container.querySelectorAll('.timeline-item[data-activity]').forEach(function(item) {
+    var activities = (item.getAttribute('data-activity') || '').split(' ');
+    var show = true;
+    if (subFilter) {
+      show = activities.indexOf(subFilter) !== -1;
+    } else if (sourceFilter) {
+      show = activities.indexOf(sourceFilter) !== -1;
+    }
+    item.style.display = show ? '' : 'none';
+  });
+  // 隐藏无可见项的日期头
+  container.querySelectorAll('.timeline-date').forEach(function(d) {
+    var next = d.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('timeline-date')) {
+      if (next.style.display !== 'none' && next.classList.contains('timeline-item')) hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    d.style.display = hasVisible ? '' : 'none';
+  });
+  markTimelineDayLast();
+}
+
+// Mark last timeline-item before each date header (break the connecting line)
+function markTimelineDayLast() {
+  document.querySelectorAll('.timeline-container').forEach(function(container) {
+    container.querySelectorAll('.timeline-item').forEach(function(item) {
+      item.classList.remove('timeline-day-last');
+    });
+    container.querySelectorAll('.timeline-date').forEach(function(dateEl) {
+      var prev = dateEl.previousElementSibling;
+      if (prev && prev.classList.contains('timeline-item')) {
+        prev.classList.add('timeline-day-last');
+      }
+    });
+  });
+}
+markTimelineDayLast();
+
+// PRD Panel toggle
+function togglePRD() {
+  document.body.classList.toggle('prd-on');
+}
+
+// === PRD auto-scroll & highlight ===
+var prdTimer = null;
+function scrollToPrd(id) {
+  if (!document.body.classList.contains('prd-on')) return;
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.prd-section.prd-active').forEach(function(s) { s.classList.remove('prd-active'); });
+  el.classList.add('prd-active');
+  clearTimeout(prdTimer);
+  prdTimer = setTimeout(function() { el.classList.remove('prd-active'); }, 2500);
+}
+var tabMap = { profile:'prd-s7', followup:'prd-s8', activity:'prd-s9', points:'prd-s10', orders:'prd-s11', changes:'prd-s12', chat:'prd-s13' };
+document.querySelectorAll('.detail-tab').forEach(function(t) {
+  t.addEventListener('click', function() { var k = this.getAttribute('data-tab'); if (tabMap[k]) scrollToPrd(tabMap[k]); });
+});
+var fa = document.querySelector('.filter-area');
+if (fa) fa.addEventListener('click', function() { scrollToPrd('prd-s3'); });
+var dt = document.querySelector('.data-table');
+if (dt) {
+  var dth = dt.querySelector('thead');
+  if (dth) dth.addEventListener('click', function() { scrollToPrd('prd-s4'); });
+  var dtb = dt.querySelector('tbody');
+  if (dtb) dtb.addEventListener('click', function(e) { if (e.target.closest('[onclick*="openDetail"]')) return; scrollToPrd('prd-s5'); });
+}
+var ds = document.querySelector('.detail-sidebar');
+if (ds) ds.addEventListener('click', function() { scrollToPrd('prd-s7'); });
+var _origOpen = openDetail;
+openDetail = function() { _origOpen(); setTimeout(function() { scrollToPrd('prd-s6'); }, 100); };
+</script>
+<script src="prd-editor.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企微侧边栏 · CRM 会员运营（转化组） - 交互原型</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+
+    --color-accent-orange-6: #FF7D00;
+    --color-accent-orange-1: #FFF7E9;
+
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-6: #242528;
+    --color-fill-hover: #F2F5F7;
+
+    --color-surface-canvas: #F2F5F7;
+
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+
+    --color-overlay: rgba(0,0,0,0.8);
+
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+
+    --radius-xs: 4px;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-pill: 9999px;
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+
+    --font-family: 'PingFang SC', Tahoma, Helvetica, Arial, 'Hiragino Sans GB',
+                   'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    background: #E0E2E6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  /* ===== 页面标题 ===== */
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 13px;
+    color: var(--color-text-3);
+    margin-bottom: 32px;
+  }
+
+  /* ===== 场景容器 ===== */
+  .scenes-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .scene-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .scene-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .scene-label {
+    font-size: 13px;
+    color: var(--color-text-3);
+    margin-top: var(--space-lg);
+  }
+
+  /* PRD 面板：页面特定布局覆盖（基础样式见 prd-editor.css） */
+  .prd-panel {
+    width: 320px;
+    background: #F2F5F7;
+    border-radius: var(--radius-card);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 700px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  /* ===== 侧边栏容器 ===== */
+  .sidebar-frame {
+    width: 360px;
+    height: 700px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ===== 侧边栏头部 ===== */
+  .sidebar-header {
+    height: 40px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    flex-shrink: 0;
+  }
+  .sidebar-header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .sidebar-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .header-icon-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    color: var(--color-text-3);
+    transition: background 0.1s;
+  }
+  .header-icon-btn:hover { background: var(--color-fill-3-hover); }
+
+  /* ===== 三 Tab 导航栏 ===== */
+  .sidebar-nav-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 6px 16px;
+    background: var(--color-fill-3);
+    flex-shrink: 0;
+  }
+  .nav-tab {
+    flex: 1;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-tab:hover {
+    color: var(--color-text-2);
+    background: var(--color-fill-3-hover);
+  }
+  .nav-tab.active {
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+  }
+
+  /* ===== 滚动区域 ===== */
+  .sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar-body::-webkit-scrollbar { width: 4px; }
+  .sidebar-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.12);
+    border-radius: 2px;
+  }
+  .sidebar-body::-webkit-scrollbar-track { background: transparent; }
+
+  /* ===== 身份卡片 ===== */
+  .identity-card {
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-6), var(--color-primary-7));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .identity-info { flex: 1; min-width: 0; }
+  .identity-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .identity-nickname {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    line-height: 24px;
+  }
+  .identity-star-id {
+    font-size: 11px;
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .identity-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+  }
+  .identity-meta .sep { color: var(--color-border-default); }
+  .identity-remark {
+    font-size: 13px;
+    color: var(--color-text-3);
+    line-height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .identity-remark:hover {
+    color: var(--color-text-2);
+  }
+  .identity-remark .edit-hint {
+    color: var(--color-text-4);
+    font-style: italic;
+  }
+
+  /* ===== 状态标签栏（与销售组一致） ===== */
+  .status-tags-bar {
+    padding: 0 16px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .status-tag.tag-member {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .status-tag.tag-trial {
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+  }
+
+  /* ===== 企微标签区 ===== */
+  .tags-section {
+    padding: 0 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .tags-label {
+    font-size: 11px;
+    color: var(--color-text-4);
+    width: 48px;
+    flex-shrink: 0;
+  }
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .tag-chip.tag-base {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .tag-chip.tag-identity {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-chip.tag-interest {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .tag-chip.tag-push {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-chip.tag-no-push {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+  .tag-chip.tag-status {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-chip.tag-renew {
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+  }
+  .tag-chip.tag-clue {
+    background: #F0E8FF;
+    color: #7B61FF;
+  }
+
+  /* ===== AI 画像总结 ===== */
+  .ai-summary-card {
+    margin: 0 16px 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+    position: relative;
+  }
+  .ai-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .ai-summary-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00CBD0, #36A590);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .ai-summary-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary-7);
+  }
+  .ai-summary-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+  }
+  .ai-action-btn {
+    font-size: 11px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .ai-action-btn:hover { color: var(--color-primary-7); }
+  .ai-summary-text {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 20px;
+  }
+  .ai-summary-card.hidden { display: none; }
+  .ai-summary-card.visible { display: block; animation: portraitFadeIn 300ms ease; }
+  @keyframes portraitFadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .ai-summary-content .ai-summary-actions {
+    margin-top: 8px;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+  /* AI 画像总结生成卡片 */
+  .ai-portrait-gen-card {
+    margin: 0 16px 12px; padding: 14px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card); text-align: center;
+  }
+  .ai-portrait-gen-header {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+  }
+  .ai-portrait-gen-header .ai-icon {
+    color: var(--color-primary-6); font-size: 16px;
+  }
+  .ai-portrait-gen-header .ai-title {
+    font-size: 13px; font-weight: 600; color: var(--color-primary-7);
+  }
+  .ai-portrait-gen-desc {
+    font-size: 12px; color: var(--color-text-3); line-height: 18px;
+    margin-bottom: 12px; text-align: left;
+  }
+  .ai-portrait-gen-btn {
+    display: inline-flex; align-items: center; gap: 4px; justify-content: center;
+    height: 32px; padding: 0 20px;
+    background: var(--color-primary-6); border: none; border-radius: var(--radius-btn);
+    cursor: pointer; font-size: 13px; font-weight: 600;
+    color: white; font-family: inherit; transition: all 100ms;
+  }
+  .ai-portrait-gen-btn:hover { opacity: 0.9; }
+  .ai-portrait-gen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ===== 分割线 ===== */
+  .divider {
+    height: 1px;
+    background: var(--color-border-default);
+    margin: 0 16px;
+  }
+  .divider-thick {
+    height: 8px;
+    background: var(--color-fill-3);
+  }
+
+  /* ===== 关键指标（与销售组一致） ===== */
+  .metrics-grid {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .metrics-grid.metrics-5col {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .metrics-grid.metrics-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    background: var(--color-fill-2);
+    border-radius: var(--radius-btn);
+  }
+  .metric-item.metric-center {
+    align-items: center;
+  }
+  .metric-label {
+    font-size: 11px;
+    color: var(--color-text-3);
+    line-height: 17px;
+    white-space: nowrap;
+  }
+  .metric-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .metric-value.danger { color: var(--color-danger-6); }
+  .metric-value.warning { color: var(--color-warning-6); }
+  .metric-value.good { color: var(--color-success-6); }
+  .metric-item.metric-danger {
+    background: #FFF5F5;
+    border: 1px solid rgba(245,74,69,0.2);
+  }
+
+  /* ===== 可点击统计指标（Option C 两级筛选） ===== */
+  .metric-item.metric-filterable {
+    cursor: pointer;
+    transition: all 100ms;
+    border: 1.5px solid transparent;
+  }
+  .metric-item.metric-filterable:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .metric-item.metric-filterable.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .metric-item.metric-filterable.active .metric-value {
+    color: var(--color-primary-6);
+  }
+  .metric-item.metric-filterable.active .metric-label {
+    color: var(--color-primary-7);
+  }
+
+  /* 二级子筛选条 */
+  .sub-filter-bar {
+    display: none;
+    gap: 6px;
+    padding: 6px 16px 2px;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .sub-filter-bar.visible {
+    display: flex;
+  }
+  .sub-filter-bar::-webkit-scrollbar { display: none; }
+  .sub-filter-chip {
+    flex-shrink: 0;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 11px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition: all 100ms;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .sub-filter-chip:hover {
+    border-color: var(--color-border-hover);
+    color: var(--color-text-2);
+  }
+  .sub-filter-chip.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .sub-filter-chip .chip-count {
+    font-weight: 600;
+  }
+
+  /* ===== Section 标题 ===== */
+  .section-header {
+    padding: 12px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    line-height: 20px;
+  }
+  .section-action {
+    font-size: 12px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+  }
+  .section-action:hover { color: var(--color-primary-7); }
+  .section-action-link {
+    font-size: 12px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+  }
+  .section-action-link:hover { color: var(--color-primary-7); }
+
+  /* ===== 动态类型筛选 ===== */
+  .activity-type-bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .activity-type-bar::-webkit-scrollbar { display: none; }
+  .activity-type-chip {
+    flex-shrink: 0;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.1s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .activity-type-chip:hover {
+    color: var(--color-text-2);
+    background: var(--color-fill-3-hover);
+  }
+  .activity-type-chip.active {
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+  }
+
+  /* ===== 时间线 ===== */
+  .timeline-section { padding: 0 16px; }
+  .timeline-date-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    padding: 12px 0 8px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .timeline-list { position: relative; }
+  .timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border-default);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 10px 0 10px 22px;
+    border-bottom: 1px solid var(--color-fill-3);
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-dot {
+    position: absolute;
+    left: 1px;
+    top: 14px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    border: 2px solid #fff;
+    z-index: 1;
+  }
+  .timeline-dot.dot-blue { background: var(--color-info-6); }
+  .timeline-dot.dot-orange { background: var(--color-accent-orange-6); }
+  .timeline-dot.dot-green { background: var(--color-success-6); }
+  .timeline-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .timeline-type {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .timeline-time {
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .timeline-desc {
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+  }
+  .timeline-desc .hl {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .timeline-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--color-info-6);
+    background: var(--color-info-1);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    font-weight: 500;
+  }
+  .timeline-duration::before {
+    content: '⏱';
+    font-size: 10px;
+  }
+
+  /* ===== 行为统计概览（复用 metrics-grid） ===== */
+  /* 已通过 .metrics-grid.metrics-4col + .metric-item.metric-center 实现 */
+
+  /* ===== 沟通记录 - AI 总结卡片 ===== */
+  .chat-summary-card {
+    margin: 12px 16px;
+    padding: 12px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+  }
+  .chat-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .chat-summary-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00CBD0, #36A590);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .chat-summary-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary-7);
+  }
+  .chat-summary-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .chat-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--color-text-3);
+  }
+  .chat-meta-value {
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .chat-meta-stars {
+    color: var(--color-accent-orange-6);
+    letter-spacing: 1px;
+  }
+  .chat-meta-stars .empty {
+    color: var(--color-text-4);
+  }
+  .chat-summary-text {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 20px;
+  }
+  /* AI 生成卡片 */
+  .chat-ai-gen-card {
+    margin: 12px 16px;
+    padding: 14px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+    text-align: center;
+  }
+  .chat-ai-gen-header {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 8px;
+  }
+  .chat-ai-gen-header .ai-icon {
+    width: 18px; height: 18px;
+    color: var(--color-primary-6); font-size: 16px; flex-shrink: 0;
+  }
+  .chat-ai-gen-header .ai-title {
+    font-size: 13px; font-weight: 600; color: var(--color-primary-7);
+  }
+  .chat-ai-gen-desc {
+    font-size: 12px; color: var(--color-text-3); line-height: 18px;
+    margin-bottom: 12px; text-align: left;
+  }
+  .chat-ai-gen-btn {
+    display: inline-flex; align-items: center; gap: 4px; justify-content: center;
+    height: 32px; padding: 0 20px;
+    background: var(--color-primary-6);
+    border: none; border-radius: var(--radius-btn);
+    cursor: pointer; font-size: 13px; font-weight: 600;
+    color: white; font-family: inherit; transition: all 100ms;
+  }
+  .chat-ai-gen-btn:hover { opacity: 0.9; }
+  .chat-ai-gen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .chat-summary-card.hidden { display: none; }
+  .chat-summary-card.visible { display: block; animation: chatFadeIn 300ms ease; }
+  @keyframes chatFadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== 沟通/跟进时间轴（与销售组一致） ===== */
+  .followup-timeline {
+    padding: 0 16px 12px;
+  }
+  .followup-tl-item {
+    display: flex;
+    gap: 8px;
+  }
+  .followup-tl-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 16px;
+    flex-shrink: 0;
+  }
+  .followup-tl-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border-default);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .followup-tl-dot.active { background: var(--color-primary-6); }
+  .followup-tl-line {
+    width: 2px;
+    flex: 1;
+    background: var(--color-border-default);
+    margin: 2px 0;
+  }
+  .followup-tl-content {
+    flex: 1;
+    padding-bottom: 8px;
+    min-width: 0;
+  }
+  .followup-tl-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--color-text-3);
+    margin-bottom: 2px;
+  }
+  .followup-tl-method {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .followup-tl-text {
+    font-size: 13px;
+    color: var(--color-text-1);
+    line-height: 20px;
+  }
+  .followup-tl-ai-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+    padding: 0 4px;
+    border-radius: 2px;
+    margin-right: 4px;
+    font-weight: 500;
+  }
+
+  /* ===== 新人进度 ===== */
+  .newcomer-progress {
+    margin: 0 16px 12px;
+    padding: 12px;
+    background: var(--color-fill-2);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-border-default);
+  }
+  .newcomer-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .newcomer-icon {
+    font-size: 14px;
+  }
+  .newcomer-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .newcomer-stage-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+    padding: 1px 8px;
+    border-radius: var(--radius-xs);
+  }
+  .newcomer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .newcomer-field {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .newcomer-field-label {
+    font-size: 10px;
+    color: var(--color-text-4);
+  }
+  .newcomer-field-value {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 18px;
+  }
+  .newcomer-field.full-width {
+    grid-column: 1 / -1;
+  }
+
+  /* ===== 备注栏 ===== */
+  .notes-section {
+    padding: 0 16px 12px;
+  }
+  .notes-area {
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 18px;
+    background: var(--color-fill-1);
+    resize: vertical;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+  }
+  .notes-area:focus {
+    border-color: var(--color-primary-6);
+  }
+  .notes-area::placeholder {
+    color: var(--color-text-4);
+  }
+
+  /* ===== 底部操作栏（与销售组一致） ===== */
+  .sidebar-footer {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    gap: 8px;
+    background: var(--color-fill-1);
+  }
+  .action-btn {
+    flex: 1;
+    height: 32px;
+    border-radius: var(--radius-btn);
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .action-btn.btn-primary {
+    background: var(--color-primary-6);
+    color: var(--color-text-7);
+  }
+  .action-btn.btn-primary:hover {
+    background: rgba(54, 165, 144, 0.9);
+  }
+  .action-btn.btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .action-btn.btn-secondary:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .action-btn.btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .action-btn.btn-outline:hover {
+    background: var(--color-fill-hover);
+  }
+  .action-btn.btn-full { flex: 1; }
+  .btn-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* ===== 预警横幅 ===== */
+  .warning-banner {
+    padding: 10px 16px;
+    background: var(--color-danger-1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .warning-banner-icon { font-size: 14px; color: var(--color-accent-orange-6); }
+
+  /* ===== 预警态指标（复用 .metric-item.metric-danger） ===== */
+
+  /* ===== 空状态 ===== */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    color: var(--color-text-4);
+    font-size: 13px;
+  }
+  .empty-state-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">企微侧边栏 · CRM 会员运营（转化组）</div>
+<div class="page-subtitle">4个场景 · 用户画像 / 客户动态 / 沟通记录 / 预警态</div>
+
+<div class="scenes-row">
+
+  <!-- ======================================================
+       场景1：用户画像（主视图）
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-profile">
+      <!-- 头部 -->
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 会员运营</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="导出">↗</div>
+          <div class="header-icon-btn" title="设置">⚙</div>
+        </div>
+      </div>
+
+      <!-- Tab 导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab active">用户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">沟通记录</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 身份卡片（含内联 AI 总结按钮） -->
+        <div class="identity-card" style="align-items: flex-start;">
+          <div class="avatar">林</div>
+          <div class="identity-info" style="flex: 1; min-width: 0;">
+            <div class="identity-name-row">
+              <span class="identity-nickname">林小鱼</span>
+              <span class="identity-star-id">NO.28456</span>
+            </div>
+            <div class="identity-meta">
+              <span>杭州</span>
+              <span class="sep">·</span>
+              <span>自由职业</span>
+              <span class="sep">·</span>
+              <span>互联网</span>
+            </div>
+            <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
+          </div>
+        </div>
+
+        <!-- 身份 & 阶段标签 -->
+        <div class="status-tags-bar">
+          <span class="status-tag tag-member">传术师</span>
+          <span class="status-tag tag-member">组局官</span>
+          <span class="status-tag tag-trial">探索期</span>
+        </div>
+
+        <!-- AI 画像总结（点击生成） -->
+        <div class="ai-portrait-gen-card" id="aiPortraitGenCard">
+          <div class="ai-portrait-gen-header">
+            <span class="ai-icon">✦</span>
+            <span class="ai-title">AI 画像总结</span>
+          </div>
+          <div class="ai-portrait-gen-desc">基于客户全维度数据，AI 自动生成客户画像分析</div>
+          <button class="ai-portrait-gen-btn" id="aiPortraitGenBtn" onclick="generateAiPortrait()">✦ 生成画像总结</button>
+        </div>
+
+        <!-- AI 画像总结（生成后展示） -->
+        <div class="ai-summary-card hidden" id="aiSummaryCard">
+          <div class="ai-summary-header">
+            <div class="ai-summary-icon">AI</div>
+            <span class="ai-summary-label">画像总结</span>
+            <div class="ai-summary-actions">
+              <button class="ai-action-btn" onclick="generateAiPortrait()">重新生成</button>
+            </div>
+          </div>
+          <div class="ai-summary-text">该用户为杭州自由职业者，互联网背景，关注AI视频方向。当前为传术师+组局官，探索期阶段。近期活跃度较高：社区发帖5篇、阅读32篇，航海参与2次。会员将于2026-01-15到期，建议提前推送续费方案。</div>
+          <div class="ai-summary-actions" style="margin-top: 8px; margin-left: 0; justify-content: flex-end;">
+            <button class="ai-action-btn">复制</button>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 关键指标（2列） -->
+        <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="metric-item">
+            <span class="metric-label">会员到期时间</span>
+            <span class="metric-value">2026-01-15</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">最近跟进</span>
+            <span class="metric-value">3天前</span>
+          </div>
+        </div>
+
+        <!-- 新人进度 -->
+        <div class="section-header">
+          <span class="section-title">新人进度</span>
+        </div>
+        <div class="newcomer-progress">
+          <div class="newcomer-header">
+            <span class="newcomer-icon">🎯</span>
+            <span class="newcomer-title">作业关键信息</span>
+            <span class="newcomer-stage-badge">探索期</span>
+          </div>
+          <div class="newcomer-grid">
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">方向 & 赛道</span>
+              <span class="newcomer-field-value">AI视频、自媒体</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">当前状态</span>
+              <span class="newcomer-field-value">探索中</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">优势</span>
+              <span class="newcomer-field-value">有剪辑基础，执行力强</span>
+            </div>
+            <div class="newcomer-field">
+              <span class="newcomer-field-label">短板</span>
+              <span class="newcomer-field-value">缺少变现路径认知</span>
+            </div>
+            <div class="newcomer-field full-width">
+              <span class="newcomer-field-label">目标 & 展望</span>
+              <span class="newcomer-field-value">实现航海变现 1000 元，建立稳定的视频创作流程</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 高频参与项目 -->
+        <div class="section-header">
+          <span class="section-title">高频参与项目</span>
+        </div>
+        <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+          <span class="tag-chip tag-interest">AI视频变现 ×2</span>
+          <span class="tag-chip tag-interest">小红书运营 ×1</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 客户标签（3组） -->
+        <div class="section-header" style="padding-bottom: 4px;">
+          <span class="section-title">客户标签</span>
+        </div>
+        <div class="tags-section" style="display: flex; flex-direction: column; gap: 10px; padding: 0 16px 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">企微标签</span>
+            <div class="tags-row">
+              <span class="tag-chip tag-base">知识付费</span>
+              <span class="tag-chip tag-base">高活跃</span>
+              <span class="tag-chip tag-base">深圳</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">行为标签</span>
+            <div class="tags-row">
+              <span class="tag-chip tag-interest">活跃分享者</span>
+              <span class="tag-chip tag-interest">连续签到7天</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; color: var(--color-text-4); line-height: 1.55;">属性标签</span>
+            <div class="tags-row">
+              <span class="tag-chip tag-identity">跨境电商</span>
+              <span class="tag-chip tag-identity">年营收500W+</span>
+              <span class="tag-chip" style="background: transparent; border: 1px solid var(--color-primary-6); color: var(--color-primary-6);">+ 添加</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 最近跟进 -->
+        <div class="section-header">
+          <span class="section-title">最近跟进</span>
+          <span class="section-action" style="color: var(--color-primary-6); font-size: 12px;">更多请前往CRM后台查看</span>
+        </div>
+        <div class="followup-timeline">
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot active"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-16</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论 AI 视频方向，用户反馈卡在选题环节，推荐了小红书案例库</div>
+            </div>
+          </div>
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-01</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次沟通，了解基础情况，用户对自媒体变现感兴趣</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="sidebar-footer">
+        <button class="action-btn btn-primary btn-full">
+          <span class="btn-icon">✎</span> 写跟进
+        </button>
+      </div>
+    </div>
+    <div class="scene-label">场景1：用户画像</div>
+    </div>
+    <div class="prd-panel" data-prd-key="delivery-s1">
+      <div class="prd-title">交付-场景1 · 用户画像</div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">会员身份卡片</div>
+        <div class="prd-card-body">头像　　来源 企微 ｜ 规则 取姓氏首字
+昵称　　来源 企微
+星球编号　来源 星球
+基础信息　城市 · 职业 · 行业（来源 星球问卷）
+备注　　来源 CRM ｜ 点击编辑
+
+身份 &amp; 阶段标签
+　身份标签　传术师 / 组局官 等（来源 社群系统）
+　阶段标签　探索期 / 增长期 等（来源 CRM）</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">AI 画像总结</div>
+        <div class="prd-card-body">默认态　隐藏，显示「生成 AI 总结」按钮
+生成态　渐变背景卡片，展示 AI 分析内容
+　含复制 / 刷新操作
+预警态　红色渐变「流失预警」风格，直接展示
+来源　　AI 模型基于用户行为数据生成</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">活跃度 + 新手任务进度</div>
+        <div class="prd-card-body">活跃度指标（5项网格）
+　连续沉默天数 / 本月活跃天数 / 发帖 / 航海 / 聚会
+　来源　行为数据聚合
+　含「查看详情」入口
+
+新人进度（作业关键信息卡片）
+　方向 &amp; 赛道　用户选择的探索方向
+　当前状态　　探索中 / 执行中 / 已变现
+　优势　　　　用户自述
+　短板　　　　用户自述
+　目标 &amp; 展望　用户目标描述
+　来源　新手任务系统</div>
+      </div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">高频项目 + 标签 + 跟进</div>
+        <div class="prd-card-body">高频参与项目
+　来源　鱼丸航海/聚会记录
+　格式　项目名 ×参与次数
+
+标签（企微标签）
+　基础标签　如 普通在期圈友
+　续费标签　如 续费期
+　兴趣标签　如 AI视频 / 自媒体 / 小红书
+　含「管理标签」入口
+
+最近跟进
+　来源 CRM，显示最近 2 条
+　标注 [AI] 自动生成标签
+　含「查看全部」入口</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景2：客户动态
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-behavior">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 会员运营</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="导出">↗</div>
+          <div class="header-icon-btn" title="设置">⚙</div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab active">客户动态</div>
+        <div class="nav-tab">沟通记录</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 行为统计概览（点击 = 一级筛选，按来源平台） -->
+        <div class="metrics-grid metrics-4col">
+          <div class="metric-item metric-center metric-filterable" data-filter="community" data-subs='[{"label":"发帖","value":"5","filter":"community-post"},{"label":"阅读","value":"32","filter":"community-read"},{"label":"评论","value":"18","filter":"community-comment"},{"label":"点赞","value":"40","filter":"community-like"},{"label":"投锚","value":"4","filter":"community-anchor"},{"label":"收藏","value":"12","filter":"community-collect"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">111</span>
+            <span class="metric-label">官网社区</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="circle" data-subs='[{"label":"发帖","value":"3","filter":"circle-post"},{"label":"评论","value":"5","filter":"circle-comment"},{"label":"点赞","value":"5","filter":"circle-like"},{"label":"投锚","value":"2","filter":"circle-anchor"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">15</span>
+            <span class="metric-label">深海圈</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="voyage" data-subs='[{"label":"参加","value":"2","filter":"voyage-join"},{"label":"打卡","value":"5","filter":"voyage-checkin"},{"label":"讨论","value":"1","filter":"voyage-discuss"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">8</span>
+            <span class="metric-label">航海</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="gathering" data-subs='[{"label":"发起","value":"1","filter":"gathering-create"},{"label":"取消","value":"1","filter":"gathering-cancel"},{"label":"导入嘉宾","value":"1","filter":"gathering-import"},{"label":"报名","value":"2","filter":"gathering-signup"},{"label":"退出","value":"1","filter":"gathering-quit"},{"label":"签到","value":"2","filter":"gathering-checkin"},{"label":"反馈","value":"2","filter":"gathering-feedback"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">10</span>
+            <span class="metric-label">聚会</span>
+          </div>
+        </div>
+
+        <!-- 二级子筛选条（点击来源类统计后展开） -->
+        <div class="sub-filter-bar" id="subFilterBar">
+        </div>
+
+        <!-- 行为时间线 -->
+        <div class="timeline-section">
+          <div class="timeline-date-header">今天 · 2025-12-20</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">14:32</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#AI视频</span> 「如何用AI做短视频月入过万」</div>
+              <div class="timeline-duration">3min</div>
+            </div>
+            <div class="timeline-item" data-activity="community-collect community">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">收藏</span>
+                <span class="timeline-time">14:20</span>
+              </div>
+              <div class="timeline-desc">收藏了「2025小红书运营指南 · 从0到1」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">昨天 · 2025-12-19</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="voyage-checkin voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">航海打卡</span>
+                <span class="timeline-time">21:15</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#AI视频变现航海</span> 打卡了「Day 12 · 完成第三个AI视频剪辑」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-comment community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表评论</span>
+                <span class="timeline-time">18:40</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了...」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-18</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="voyage-join voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">参加航海</span>
+                <span class="timeline-time">10:00</span>
+              </div>
+              <div class="timeline-desc">报名参加了 <span class="hl">AI视频变现</span> 航海（第2次）</div>
+            </div>
+            <div class="timeline-item" data-activity="community-post community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表内容</span>
+                <span class="timeline-time">09:20</span>
+              </div>
+              <div class="timeline-desc">发表了 <span class="hl">#实操复盘</span>「我的AI视频制作之路」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-15</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="gathering-create gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发起聚会</span>
+                <span class="timeline-time">15:00</span>
+              </div>
+              <div class="timeline-desc">发起了「深圳站 · 生财有术线下聚会」<span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-import gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">导入嘉宾</span>
+                <span class="timeline-time">16:30</span>
+              </div>
+              <div class="timeline-desc">为「深圳站 · 生财有术线下聚会」导入了 5 位嘉宾<span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-signup gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会报名</span>
+                <span class="timeline-time">10:00</span>
+              </div>
+              <div class="timeline-desc">报名了「杭州站 · AI副业交流聚会」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-10</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="gathering-checkin gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会签到</span>
+                <span class="timeline-time">14:05</span>
+              </div>
+              <div class="timeline-desc">在「杭州站 · AI副业交流聚会」完成签到</div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-feedback gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会反馈 <span class="tag tag-default" style="font-size:10px; margin-left:4px;">嘉宾</span></span>
+                <span class="timeline-time">18:20</span>
+              </div>
+              <div class="timeline-desc">填写了「杭州站 · AI副业交流聚会」反馈：活动组织很好，认识了同频的人</div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-cancel gathering">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">取消聚会</span>
+                <span class="timeline-time">09:30</span>
+              </div>
+              <div class="timeline-desc">取消了「上海站 · 自媒体变现私享会」<span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-quit gathering">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">退出聚会</span>
+                <span class="timeline-time">11:00</span>
+              </div>
+              <div class="timeline-desc">退出了「北京站 · 知识付费圆桌会」，原因：时间冲突</div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-checkin gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会签到</span>
+                <span class="timeline-time">14:10</span>
+              </div>
+              <div class="timeline-desc">在「广州站 · 生财圈友见面会」完成签到</div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-signup gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会报名</span>
+                <span class="timeline-time">10:00</span>
+              </div>
+              <div class="timeline-desc">报名了「广州站 · 生财圈友见面会」</div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-feedback gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">聚会反馈 <span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></span>
+                <span class="timeline-time">20:00</span>
+              </div>
+              <div class="timeline-desc">填写了「广州站 · 生财圈友见面会」反馈：到场率85%，整体效果不错</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-label">场景2：客户动态</div>
+    </div>
+    <div class="prd-panel" data-prd-key="delivery-s2">
+      <div class="prd-title">交付-场景2 · 行为动态</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">Option C 两级筛选</div>
+        <div class="prd-card-body">一级筛选（按来源平台，4列网格）
+　官网社区 / 深海圈 / 航海 / 聚会
+　每格显示累计数量，点击筛选时间线
+
+二级筛选（按行为子项，chips 横滑）
+　全部 + 各子行为（含数量）
+　如 发帖 5 / 阅读 32 / 评论 18 / 点赞 40 / 投锚 4
+　规则　单选切换，再次点击取消
+　规则　子行为项因一级筛选而变</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">行为时间线</div>
+        <div class="prd-card-body">按日期分组，倒序排列
+日期头　今天 / 昨天 / 具体日期
+
+圆点颜色按来源区分
+　蓝色 = 社区阅读 / 发帖
+　橙色 = 航海相关（打卡 / 参加）
+　绿色 = 收藏 / 聚会
+　红色 = 退出聚会 / 取消聚会
+　灰色 = 评论等
+
+聚会行为
+　组局官：发起聚会 / 取消聚会 / 导入嘉宾
+　圈友：报名 / 退出 / 签到 / 填写反馈
+　组局官操作附带「组局官」角色标签
+　填写反馈需标记角色（嘉宾/组局官），圈友不标记
+
+每条含　类型圆点 + 行为标题 + 时间
+　　　　+ 内容摘要（可选附加阅读时长等）
+无底部操作栏</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景3：沟通记录
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-comms">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 会员运营</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="导出">↗</div>
+          <div class="header-icon-btn" title="设置">⚙</div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab active">沟通记录</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- AI 聊天总结 -->
+        <div class="chat-ai-gen-card" id="chatAiGenCard">
+          <div class="chat-ai-gen-header">
+            <span class="ai-icon">✦</span>
+            <span class="ai-title">AI 沟通记录总结</span>
+          </div>
+          <div class="chat-ai-gen-desc">基于客户沟通记录数据，AI 自动生成沟通分析</div>
+          <button class="chat-ai-gen-btn" id="chatAiGenBtn" onclick="generateChatAiSummary()">✦ 生成沟通总结</button>
+        </div>
+        <div class="chat-summary-card hidden" id="chatSummaryCard">
+          <div class="chat-summary-header">
+            <div class="chat-summary-icon">AI</div>
+            <span class="chat-summary-label">聊天记录总结</span>
+          </div>
+          <div class="chat-summary-meta">
+            <div class="chat-meta-item">
+              友好度
+              <span class="chat-meta-stars">★★★★<span class="empty">★</span></span>
+            </div>
+            <div class="chat-meta-item">
+              续费意愿
+              <span class="chat-meta-value" style="color: var(--color-warning-6);">观望中</span>
+            </div>
+          </div>
+          <div class="chat-summary-text">用户整体沟通友好，愿意交流但决策偏慢，对续费持观望态度，核心顾虑为方向不清晰。过往沟通中多次提到对AI视频感兴趣但缺乏具体落地路径，建议通过案例引导推进。</div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 沟通时间轴 -->
+        <div class="section-header">
+          <span class="section-title">沟通时间轴</span>
+        </div>
+        <div class="followup-timeline">
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot active"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-16</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论 AI 视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-12-01</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-11-15</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>新人首次沟通，收集作业信息，推荐了航海项目。</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="scene-label">场景3：沟通记录</div>
+    </div>
+    <div class="prd-panel" data-prd-key="delivery-s3">
+      <div class="prd-title">交付-场景3 · 沟通记录</div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">AI 聊天总结</div>
+        <div class="prd-card-body">默认显示「AI 生成聊天记录总结」按钮
+点击后生成（按钮→生成中...→卡片淡入）
+渐变背景卡片
+友好度　★ 评分（1-5 星，如 ★★★★☆）
+续费意愿　文字标签
+　颜色　观望中=橙色 / 积极=绿色 / 消极=红色
+总结文本　AI 分析近期沟通内容</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">沟通时间轴 + 备注</div>
+        <div class="prd-card-body">时间倒序展示沟通记录
+存在对话的才会在0点出发AI计算
+日期 + [AI] 自动总结标签 + 内容摘要
+每条含 AI 智能分析标签（如 选题困难、方向不明等）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景4：预警态 · 用户沉默 / 活跃下降
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-warning">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 会员运营</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="导出">↗</div>
+          <div class="header-icon-btn" title="设置">⚙</div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab active">用户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">沟通记录</div>
+      </div>
+
+      <!-- 预警横幅 -->
+      <div class="warning-banner">
+        <span class="warning-banner-icon">⚠</span>
+        <span>用户连续沉默 15 天，活跃度显著下降，存在流失风险</span>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 身份卡片 -->
+        <div class="identity-card">
+          <div class="avatar" style="opacity: 0.7;">赵</div>
+          <div class="identity-info">
+            <div class="identity-name-row">
+              <span class="identity-nickname">赵明远</span>
+              <span class="identity-star-id">NO.31205</span>
+            </div>
+            <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
+            <div class="identity-meta">
+              <span>深圳</span>
+              <span class="sep">·</span>
+              <span>创业者</span>
+              <span class="sep">·</span>
+              <span>电商</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 身份 & 阶段标签 -->
+        <div class="status-tags-bar">
+          <span class="status-tag tag-trial">增长期</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 企微标签 -->
+        <div class="section-header" style="padding-bottom: 4px;">
+          <span class="section-title">标签</span>
+          <span class="section-action">管理标签 ›</span>
+        </div>
+        <div class="tags-section">
+          <div class="tags-row">
+            <span class="tag-chip tag-renew">续费期</span>
+            <span class="tag-chip tag-interest">电商</span>
+            <span class="tag-chip tag-interest">出海</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- AI 画像总结（流失预警 - 全宽无边框） -->
+        <div style="background: #FFEDE8; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--color-danger-6); display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; font-weight: 700; flex-shrink: 0;">AI</div>
+            <span style="font-size: 14px; font-weight: 700; color: var(--color-danger-6);">画像总结 · 流失预警</span>
+          </div>
+          <div style="font-size: 12px; color: var(--color-text-2); line-height: 1.5;">该用户近半月无任何社区活跃行为，上次沟通中对续费持犹豫态度。用户为电商创业者，曾参与出海航海1次但未完成打卡。建议主动触达了解近况，推荐电商相关精华内容或活动，降低流失风险。</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 活跃度快照（预警） -->
+        <div class="section-header">
+          <span class="section-title">活跃度</span>
+          <span class="section-action">查看详情 ›</span>
+        </div>
+        <div class="metrics-grid metrics-5col">
+          <div class="metric-item metric-center metric-danger">
+            <span class="metric-value danger">15</span>
+            <span class="metric-label">连续沉默天数</span>
+          </div>
+          <div class="metric-item metric-center metric-danger">
+            <span class="metric-value danger">2</span>
+            <span class="metric-label">本月活跃天数</span>
+          </div>
+          <div class="metric-item metric-center">
+            <span class="metric-value">1</span>
+            <span class="metric-label">发帖</span>
+          </div>
+          <div class="metric-item metric-center">
+            <span class="metric-value">1</span>
+            <span class="metric-label">航海</span>
+          </div>
+          <div class="metric-item metric-center">
+            <span class="metric-value">0</span>
+            <span class="metric-label">聚会</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 最近跟进（较久远） -->
+        <div class="section-header">
+          <span class="section-title">最近跟进</span>
+          <span class="section-action">查看全部 ›</span>
+        </div>
+        <div class="followup-timeline">
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot" style="background: var(--color-danger-6);"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta" style="color: var(--color-danger-6);">2025-12-05 · 15天前</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户表示最近忙于业务，暂时没时间参与社区活动，对续费持观望态度。销售李小明当日也有电话跟进。</div>
+            </div>
+          </div>
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">2025-11-20</div>
+              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>推荐了出海电商相关航海，用户表示感兴趣但未报名</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="sidebar-footer">
+        <button class="action-btn btn-primary btn-full">
+          <span class="btn-icon">✎</span> 写跟进
+        </button>
+      </div>
+    </div>
+    <div class="scene-label">场景4：预警态</div>
+    </div>
+    <div class="prd-panel" data-prd-key="delivery-s4">
+      <div class="prd-title">交付-场景4 · 预警态</div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">预警触发条件</div>
+        <div class="prd-card-body">连续沉默 N 天（如 15 天）
+活跃度显著下降
+存在流失风险
+阈值可后台配置</div>
+      </div>
+      <div class="prd-card" style="--accent: #D83931;">
+        <div class="prd-card-title">视觉变化</div>
+        <div class="prd-card-body">顶部红色预警横幅
+　⚠ 用户连续沉默 {N} 天，活跃度显著下降
+
+身份卡片透明度 0.7
+标签　增加预警阶段标签（如 增长期→流失风险）
+
+AI 画像总结 → 红色渐变「流失预警」风格
+　直接展示（无需点击生成）
+　内容偏重流失风险分析
+
+活跃度关键数值红色高亮
+　连续沉默天数 + 本月活跃天数 → danger 红色
+
+跟进记录时间距当前较远
+　如「15天前」红色强调</div>
+      </div>
+      <div class="prd-card" style="--accent: #242528;">
+        <div class="prd-card-title">操作</div>
+        <div class="prd-card-body">底部操作栏仍可用
+写跟进 / 备注 / 更多
+可正常执行跟进和备注操作</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ── AI 画像总结生成 ── */
+  function generateAiPortrait() {
+    var btn = document.getElementById('aiPortraitGenBtn');
+    var genCard = document.getElementById('aiPortraitGenCard');
+    var card = document.getElementById('aiSummaryCard');
+    if (btn.disabled) return;
+    btn.textContent = '生成中...';
+    btn.disabled = true;
+    setTimeout(function() {
+      genCard.style.display = 'none';
+      card.classList.remove('hidden');
+      card.classList.add('visible');
+    }, 1000);
+  }
+
+  /* ── 两级统计筛选（转化组 Option C + 方案A） ── */
+  function toggleSourceFilter(el) {
+    var isActive = el.classList.contains('active');
+    var grid = el.closest('.metrics-grid');
+    // 清除所有激活态
+    grid.querySelectorAll('.metric-filterable').forEach(function(m) {
+      m.classList.remove('active');
+    });
+    // 隐藏二级筛选
+    var subBar = document.getElementById('subFilterBar');
+    subBar.innerHTML = '';
+    subBar.classList.remove('visible');
+
+    if (!isActive) {
+      el.classList.add('active');
+    }
+
+    var filterVal = el.classList.contains('active') ? el.getAttribute('data-filter') : null;
+    var subsData = el.getAttribute('data-subs');
+
+    // 如果有二级子项，展开子筛选条
+    if (filterVal && subsData) {
+      var subs = JSON.parse(subsData);
+      // 添加「全部」chip
+      var allChip = document.createElement('button');
+      allChip.className = 'sub-filter-chip active';
+      allChip.setAttribute('data-sub-filter', '');
+      allChip.innerHTML = '全部';
+      allChip.onclick = function() { toggleSubFilter(this, filterVal); };
+      subBar.appendChild(allChip);
+      // 添加各子项
+      subs.forEach(function(s) {
+        var chip = document.createElement('button');
+        chip.className = 'sub-filter-chip';
+        chip.setAttribute('data-sub-filter', s.filter);
+        chip.innerHTML = s.label + ' <span class="chip-count">' + s.value + '</span>';
+        chip.onclick = function() { toggleSubFilter(this, filterVal); };
+        subBar.appendChild(chip);
+      });
+      subBar.classList.add('visible');
+    }
+
+    // 筛选时间线
+    applyTimelineFilter(filterVal, null);
+  }
+
+  function toggleSubFilter(chip, parentFilter) {
+    var subBar = chip.closest('.sub-filter-bar');
+    subBar.querySelectorAll('.sub-filter-chip').forEach(function(c) {
+      c.classList.remove('active');
+    });
+    chip.classList.add('active');
+    var subVal = chip.getAttribute('data-sub-filter');
+    // 空值 = 「全部」子项 → 按父级筛选
+    applyTimelineFilter(parentFilter, subVal || null);
+  }
+
+  function applyTimelineFilter(sourceFilter, subFilter) {
+    var section = document.querySelector('.sidebar-body .timeline-section');
+    if (!section) return;
+
+    section.querySelectorAll('.timeline-item').forEach(function(item) {
+      var activities = (item.getAttribute('data-activity') || '').split(' ');
+      var show = true;
+      if (subFilter) {
+        // 二级：精确匹配子筛选值
+        show = activities.indexOf(subFilter) !== -1;
+      } else if (sourceFilter) {
+        // 一级：匹配来源或行为类型
+        show = activities.indexOf(sourceFilter) !== -1;
+      }
+      item.style.display = show ? '' : 'none';
+    });
+
+    // 隐藏无可见项的日期头
+    section.querySelectorAll('.timeline-list').forEach(function(list) {
+      var hasVisible = Array.from(list.querySelectorAll('.timeline-item')).some(function(i) {
+        return i.style.display !== 'none';
+      });
+      var header = list.previousElementSibling;
+      if (header && header.classList.contains('timeline-date-header')) {
+        header.style.display = hasVisible ? '' : 'none';
+      }
+      list.style.display = hasVisible ? '' : 'none';
+    });
+  }
+  // AI Chat Summary — click to generate
+  function generateChatAiSummary() {
+    var btn = document.getElementById('chatAiGenBtn');
+    var genCard = document.getElementById('chatAiGenCard');
+    var card = document.getElementById('chatSummaryCard');
+    if (btn.disabled) return;
+    btn.textContent = '生成中...';
+    btn.disabled = true;
+    setTimeout(function() {
+      genCard.style.display = 'none';
+      card.classList.remove('hidden');
+      card.classList.add('visible');
+    }, 1500);
+  }
+</script>
+
+<script src="prd-editor.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+/**
+ * PRD Editor — 通用可编辑 PRD 面板样式
+ * 使用方式：<link rel="stylesheet" href="prd-editor.css">
+ *
+ * 支持两种 PRD 结构：
+ *   1. Card 模式：.prd-panel > .prd-card (.prd-card-title + .prd-card-body)
+ *   2. Section 模式：.prd-panel > .prd-section (.prd-section-title + .prd-label + .prd-item + .prd-sub)
+ *
+ * 面板需添加 data-prd-key="unique-key" 属性用于 localStorage 持久化
+ */
+
+/* ========== 基础布局（Card 模式） ========== */
+.prd-panel {
+  position: relative;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--color-text-2, #3B3D40);
+}
+.prd-panel::-webkit-scrollbar { width: 4px; }
+.prd-panel::-webkit-scrollbar-thumb {
+  background: var(--color-text-4, #BDC1C7);
+  border-radius: 2px;
+}
+.prd-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-1, #242528);
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #D2D5DB;
+}
+.prd-card {
+  position: relative;
+  background: #FFFFFF;
+  border-radius: 6px;
+  padding: 10px 12px 10px 14px;
+  border-left: 3px solid var(--accent, #757980);
+}
+.prd-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent, #757980);
+  margin-bottom: 4px;
+}
+.prd-card-body {
+  font-size: 11px;
+  white-space: pre-wrap;
+  color: #3B3D40;
+  line-height: 1.7;
+}
+
+/* ========== Card 行级编辑 ========== */
+.prd-card-line {
+  position: relative;
+  font-size: 11px;
+  color: #3B3D40;
+  line-height: 1.7;
+  padding-right: 16px;
+  min-height: 18px;
+}
+.prd-card-line-delete {
+  position: absolute; top: 1px; right: -2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--color-text-4, #BDC1C7); font-size: 11px; line-height: 1;
+  display: none; align-items: center; justify-content: center;
+}
+.prd-card-line:hover > .prd-card-line-delete { display: flex; }
+.prd-card-line-delete:hover { background: #FFEDE8; color: #F54A45; }
+.prd-card-add-line {
+  font-size: 10px; color: var(--color-text-4, #BDC1C7); cursor: pointer;
+  padding: 1px 0; transition: color 0.15s; margin-top: 2px;
+}
+.prd-card-add-line:hover { color: var(--color-primary-6, #36A590); }
+
+/* ========== 基础布局（Section 模式） ========== */
+.prd-section {
+  position: relative;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #F0E6CC;
+}
+.prd-section:last-of-type { border-bottom: none; }
+.prd-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.prd-section-title.orange { background: #FFF7E9; color: var(--color-accent-orange-6, #FF7D00); }
+.prd-section-title.green  { background: var(--color-primary-1, #E9FFF8); color: var(--color-primary-6, #36A590); }
+.prd-section-title.blue   { background: var(--color-info-1, #E8F4FF); color: var(--color-info-6, #327CFB); }
+.prd-section-title.red    { background: var(--color-danger-1, #FFEDE8); color: var(--color-danger-6, #F54A45); }
+.prd-item {
+  position: relative;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--color-text-2, #3B3D40);
+  padding-left: 12px;
+}
+.prd-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-4, #BDC1C7);
+}
+.prd-item strong { color: var(--color-text-1, #242528); font-weight: 600; }
+.prd-item code {
+  background: var(--color-fill-3, #F2F5F7);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: monospace;
+}
+.prd-sub {
+  position: relative;
+  padding-left: 24px;
+  font-size: 12px;
+  color: var(--color-text-3, #757980);
+  line-height: 18px;
+}
+.prd-label {
+  position: relative;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-1, #242528);
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+.prd-tag-new {
+  display: inline-block;
+  background: var(--color-accent-orange-6, #FF7D00);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 3px;
+  line-height: 16px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* ========== Contenteditable 编辑态 ========== */
+[contenteditable] {
+  outline: none;
+}
+.prd-title[contenteditable],
+.prd-card-title[contenteditable],
+.prd-card-body[contenteditable],
+.prd-card-line[contenteditable],
+.prd-section-title[contenteditable],
+.prd-label[contenteditable],
+.prd-item[contenteditable],
+.prd-sub[contenteditable] {
+  cursor: text;
+  border-radius: 3px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.prd-title[contenteditable]:hover,
+.prd-card-title[contenteditable]:hover,
+.prd-card-body[contenteditable]:hover,
+.prd-card-line[contenteditable]:hover,
+.prd-section-title[contenteditable]:hover,
+.prd-label[contenteditable]:hover,
+.prd-item[contenteditable]:hover,
+.prd-sub[contenteditable]:hover {
+  background: rgba(255,255,255,0.4);
+}
+.prd-title[contenteditable]:focus,
+.prd-card-title[contenteditable]:focus,
+.prd-card-body[contenteditable]:focus,
+.prd-card-line[contenteditable]:focus,
+.prd-section-title[contenteditable]:focus,
+.prd-label[contenteditable]:focus,
+.prd-item[contenteditable]:focus,
+.prd-sub[contenteditable]:focus {
+  box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.5);
+  background: rgba(255,255,255,0.6);
+}
+
+/* ========== Card 删除 ========== */
+.prd-card-delete {
+  position: absolute; top: 4px; right: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--color-text-4, #BDC1C7); font-size: 14px; line-height: 1;
+  display: none; align-items: center; justify-content: center;
+}
+.prd-card:hover .prd-card-delete { display: flex; }
+.prd-card-delete:hover { background: #FFEDE8; color: #F54A45; }
+
+/* ========== Section 删除 ========== */
+.prd-section-delete {
+  position: absolute; top: 0; right: 0;
+  padding: 2px 6px; border-radius: 4px;
+  background: transparent; border: 1px solid transparent; cursor: pointer;
+  color: var(--color-text-4, #BDC1C7); font-size: 11px; line-height: 1.2;
+  display: none; align-items: center; gap: 2px;
+}
+.prd-section:hover > .prd-section-delete { display: flex; }
+.prd-section-delete:hover { background: #FFEDE8; color: #F54A45; border-color: #F54A45; }
+
+/* ========== Item 删除 ========== */
+.prd-item-delete {
+  position: absolute; top: 0; right: -6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--color-text-4, #BDC1C7); font-size: 12px; line-height: 1;
+  display: none; align-items: center; justify-content: center;
+}
+.prd-item:hover > .prd-item-delete,
+.prd-label:hover > .prd-item-delete,
+.prd-sub:hover > .prd-item-delete { display: flex; }
+.prd-item-delete:hover { background: #FFEDE8; color: #F54A45; }
+
+/* ========== 添加按钮 ========== */
+.prd-add-card,
+.prd-add-section {
+  border: 1px dashed var(--color-text-4, #BDC1C7);
+  border-radius: 6px; padding: 8px;
+  text-align: center; cursor: pointer;
+  color: var(--color-text-4, #BDC1C7); font-size: 12px;
+  transition: all 0.15s;
+}
+.prd-add-section { margin-top: 8px; }
+.prd-add-card:hover,
+.prd-add-section:hover {
+  border-color: var(--color-primary-6, #36A590);
+  color: var(--color-primary-6, #36A590);
+  background: rgba(54, 165, 144, 0.05);
+}
+.prd-add-item {
+  font-size: 11px; color: var(--color-text-4, #BDC1C7); cursor: pointer;
+  padding: 2px 0 2px 12px; transition: color 0.15s;
+}
+.prd-add-item:hover { color: var(--color-primary-6, #36A590); }
+
+/* ========== Toolbar ========== */
+.prd-toolbar,
+.prd-edit-toolbar {
+  display: flex; gap: 8px; padding-top: 6px;
+  border-top: 1px solid #E4E4E7; margin-top: 4px;
+}
+.prd-edit-toolbar {
+  padding-top: 10px;
+  border-top-color: #F0E6CC;
+  margin-top: 8px;
+}
+.prd-toolbar-btn,
+.prd-edit-toolbar-btn {
+  font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #E4E4E7; background: white;
+  cursor: pointer; color: var(--color-text-3, #757980);
+}
+.prd-toolbar-btn:hover,
+.prd-edit-toolbar-btn:hover {
+  background: #F2F5F7; color: var(--color-text-1, #242528);
+}
+.prd-toolbar-btn.danger:hover,
+.prd-edit-toolbar-btn.danger:hover {
+  background: #FFEDE8; color: #F54A45; border-color: #F54A45;
+}
+
+/* ========== Drag & Drop ========== */
+.prd-card[draggable="true"],
+.prd-section[draggable="true"] {
+  cursor: grab;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+.prd-card[draggable="true"]:active,
+.prd-section[draggable="true"]:active {
+  cursor: grabbing;
+}
+.prd-card.dragging,
+.prd-section.dragging {
+  opacity: 0.35;
+  box-shadow: none;
+}
+.prd-drop-indicator {
+  height: 3px;
+  background: var(--color-primary-6, #36A590);
+  border-radius: 2px;
+  margin: -2px 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+
+/* ========== Insert Zone ========== */
+.prd-insert-zone {
+  height: 8px; position: relative; cursor: pointer; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; margin: -2px 0;
+}
+.prd-insert-zone:hover {
+  height: 28px;
+  background: rgba(54, 165, 144, 0.06);
+  border: 1px dashed rgba(54, 165, 144, 0.4);
+}
+.prd-insert-zone-btn {
+  display: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--color-primary-6, #36A590); color: white; border: none;
+  font-size: 14px; line-height: 1; cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.prd-insert-zone:hover .prd-insert-zone-btn { display: flex; }

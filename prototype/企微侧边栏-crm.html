@@ -1,0 +1,2761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企微侧边栏 · CRM 客户管理 - 交互原型</title>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+
+    --color-accent-orange-6: #FF7D00;
+    --color-accent-orange-1: #FFF7E9;
+
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-6: #242528;
+    --color-fill-hover: #F2F5F7;
+
+    --color-surface-canvas: #F2F5F7;
+
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+
+    --color-overlay: rgba(0,0,0,0.8);
+
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+
+    --radius-xs: 4px;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-pill: 9999px;
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+
+    --font-family: 'PingFang SC', Tahoma, Helvetica, Arial, 'Hiragino Sans GB',
+                   'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    background: #E0E2E6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  /* ===== 页面标题 ===== */
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 13px;
+    color: var(--color-text-3);
+    margin-bottom: 32px;
+  }
+
+  /* ===== 场景容器 ===== */
+  .scenes-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .scene-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .scene-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .scene-label {
+    font-size: 13px;
+    color: var(--color-text-3);
+    margin-top: var(--space-lg);
+  }
+
+  /* PRD 面板：页面特定布局覆盖（基础样式见 prd-editor.css） */
+  .prd-panel {
+    width: 320px;
+    background: #F2F5F7;
+    border-radius: var(--radius-card);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 700px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  /* ===== 侧边栏容器 ===== */
+  .sidebar-frame {
+    width: 360px;
+    height: 700px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ===== 侧边栏头部 ===== */
+  .sidebar-header {
+    height: 40px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    flex-shrink: 0;
+  }
+  .sidebar-header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .sidebar-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .header-icon-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    color: var(--color-text-3);
+    transition: background 0.1s;
+  }
+  .header-icon-btn:hover {
+    background: var(--color-fill-3-hover);
+  }
+
+  /* ===== 三 Tab 导航栏 ===== */
+  .sidebar-nav-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 6px 16px;
+    background: var(--color-fill-3);
+    flex-shrink: 0;
+  }
+  .nav-tab {
+    flex: 1;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-tab:hover {
+    color: var(--color-text-2);
+    background: var(--color-fill-3-hover);
+  }
+  .nav-tab.active {
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+  }
+
+  /* ===== 搜索栏 ===== */
+  .sidebar-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--color-border-default);
+    flex-shrink: 0;
+  }
+  .sidebar-search-input {
+    flex: 1;
+    height: 30px;
+    padding: 0 10px 0 30px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .sidebar-search-input::placeholder {
+    color: var(--color-text-4);
+  }
+  .sidebar-search-input:focus {
+    border-color: var(--color-primary-6);
+  }
+  .search-input-wrap {
+    position: relative;
+    flex: 1;
+  }
+  .search-input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--color-text-4);
+    pointer-events: none;
+  }
+
+  /* ===== 动态类型筛选 ===== */
+  .activity-type-bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .activity-type-bar::-webkit-scrollbar { display: none; }
+  .activity-type-chip {
+    flex-shrink: 0;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.1s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .activity-type-chip:hover {
+    color: var(--color-text-2);
+    background: var(--color-fill-3-hover);
+  }
+  .activity-type-chip.active {
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+  }
+
+  /* ===== 客户动态 - 时间线 ===== */
+  .timeline-section {
+    padding: 0 16px;
+  }
+  .timeline-date-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    padding: 12px 0 8px;
+    border-bottom: 1px solid var(--color-border-default);
+    margin-bottom: 0;
+  }
+  .timeline-list {
+    position: relative;
+  }
+  .timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border-default);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 10px 0 10px 22px;
+    border-bottom: 1px solid var(--color-fill-3);
+  }
+  .timeline-item:last-child {
+    border-bottom: none;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 1px;
+    top: 14px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    border: 2px solid #fff;
+    z-index: 1;
+  }
+  .timeline-dot.dot-blue { background: var(--color-info-6); }
+  .timeline-dot.dot-orange { background: var(--color-accent-orange-6); }
+  .timeline-dot.dot-green { background: var(--color-success-6); }
+  .timeline-dot.dot-teal { background: var(--color-primary-6); }
+  .timeline-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .timeline-type {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .timeline-time {
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .timeline-desc {
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+  }
+  .timeline-desc .hl {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .timeline-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--color-info-6);
+    background: var(--color-info-1);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    font-weight: 500;
+  }
+  .timeline-duration::before {
+    content: '⏱';
+    font-size: 10px;
+  }
+
+  /* ===== 订单列表 ===== */
+  .order-filter-bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .order-filter-bar::-webkit-scrollbar { display: none; }
+  .order-filter-chip {
+    flex-shrink: 0;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.1s;
+    white-space: nowrap;
+  }
+  .order-filter-chip:hover {
+    color: var(--color-text-2);
+    background: var(--color-fill-3-hover);
+  }
+  .order-filter-chip.active {
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .order-list {
+    padding: 0 16px;
+  }
+  .order-card {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-fill-3);
+  }
+  .order-card:last-child { border-bottom: none; }
+  .order-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .order-no {
+    font-size: 11px;
+    color: var(--color-text-4);
+    font-family: monospace;
+  }
+  .order-status {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .order-status.os-paid {
+    color: var(--color-success-6);
+    background: var(--color-success-1);
+  }
+  .order-status.os-pending {
+    color: var(--color-warning-6);
+    background: var(--color-warning-1);
+  }
+  .order-status.os-completed {
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .order-status.os-cancelled {
+    color: var(--color-text-3);
+    background: var(--color-fill-3);
+  }
+  .order-status.os-closed {
+    color: var(--color-danger-6);
+    background: var(--color-danger-1);
+  }
+  .order-status.os-received {
+    color: var(--color-info-6);
+    background: var(--color-info-1);
+  }
+  .order-body {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .order-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-btn);
+    background: var(--color-fill-3);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--color-text-4);
+    font-size: 20px;
+  }
+  .order-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .order-body-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .order-product {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-1);
+    margin-bottom: 4px;
+    line-height: 20px;
+  }
+  .order-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--color-text-3);
+  }
+  .order-amount {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .order-amount .original {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text-4);
+    text-decoration: line-through;
+    margin-left: 4px;
+  }
+  .order-refund {
+    font-size: 11px;
+    color: var(--color-danger-6);
+    margin-top: 4px;
+  }
+
+  /* ===== 滚动区域 ===== */
+  .sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar-body::-webkit-scrollbar { width: 4px; }
+  .sidebar-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.12);
+    border-radius: 2px;
+  }
+  .sidebar-body::-webkit-scrollbar-track { background: transparent; }
+
+  /* ===== 第一区：客户身份卡片 ===== */
+  .identity-card {
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-6), var(--color-primary-7));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .identity-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .identity-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .identity-nickname {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    line-height: 24px;
+  }
+  .identity-star-id {
+    font-size: 11px;
+    color: var(--color-accent-orange-6);
+    background: var(--color-accent-orange-1);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .identity-remark {
+    font-size: 13px;
+    color: var(--color-text-3);
+    line-height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .identity-remark:hover {
+    color: var(--color-text-2);
+  }
+  .identity-remark .edit-hint {
+    color: var(--color-text-4);
+    font-style: italic;
+  }
+  .identity-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+  }
+  .identity-meta .sep {
+    color: var(--color-border-default);
+  }
+
+  /* ===== 第二区：状态标签栏 ===== */
+  .status-tags-bar {
+    padding: 0 16px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .status-tag.tag-paid {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .status-tag.tag-trial {
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+  }
+  .status-tag.tag-potential {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .status-tag.tag-lost {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+  .status-tag.tag-level {
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .status-tag.tag-level:hover {
+    background: #FFECD6;
+  }
+  .status-tag.tag-member {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .status-tag.tag-deleted {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+  .status-tag.tag-friend {
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+  }
+  .status-tag.tag-multi-follow {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .status-tag.tag-reseller {
+    background: #F0E8FF;
+    color: #7B61FF;
+  }
+
+  /* ===== 通用标签 ===== */
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .tag-chip.tag-interest {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+
+  /* ===== 分割线 ===== */
+  .divider {
+    height: 1px;
+    background: var(--color-border-default);
+    margin: 0 16px;
+  }
+  .divider-thick {
+    height: 8px;
+    background: var(--color-fill-3);
+  }
+
+  /* ===== 第三区：关键指标 ===== */
+  .metrics-grid {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .metrics-grid.metrics-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+  .metrics-grid.metrics-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .metrics-grid.metrics-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .metrics-grid.metrics-5col {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .metric-item.metric-center {
+    align-items: center;
+  }
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    background: var(--color-fill-2);
+    border-radius: var(--radius-btn);
+  }
+  .metric-item.metric-filterable {
+    cursor: pointer;
+    transition: all 100ms;
+    border: 1.5px solid transparent;
+  }
+  .metric-item.metric-filterable:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .metric-item.metric-filterable.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .metric-item.metric-filterable.active .metric-value {
+    color: var(--color-primary-6);
+  }
+  .metric-item.metric-filterable.active .metric-label {
+    color: var(--color-primary-7);
+  }
+  .metric-label {
+    font-size: 11px;
+    color: var(--color-text-3);
+    line-height: 17px;
+  }
+  .metric-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .metric-value.danger {
+    color: var(--color-danger-6);
+  }
+  .metric-value.warning {
+    color: var(--color-warning-6);
+  }
+  .stars {
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .stars .empty {
+    color: var(--color-text-4);
+  }
+  .stars-orange {
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .stars-empty {
+    color: var(--color-text-4);
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .metric-item.metric-danger {
+    background: #FFF5F5;
+    border: 1px solid rgba(245,74,69,0.2);
+  }
+
+  /* ===== Metrics Columns (asymmetric flex layout for Scene 4) ===== */
+  .metrics-columns {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .metrics-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ===== Section 标题 ===== */
+  .section-header {
+    padding: 12px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    line-height: 20px;
+  }
+  .section-action {
+    font-size: 12px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+  .section-action:hover {
+    color: var(--color-primary-7);
+  }
+  .section-action-link {
+    font-size: 12px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+  }
+  .section-action-link:hover {
+    color: var(--color-primary-7);
+  }
+
+  /* ===== 最近跟进时间线 ===== */
+  .followup-timeline {
+    padding: 0 16px 12px;
+  }
+  .followup-tl-item {
+    display: flex;
+    gap: 8px;
+  }
+  .followup-tl-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 16px;
+    flex-shrink: 0;
+  }
+  .followup-tl-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border-default);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .followup-tl-dot.active {
+    background: var(--color-primary-6);
+  }
+  .followup-tl-line {
+    width: 2px;
+    flex: 1;
+    background: var(--color-border-default);
+    margin: 2px 0;
+  }
+  .followup-tl-content {
+    flex: 1;
+    padding-bottom: 8px;
+    min-width: 0;
+  }
+  .followup-tl-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--color-text-3);
+    margin-bottom: 2px;
+  }
+  .followup-tl-method {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .followup-tl-text {
+    font-size: 13px;
+    color: var(--color-text-1);
+    line-height: 20px;
+  }
+  .followup-tl-status-change {
+    font-size: 11px;
+    color: var(--color-warning-6);
+    margin-top: 2px;
+  }
+
+  /* ===== 第四区：三层标签 ===== */
+  .tags-section {
+    padding: 0 16px 12px;
+  }
+  .tag-layer {
+    margin-bottom: 10px;
+  }
+  .tag-layer:last-child {
+    margin-bottom: 0;
+  }
+  .tag-layer-label {
+    font-size: 11px;
+    color: var(--color-text-4);
+    line-height: 17px;
+    margin-bottom: 6px;
+  }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .customer-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+  .customer-tag.tag-wechat {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .customer-tag.tag-behavior {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .customer-tag.tag-attribute {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-group-name {
+    font-size: 11px;
+    color: var(--color-text-4);
+    margin-right: 4px;
+  }
+  .tag-add-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    color: var(--color-primary-6);
+    background: transparent;
+    border: 1px dashed var(--color-primary-6);
+    cursor: pointer;
+    transition: background 0.1s;
+    gap: 2px;
+  }
+  .tag-add-btn:hover {
+    background: var(--color-primary-1);
+  }
+  .tag-more {
+    font-size: 11px;
+    color: var(--color-text-4);
+    cursor: pointer;
+    line-height: 22px;
+    padding: 0 4px;
+  }
+  .tag-more:hover {
+    color: var(--color-text-3);
+  }
+
+  /* ===== 第五区：客户来源 & 归属 ===== */
+  .info-list {
+    padding: 0 16px 12px;
+  }
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+  .info-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    flex-shrink: 0;
+    width: 64px;
+  }
+  .info-value {
+    font-size: 13px;
+    color: var(--color-text-1);
+    text-align: right;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ===== 第五区：体验营调研（加强样式） ===== */
+  .survey-card {
+    margin: 0 16px 0;
+    background: var(--color-primary-1);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .survey-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary-7);
+  }
+  .survey-header::before {
+    content: '📋';
+    font-size: 14px;
+  }
+  .survey-body {
+    padding: 0 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .survey-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .survey-label {
+    font-size: 11px;
+    color: var(--color-primary-7);
+    flex-shrink: 0;
+    width: 56px;
+    line-height: 22px;
+  }
+  .survey-value {
+    font-size: 12px;
+    color: var(--color-text-1);
+    font-weight: 500;
+    background: rgba(255,255,255,0.7);
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    line-height: 18px;
+    flex: 1;
+    min-width: 0;
+  }
+  .survey-value.long-text {
+    font-size: 11px;
+    line-height: 16px;
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  /* ===== 第六区：最近跟进 ===== */
+  .followup-list {
+    padding: 0 16px 12px;
+  }
+  .followup-item {
+    position: relative;
+    padding: 8px 0 8px 16px;
+    border-left: 2px solid var(--color-border-default);
+  }
+  .followup-item:last-child {
+    border-left-color: transparent;
+  }
+  .followup-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    border: 2px solid var(--color-fill-1);
+  }
+  .followup-item:last-child::before {
+    background: var(--color-border-default);
+  }
+  .followup-meta {
+    font-size: 11px;
+    color: var(--color-text-3);
+    line-height: 17px;
+    margin-bottom: 2px;
+    display: flex;
+    gap: 4px;
+  }
+  .followup-method {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .followup-content {
+    font-size: 13px;
+    color: var(--color-text-1);
+    line-height: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .followup-status-change {
+    font-size: 11px;
+    color: var(--color-warning-6);
+    margin-top: 2px;
+  }
+  .view-all-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    padding: 8px 0;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+  .view-all-link:hover {
+    color: var(--color-primary-7);
+  }
+
+  /* ===== 底部操作栏 ===== */
+  .sidebar-footer {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    gap: 8px;
+    background: var(--color-fill-1);
+  }
+  .action-btn {
+    flex: 1;
+    height: 32px;
+    border-radius: var(--radius-btn);
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .action-btn.btn-primary {
+    background: var(--color-primary-6);
+    color: var(--color-text-7);
+  }
+  .action-btn.btn-primary:hover {
+    background: rgba(54, 165, 144, 0.9);
+  }
+  .action-btn.btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .action-btn.btn-secondary:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .action-btn.btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .action-btn.btn-outline:hover {
+    background: var(--color-fill-hover);
+  }
+  .action-btn.btn-full {
+    flex: 1;
+  }
+  .btn-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* ===== 跟进表单（展开态） ===== */
+  .followup-form {
+    padding: 12px 16px;
+    background: var(--color-fill-2);
+    border-top: 1px solid var(--color-border-default);
+    display: none;
+  }
+  .followup-form.active {
+    display: block;
+  }
+  .form-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-close {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-3);
+    border-radius: var(--radius-xs);
+  }
+  .form-close:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .form-group {
+    margin-bottom: 10px;
+  }
+  .form-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .form-label .required {
+    color: var(--color-danger-6);
+  }
+  .form-methods {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .method-chip {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 12px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .method-chip:hover {
+    border-color: var(--color-border-hover);
+  }
+  .method-chip.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .form-textarea {
+    width: 100%;
+    height: 72px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    color: var(--color-text-1);
+    line-height: 20px;
+    transition: border-color 0.15s;
+  }
+  .form-textarea::placeholder {
+    color: var(--color-text-4);
+  }
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .form-inline-row {
+    display: flex;
+    gap: 8px;
+  }
+  .form-inline-row .form-group {
+    flex: 1;
+  }
+  .form-select {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23757980' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .form-select:focus {
+    outline: none;
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .form-input {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    transition: border-color 0.15s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .form-input::placeholder {
+    color: var(--color-text-4);
+  }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .form-btn {
+    height: 28px;
+    padding: 0 16px;
+    border-radius: var(--radius-btn);
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.1s;
+  }
+  .form-btn.btn-submit {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .form-btn.btn-submit:hover {
+    background: rgba(54, 165, 144, 0.9);
+  }
+  .form-btn.btn-cancel {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .form-btn.btn-cancel:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .char-count {
+    font-size: 11px;
+    color: var(--color-text-4);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* ===== 异常态：客户删除 ===== */
+  .sidebar-frame.deleted .identity-nickname,
+  .sidebar-frame.deleted .identity-meta,
+  .sidebar-frame.deleted .followup-content {
+    color: #999;
+  }
+  .sidebar-frame.deleted .avatar {
+    opacity: 0.5;
+  }
+
+  /* ===== 加载骨架屏 ===== */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    to { left: 100%; }
+  }
+
+  /* ===== 标签选择弹层 ===== */
+  .tag-picker-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+    display: none;
+    align-items: flex-end;
+    animation: fadeIn 0.2s;
+  }
+  .tag-picker-overlay.active {
+    display: flex;
+  }
+  .tag-picker {
+    width: 100%;
+    max-height: 60%;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    padding: 16px;
+    animation: slideUp 0.2s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .tag-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .tag-picker-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .tag-picker-close {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-3);
+    border-radius: var(--radius-xs);
+  }
+  .tag-picker-close:hover {
+    background: var(--color-fill-3);
+  }
+  .tag-picker-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag-picker-item {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 13px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .tag-picker-item:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+  }
+  .tag-picker-item.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+  }
+
+  /* ===== 等级选择弹出 ===== */
+  .level-dropdown {
+    position: absolute;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 4px;
+    box-shadow: var(--shadow-card);
+    z-index: 50;
+    display: none;
+    min-width: 128px;
+  }
+  .level-dropdown.active {
+    display: block;
+  }
+  .level-option {
+    padding: 4px 8px;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .level-option:hover {
+    background: var(--color-fill-hover);
+  }
+  .level-option.selected {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
+  /* ===== AI 画像总结 ===== */
+  .ai-generate-btn {
+    height: 28px;
+    padding: 0 16px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-primary-6);
+    background: var(--color-fill-1);
+    color: var(--color-primary-6);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .ai-generate-btn:hover {
+    background: var(--color-primary-1);
+  }
+  .ai-summary-card {
+    margin: 0 16px 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, #F0FCFC, #E9FFF8);
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-card);
+    position: relative;
+    display: none;
+  }
+  .ai-summary-card.visible {
+    display: block;
+  }
+  .ai-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .ai-summary-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00CBD0, #36A590);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .ai-summary-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary-7);
+  }
+  .ai-summary-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+  }
+  .ai-action-btn {
+    font-size: 11px;
+    color: var(--color-primary-6);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .ai-action-btn:hover { color: var(--color-primary-7); }
+  .ai-summary-text {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 20px;
+  }
+  .ai-summary-content .ai-summary-actions {
+    margin-top: 8px;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">企微侧边栏 · CRM 客户管理</div>
+<div class="page-subtitle">PC 端企业微信聊天侧边栏 · 宽度 360px · 五种业务场景</div>
+
+<div class="scenes-row">
+
+  <!-- ======================================================
+       场景1：销售视角-客户画像
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-normal">
+      <!-- 头部 -->
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 客户管理</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="搜索">🔍</div>
+          <div class="header-icon-btn" title="更多">⋯</div>
+        </div>
+      </div>
+
+      <!-- 三 Tab 导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab active">客户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">订单列表</div>
+      </div>
+
+      <!-- 客户信息内容 -->
+      <div class="sidebar-body">
+        <!-- 第一区：身份卡片（含内联 AI 总结按钮） -->
+        <div class="identity-card">
+          <div class="avatar">林</div>
+          <div class="identity-info">
+            <div class="identity-name-row">
+              <span class="identity-nickname">林小鱼</span>
+              <span class="identity-star-id">NO.28456</span>
+            </div>
+            <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
+            <div class="identity-meta">
+              <span>186****7890</span>
+              <span class="sep">|</span>
+              <span>8体</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第二区：状态标签栏 -->
+        <div class="status-tags-bar">
+          <span class="status-tag tag-trial">体验客户</span>
+          <span class="status-tag tag-friend">双向好友</span>
+          <span class="status-tag tag-multi-follow">多人跟进</span>
+          <span class="status-tag tag-reseller">分销</span>
+        </div>
+
+        <!-- AI 画像总结（点击生成） -->
+        <div class="ai-portrait-gen-card" id="aiPortraitGenCard" style="margin: 0 16px 12px; padding: 14px; background: linear-gradient(135deg, #F0FCFC, #E9FFF8); border: 1px solid var(--color-primary-2); border-radius: var(--radius-card); text-align: center;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+            <span style="color: var(--color-primary-6); font-size: 16px;">✦</span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--color-primary-7);">AI 画像总结</span>
+          </div>
+          <div style="font-size: 12px; color: var(--color-text-3); line-height: 18px; margin-bottom: 12px; text-align: left;">基于客户全维度数据，AI 自动生成客户画像分析</div>
+          <button class="ai-generate-btn" onclick="generateAiSummary(this)" style="height: 32px; padding: 0 20px; background: var(--color-primary-6); color: white; border: none; border-radius: var(--radius-btn); font-size: 13px; font-weight: 600; cursor: pointer;">✦ 生成画像总结</button>
+        </div>
+
+        <!-- AI 画像总结（生成后展示） -->
+        <div class="ai-summary-card" id="aiSummary-profile">
+          <div class="ai-summary-header">
+            <div class="ai-summary-icon">AI</div>
+            <span class="ai-summary-label">画像总结</span>
+            <div class="ai-summary-actions">
+              <button class="ai-action-btn" onclick="generateAiSummary(document.querySelector('#sidebar-normal .ai-generate-btn'))">重新生成</button>
+            </div>
+          </div>
+          <div class="ai-summary-text">该用户为杭州自由职业者，关注AI视频方向。当前为体验客户阶段，加入8体。近期活跃度较高：发帖5篇、阅读32篇、评论23条，对AI视频类内容兴趣浓厚。建议推荐AI视频变现航海活动，引导从体验转为正式会员。</div>
+          <div class="ai-summary-actions" style="margin-top: 8px; margin-left: 0; justify-content: flex-end;">
+            <button class="ai-action-btn">复制</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 体验营调研 -->
+        <div class="survey-card" style="margin-top: 12px;">
+          <div class="survey-header">体验营课前调研</div>
+          <div class="survey-body">
+            <div class="survey-row">
+              <span class="survey-label">所在城市</span>
+              <span class="survey-value">杭州</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">现在工作</span>
+              <span class="survey-value">自由职业/互联网</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">工作年限</span>
+              <span class="survey-value">工作1-3年</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">年收入</span>
+              <span class="survey-value">年收入7-12万</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">赚钱阶段</span>
+              <span class="survey-value long-text">做过项目或正在做项目，但没有拿到结果或是不聚焦</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关键指标 -->
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-label">客户等级</span>
+            <span class="metric-value"><span class="stars-orange">★★</span><span class="stars-empty">★★★</span> B</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">最近跟进</span>
+            <span class="metric-value">3天前</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">体验营到期</span>
+            <span class="metric-value">2026-01-15</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 第四区：客户信息 -->
+        <div class="section-header">
+          <span class="section-title">客户信息</span>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">客户来源</span>
+            <span class="info-value">合作导流-小红书</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">鱼丸账号</span>
+            <span class="info-value">鱼丸-林小鱼</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">专属销售</span>
+            <span class="info-value">陈小美</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">添加时间</span>
+            <span class="info-value">2025-10-15</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 最近跟进 -->
+        <div class="section-header">
+          <span class="section-title">最近跟进</span>
+          <span class="section-action-link">更多请前往CRM后台查看</span>
+        </div>
+        <div class="followup-timeline">
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot active"></div>
+              <div class="followup-tl-line"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">
+                <span>12-18 14:30</span>
+                <span>·</span>
+                <span class="followup-tl-method">企微消息</span>
+              </div>
+              <div class="followup-tl-text">回复客户关于AI视频航海的咨询，推荐了体验营课程，客户表示感兴趣</div>
+            </div>
+          </div>
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">
+                <span>12-01 10:00</span>
+                <span>·</span>
+                <span class="followup-tl-method">企微消息</span>
+              </div>
+              <div class="followup-tl-text">首次沟通，了解客户基础情况，自由职业互联网背景，对自媒体变现感兴趣</div>
+              <!-- 状态变更已删除 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 跟进表单（展开态） -->
+      <div class="followup-form" id="followupForm-sidebar-normal">
+        <div class="form-title">
+          <span>写跟进</span>
+          <div class="form-close" onclick="closeFollowupForm('sidebar-normal')">✕</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进方式</div>
+          <div class="form-methods">
+            <button class="method-chip selected">企微消息</button>
+            <button class="method-chip" onclick="selectMethod(this)">电话</button>
+            <button class="method-chip" onclick="selectMethod(this)">面谈</button>
+            <button class="method-chip" onclick="selectMethod(this)">微信沟通</button>
+            <button class="method-chip" onclick="selectMethod(this)">其他</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进内容</div>
+          <textarea class="form-textarea" placeholder="请输入跟进内容（1-500字）" maxlength="500" oninput="updateCharCount(this)"></textarea>
+          <div class="char-count">0/500</div>
+        </div>
+        <div class="form-inline-row">
+          <div class="form-group">
+            <div class="form-label">下次跟进</div>
+            <input type="date" class="form-input" min="2026-03-03">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="form-btn btn-cancel" onclick="closeFollowupForm('sidebar-normal')">取消</button>
+          <button class="form-btn btn-submit">提交</button>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="sidebar-footer">
+        <button class="action-btn btn-primary btn-full" onclick="openFollowupForm('sidebar-normal')">
+          <span class="btn-icon">✚</span> 写跟进
+        </button>
+      </div>
+
+      <!-- 标签选择弹层 -->
+      <div class="tag-picker-overlay" id="tagPicker-sidebar-normal" onclick="hideTagPicker(event, 'sidebar-normal')">
+        <div class="tag-picker" onclick="event.stopPropagation()">
+          <div class="tag-picker-header">
+            <span class="tag-picker-title">添加属性标签</span>
+            <div class="tag-picker-close" onclick="hideTagPicker(null, 'sidebar-normal')">✕</div>
+          </div>
+          <div class="tag-picker-list">
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">跨境电商</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">年营收500W+</button>
+            <button class="tag-picker-item selected">自媒体</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">电商从业</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">自由职业</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">技术开发</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">金融从业</button>
+            <button class="tag-picker-item" onclick="this.classList.toggle('selected')">创业者</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-label">场景1：销售视角-客户画像</div>
+    </div>
+    <div class="prd-panel" data-prd-key="crm-s1" data-prd-version="20260309a">
+      <div class="prd-title">场景1 · 客户画像 字段说明</div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">客户身份卡片</div>
+        <div class="prd-card-body">头像　　　来源 企微 ｜ 规则 无头像取姓氏首字
+昵称　　　来源 企微
+星球编号　来源 星球 ｜ 规则 非会员不显示
+备注　　　来源 CRM ｜ 交互 点击编辑，失焦保存
+手机号　　来源 CRM ｜ 规则 脱敏中间4位 ****
+体验营期数　来源 鱼丸 ｜ 规则 非会员不显示</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">状态标签栏</div>
+        <div class="prd-card-body">客户状态
+　来源　CRM
+　枚举　潜在客户 / 体验客户 / 付费客户 / 流失客户
+　样式　badge 色彩区分（orange/green/blue/grey）
+
+好友状态　来源 企微实时回调（如 双向好友）
+多人跟进　规则 多个销售跟进时显示
+分销　　　规则 分销渠道客户显示</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">体验营调研</div>
+        <div class="prd-card-body">来源　体验营课前调研问卷
+字段　城市 / 工作 / 工作年限 / 年收入 / 赚钱阶段
+规则　已填写问卷显示，未填写不显示
+位置　状态标签下方、关键指标上方</div>
+      </div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">关键指标</div>
+        <div class="prd-card-body">客户等级
+　来源　CRM，支持手动调整
+　格式　★ 星级评分 + 字母等级（S+/S/A/B/C/D/E）
+　交互　点击切换等级，即时保存
+　联动　变更后动态生成跟进记录
+
+最近跟进
+　来源　CRM
+　格式　当前日期 − 最后跟进日（如「3天前」）
+　预警　> 7天红色高亮（阈值可配）
+
+体验营到期
+　来源　鱼丸
+　格式　年月日（如 2026-01-15）
+　规则　未参加体验营显示 —
+　预警　剩余 ≤ 7天红色</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">客户信息</div>
+        <div class="prd-card-body">客户来源　来源 CRM ｜ 渠道标识
+鱼丸账号　来源 鱼丸 ｜ 关联用户名
+专属销售　来源 CRM
+添加时间　来源 企微 ｜ 好友添加时间</div>
+      </div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">最近跟进</div>
+        <div class="prd-card-body">规则　显示最近 5 条跟进记录</div>
+      </div>
+      <div class="prd-card" style="--accent: #242528;">
+        <div class="prd-card-title">底部操作</div>
+        <div class="prd-card-body">写跟进
+　交互　POST 接口提交
+　必填　跟进方式（枚举）+ 内容（1-500字）
+　选填　下次跟进日期
+　联动　提交后刷新跟进列表</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景2：销售视角-客户动态
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-activity">
+      <!-- 头部 -->
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 客户管理</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="搜索">🔍</div>
+          <div class="header-icon-btn" title="更多">⋯</div>
+        </div>
+      </div>
+
+      <!-- 三 Tab 导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab">客户画像</div>
+        <div class="nav-tab active">客户动态</div>
+        <div class="nav-tab">订单列表</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 行为统计概览（点击筛选时间线） -->
+        <div class="metrics-grid metrics-3col">
+          <div class="metric-item metric-center metric-filterable" data-filter="post" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">5</span>
+            <span class="metric-label">发帖</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="read" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">32</span>
+            <span class="metric-label">阅读</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="comment" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">23</span>
+            <span class="metric-label">评论</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="like" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">45</span>
+            <span class="metric-label">点赞</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="anchor" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">6</span>
+            <span class="metric-label">投锚</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="collect" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">12</span>
+            <span class="metric-label">收藏</span>
+          </div>
+        </div>
+
+        <!-- 行为时间线 -->
+        <div class="timeline-section">
+          <!-- 今天 -->
+          <div class="timeline-date-header">今天 · 2025-12-20</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="read">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">14:32</span>
+              </div>
+              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#AI视频</span> 「如何用AI做短视频月入过万」</div>
+              <span class="timeline-duration">3min</span>
+            </div>
+
+            <div class="timeline-item" data-activity="collect">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">收藏</span>
+                <span class="timeline-time">14:20</span>
+              </div>
+              <div class="timeline-desc">林小鱼收藏了「2025小红书运营指南 · 从0到1」</div>
+            </div>
+
+            <div class="timeline-item" data-activity="form" style="border-bottom: none;">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">表单填写</span>
+                <span class="timeline-time">10:05</span>
+              </div>
+              <div class="timeline-desc">林小鱼填写了表单「体验营课前调研问卷」</div>
+            </div>
+          </div>
+
+          <!-- 昨天 -->
+          <div class="timeline-date-header">昨天 · 2025-12-19</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="comment">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表评论</span>
+                <span class="timeline-time">18:40</span>
+              </div>
+              <div class="timeline-desc">林小鱼在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了，剪辑效率提升很多」</div>
+            </div>
+
+            <div class="timeline-item" data-activity="read" style="border-bottom: none;">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">10:15</span>
+              </div>
+              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#自媒体变现</span> 「小红书起号的5个关键动作」</div>
+              <span class="timeline-duration">5min</span>
+            </div>
+          </div>
+
+          <!-- 前天之前显示具体日期 -->
+          <div class="timeline-date-header">2025-12-18</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="anchor">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">投锚</span>
+                <span class="timeline-time">20:30</span>
+              </div>
+              <div class="timeline-desc">林小鱼给 <span class="hl">#实操复盘</span>「我的AI视频制作之路」投了锚</div>
+            </div>
+
+            <div class="timeline-item" data-activity="post" style="border-bottom: none;">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表内容</span>
+                <span class="timeline-time">09:20</span>
+              </div>
+              <div class="timeline-desc">林小鱼发表了 <span class="hl">#实操复盘</span>「我的AI视频制作之路」</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="scene-label">场景2：销售视角-客户动态</div>
+    </div>
+    <div class="prd-panel" data-prd-key="crm-s2" data-prd-version="20260309a">
+      <div class="prd-title">场景2 · 客户动态 字段说明</div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">页面结构</div>
+        <div class="prd-card-body">三Tab导航：客户画像 / 客户动态 / 订单列表
+行为统计网格（2行×3列，点击筛选时间线）
+时间线列表（按日期分组，倒序排列）
+无底部操作栏（不支持写跟进）</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">行为统计网格</div>
+        <div class="prd-card-body">网格布局　2行 × 3列
+指标项　发帖 / 阅读 / 评论 / 点赞 / 投锚 / 收藏
+每格显示该类型累计数量
+交互　点击指标格筛选时间线
+来源　鱼丸平台行为事件流</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">日期分组规则</div>
+        <div class="prd-card-body">规则　今天 →「今天 · YYYY-MM-DD」
+规则　昨天 →「昨天 · YYYY-MM-DD」
+规则　前天及更早 → 仅显示日期
+规则　同日内按时间倒序</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">各动态类型字段</div>
+        <div class="prd-card-body">阅读内容
+　来源　鱼丸阅读事件 ｜ 蓝色圆点
+　格式　阅读了 #{话题}「{标题}」
+　附加　阅读时长（&lt;1min秒，≥1min分钟）
+
+收藏
+　来源　鱼丸收藏事件 ｜ 绿色圆点
+　格式　收藏了「{标题}」
+
+表单填写
+　来源　鱼丸表单提交 ｜ 绿色圆点
+　格式　填写了表单「{名称}」
+
+发表评论
+　来源　鱼丸评论事件 ｜ 蓝色圆点
+　格式　在 #{话题} 评论了「{内容}」
+
+投锚
+　来源　鱼丸投锚记录 ｜ 绿色圆点
+　格式　给 #{话题}「{标题}」投了锚
+
+发表内容
+　来源　鱼丸发帖事件 ｜ 蓝色圆点
+　格式　发表了 #{话题}「{标题}」</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景3：订单列表
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-orders">
+      <!-- 头部 -->
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 客户管理</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="搜索">🔍</div>
+          <div class="header-icon-btn" title="更多">⋯</div>
+        </div>
+      </div>
+
+      <!-- 三 Tab 导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab">客户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab active">订单列表</div>
+      </div>
+
+      <!-- 订单搜索 -->
+      <div class="sidebar-search-bar">
+        <div class="search-input-wrap">
+          <span class="search-input-icon">🔍</span>
+          <input type="text" class="sidebar-search-input" placeholder="搜索订单号 / 商品名称" oninput="filterOrders(this.value)">
+        </div>
+      </div>
+
+      <!-- 订单筛选 -->
+      <div class="order-filter-bar">
+        <button class="order-filter-chip active">全部 356</button>
+        <button class="order-filter-chip">待付款 24</button>
+        <button class="order-filter-chip">已付款 24</button>
+        <button class="order-filter-chip">已完成 24</button>
+        <button class="order-filter-chip">已取消 24</button>
+      </div>
+
+      <!-- 订单列表内容 -->
+      <div class="sidebar-body">
+        <div class="order-list">
+          <div class="order-card">
+            <div class="order-card-head">
+              <span class="order-no">SC20251218003</span>
+              <span class="order-status os-paid">已付款</span>
+            </div>
+            <div class="order-body">
+              <div class="order-thumb" style="background: linear-gradient(135deg, #4C8EFF, #327CFB); color: #fff; font-size: 11px; font-weight: 700;">航海</div>
+              <div class="order-body-info">
+                <div class="order-product">AI视频变现 · 航海门票（第2期）</div>
+                <div class="order-meta">
+                  <span class="order-amount">¥599</span>
+                  <span>2025-12-18 10:00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-card-head">
+              <span class="order-no">SC20251115008</span>
+              <span class="order-status os-completed">已完成</span>
+            </div>
+            <div class="order-body">
+              <div class="order-thumb" style="background: linear-gradient(135deg, #36A590, #248F80); color: #fff; font-size: 13px; font-weight: 700;">8期</div>
+              <div class="order-body-info">
+                <div class="order-product">生财有术第8期 · 年费会员</div>
+                <div class="order-meta">
+                  <span class="order-amount">¥2,365</span>
+                  <span>2025-11-15 09:30</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-card-head">
+              <span class="order-no">SC20251101042</span>
+              <span class="order-status os-completed">已完成</span>
+            </div>
+            <div class="order-body">
+              <div class="order-thumb" style="background: linear-gradient(135deg, #4C8EFF, #327CFB); color: #fff; font-size: 11px; font-weight: 700;">航海</div>
+              <div class="order-body-info">
+                <div class="order-product">AI视频变现 · 航海门票（第1期）</div>
+                <div class="order-meta">
+                  <span class="order-amount">¥599</span>
+                  <span>2025-11-01 14:20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-card" style="border-bottom: none;">
+            <div class="order-card-head">
+              <span class="order-no">SC20251015001</span>
+              <span class="order-status os-completed">已完成</span>
+            </div>
+            <div class="order-body">
+              <div class="order-thumb" style="background: linear-gradient(135deg, #FF9A2F, #FF7D00); color: #fff; font-size: 11px; font-weight: 700;">体验</div>
+              <div class="order-body-info">
+                <div class="order-product">生财有术 · 7天体验卡</div>
+                <div class="order-meta">
+                  <span class="order-amount">¥0.00</span>
+                  <span>2025-10-15 16:45</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="scene-label">场景3：订单列表</div>
+    </div>
+    <div class="prd-panel" data-prd-key="crm-s3" data-prd-version="20260309a">
+      <div class="prd-title">场景3 · 订单列表 字段说明</div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">页面结构</div>
+        <div class="prd-card-body">三Tab导航：客户画像 / 客户动态 / 订单列表
+搜索栏（订单号 / 商品名称模糊搜索）
+状态筛选栏（横向排列）
+订单卡片列表（按下单时间倒序）
+无底部操作栏</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">搜索功能</div>
+        <div class="prd-card-body">规则　订单编号 + 商品名称模糊匹配
+交互　输入即搜索（debounce 300ms）
+规则　空结果显示「暂无匹配订单」
+来源　待定（CRM 订单接口）</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">状态筛选</div>
+        <div class="prd-card-body">枚举　全部 / 待付款 / 已付款 / 已完成 / 已取消
+规则　每项显示对应数量（如「全部 356」）
+交互　点击切换，单选，默认「全部」
+规则　选中态：#E9FFF8 底 + #36A590 字
+规则　未选中态：#F2F5F7 底 + #757980 字</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">订单卡片字段</div>
+        <div class="prd-card-body">订单编号　格式 SC + 日期 + 序号
+商品缩略图　规则 有图显示商品图，无图品牌色+简称
+商品名称　来源 商城 ｜ 规则 单行截断
+金额　　　格式 ¥X,XXX（千分位）
+下单时间　格式 YYYY-MM-DD HH:mm
+退款信息　规则 仅已关闭/已退款显示 ｜ 红色文字</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">订单状态定义</div>
+        <div class="prd-card-body">待付款　#FFF9E8 + #FA9A1D ｜ 已下单未付款
+已付款　#E9FFF8 + #52C41A ｜ 已完成支付
+已完成　#E9FFF8 + #36A590 ｜ 订单已履约
+已取消　#F2F5F7 + #757980 ｜ 主动取消/超时
+已关闭　#FFEDE8 + #F54A45 ｜ 异常关闭/已退款</div>
+      </div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">分页与排序</div>
+        <div class="prd-card-body">规则　按下单时间倒序（最新在前）
+规则　空状态显示「暂无订单」
+来源　待定（CRM/商城订单接口）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景4：预警客户 · 即将到期 · 跟进过期
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-warning">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 客户管理</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="搜索">🔍</div>
+          <div class="header-icon-btn" title="更多">⋯</div>
+        </div>
+      </div>
+
+      <!-- 三Tab导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab active">客户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">订单列表</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 身份卡片 -->
+        <div class="identity-card">
+          <div class="avatar" style="background: linear-gradient(135deg, #FF9A2F, #FF7D00); opacity: 0.7;">赵</div>
+          <div class="identity-info">
+            <div class="identity-name-row">
+              <span class="identity-nickname">赵明远</span>
+              <span class="identity-star-id">NO.31205</span>
+            </div>
+            <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
+            <div class="identity-meta">
+              <span>139****5566</span>
+              <span class="sep">·</span>
+              <span>8体</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 状态标签栏 -->
+        <div class="status-tags-bar">
+          <span class="status-tag tag-paid">付费客户</span>
+          <span class="status-tag tag-member">正式会员</span>
+          <span class="status-tag tag-multi-follow">多人跟进</span>
+          <span class="status-tag tag-reseller">分销</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 体验营调研 -->
+        <div class="survey-card" style="margin-top: 12px;">
+          <div class="survey-header">体验营课前调研</div>
+          <div class="survey-body">
+            <div class="survey-row">
+              <span class="survey-label">所在城市</span>
+              <span class="survey-value">深圳</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">现在工作</span>
+              <span class="survey-value">电商创业者</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">工作年限</span>
+              <span class="survey-value">工作4-8年</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">年收入</span>
+              <span class="survey-value">年收入20-50万</span>
+            </div>
+            <div class="survey-row">
+              <span class="survey-label">赚钱阶段</span>
+              <span class="survey-value long-text">已经在某个项目上深耕半年以上，拿到过结果，但还没有招人放大</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关键指标（预警态 - 非对称布局） -->
+        <div class="metrics-columns">
+          <div class="metrics-col">
+            <div class="metric-item metric-danger">
+              <span class="metric-label">到期时间</span>
+              <span class="metric-value danger">01-05 · 剩余5天</span>
+            </div>
+          </div>
+          <div class="metrics-col">
+            <div class="metric-item">
+              <span class="metric-label">最近跟进</span>
+              <span class="metric-value danger">15天前</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 客户信息 -->
+        <div class="section-header">
+          <span class="section-title">客户信息</span>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">客户来源</span>
+            <span class="info-value">老客推荐</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">鱼丸账号</span>
+            <span class="info-value">鱼丸-赵明远</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">专属销售</span>
+            <span class="info-value">李小明</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">添加时间</span>
+            <span class="info-value">2025-06-10</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 最近跟进 -->
+        <div class="section-header">
+          <span class="section-title">最近跟进</span>
+          <span class="section-action" onclick="openFollowupForm('sidebar-warning')">写跟进</span>
+        </div>
+        <div class="followup-timeline">
+          <div class="followup-tl-item">
+            <div class="followup-tl-left">
+              <div class="followup-tl-dot active"></div>
+            </div>
+            <div class="followup-tl-content">
+              <div class="followup-tl-meta">
+                <span class="followup-tl-method">电话</span>
+                <span>· 李小明 · 12-05 14:00</span>
+              </div>
+              <div class="followup-tl-text">提醒续费，客户表示最近忙于业务，暂时没时间参与社区，对续费持观望态度</div>
+            </div>
+          </div>
+        </div>
+        <div class="view-all-link">查看全部跟进 →</div>
+      </div>
+
+      <!-- 跟进表单 -->
+      <div class="followup-form" id="followupForm-sidebar-warning">
+        <div class="form-title">
+          <span>写跟进</span>
+          <div class="form-close" onclick="closeFollowupForm('sidebar-warning')">✕</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进方式</div>
+          <div class="form-methods">
+            <button class="method-chip" onclick="selectMethod(this)">企微消息</button>
+            <button class="method-chip selected">电话</button>
+            <button class="method-chip" onclick="selectMethod(this)">面谈</button>
+            <button class="method-chip" onclick="selectMethod(this)">微信沟通</button>
+            <button class="method-chip" onclick="selectMethod(this)">其他</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进内容</div>
+          <textarea class="form-textarea" placeholder="请输入跟进内容（1-500字）" maxlength="500" oninput="updateCharCount(this)"></textarea>
+          <div class="char-count">0/500</div>
+        </div>
+        <div class="form-inline-row">
+          <div class="form-group">
+            <div class="form-label">下次跟进</div>
+            <input type="date" class="form-input" min="2026-03-03">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="form-btn btn-cancel" onclick="closeFollowupForm('sidebar-warning')">取消</button>
+          <button class="form-btn btn-submit">提交</button>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="sidebar-footer">
+        <button class="action-btn btn-primary btn-full" onclick="openFollowupForm('sidebar-warning')">
+          <span class="btn-icon">✎</span> 写跟进
+        </button>
+      </div>
+    </div>
+    <div class="scene-label">场景4：预警客户</div>
+    </div>
+    <div class="prd-panel" data-prd-key="crm-s4" data-prd-version="20260309a">
+      <div class="prd-title">场景4 · 预警态 字段说明（与场景1差异）</div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">预警触发逻辑</div>
+        <div class="prd-card-body">规则　以下任一条件触发预警态：
+① 最近跟进 > 7天（阈值可配）
+② 下次跟进日期 &lt; 当前日期
+③ 会员到期剩余 ≤ 7天（阈值可配）
+规则　多个条件可同时触发</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">体验营调研</div>
+        <div class="prd-card-body">规则　预警态下仍正常显示
+规则　显示条件与正常态一致
+　　　已填写问卷显示，未填写不显示
+来源　与场景1相同</div>
+      </div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">关键指标 — 预警取值</div>
+        <div class="prd-card-body">最近跟进
+　规则　当前日期 − 最后跟进日
+　预警　天数 > 阈值（默认 7）
+
+会员到期时间
+　来源　星球
+　预警　剩余天数 ≤ 阈值
+
+到期时间
+　来源　鱼丸
+　规则　到期日期 − 当前日期
+　预警　剩余天数 ≤ 阈值（默认 7）</div>
+      </div>
+      <div class="prd-card" style="--accent: #52C41A;">
+        <div class="prd-card-title">预警解除逻辑</div>
+        <div class="prd-card-body">跟进过期　联动 提交新跟进后自动解除
+到期预警　联动 续费成功后自动解除
+预警阈值　规则 CRM 后台可配置</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">操作能力</div>
+        <div class="prd-card-body">规则　预警态下所有操作仍可用
+　　　写跟进 / 打标签 / 详情 均正常
+　　　（与异常态的禁用不同）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       场景5：异常态 · 客户已删除好友
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame deleted" id="sidebar-deleted">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 客户管理</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="搜索">🔍</div>
+          <div class="header-icon-btn" title="更多">⋯</div>
+        </div>
+      </div>
+
+      <!-- 三Tab导航 -->
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab active">客户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">订单列表</div>
+      </div>
+
+      <div class="sidebar-body">
+        <!-- 身份卡片 -->
+        <div class="identity-card">
+          <div class="avatar" style="background: #BDC1C7;">赵</div>
+          <div class="identity-info">
+            <div class="identity-name-row">
+              <span class="identity-nickname">赵小明</span>
+            </div>
+            <div class="identity-remark"><span class="edit-hint">点击添加备注</span></div>
+            <div class="identity-meta">
+              <span>非会员</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 状态标签栏 -->
+        <div class="status-tags-bar">
+          <span class="status-tag tag-potential">潜在客户</span>
+          <span class="status-tag tag-deleted">客户已删除</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 关键指标 -->
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-label">客户等级</span>
+            <span class="metric-value">
+              <span class="stars-orange">★</span><span class="stars-empty">★★★★</span> E
+            </span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">最近跟进</span>
+            <span class="metric-value" style="color: #999;">2025-12-20 20:00:00</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">会员到期</span>
+            <span class="metric-value" style="color: #999;">—</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">到期时间</span>
+            <span class="metric-value" style="color: #999;">—</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 客户信息 -->
+        <div class="section-header">
+          <span class="section-title">客户信息</span>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">客户来源</span>
+            <span class="info-value" style="color: #999;">公众号-文末导流</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">鱼丸账号</span>
+            <span class="info-value" style="color: #999;">鱼丸-赵六</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">专属销售</span>
+            <span class="info-value" style="color: #999;">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">添加时间</span>
+            <span class="info-value" style="color: #999;">2026-01-15</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">删除时间</span>
+            <span class="info-value" style="color: var(--color-danger-6);">2026-02-20</span>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
+        <!-- 最近跟进 -->
+        <div class="section-header">
+          <span class="section-title">最近跟进</span>
+        </div>
+        <div style="text-align: center; padding: 20px 16px; color: var(--color-text-4); font-size: 13px;">
+          暂无跟进记录
+        </div>
+      </div>
+
+      <!-- 底部操作栏（禁用） -->
+      <div class="sidebar-footer">
+        <button class="action-btn btn-primary btn-full" style="opacity: 0.5; cursor: not-allowed;" disabled>
+          <span class="btn-icon">✎</span> 写跟进
+        </button>
+      </div>
+    </div>
+    <div class="scene-label">场景5：已删除客户</div>
+    </div>
+    <div class="prd-panel" data-prd-key="crm-s5" data-prd-version="20260309a">
+      <div class="prd-title">场景5 · 异常态 字段说明（与场景1差异）</div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">触发条件</div>
+        <div class="prd-card-body">来源　企微实时回调
+规则　客户单删或互删好友
+规则　好友状态变为「已删除」时触发</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">新增字段</div>
+        <div class="prd-card-body">删除时间　来源 企微 ｜ 格式 YYYY-MM-DD
+已删除标签　规则 状态标签栏新增红色标签</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">字段显示变化</div>
+        <div class="prd-card-body">关键指标　规则 保留原有数据，正常显示
+体验营调研　规则 未填写不显示，已填写保留
+跟进记录　规则 保留历史记录（如有）
+头像　　　规则 透明度 50%</div>
+      </div>
+      <div class="prd-card" style="--accent: #242528;">
+        <div class="prd-card-title">操作能力变化</div>
+        <div class="prd-card-body">写跟进　交互 禁用（不可提交新跟进）
+打标签　交互 禁用（不可编辑标签）
+详情　　交互 可用（查看历史信息）</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">数据保留逻辑</div>
+        <div class="prd-card-body">跟进记录　规则 保留，只读
+已有标签　规则 保留显示，不可编辑
+客户信息　规则 保留展示
+指标数据　规则 保留已有数据，正常显示</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ── AI 画像总结生成 ── */
+  function generateAiSummary(btn) {
+    var genCard = document.getElementById('aiPortraitGenCard');
+    var card = document.getElementById('aiSummary-profile');
+    if (!card) return;
+    btn.textContent = '生成中...';
+    btn.disabled = true;
+    setTimeout(function() {
+      if (genCard) genCard.style.display = 'none';
+      card.classList.add('visible');
+    }, 1000);
+  }
+
+  // 跟进表单展开/收起
+  function openFollowupForm(sidebarId) {
+    var form = document.getElementById('followupForm-' + sidebarId);
+    if (form) form.classList.add('active');
+  }
+  function closeFollowupForm(sidebarId) {
+    var form = document.getElementById('followupForm-' + sidebarId);
+    if (form) form.classList.remove('active');
+  }
+
+  // 跟进方式选择
+  function selectMethod(el) {
+    var siblings = el.parentElement.querySelectorAll('.method-chip');
+    siblings.forEach(function(s) { s.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+
+  // 字数统计
+  function updateCharCount(textarea) {
+    var count = textarea.value.length;
+    var counter = textarea.nextElementSibling;
+    if (counter) counter.textContent = count + '/500';
+  }
+
+  // 标签选择弹层
+  function showTagPicker(sidebarId) {
+    var picker = document.getElementById('tagPicker-' + sidebarId);
+    if (picker) picker.classList.add('active');
+  }
+  function hideTagPicker(event, sidebarId) {
+    if (event && event.target !== event.currentTarget) return;
+    var picker = document.getElementById('tagPicker-' + sidebarId);
+    if (picker) picker.classList.remove('active');
+  }
+
+  // ===== 客户动态类型筛选 =====
+  function filterActivity(chipEl, type) {
+    var bar = chipEl.parentElement;
+    bar.querySelectorAll('.activity-type-chip').forEach(function(c) { c.classList.remove('active'); });
+    chipEl.classList.add('active');
+
+    var sidebar = document.getElementById('sidebar-activity');
+    var items = sidebar.querySelectorAll('.timeline-item');
+    var dateHeaders = sidebar.querySelectorAll('.timeline-date-header');
+
+    items.forEach(function(item) {
+      if (type === 'all' || item.dataset.activity === type) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // 隐藏没有可见条目的日期标题
+    dateHeaders.forEach(function(header) {
+      var list = header.nextElementSibling;
+      if (!list) return;
+      var visibleItems = list.querySelectorAll('.timeline-item:not([style*="display: none"])');
+      header.style.display = visibleItems.length > 0 ? '' : 'none';
+      list.style.display = visibleItems.length > 0 ? '' : 'none';
+    });
+  }
+
+  // ===== 订单搜索 =====
+  function filterOrders(keyword) {
+    var sidebar = document.getElementById('sidebar-orders');
+    var cards = sidebar.querySelectorAll('.order-card');
+    var kw = keyword.trim().toLowerCase();
+
+    cards.forEach(function(card) {
+      if (!kw) {
+        card.style.display = '';
+        return;
+      }
+      var orderNo = (card.querySelector('.order-no') || {}).textContent || '';
+      var product = (card.querySelector('.order-product') || {}).textContent || '';
+      var match = orderNo.toLowerCase().indexOf(kw) !== -1 || product.toLowerCase().indexOf(kw) !== -1;
+      card.style.display = match ? '' : 'none';
+    });
+  }
+
+  /* ── 统计指标点击筛选（Option C） ── */
+  function toggleMetricFilter(el) {
+    var isActive = el.classList.contains('active');
+    // 同一 metrics-grid 内单选切换
+    var grid = el.closest('.metrics-grid');
+    grid.querySelectorAll('.metric-filterable').forEach(function(m) {
+      m.classList.remove('active');
+    });
+    // 再次点击同一项 = 取消筛选（显示全部）
+    if (!isActive) {
+      el.classList.add('active');
+    }
+    var filterVal = el.classList.contains('active') ? el.getAttribute('data-filter') : null;
+    // 筛选时间线
+    var section = grid.closest('.sidebar-body').querySelector('.timeline-section');
+    if (!section) return;
+    section.querySelectorAll('.timeline-item').forEach(function(item) {
+      if (!filterVal) {
+        item.style.display = '';
+      } else {
+        item.style.display = item.getAttribute('data-activity') === filterVal ? '' : 'none';
+      }
+    });
+    // 隐藏没有可见项的日期头
+    section.querySelectorAll('.timeline-list').forEach(function(list) {
+      var hasVisible = Array.from(list.querySelectorAll('.timeline-item')).some(function(i) {
+        return i.style.display !== 'none';
+      });
+      var header = list.previousElementSibling;
+      if (header && header.classList.contains('timeline-date-header')) {
+        header.style.display = hasVisible ? '' : 'none';
+      }
+      list.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+</script>
+
+<script src="prd-editor.js"></script>
+
+</body>
+</html>

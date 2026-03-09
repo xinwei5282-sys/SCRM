@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新手任务系统 - 移动端交互原型</title>
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    /* 主题色 — §2.1 Primary（生财绿 / Teal） */
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;       /* 主色调 */
+    --color-primary-7: #248F80;       /* hover 状态 */
+
+    /* 强调色 — §2.2 Accent Orange */
+    --color-accent-orange-6: #FF7D00;
+
+    /* 文字色 — §2.8 语义化 Text */
+    --color-text-1: #242528;          /* 主要：标题、正文 */
+    --color-text-2: #3B3D40;          /* 次要：副标题 */
+    --color-text-3: #757980;          /* 弱化：辅助说明 */
+    --color-text-4: #BDC1C7;          /* 禁用/占位符 */
+    --color-text-6: #D2D5DB;          /* 不可点文字 - 禁用 */
+    --color-text-7: #FFFFFF;          /* 反白文字 */
+
+    /* 填充色 — §2.9 语义化 Fill */
+    --color-fill-1: #FFFFFF;          /* 主背景 - 卡片、弹窗 */
+    --color-fill-2: #F7F9FA;          /* 浅灰填充 - 输入框背景 */
+    --color-fill-3: #F2F5F7;          /* Nova: 次要背景 / Secondary 按钮 */
+    --color-fill-3-hover: #E8EBED;    /* 背景色 hover */
+    --color-fill-3-disabled: #BDC1C7; /* 背景色 - 禁用 */
+    --color-fill-6: #242528;          /* 气泡背景 - Toast */
+    --color-fill-hover: #F2F5F7;      /* Nova: 通用 hover 背景 */
+
+    /* 表面 — §2.10 Surface */
+    --color-surface-canvas: #F2F5F7;  /* Nova: 页面背景 */
+
+    /* 边框 — §2.11 Nova Border */
+    --color-border-default: #E4E4E7;  /* Nova: 默认边框 */
+    --color-border-hover: rgba(117, 121, 128, 0.3); /* Nova: Hover 边框 */
+    --color-border-teal: #C5EBDE;     /* 主题色边框 - 选中 */
+
+    /* 遮罩 — §2.12 Overlay */
+    --color-overlay: rgba(0,0,0,0.8); /* Nova: 弹窗遮罩 80% */
+    --color-overlay-a50: rgba(0,0,0,0.5);
+    --color-overlay-a40: rgba(0,0,0,0.4);
+
+    /* 反色 — §2.13 Inverse */
+    --color-inverse-a12: rgba(255,255,255,0.12);
+    --color-inverse-a20: rgba(255,255,255,0.2);
+    --color-inverse-a60: rgba(255,255,255,0.6);
+
+    /* 功能色 — §2.15-2.18 状态色 */
+    --color-success-1: #F4FFE8;       /* 成功背景 */
+    --color-success-6: #52C41A;       /* 成功文字、图标 */
+    --color-warning-1: #FFF9E8;       /* 警告背景 */
+    --color-warning-6: #FA9A1D;       /* 警告文字、图标 */
+    --color-danger-1: #FFEDE8;        /* 错误背景 — §2.17 */
+    --color-danger-6: #F54A45;        /* 错误文字、图标 — §2.17 */
+    --color-info-1: #E8F4FF;          /* 信息背景 */
+    --color-info-6: #327CFB;          /* 信息文字、图标 */
+
+    /* 阴影 — §2.20 */
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-phone: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-button-accent: 0 4px 12px rgba(255,107,53,0.4);
+
+    /* 渐变 — §2.21 */
+    --gradient-accent: linear-gradient(162deg, #FF7D00 0%, #D25F00 100%);
+    --gradient-accent-full: linear-gradient(146deg, #FF7D00 0%, #D25F00 50%, #A64501 100%);
+    --gradient-dark-header: linear-gradient(180deg, #1A1B1E 0%, #2D2D44 100%);
+    --gradient-progress: linear-gradient(90deg, #FF7D00, #FFB65D);
+
+    /* 圆角 — §5 Nova 圆角规范 */
+    --radius-xs: 4px;                 /* 小型元素 (badge, tag) */
+    --radius-btn: 6px;                /* Nova: 按钮、输入框、菜单项 */
+    --radius-card: 8px;               /* Nova: 卡片、弹窗、下拉菜单 */
+    --radius-pill: 9999px;            /* 完整胶囊形状 */
+    --radius-phone: 40px;             /* 手机边框（仅原型）*/
+
+    /* 间距 — §4 Nova: 容器 padding 16px, 组件间 gap 16px */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+    --space-3xl: 32px;
+
+    /* 字体 — §3.1 */
+    --font-family: 'PingFang SC', Tahoma, Helvetica, Arial, 'Hiragino Sans GB',
+                   'Microsoft YaHei', 'Heiti SC', 'WenQuanYi Micro Hei', sans-serif;
+  }
+
+  /* ===== Reset ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    background: #E0E2E6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 40px;
+    min-height: 100vh;
+  }
+
+  /* ========================================================
+   * Phone Frame — §16 Figma 约定
+   * 375×812px, 40px 圆角
+   * ======================================================== */
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-phone);       /* §16: 40px */
+    overflow: hidden;
+    box-shadow: var(--shadow-phone), 0 0 0 1px rgba(0,0,0,0.05);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .screen-label {
+    text-align: center;
+    color: var(--color-text-3);
+    font-size: 13px;                         /* --text-m-sm */
+    line-height: 20px;
+    margin-top: var(--space-lg);
+    font-weight: 400;
+  }
+
+  /* ========================================================
+   * Pages — slide transition
+   * UI_Design §3.2: 页面切换 左右滑动 300ms ease-in-out
+   * ======================================================== */
+  .pages-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .page {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease-in-out;  /* §3.2 */
+    will-change: transform;
+  }
+  .page.page-home                   { transform: translateX(0); }
+  .page.page-home.slide-left        { transform: translateX(-100%); }
+  .page.page-tasks                  { transform: translateX(100%); }
+  .page.page-tasks.slide-in         { transform: translateX(0); }
+
+  /* ========================================================
+   * Status Bar — §6.1: 状态栏 44px
+   * ======================================================== */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .status-bar.light {
+    background: var(--color-fill-1);         /* UI_Design §1.1: --color-fill-1 */
+    color: var(--color-text-1);
+  }
+  .status-bar.dark {
+    background: transparent;
+    color: var(--color-text-7);              /* UI_Design §1.2 */
+  }
+  .status-icons { display: flex; gap: 6px; font-size: 12px; }
+
+  /* Home Indicator — §16 */
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 3px;
+    z-index: 10;
+  }
+
+  /* ========================================================
+   * HOME PAGE
+   * UI_Design §1.1
+   * ======================================================== */
+  .home-page-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* Nav Bar — UI_Design §1.1: 48px, --text-m-h2-bold (16px/700), 0.5px border */
+  .nav-bar {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 0.5px solid var(--color-border-default); /* Nova: #E4E4E7 */
+    font-size: 16px;                         /* --text-m-h2-bold */
+    font-weight: 700;
+    line-height: 24px;
+    color: var(--color-text-1);
+    flex-shrink: 0;
+    background: var(--color-fill-1);
+  }
+
+  /* ========================================================
+   * Floating Banner — UI_Design §2.5
+   * 高度 45px, #FFFBF0, 0.5px #F0E6CC, --text-m-body (14px/400)
+   * ======================================================== */
+  .floating-banner {
+    height: 45px;
+    background: #FFFBF0;
+    border-bottom: 0.5px solid #F0E6CC;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-lg);
+    flex-shrink: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+  }
+  .floating-banner.visible {
+    max-height: 50px;
+    opacity: 1;
+  }
+
+  .floating-banner .banner-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    flex: 1;
+  }
+  .floating-banner .banner-icon { font-size: 18px; }
+  .floating-banner .text {
+    font-size: 14px;                         /* --text-m-body */
+    font-weight: 400;
+    line-height: 22px;
+    color: var(--color-text-1);
+  }
+  .floating-banner .text strong {
+    color: var(--color-accent-orange-6);
+    font-weight: 700;
+  }
+  .floating-banner .close {
+    font-size: 18px;                         /* UI_Design §2.5 */
+    color: var(--color-text-4);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Home Content */
+  .home-content {
+    flex: 1;
+    background: var(--color-surface-canvas);  /* UI_Design §1.1 */
+    padding: var(--space-lg);
+    overflow-y: auto;
+  }
+
+  /* Feed Cards — Nova: 卡片圆角 8px */
+  .feed-card {
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default); /* Nova §7.2: 卡片边框 */
+    border-radius: var(--radius-card);          /* Nova: 8px */
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+    box-shadow: var(--shadow-card);
+  }
+  .feed-card .fc-header {
+    display: flex; align-items: center; gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+  .feed-card .fc-avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  }
+  .feed-card .fc-author {
+    font-size: 14px; font-weight: 700; color: var(--color-text-1); line-height: 22px;
+  }
+  .feed-card .fc-time {
+    font-size: 12px; font-weight: 400; color: var(--color-text-4); line-height: 18px;
+  }
+  .feed-card .fc-title {
+    font-size: 15px; font-weight: 700; color: var(--color-text-1);
+    line-height: 23px; margin-bottom: var(--space-xs);
+  }
+  .feed-card .fc-excerpt {
+    font-size: 13px; font-weight: 400; color: var(--color-text-3);
+    line-height: 20px;
+    display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .feed-card .fc-footer {
+    display: flex; gap: var(--space-xl); margin-top: var(--space-md);
+    font-size: 12px; font-weight: 400; color: var(--color-text-4); line-height: 18px;
+  }
+
+  /* ========================================================
+   * Modal — Nova 弹窗规范
+   * 遮罩: 黑色 80% 透明
+   * 弹窗圆角: 8px
+   * 动画: 200ms, scale 95%→100%
+   * z-index: 弹窗遮罩 400
+   * ======================================================== */
+  .modal-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);         /* Nova: 黑色 80% */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;                             /* Nova: 弹窗遮罩 400 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;        /* Nova: 弹窗动画 200ms */
+  }
+  .modal-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal-overlay.closing {
+    transition: opacity 150ms ease-in;        /* UI_Design §2.4: 关闭 150ms */
+  }
+
+  .modal-card {
+    width: 300px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);        /* Nova: 8px */
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-modal);
+    transform: scale(0.95);                   /* Nova: 入场 95%→100% */
+    transition: transform 0.2s ease-out;      /* Nova: 200ms */
+  }
+  .modal-overlay.visible .modal-card {
+    transform: scale(1.0);
+  }
+  .modal-overlay.closing .modal-card {
+    transform: scale(0.95);                   /* Nova: 出场 100%→95% */
+    transition: transform 150ms ease-in;      /* UI_Design §2.4: 关闭 150ms */
+  }
+
+  /* Modal Header — UI_Design §1.1: 200px, --gradient-accent-full */
+  .modal-header {
+    height: 200px;
+    background: var(--gradient-accent-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-header::before {
+    content: ''; position: absolute;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: -40px; right: -30px;
+  }
+  .modal-header::after {
+    content: ''; position: absolute;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    bottom: -20px; left: -10px;
+  }
+
+  /* Modal Emoji — 🎓 64px */
+  .modal-emoji {
+    font-size: 64px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Modal Close — 28px 圆形, --color-overlay-a40, --color-text-7 */
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: var(--color-overlay-a40);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-7);
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  /* Modal Body */
+  .modal-body {
+    padding: var(--space-2xl) var(--space-xl); /* 24px 20px */
+    text-align: center;
+  }
+
+  /* Modal Title — --text-m-h1: 18px/26px/700, --color-text-1 */
+  .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 26px;
+    color: var(--color-text-1);
+    margin-bottom: var(--space-xl);           /* 20px */
+  }
+
+  /* CTA Button — Nova: lg 高度 36px, 圆角 6px */
+  .modal-btn {
+    display: inline-block;
+    width: 144px;
+    height: 36px;                             /* Nova: lg 按钮 36px */
+    line-height: 36px;
+    background: var(--color-primary-6);        /* 主题色 */
+    border-radius: var(--radius-btn);         /* Nova: 6px */
+    color: var(--color-text-7);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease; /* Nova: 标准过渡 150ms */
+  }
+  .modal-btn:active {
+    transform: scale(0.96);
+    opacity: 0.8;
+  }
+
+  /* ========================================================
+   * TASK LIST PAGE — UI_Design §1.2
+   * ======================================================== */
+  .task-page-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* Task Header — --gradient-dark-header */
+  .task-header {
+    background: var(--gradient-dark-header);
+    padding: 0 var(--space-lg);              /* 0 16px */
+    flex-shrink: 0;
+  }
+
+  /* Task Nav — 48px, back button 22px */
+  .task-nav {
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .back-btn {
+    font-size: 22px;                          /* §1.2: 返回按钮 22px */
+    color: var(--color-text-7);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -8px;
+  }
+
+  /* Task Title — --text-m-h1: 18px/26px/700, --color-text-7 */
+  .task-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 26px;
+    color: var(--color-text-7);
+    margin-top: var(--space-sm);              /* 8px */
+  }
+
+  /* Task Subtitle — --text-m-sm: 13px/20px/400, --color-inverse-a60 */
+  .task-subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--color-inverse-a60);
+    margin-top: 6px;
+  }
+
+  /* Progress Card — Nova: 卡片圆角 8px */
+  .progress-card {
+    background: var(--color-inverse-a12);
+    border-radius: var(--radius-card);        /* Nova: 8px */
+    padding: 14px var(--space-lg);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  /* Progress Label — --text-m-sm: 13px/20px/400, --color-inverse-a60 */
+  .progress-label {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--color-inverse-a60);
+  }
+  /* Progress Count — --text-m-sm-bold: 13px/20px/700, --color-accent-orange-6 */
+  .progress-count {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 20px;
+    color: var(--color-accent-orange-6);
+  }
+
+  /* Progress Bar — §2.3: 6px, --color-inverse-a20, --gradient-progress, width 0.3s ease */
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--color-inverse-a20);
+    border-radius: var(--radius-xs);          /* 4px */
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 6px;
+    width: 0%;
+    background: var(--gradient-progress);
+    border-radius: var(--radius-xs);
+    transition: width 0.3s ease;              /* §2.3 */
+  }
+
+  /* ========================================================
+   * Task List — Nova: gap 16px, padding 16px
+   * ======================================================== */
+  .task-list {
+    background: var(--color-surface-canvas);
+    flex: 1;
+    padding: var(--space-lg) var(--space-lg) 0; /* Nova: 16px */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);                     /* Nova: 组件间 gap 16px */
+    overflow-y: auto;
+  }
+
+  /* ========================================================
+   * Task Card — Nova 卡片规范
+   * 边框: #E4E4E7, 圆角: 8px
+   * ======================================================== */
+  .task-card {
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default); /* Nova: #E4E4E7 */
+    border-radius: var(--radius-card);        /* Nova: 8px */
+    padding: var(--space-lg);                /* Nova: 容器 padding 16px */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+  }
+
+  /* State: done */
+  .task-card.done {
+    opacity: 0.5;                                  /* Nova §8.1: Disabled 透明度 50% */
+  }
+
+  /* ========================================================
+   * QR Code Modal — 扫码添加鱼丸
+   * Nova: 弹窗 8px 圆角, 遮罩 80%, 动画 200ms
+   * ======================================================== */
+  .qr-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+  }
+  .qr-overlay.visible { opacity: 1; pointer-events: all; }
+
+  .qr-card {
+    width: 280px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-align: center;
+    box-shadow: var(--shadow-modal);
+    transform: scale(0.95);
+    transition: transform 0.2s ease-out;
+  }
+  .qr-overlay.visible .qr-card { transform: scale(1); }
+
+  .qr-card-header {
+    padding: 20px 20px 0;
+  }
+  .qr-card-title {
+    font-size: 16px; font-weight: 700;
+    color: var(--color-text-1); line-height: 24px;
+  }
+  .qr-card-desc {
+    font-size: 13px; color: var(--color-text-3);
+    line-height: 20px; margin-top: 4px;
+  }
+
+  .qr-code-wrapper {
+    padding: 20px;
+  }
+  .qr-code-box {
+    width: 180px; height: 180px;
+    margin: 0 auto;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  /* Placeholder QR pattern */
+  .qr-placeholder {
+    width: 150px; height: 150px;
+    background:
+      repeating-conic-gradient(var(--color-text-1) 0% 25%, transparent 0% 50%) 0 0 / 12px 12px,
+      repeating-conic-gradient(var(--color-text-1) 0% 25%, transparent 0% 50%) 6px 6px / 12px 12px;
+    opacity: 0.7;
+    border-radius: 2px;
+  }
+  .qr-placeholder-logo {
+    position: absolute;
+    width: 36px; height: 36px;
+    background: var(--color-primary-6);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px; font-weight: 700;
+    box-shadow: 0 0 0 3px white;
+  }
+
+  .qr-hint {
+    font-size: 12px; color: var(--color-text-4);
+    line-height: 18px; margin-bottom: 4px;
+  }
+
+  .qr-card-footer {
+    padding: 0 20px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .qr-done-btn {
+    height: 36px; line-height: 36px;
+    background: var(--color-primary-6);
+    border-radius: var(--radius-btn);
+    color: var(--color-text-7);
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .qr-done-btn:active { transform: scale(0.96); opacity: 0.8; }
+  .qr-close-btn {
+    font-size: 13px; color: var(--color-text-3);
+    cursor: pointer; padding: 4px 0;
+  }
+
+  /* State: just completed animation */
+  .task-card.just-done {
+    animation: taskCompleteAnim 0.3s ease;    /* §3.2: 300ms ease */
+  }
+  @keyframes taskCompleteAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.015); box-shadow: 0 2px 12px rgba(54,165,144,0.12); }
+    100% { transform: scale(1); }
+  }
+
+  /* State: disabled — Nova: 透明度 50% */
+  .task-card.disabled {
+    opacity: 0.5;                             /* Nova: Disabled 透明度 50% */
+  }
+
+  .task-info { flex: 1; min-width: 0; }
+
+  /* Task Name — --text-m-h2-bold: 16px/24px/700, --color-text-1 */
+  .task-name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: var(--color-text-1);
+    margin-bottom: var(--space-xs);           /* 4px — §2.2 标题与描述间距 */
+  }
+
+  /* Task Desc — --text-m-sm: 13px/20px/400, --color-text-4 */
+  .task-desc {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--color-text-4);
+  }
+
+  /* ========================================================
+   * Task Button — UI_Design §2.1 Task Active 变体
+   * 高度: 34px, 圆角: 6px
+   * Primary: #36A590 bg, 白色文字, hover 透明度 90%
+   * Secondary (completed): #F2F5F7 bg, #242528 text
+   * ======================================================== */
+  .task-btn {
+    flex-shrink: 0;
+    width: 79px;
+    height: 34px;                             /* UI_Design §2.1: Task Active 34px */
+    border-radius: var(--radius-btn);         /* Nova: 6px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-left: var(--space-md);
+    border: none;
+    font-family: var(--font-family);
+    user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease; /* Nova: 标准过渡 150ms */
+  }
+  .task-btn.active {
+    background: var(--color-primary-6);       /* Nova: Primary #36A590 */
+    color: var(--color-text-7);
+  }
+  .task-btn.active:active {
+    transform: scale(0.96);
+    opacity: 0.8;
+  }
+  .task-btn.completed {
+    background: var(--color-fill-3);          /* Nova: Secondary #F2F5F7 */
+    border: 1px solid var(--color-border-default); /* Nova: #E4E4E7 */
+    color: var(--color-text-4);
+    cursor: default;
+  }
+  .task-btn.disabled-btn {
+    opacity: 0.5;                             /* Nova: Disabled 透明度 50% */
+    cursor: not-allowed;                      /* Nova: not-allowed */
+  }
+
+  /* ========================================================
+   * Completion Overlay — PRD §7.2, UI_Design §3.1: 全部完成→显示完成弹窗
+   * ======================================================== */
+  .done-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);         /* Nova: 黑色 80% */
+    z-index: 500;                             /* Nova: 弹窗 500 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;        /* Nova: 弹窗动画 200ms */
+  }
+  .done-overlay.visible { opacity: 1; pointer-events: all; }
+
+  .done-card {
+    width: 300px;
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);        /* Nova: 8px */
+    overflow: hidden;
+    text-align: center;
+    box-shadow: var(--shadow-modal);
+    transform: scale(0.95);                   /* Nova: 95%→100% */
+    transition: transform 0.2s ease-out;      /* Nova: 200ms */
+  }
+  .done-overlay.visible .done-card { transform: scale(1); }
+
+  .done-card-header {
+    background: linear-gradient(135deg, var(--color-primary-6), #2BC4A8);
+    padding: 36px 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .done-card-header::before {
+    content: ''; position: absolute;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    top: -30px; right: -20px;
+  }
+  .done-emoji {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+    animation: celebrateBounce 1s ease-in-out infinite;
+  }
+  @keyframes celebrateBounce {
+    0%, 100% { transform: scale(1) rotate(0); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    75% { transform: scale(1.1) rotate(5deg); }
+  }
+  .done-card-header .done-title {
+    font-size: 18px; font-weight: 700; line-height: 26px;
+    color: var(--color-text-7);
+    position: relative; z-index: 1;
+  }
+  .done-card-header .done-subtitle {
+    font-size: 13px; font-weight: 400; line-height: 20px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 4px;
+    position: relative; z-index: 1;
+  }
+  .done-card-body {
+    padding: var(--space-2xl) var(--space-xl);
+  }
+  .done-card-body .done-msg {
+    font-size: 14px; font-weight: 400; line-height: 22px;
+    color: var(--color-text-3);
+    margin-bottom: var(--space-xl);
+  }
+  .done-start-btn {
+    display: inline-block;
+    width: 160px; height: 36px; line-height: 36px; /* Nova: lg 按钮 36px */
+    background: var(--color-primary-6);
+    border-radius: var(--radius-btn);         /* Nova: 6px */
+    color: var(--color-text-7);
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease; /* Nova: 150ms */
+  }
+  .done-start-btn:active { transform: scale(0.96); opacity: 0.8; }
+
+  /* ========================================================
+   * Confetti — 彩纸动画
+   * ======================================================== */
+  .confetti-container {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 600; overflow: hidden; /* Nova: above 弹窗 500 */
+  }
+  .confetti {
+    position: absolute; top: -10px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(820px) rotate(720deg); opacity: 0; }
+  }
+
+  /* ========================================================
+   * Toast — Nova: 白色背景, 边框 #E4E4E7, 带阴影, z-index 800
+   * ======================================================== */
+  .toast {
+    position: absolute; top: 80px; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--color-fill-1);          /* Nova: 白色背景 */
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default); /* Nova: #E4E4E7 */
+    padding: var(--space-sm) var(--space-xl);
+    border-radius: var(--radius-card);        /* Nova: 8px (容器类) */
+    font-size: 13px; line-height: 20px;
+    box-shadow: var(--shadow-card);           /* Nova: 带阴影 */
+    z-index: 800;                             /* Nova: Toast 800 */
+    opacity: 0; white-space: nowrap;
+    transition: all 0.2s ease;                /* Nova: 弹窗动画 200ms */
+    pointer-events: none;
+  }
+  .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="phone-frame" id="phone">
+    <div class="pages-container">
+
+      <!-- =============================================
+           PAGE: HOME — UI_Design §1.1
+           ============================================= -->
+      <div class="page page-home" id="page-home">
+        <div class="home-page-inner">
+
+          <!-- Status Bar — 44px, light -->
+          <div class="status-bar light">
+            <span>9:41</span>
+            <span class="status-icons"><span>📶</span><span>🔋</span></span>
+          </div>
+
+          <!-- Nav Bar — 48px, --text-m-h2-bold -->
+          <div class="nav-bar">首页</div>
+
+          <!-- Floating Banner — §2.5: 45px, #FFFBF0, --text-m-body -->
+          <div class="floating-banner" id="home-banner">
+            <div class="banner-left" onclick="goToTasks()">
+              <span class="banner-icon">🎓</span>
+              <span class="text" id="banner-text">你还有 <strong>3个新手任务</strong> 未完成</span>
+            </div>
+            <span class="close" onclick="closeBanner(event)">×</span>
+          </div>
+
+          <!-- Home Content — --color-surface-canvas -->
+          <div class="home-content">
+            <div class="feed-card">
+              <div class="fc-header">
+                <div class="fc-avatar" style="background:linear-gradient(135deg,#6DD5C4,#36A590);"></div>
+                <div>
+                  <div class="fc-author">静水流深</div>
+                  <div class="fc-time">01-27 · 首页精选</div>
+                </div>
+              </div>
+              <div class="fc-title">春江水暖鸭先知，赚钱的信息永远在咸鱼</div>
+              <div class="fc-excerpt">最近在咸鱼上发现了一个非常有意思的现象，很多人通过二手交易平台找到了第一桶金的灵感。今天分享三个我实际验证过的案例...</div>
+              <div class="fc-footer"><span>👍 163</span><span>💬 42</span><span>⭐ 收藏</span></div>
+            </div>
+            <div class="feed-card">
+              <div class="fc-header">
+                <div class="fc-avatar" style="background:linear-gradient(135deg,#FF9A2F,#FF7D00);"></div>
+                <div>
+                  <div class="fc-author">斯嘉丽</div>
+                  <div class="fc-time">3天前 · 首页精选</div>
+                </div>
+              </div>
+              <div class="fc-title">小红书售卖小程序，943粉丝变现38万！</div>
+              <div class="fc-excerpt">很多人觉得小红书只是一个种草平台，但其实它的商业化潜力远超你的想象。我用一个简单的小程序在小红书上实现了...</div>
+              <div class="fc-footer"><span>👍 58</span><span>💬 21</span><span>⭐ 收藏</span></div>
+            </div>
+            <div class="feed-card">
+              <div class="fc-header">
+                <div class="fc-avatar" style="background:linear-gradient(135deg,#82B1FF,#448AFF);"></div>
+                <div>
+                  <div class="fc-author">九五</div>
+                  <div class="fc-time">02-03 · AI专题</div>
+                </div>
+              </div>
+              <div class="fc-title">闲鱼+京粉＝无货源，赚了8000</div>
+              <div class="fc-excerpt">无货源电商一直是很多新手入门的首选方向，今天分享一个闲鱼结合京东联盟的玩法，门槛极低，利润可观...</div>
+              <div class="fc-footer"><span>👍 56</span><span>💬 18</span><span>⭐ 收藏</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Overlay — §2.4 -->
+        <div class="modal-overlay" id="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <span class="modal-emoji">🎓</span>
+            </div>
+            <div class="modal-close" onclick="closeModal()">×</div>
+            <div class="modal-body">
+              <div class="modal-title">完成新手任务<br>开启你的赚钱第一课</div>
+              <div class="modal-btn" onclick="goToTasks()">去完成</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+           PAGE: TASK LIST — UI_Design §1.2
+           ============================================= -->
+      <div class="page page-tasks" id="page-tasks">
+        <div class="task-page-inner">
+
+          <!-- Status Bar — dark -->
+          <div class="status-bar dark" style="background:#1A1B1E;">
+            <span>9:41</span>
+            <span class="status-icons"><span>📶</span><span>🔋</span></span>
+          </div>
+
+          <!-- Task Header — --gradient-dark-header -->
+          <div class="task-header">
+            <div class="task-nav">
+              <span class="back-btn" onclick="goBack()">‹</span>
+            </div>
+            <div class="task-title">完成新手任务，<br>开启你的赚钱第一课</div>
+            <div class="task-subtitle">完成以下任务快速融入生财有术</div>
+            <div class="progress-card">
+              <div class="progress-header">
+                <span class="progress-label">任务进度</span>
+                <span class="progress-count" id="progress-text">0/4 已完成</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task List — --color-surface-canvas, gap 12px, padding 16px -->
+          <div class="task-list" id="task-list"></div>
+        </div>
+
+        <!-- QR Code Overlay — 扫码添加鱼丸 -->
+        <div class="qr-overlay" id="qr-overlay">
+          <div class="qr-card">
+            <div class="qr-card-header">
+              <div class="qr-card-title">扫码添加鱼丸</div>
+              <div class="qr-card-desc">添加鱼丸微信，获取专属社群服务</div>
+            </div>
+            <div class="qr-code-wrapper">
+              <div class="qr-code-box">
+                <div class="qr-placeholder"></div>
+                <div class="qr-placeholder-logo">$</div>
+              </div>
+            </div>
+            <div class="qr-hint">长按识别二维码添加</div>
+            <div class="qr-card-footer">
+              <div class="qr-done-btn" onclick="closeQrModal()">我已添加</div>
+              <div class="qr-close-btn" onclick="closeQrModal()">稍后再说</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Overlay -->
+        <div class="done-overlay" id="done-overlay">
+          <div class="done-card">
+            <div class="done-card-header">
+              <span class="done-emoji">🎉</span>
+              <div class="done-title">太棒了！全部任务已完成</div>
+              <div class="done-subtitle">你已成功融入生财有术</div>
+            </div>
+            <div class="done-card-body">
+              <div class="done-msg">恭喜完成所有新手任务！<br>开始探索更多赚钱机会吧</div>
+              <div class="done-start-btn" onclick="finishAll()">开始探索</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Shared: home indicator, toast, confetti -->
+    <div class="home-indicator"></div>
+    <div class="toast" id="toast"></div>
+    <div class="confetti-container" id="confetti-container"></div>
+  </div>
+  <div class="screen-label" id="screen-label">首页 · 新手任务弹窗</div>
+</div>
+
+<script>
+  /* ========================================================
+   * Data — PRD §3.2: 移动端 4 个任务
+   * UI_Design §1.2: 任务名称、描述、按钮文案
+   * §2.2 状态矩阵: 未完成→Task Active, 已完成→Task Completed
+   * ======================================================== */
+  const tasks = [
+    { id: 1, name: '绑定星球账号', desc: '同步你在知识星球的会员身份', btnText: '去绑定', doneText: '已绑定', completed: false },
+    { id: 2, name: '扫码添加鱼丸', desc: '获取专属社群服务',         btnText: '去添加', doneText: '已添加', completed: false },
+    { id: 3, name: '填写新人登记表', desc: '让我们更了解你的需求',   btnText: '去填写', doneText: '已填写', completed: false },
+  ];
+
+  let currentPage = 'home';
+  let bannerClosed = false;
+  let allFinished = false;
+
+  /* ========================================================
+   * Page Navigation
+   * UI_Design §3.2: 页面切换 左右滑动 300ms ease-in-out
+   * ======================================================== */
+  function goToTasks() {
+    closeModal();
+    currentPage = 'tasks';
+    document.getElementById('page-home').classList.add('slide-left');
+    document.getElementById('page-tasks').classList.add('slide-in');
+    document.getElementById('screen-label').textContent = '新手任务页';
+    renderTasks();
+  }
+
+  function goBack() {
+    currentPage = 'home';
+    document.getElementById('page-home').classList.remove('slide-left');
+    document.getElementById('page-tasks').classList.remove('slide-in');
+    document.getElementById('screen-label').textContent = '首页';
+    updateBanner();
+  }
+
+  /* ========================================================
+   * Modal — Nova 弹窗动画 200ms
+   * 入场: fade-in + scale 95%→100%
+   * 出场: fade-out + scale 100%→95%
+   * ======================================================== */
+  function openModal() {
+    if (allFinished) return;
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('closing');
+    overlay.classList.add('visible');
+    document.getElementById('screen-label').textContent = '首页 · 新手任务弹窗';
+  }
+
+  function closeModal() {
+    const overlay = document.getElementById('modal-overlay');
+    if (!overlay.classList.contains('visible')) return;
+    overlay.classList.add('closing');
+    overlay.classList.remove('visible');
+    // After close animation (200ms), clean up
+    setTimeout(() => overlay.classList.remove('closing'), 200);
+
+    if (currentPage === 'home') {
+      updateBanner();
+      document.getElementById('screen-label').textContent = '首页 · 悬浮提醒条';
+    }
+  }
+
+  /* ========================================================
+   * Floating Banner — UI_Design §2.5, §3.1
+   * 点击关闭 → 弹窗收起，显示悬浮入口
+   * 点击 → 新手任务页
+   * 点击关闭 → 隐藏入口
+   * ======================================================== */
+  function updateBanner() {
+    const banner = document.getElementById('home-banner');
+    const remaining = tasks.filter(t => !t.completed).length;
+
+    if (bannerClosed || remaining === 0 || allFinished) {
+      banner.classList.remove('visible');
+      return;
+    }
+    document.getElementById('banner-text').innerHTML =
+      '你还有 <strong>' + remaining + '个新手任务</strong> 未完成';
+    banner.classList.add('visible');
+  }
+
+  function closeBanner(e) {
+    e.stopPropagation();
+    bannerClosed = true;
+    document.getElementById('home-banner').classList.remove('visible');
+    showToast('提醒已关闭');
+    document.getElementById('screen-label').textContent = '首页';
+  }
+
+  /* ========================================================
+   * Render Task List
+   * UI_Design §1.2, §2.2
+   * ======================================================== */
+  function renderTasks() {
+    const list = document.getElementById('task-list');
+    const completed = tasks.filter(t => t.completed).length;
+    const total = tasks.length;
+
+    // Progress — §2.3: width 0.3s ease
+    document.getElementById('progress-text').textContent = completed + '/' + total + ' 已完成';
+    document.getElementById('progress-bar').style.width = ((completed / total) * 100) + '%';
+
+    list.innerHTML = tasks.map(function(task) {
+      var cardClass = 'task-card';
+      if (task.completed) cardClass += ' done';
+
+      var btnClass, btnText;
+      if (task.completed) {
+        btnClass = 'task-btn completed';
+        btnText = task.doneText;
+      } else {
+        btnClass = 'task-btn active';
+        btnText = task.btnText;
+      }
+
+      var btnHtml = task.completed
+        ? '<button class="' + btnClass + '">' + btnText + '</button>'
+        : '<button class="' + btnClass + '" onclick="completeTask(' + task.id + ')">' + btnText + '</button>';
+
+      return '<div class="' + cardClass + '" id="task-' + task.id + '">' +
+        '<div class="task-info">' +
+          '<div class="task-name">' + task.name + '</div>' +
+          '<div class="task-desc">' + task.desc + '</div>' +
+        '</div>' +
+        btnHtml +
+      '</div>';
+    }).join('');
+  }
+
+  /* ========================================================
+   * QR Code Modal — 扫码添加鱼丸
+   * ======================================================== */
+  var QR_TASK_ID = 2; // 扫码添加鱼丸
+  var qrCallbackTimer = null;
+
+  function openQrModal() {
+    document.getElementById('qr-overlay').classList.add('visible');
+    // 模拟企微回调（原型演示：5秒后回调成功，自动更新列表状态）
+    qrCallbackTimer = setTimeout(function() {
+      doCompleteTask(QR_TASK_ID);
+    }, 5000);
+  }
+
+  function closeQrModal() {
+    document.getElementById('qr-overlay').classList.remove('visible');
+  }
+
+  /* ========================================================
+   * Complete Task
+   * UI_Design §3.2: 任务完成 按钮颜色渐变+进度条增长 300ms ease
+   * PRD §5: 操作完成→自动更新状态和进度
+   * ======================================================== */
+  function completeTask(id) {
+    // 扫码添加鱼丸 → 先展示二维码
+    if (id === QR_TASK_ID) {
+      openQrModal();
+      return;
+    }
+    doCompleteTask(id);
+  }
+
+  function doCompleteTask(id) {
+    var task = tasks.find(function(t) { return t.id === id; });
+    if (!task || task.completed) return;
+    task.completed = true;
+
+    // Animation on card — §3.2: 300ms ease
+    var card = document.getElementById('task-' + id);
+    if (card) card.classList.add('just-done');
+
+    showToast('"' + task.name + '" 已完成');
+
+    // Re-render after animation
+    setTimeout(function() {
+      renderTasks();
+
+      // PRD §5: 所有任务完成后，显示任务完成提示
+      if (tasks.every(function(t) { return t.completed; })) {
+        setTimeout(function() { showDoneState(); }, 500);
+      }
+    }, 350);
+  }
+
+  /* ========================================================
+   * All Done — PRD §7.2, UI_Design §3.1: 全部完成→显示完成弹窗
+   * ======================================================== */
+  function showDoneState() {
+    document.getElementById('done-overlay').classList.add('visible');
+    launchConfetti();
+  }
+
+  function finishAll() {
+    allFinished = true;
+    document.getElementById('done-overlay').classList.remove('visible');
+    goBack();
+    showToast('欢迎加入生财有术，开始探索吧！');
+    document.getElementById('screen-label').textContent = '首页 · 任务全部完成';
+  }
+
+  /* ========================================================
+   * Confetti — 彩纸动画
+   * 7 色: #FF7D00, #36A590, #FFB65D, #FF9A2F, #2BC4A8, #FF6B35, #6DD5C4
+   * ======================================================== */
+  function launchConfetti() {
+    var container = document.getElementById('confetti-container');
+    var colors = ['#FF7D00', '#36A590', '#FFB65D', '#FF9A2F', '#2BC4A8', '#FF6B35', '#6DD5C4'];
+    for (var i = 0; i < 40; i++) {
+      var p = document.createElement('div');
+      p.className = 'confetti';
+      var c = colors[Math.floor(Math.random() * colors.length)];
+      var s = Math.random() * 6 + 4;
+      p.style.cssText =
+        'left:' + (Math.random() * 100) + '%;' +
+        'width:' + s + 'px;height:' + s + 'px;' +
+        'background:' + c + ';' +
+        'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';' +
+        'animation-duration:' + (Math.random() * 1.5 + 1.5) + 's;' +
+        'animation-delay:' + (Math.random() * 0.5) + 's;';
+      container.appendChild(p);
+    }
+    setTimeout(function() { container.innerHTML = ''; }, 4000);
+  }
+
+  /* ========================================================
+   * Toast
+   * ======================================================== */
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    setTimeout(function() { t.classList.remove('visible'); }, 2200);
+  }
+
+  /* ========================================================
+   * Init — UI_Design §3.1: 弹窗弹出（首次登录）
+   * ======================================================== */
+  setTimeout(function() { openModal(); }, 600);
+</script>
+
+</body>
+</html>
