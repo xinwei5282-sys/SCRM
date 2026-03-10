@@ -630,7 +630,7 @@
     flex-wrap: wrap;
     gap: 4px;
   }
-  .personal-info-tags .tag-sm {
+  .tag-sm {
     display: inline-flex;
     align-items: center;
     height: 20px;
@@ -1448,40 +1448,29 @@
 
         <!-- ===== Tab: 客户档案 ===== -->
         <div class="tab-content" data-tab="profile">
-        <!-- 基础信息 -->
-        <div class="section-header">
-          <span class="section-title">基础信息</span>
-        </div>
-        <div class="personal-info-section">
-          <div class="personal-info-grid">
-            <div class="personal-info-item">
-              <span class="personal-info-label">星球编号</span>
-              <span class="personal-info-value">28456</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">星球昵称</span>
-              <span class="personal-info-value">林小鱼</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">性别</span>
-              <span class="personal-info-value">女</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">手机号</span>
-              <span class="personal-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span></span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">微信号</span>
-              <span class="personal-info-value">linxiaoyu_ai</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="divider-thick"></div>
-
-        <!-- 会员信息（表格样式） -->
+        <!-- 全部信息统一表格 -->
         <div class="member-table-section">
           <table class="member-table">
+            <!-- 基础信息 -->
+            <tr><td colspan="4" class="member-table-header">基础信息</td></tr>
+            <tr>
+              <td class="mt-label">星球编号</td>
+              <td class="mt-value">28456</td>
+              <td class="mt-label">星球昵称</td>
+              <td class="mt-value">林小鱼</td>
+            </tr>
+            <tr>
+              <td class="mt-label">性别</td>
+              <td class="mt-value">女</td>
+              <td class="mt-label">手机号</td>
+              <td class="mt-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span></td>
+            </tr>
+            <tr>
+              <td class="mt-label">微信号</td>
+              <td class="mt-value">linxiaoyu_ai</td>
+              <td class="mt-label"></td>
+              <td class="mt-value"></td>
+            </tr>
             <!-- 官网会员 -->
             <tr><td colspan="4" class="member-table-header">会员信息 — 官网会员（鱼丸 580）</td></tr>
             <tr>
@@ -1566,61 +1555,35 @@
               <td class="mt-label">续费次数</td>
               <td class="mt-value">0</td>
             </tr>
+            <!-- 个人信息 -->
+            <tr><td colspan="4" class="member-table-header">个人信息</td></tr>
+            <tr>
+              <td class="mt-label">岗位方向</td>
+              <td class="mt-value">独立开发者</td>
+              <td class="mt-label">工作年限</td>
+              <td class="mt-value">5年</td>
+            </tr>
+            <tr>
+              <td class="mt-label">年收入</td>
+              <td class="mt-value">30万</td>
+              <td class="mt-label">感兴趣领域</td>
+              <td class="mt-value"><span class="tag-sm">AI应用</span> <span class="tag-sm">短视频</span> <span class="tag-sm">知识付费</span> <span class="tag-sm">电商</span></td>
+            </tr>
+            <tr>
+              <td class="mt-label">个人介绍</td>
+              <td colspan="3" class="mt-value">5年副业经验，专注AI视频创作和自媒体运营。曾在某互联网公司从事产品工作，2023年开始全职做独立开发者。</td>
+            </tr>
+            <tr>
+              <td class="mt-label">加入原因</td>
+              <td colspan="3" class="mt-value">希望学习更多变现方法，认识同频的人，找到适合自己的副业赛道</td>
+            </tr>
+            <tr>
+              <td class="mt-label">提供资源</td>
+              <td class="mt-value"><span class="tag-sm">AI视频制作</span> <span class="tag-sm">短视频剪辑</span></td>
+              <td class="mt-label">需要资源</td>
+              <td class="mt-value"><span class="tag-sm">流量渠道</span> <span class="tag-sm">变现指导</span></td>
+            </tr>
           </table>
-        </div>
-
-        <div class="divider-thick"></div>
-
-        <!-- 个人信息 -->
-        <div class="section-header">
-          <span class="section-title">个人信息</span>
-        </div>
-        <div class="personal-info-section">
-          <div class="personal-info-grid">
-            <div class="personal-info-item">
-              <span class="personal-info-label">岗位方向</span>
-              <span class="personal-info-value">独立开发者</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">工作年限</span>
-              <span class="personal-info-value">5年</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">年收入</span>
-              <span class="personal-info-value">30万</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">感兴趣领域</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">AI应用</span>
-                <span class="tag-sm">短视频</span>
-                <span class="tag-sm">知识付费</span>
-                <span class="tag-sm">电商</span>
-              </div>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">个人介绍</span>
-              <span class="personal-info-value text-long">5年副业经验，专注AI视频创作和自媒体运营。曾在某互联网公司从事产品工作，2023年开始全职做独立开发者。</span>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">加入原因</span>
-              <span class="personal-info-value text-long">希望学习更多变现方法，认识同频的人，找到适合自己的副业赛道</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">提供资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">AI视频制作</span>
-                <span class="tag-sm">短视频剪辑</span>
-              </div>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">需要资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">流量渠道</span>
-                <span class="tag-sm">变现指导</span>
-              </div>
-            </div>
-          </div>
         </div>
         </div><!-- /tab-content profile -->
 
