@@ -588,6 +588,41 @@
   .friend-ok { color: var(--color-success-6); font-weight: 500; }
   .friend-deleted { color: var(--color-danger-6); font-weight: 500; }
 
+  /* ===== 基础信息表格 ===== */
+  .basic-info-table {
+    padding: 0 16px 4px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    margin: 0 16px 8px;
+    overflow: hidden;
+  }
+  .basic-info-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px 1fr;
+    border-bottom: 1px solid var(--color-border-default);
+    min-height: 32px;
+  }
+  .basic-info-row:last-child { border-bottom: none; }
+  .basic-info-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    padding: 7px 8px;
+    background: var(--color-fill-2);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .basic-info-value {
+    font-size: 12px;
+    color: var(--color-text-1);
+    padding: 7px 8px;
+    display: flex;
+    align-items: center;
+    word-break: break-all;
+  }
+
   /* ===== 个人信息 ===== */
   .personal-info-section {
     padding: 0 16px 8px;
@@ -1579,22 +1614,28 @@
       </div>
 
       <div class="sidebar-body">
-        <!-- 身份卡片（简版） -->
-        <div class="identity-card" style="align-items: flex-start;">
-          <div class="avatar">林</div>
-          <div class="identity-info" style="flex: 1; min-width: 0;">
-            <div class="identity-name-row">
-              <span class="identity-nickname">林小鱼</span>
-              <span class="identity-star-id">NO.28456</span>
-              <span class="channel-tag channel-qw">企微</span>
-            </div>
-            <div class="identity-meta">
-              <span>杭州</span>
-              <span class="sep">·</span>
-              <span>独立开发者</span>
-              <span class="sep">·</span>
-              <span>AI</span>
-            </div>
+        <!-- 基础信息 -->
+        <div class="section-header" style="justify-content: center;">
+          <span class="section-title" style="color: var(--color-primary-6);">基础信息</span>
+        </div>
+        <div class="basic-info-table">
+          <div class="basic-info-row">
+            <span class="basic-info-label">星球编号</span>
+            <span class="basic-info-value">28456</span>
+            <span class="basic-info-label">星球昵称</span>
+            <span class="basic-info-value">林小鱼</span>
+          </div>
+          <div class="basic-info-row">
+            <span class="basic-info-label">性别</span>
+            <span class="basic-info-value">女</span>
+            <span class="basic-info-label">手机号</span>
+            <span class="basic-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">👁</span></span>
+          </div>
+          <div class="basic-info-row">
+            <span class="basic-info-label">微信号</span>
+            <span class="basic-info-value">linxiaoyu_ai</span>
+            <span class="basic-info-label"></span>
+            <span class="basic-info-value"></span>
           </div>
         </div>
 
@@ -1734,11 +1775,13 @@
     </div>
     <div class="scene-label">场景1b：客户档案</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s1b" data-prd-version="20260310f">
+    <div class="prd-panel" data-prd-key="delivery-s1b" data-prd-version="20260310g">
       <div class="prd-title">交付-场景1b · 客户档案</div>
       <div class="prd-card" style="--accent: #586E93;">
         <div class="prd-card-title">客户档案页</div>
-        <div class="prd-card-body">顶部保留身份卡片（简版，仅头像+昵称+编号+渠道）
+        <div class="prd-card-body">基础信息（表格样式，2列×N行）
+　星球编号　星球昵称　性别　手机号（脱敏+眼睛图标）　微信号
+　不含客户ID（后台字段，不展示）
 
 会员信息（按类型分卡片：官网/航海/深海圈）
 　每张含：会员类型+状态+鱼丸+专属服务+好友状态
