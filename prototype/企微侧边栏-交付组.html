@@ -600,6 +600,69 @@
     color: var(--color-text-2);
     line-height: 18px;
   }
+  .personal-info-value.editable {
+    cursor: pointer;
+    padding: 0 4px;
+    margin: 0 -4px;
+    border-radius: var(--radius-xs);
+    border: 1px dashed transparent;
+    transition: all 0.1s;
+  }
+  .personal-info-value.editable:hover {
+    border-color: var(--color-border-hover);
+    background: var(--color-fill-hover);
+  }
+  .personal-info-value .edit-icon {
+    display: none;
+    width: 12px;
+    height: 12px;
+    color: var(--color-text-4);
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  .personal-info-value.editable:hover .edit-icon {
+    display: inline;
+  }
+  .editable-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .editable-input-wrap input {
+    flex: 1;
+    height: 24px;
+    min-width: 0;
+    border: 1px solid var(--color-primary-6);
+    border-radius: var(--radius-xs);
+    padding: 0 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .editable-input-wrap .edit-confirm,
+  .editable-input-wrap .edit-cancel {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .editable-input-wrap .edit-confirm {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .editable-input-wrap .edit-cancel {
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+  }
   .personal-info-tags {
     display: flex;
     flex-wrap: wrap;
@@ -1129,6 +1192,165 @@
     color: var(--color-text-4);
   }
 
+  /* ===== 跟进表单（展开态） ===== */
+  .followup-form {
+    padding: 12px 16px;
+    background: var(--color-fill-2);
+    border-top: 1px solid var(--color-border-default);
+    display: none;
+  }
+  .followup-form.active {
+    display: block;
+  }
+  .form-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-close {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-3);
+    border-radius: var(--radius-xs);
+  }
+  .form-close:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .form-group {
+    margin-bottom: 10px;
+  }
+  .form-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .form-label .required {
+    color: var(--color-danger-6);
+  }
+  .form-methods {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .method-chip {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    font-size: 12px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .method-chip:hover {
+    border-color: var(--color-border-hover);
+  }
+  .method-chip.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+  .form-textarea {
+    width: 100%;
+    height: 72px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    color: var(--color-text-1);
+    line-height: 20px;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+  }
+  .form-textarea::placeholder {
+    color: var(--color-text-4);
+  }
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .form-inline-row {
+    display: flex;
+    gap: 8px;
+  }
+  .form-inline-row .form-group {
+    flex: 1;
+  }
+  .form-input {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .form-input::placeholder {
+    color: var(--color-text-4);
+  }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .form-btn {
+    height: 28px;
+    padding: 0 16px;
+    border-radius: var(--radius-btn);
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.1s;
+  }
+  .form-btn.btn-submit {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .form-btn.btn-submit:hover {
+    background: rgba(54, 165, 144, 0.9);
+  }
+  .form-btn.btn-cancel {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .form-btn.btn-cancel:hover {
+    background: var(--color-fill-3-hover);
+  }
+  .char-count {
+    font-size: 11px;
+    color: var(--color-text-4);
+    text-align: right;
+    margin-top: 2px;
+  }
+
   /* ===== 底部操作栏（与销售组一致） ===== */
   .sidebar-footer {
     flex-shrink: 0;
@@ -1443,11 +1665,11 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">手机号</span>
-              <span class="personal-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span></span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '186****3721')">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span><svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">微信号</span>
-              <span class="personal-info-value">linxiaoyu_ai</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, 'linxiaoyu_ai')">linxiaoyu_ai<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
             </div>
           </div>
         </div>
@@ -1472,7 +1694,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">专属服务</span>
-              <span class="personal-info-value">潇墨</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '潇墨')">潇墨<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -1519,7 +1741,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">专属服务</span>
-              <span class="personal-info-value">潇墨</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '潇墨')">潇墨<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -1558,7 +1780,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">专属服务</span>
-              <span class="personal-info-value">李李</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '李李')">李李<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -2295,9 +2517,42 @@
 
       </div>
 
+      <!-- 写跟进表单 -->
+      <div class="followup-form" id="followupForm-delivery">
+        <div class="form-title">
+          <span>写跟进</span>
+          <div class="form-close" onclick="closeFollowupForm('delivery')">✕</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进方式</div>
+          <div class="form-methods">
+            <button class="method-chip selected">企微消息</button>
+            <button class="method-chip" onclick="selectMethod(this)">电话</button>
+            <button class="method-chip" onclick="selectMethod(this)">面谈</button>
+            <button class="method-chip" onclick="selectMethod(this)">微信沟通</button>
+            <button class="method-chip" onclick="selectMethod(this)">其他</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label"><span class="required">*</span> 跟进内容</div>
+          <textarea class="form-textarea" placeholder="请输入跟进内容（1-500字）" maxlength="500" oninput="updateCharCount(this)"></textarea>
+          <div class="char-count">0/500</div>
+        </div>
+        <div class="form-inline-row">
+          <div class="form-group">
+            <div class="form-label">下次跟进</div>
+            <input type="date" class="form-input" min="2026-03-10">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="form-btn btn-cancel" onclick="closeFollowupForm('delivery')">取消</button>
+          <button class="form-btn btn-submit">提交</button>
+        </div>
+      </div>
+
       <!-- 底部操作栏 -->
       <div class="sidebar-footer" data-footer="overview">
-        <button class="action-btn btn-primary btn-full">
+        <button class="action-btn btn-primary btn-full" onclick="openFollowupForm('delivery')">
           <span class="btn-icon">✎</span> 写跟进
         </button>
       </div>
@@ -2772,6 +3027,59 @@ AI 画像总结 → 红色渐变「流失预警」风格
 </div>
 
 <script>
+  /* ── 写跟进表单 ── */
+  function openFollowupForm(sidebarId) {
+    var form = document.getElementById('followupForm-' + sidebarId);
+    if (form) form.classList.add('active');
+  }
+  function closeFollowupForm(sidebarId) {
+    var form = document.getElementById('followupForm-' + sidebarId);
+    if (form) form.classList.remove('active');
+  }
+  function selectMethod(el) {
+    var siblings = el.parentElement.querySelectorAll('.method-chip');
+    siblings.forEach(function(s) { s.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+  function updateCharCount(textarea) {
+    var count = textarea.value.length;
+    var counter = textarea.nextElementSibling;
+    if (counter) counter.textContent = count + '/500';
+  }
+
+  /* ── 字段内联编辑 ── */
+  function startEdit(el, currentVal) {
+    if (el.querySelector('.editable-input-wrap')) return;
+    var origHTML = el.innerHTML;
+    el.classList.remove('editable');
+    el.removeAttribute('onclick');
+    el.innerHTML = '<div class="editable-input-wrap">' +
+      '<input type="text" value="' + currentVal + '" />' +
+      '<button class="edit-confirm" title="确认">✓</button>' +
+      '<button class="edit-cancel" title="取消">✕</button>' +
+      '</div>';
+    var input = el.querySelector('input');
+    input.focus();
+    input.select();
+    el.querySelector('.edit-confirm').onclick = function(e) {
+      e.stopPropagation();
+      var newVal = input.value.trim() || currentVal;
+      el.innerHTML = newVal + '<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+      el.classList.add('editable');
+      el.setAttribute('onclick', "startEdit(this, '" + newVal.replace(/'/g, "\\'") + "')");
+    };
+    el.querySelector('.edit-cancel').onclick = function(e) {
+      e.stopPropagation();
+      el.innerHTML = origHTML;
+      el.classList.add('editable');
+      el.setAttribute('onclick', "startEdit(this, '" + currentVal.replace(/'/g, "\\'") + "')");
+    };
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') el.querySelector('.edit-confirm').click();
+      if (e.key === 'Escape') el.querySelector('.edit-cancel').click();
+    });
+  }
+
   /* ── AI 画像总结生成 ── */
   function generateAiPortrait() {
     var btn = document.getElementById('aiPortraitGenBtn');
