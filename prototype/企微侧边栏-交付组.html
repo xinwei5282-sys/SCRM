@@ -886,23 +886,7 @@
     font-weight: 500;
   }
   .followup-tl-rounds { font-size: 10px; color: var(--color-text-4); margin-left: 4px; }
-  .followup-tl-item.clickable { cursor: pointer; padding: 4px; margin: -4px; border-radius: 4px; transition: background 100ms; }
-  .followup-tl-item.clickable:hover { background: var(--color-fill-hover); }
   /* Mobile chat records */
-  .mobile-chat-list { padding: 0 16px 12px; }
-  .mobile-chat-date { font-size: 11px; color: var(--color-text-4); text-align: center; margin: 12px 0 8px; position: relative; }
-  .mobile-chat-date:first-child { margin-top: 4px; }
-  .mobile-chat-date::before, .mobile-chat-date::after { content: ''; position: absolute; top: 50%; height: 1px; background: var(--color-border-default); width: calc(50% - 40px); }
-  .mobile-chat-date::before { left: 0; }
-  .mobile-chat-date::after { right: 0; }
-  .mobile-chat-msg { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 8px; }
-  .mobile-chat-msg-me { flex-direction: row-reverse; }
-  .mobile-chat-avatar { width: 26px; height: 26px; border-radius: 4px; flex-shrink: 0; background: var(--color-primary-2); color: var(--color-primary-7); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
-  .mobile-chat-bubble { max-width: 65%; padding: 6px 10px; background: var(--color-fill-1); border: 1px solid var(--color-border-default); border-radius: 2px 8px 8px 8px; font-size: 12px; color: var(--color-text-1); line-height: 18px; }
-  .mobile-chat-bubble-me { background: #D4F5EC; border-color: #B8E8DA; border-radius: 8px 2px 8px 8px; }
-  .mobile-chat-time { font-size: 10px; color: var(--color-text-4); margin-top: 2px; flex-shrink: 0; }
-  @keyframes chatDateFlash { 0% { background: var(--color-primary-1); } 100% { background: transparent; } }
-  .chat-date-highlight { animation: chatDateFlash 1.5s ease forwards; border-radius: 4px; padding: 2px 8px; margin-left: -8px; margin-right: -8px; }
 
   /* ===== 新人进度 ===== */
   .newcomer-progress {
@@ -1096,6 +1080,7 @@
         <div class="nav-tab active">用户画像</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab">沟通记录</div>
+        <div class="nav-tab">积分记录</div>
       </div>
 
       <div class="sidebar-body">
@@ -1355,6 +1340,7 @@
         <div class="nav-tab">用户画像</div>
         <div class="nav-tab active">客户动态</div>
         <div class="nav-tab">沟通记录</div>
+        <div class="nav-tab">积分记录</div>
       </div>
 
       <div class="sidebar-body">
@@ -1393,7 +1379,7 @@
                 <span class="timeline-time">14:32</span>
               </div>
               <div class="timeline-desc">阅读了 <span class="hl">#AI视频</span> 「如何用AI做短视频月入过万」</div>
-              <div class="timeline-duration">3min</div>
+              <div class="timeline-duration">8min</div>
             </div>
             <div class="timeline-item" data-activity="community-collect community">
               <div class="timeline-dot dot-green"></div>
@@ -1402,6 +1388,30 @@
                 <span class="timeline-time">14:20</span>
               </div>
               <div class="timeline-desc">收藏了「2025小红书运营指南 · 从0到1」</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈点赞</span>
+                <span class="timeline-time">11:45</span>
+              </div>
+              <div class="timeline-desc">在深海圈点赞了「独立开发者接单指南」</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈评论</span>
+                <span class="timeline-time">11:40</span>
+              </div>
+              <div class="timeline-desc">在深海圈评论了「独立开发者接单指南」：感谢分享，很有启发</div>
+            </div>
+            <div class="timeline-item" data-activity="community-post community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">表单填写</span>
+                <span class="timeline-time">10:05</span>
+              </div>
+              <div class="timeline-desc">填写了表单「体验营课前调研问卷」</div>
             </div>
           </div>
 
@@ -1415,18 +1425,68 @@
               </div>
               <div class="timeline-desc">在 <span class="hl">#AI视频变现航海</span> 打卡了「Day 12 · 完成第三个AI视频剪辑」</div>
             </div>
+            <div class="timeline-item" data-activity="voyage-checkin voyage-fail voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">航海打卡 <span class="tag" style="font-size:10px; margin-left:4px; background:var(--color-danger-1); color:var(--color-danger-6); border:1px solid var(--color-danger-2); padding:0 4px; border-radius:3px;">打卡失败</span></span>
+                <span class="timeline-time">20:00</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#小红书起号航海</span> 打卡了「Day 8 · 发布第一篇笔记」，审核未通过</div>
+            </div>
             <div class="timeline-item" data-activity="community-comment community">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
                 <span class="timeline-type">发表评论</span>
                 <span class="timeline-time">18:40</span>
               </div>
-              <div class="timeline-desc">在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了...」</div>
+              <div class="timeline-desc">在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了，剪辑效率提升很多」</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-read circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈阅读</span>
+                <span class="timeline-time">17:30</span>
+              </div>
+              <div class="timeline-desc">在深海圈阅读了「私域流量变现的3种高效模型」</div>
+              <div class="timeline-duration">12min</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈评论</span>
+                <span class="timeline-time">17:22</span>
+              </div>
+              <div class="timeline-desc">在深海圈评论了「私域流量变现的3种高效模型」：这套方法论很实用</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈点赞</span>
+                <span class="timeline-time">17:18</span>
+              </div>
+              <div class="timeline-desc">在深海圈点赞了「私域流量变现的3种高效模型」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">10:15</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#自媒体变现</span>「小红书起号的5个关键动作」</div>
+              <div class="timeline-duration">5min</div>
             </div>
           </div>
 
           <div class="timeline-date-header">2025-12-18</div>
           <div class="timeline-list">
+            <div class="timeline-item" data-activity="circle-post circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈发帖</span>
+                <span class="timeline-time">15:30</span>
+              </div>
+              <div class="timeline-desc">在深海圈发表了「AI视频变现第一周复盘：从0到日更」</div>
+            </div>
             <div class="timeline-item" data-activity="voyage-join voyage">
               <div class="timeline-dot dot-orange"></div>
               <div class="timeline-head">
@@ -1445,13 +1505,58 @@
             </div>
           </div>
 
+          <div class="timeline-date-header">2025-12-16</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="circle-anchor circle">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈投锚</span>
+                <span class="timeline-time">21:20</span>
+              </div>
+              <div class="timeline-desc">在深海圈给「自媒体矩阵搭建实战」投了锚</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈评论</span>
+                <span class="timeline-time">20:15</span>
+              </div>
+              <div class="timeline-desc">在深海圈评论了「自媒体矩阵搭建实战」：这套方法论我也在用，效果不错</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈点赞</span>
+                <span class="timeline-time">19:50</span>
+              </div>
+              <div class="timeline-desc">在深海圈点赞了「月入10万的副业思维模型」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-anchor community">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">投锚</span>
+                <span class="timeline-time">16:30</span>
+              </div>
+              <div class="timeline-desc">给 <span class="hl">#实操复盘</span>「我的AI视频制作之路」投了锚</div>
+            </div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">11:45</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#生财日历</span>「12月16日 · 副业选择的3个核心逻辑」</div>
+              <div class="timeline-duration">4min</div>
+            </div>
+          </div>
+
           <div class="timeline-date-header">2025-12-15</div>
           <div class="timeline-list">
             <div class="timeline-item" data-activity="gathering-create gathering">
               <div class="timeline-dot dot-green"></div>
               <div class="timeline-head">
                 <span class="timeline-type">发起聚会</span>
-                <span class="timeline-time">15:00</span>
+                <span class="timeline-time">16:30</span>
               </div>
               <div class="timeline-desc">发起了「深圳站 · 生财有术线下聚会」<span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></div>
             </div>
@@ -1462,6 +1567,14 @@
                 <span class="timeline-time">16:30</span>
               </div>
               <div class="timeline-desc">为「深圳站 · 生财有术线下聚会」导入了 5 位嘉宾<span class="tag tag-default" style="font-size:10px; margin-left:4px;">组局官</span></div>
+            </div>
+            <div class="timeline-item" data-activity="circle-post circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈发帖</span>
+                <span class="timeline-time">14:00</span>
+              </div>
+              <div class="timeline-desc">在深海圈发表了「生财有术新手入门经验分享」</div>
             </div>
             <div class="timeline-item" data-activity="gathering-signup gathering">
               <div class="timeline-dot dot-green"></div>
@@ -1491,6 +1604,87 @@
               </div>
               <div class="timeline-desc">填写了「杭州站 · AI副业交流聚会」反馈：活动组织很好，认识了同频的人</div>
             </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈评论</span>
+                <span class="timeline-time">16:00</span>
+              </div>
+              <div class="timeline-desc">在深海圈评论了「小红书带货的正确姿势」：定价策略这块讲得很透彻</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈点赞</span>
+                <span class="timeline-time">15:50</span>
+              </div>
+              <div class="timeline-desc">在深海圈点赞了「小红书带货的正确姿势」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-like community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">点赞</span>
+                <span class="timeline-time">11:30</span>
+              </div>
+              <div class="timeline-desc">点赞了 <span class="hl">#精华帖</span>「年度复盘：从0到年入百万的路径」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-05</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="voyage-leave voyage">
+              <div class="timeline-dot dot-danger"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">退出航海</span>
+                <span class="timeline-time">18:00</span>
+              </div>
+              <div class="timeline-desc">退出了 <span class="hl">小红书起号</span> 航海，原因：时间冲突</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-post circle">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈发帖</span>
+                <span class="timeline-time">16:45</span>
+              </div>
+              <div class="timeline-desc">在深海圈发表了「副业赚钱实操复盘：3个月从0到月入2万」</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-anchor circle">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈投锚</span>
+                <span class="timeline-time">15:40</span>
+              </div>
+              <div class="timeline-desc">在深海圈给「高客单转化漏斗拆解」投了锚</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-comment circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈评论</span>
+                <span class="timeline-time">15:30</span>
+              </div>
+              <div class="timeline-desc">在深海圈评论了「高客单转化漏斗拆解」：这个漏斗模型很实用</div>
+            </div>
+            <div class="timeline-item" data-activity="circle-like circle">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">深海圈点赞</span>
+                <span class="timeline-time">15:25</span>
+              </div>
+              <div class="timeline-desc">在深海圈点赞了「高客单转化漏斗拆解」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">10:35</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#知识IP</span>「知识付费产品的定价策略全解析」</div>
+              <div class="timeline-duration">10min</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-01</div>
+          <div class="timeline-list">
             <div class="timeline-item" data-activity="gathering-cancel gathering">
               <div class="timeline-dot dot-danger"></div>
               <div class="timeline-head">
@@ -1530,6 +1724,14 @@
                 <span class="timeline-time">20:00</span>
               </div>
               <div class="timeline-desc">填写了「广州站 · 生财圈友见面会」反馈：到场率85%，整体效果不错</div>
+            </div>
+            <div class="timeline-item" data-activity="voyage-join voyage">
+              <div class="timeline-dot dot-orange"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">参加航海</span>
+                <span class="timeline-time">14:00</span>
+              </div>
+              <div class="timeline-desc">报名参加了 <span class="hl">小红书起号</span> 航海（第1次）</div>
             </div>
           </div>
         </div>
@@ -1594,6 +1796,7 @@
         <div class="nav-tab">用户画像</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab active">沟通记录</div>
+        <div class="nav-tab">积分记录</div>
       </div>
 
       <div class="sidebar-body">
@@ -1632,7 +1835,7 @@
           <span class="section-action" style="color: var(--color-text-4); font-size: 11px;">近30天</span>
         </div>
         <div class="followup-timeline">
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-19')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot active"></div>
               <div class="followup-tl-line"></div>
@@ -1642,7 +1845,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户咨询航海打卡规则，确认了AI视频变现航海的提交格式。交流较简短，用户情绪积极。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-16')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
@@ -1652,7 +1855,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论AI视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-12')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
@@ -1662,7 +1865,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户主动分享了第一条AI视频的数据（播放量200+），询问如何优化封面和标题。推荐了爆款标题公式。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-08')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
@@ -1672,7 +1875,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户询问AI视频工具推荐，对比了剪映和CapCut。最终选择剪映，沟通较深入。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-12-01')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
@@ -1682,7 +1885,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次深入沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。引导加入航海。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-11-25')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
               <div class="followup-tl-line"></div>
@@ -1692,7 +1895,7 @@
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>新人入圈引导，发送了欢迎消息和新手任务说明。用户回复了基本信息。</div>
             </div>
           </div>
-          <div class="followup-tl-item clickable" onclick="scrollToChatDate('2025-11-20')">
+          <div class="followup-tl-item">
             <div class="followup-tl-left">
               <div class="followup-tl-dot"></div>
             </div>
@@ -1700,233 +1903,6 @@
               <div class="followup-tl-meta">2025-11-20 <span class="followup-tl-rounds">· 1轮对话</span></div>
               <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次触达，用户咨询会员权益，简短回复后未继续。</div>
             </div>
-          </div>
-        </div>
-
-        <div class="divider-thick"></div>
-
-        <!-- 聊天记录 -->
-        <div class="section-header">
-          <span class="section-title">聊天记录</span>
-        </div>
-        <div class="mobile-chat-list">
-          <div class="mobile-chat-date" id="chatDate-2025-12-19">12-19</div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">潇墨，航海打卡是每天都要提交吗？</div>
-            <div class="mobile-chat-time">15:02</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">是的，每天提交一次打卡记录就行，格式按模板来～</div>
-            <div class="mobile-chat-time">15:05</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">好的明白了，AI视频变现航海的提交格式是什么？</div>
-            <div class="mobile-chat-time">15:08</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">格式：【日期】+视频链接+当日数据截图，发到航海群就行👍</div>
-            <div class="mobile-chat-time">15:10</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-12-16">12-16</div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">最近在想AI视频的方向，但是卡在选题上了</div>
-            <div class="mobile-chat-time">10:30</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">选题确实是关键！推荐你看下小红书案例库，里面有很多爆款选题参考</div>
-            <div class="mobile-chat-time">10:35</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">好的，那个案例库在哪里找？</div>
-            <div class="mobile-chat-time">10:38</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">在精华区第3个板块，我把链接发你</div>
-            <div class="mobile-chat-time">10:40</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] 小红书AI视频爆款选题库</div>
-            <div class="mobile-chat-time">10:41</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">收到！我跟着航海节奏走试试</div>
-            <div class="mobile-chat-time">10:45</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-12-12">12-12</div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">潇墨！我第一条AI视频发了，播放量200多，算什么水平？</div>
-            <div class="mobile-chat-time">16:20</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">很不错的起步！新号200+已经超过大部分人了🎉</div>
-            <div class="mobile-chat-time">16:25</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">怎么优化封面和标题呀？感觉还能更好</div>
-            <div class="mobile-chat-time">16:28</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">封面建议用对比图or数字冲击，标题用"3个方法/技巧"这种爆款公式</div>
-            <div class="mobile-chat-time">16:32</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">明白了，这几天按这个思路优化试试</div>
-            <div class="mobile-chat-time">16:35</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">加油💪有数据变化随时交流</div>
-            <div class="mobile-chat-time">16:36</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">好的谢谢！</div>
-            <div class="mobile-chat-time">16:38</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">不客气～期待你下一条视频的数据🔥</div>
-            <div class="mobile-chat-time">16:39</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-12-08">12-08</div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">想做AI视频，剪映和CapCut哪个好用？</div>
-            <div class="mobile-chat-time">14:10</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">国内推荐剪映，AI功能更强。CapCut更适合海外发布</div>
-            <div class="mobile-chat-time">14:15</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">那我先用剪映，AI功能具体有哪些？</div>
-            <div class="mobile-chat-time">14:18</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">AI文案、AI配音、智能剪辑都有，建议从AI配音开始上手</div>
-            <div class="mobile-chat-time">14:22</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">好的，还有什么注意事项吗</div>
-            <div class="mobile-chat-time">14:25</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">注意原创度，别直接搬运。航海群里有详细教程</div>
-            <div class="mobile-chat-time">14:28</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">了解，那我先去看教程</div>
-            <div class="mobile-chat-time">14:30</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">好的👍有问题随时问</div>
-            <div class="mobile-chat-time">14:31</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">嗯嗯，最后问下，配音用哪个音色比较好？</div>
-            <div class="mobile-chat-time">14:35</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">「知识博主」那个音色最自然，热门视频大多用这个</div>
-            <div class="mobile-chat-time">14:38</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-12-01">12-01</div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">峰哥你好～我是你的专属交付官潇墨，想了解下你目前的情况</div>
-            <div class="mobile-chat-time">09:30</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">你好！我是做自由职业的，之前在互联网公司</div>
-            <div class="mobile-chat-time">10:00</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">互联网背景很有优势！目前有什么赚钱方向吗？</div>
-            <div class="mobile-chat-time">10:05</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">自媒体变现想试试，但还没找到具体方向</div>
-            <div class="mobile-chat-time">10:10</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">推荐你了解下AI视频变现航海，很适合你的背景</div>
-            <div class="mobile-chat-time">10:15</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">好的我去看看，航海怎么参加？</div>
-            <div class="mobile-chat-time">10:20</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">在社群精华区有报名入口，我把链接发你</div>
-            <div class="mobile-chat-time">10:22</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] AI视频变现航海报名</div>
-            <div class="mobile-chat-time">10:23</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">收到，我先看下，有问题再找你</div>
-            <div class="mobile-chat-time">10:30</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">好的，随时沟通～</div>
-            <div class="mobile-chat-time">10:31</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">对了还想问下，航海一般持续多久？</div>
-            <div class="mobile-chat-time">11:00</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">通常21天一期，有导师带着走，节奏不会太紧张</div>
-            <div class="mobile-chat-time">11:05</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-11-25">11-25</div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">峰哥欢迎加入生财有术！我是你的专属交付官～</div>
-            <div class="mobile-chat-time">10:00</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">[链接] 新手任务指南</div>
-            <div class="mobile-chat-time">10:01</div>
-          </div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">你好！谢谢，我叫李峰，坐标深圳</div>
-            <div class="mobile-chat-time">11:20</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">欢迎峰哥！建议先完成新手任务，有问题随时找我😊</div>
-            <div class="mobile-chat-time">11:25</div>
-          </div>
-
-          <div class="mobile-chat-date" id="chatDate-2025-11-20">11-20</div>
-          <div class="mobile-chat-msg">
-            <div class="mobile-chat-avatar">峰</div>
-            <div class="mobile-chat-bubble">你好，想了解下会员权益</div>
-            <div class="mobile-chat-time">09:00</div>
-          </div>
-          <div class="mobile-chat-msg mobile-chat-msg-me">
-            <div class="mobile-chat-bubble mobile-chat-bubble-me">你好！会员权益包含精华帖、航海活动、线下聚会等，详情可以看这里～ [链接]</div>
-            <div class="mobile-chat-time">09:15</div>
           </div>
         </div>
 
@@ -1974,6 +1950,7 @@
         <div class="nav-tab active">用户画像</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab">沟通记录</div>
+        <div class="nav-tab">积分记录</div>
       </div>
 
       <!-- 预警横幅 -->
@@ -2182,6 +2159,215 @@ AI 画像总结 → 红色渐变「流失预警」风格
     </div>
   </div>
 
+  <!-- ======================================================
+       场景5：积分记录
+       ====================================================== -->
+  <div class="scene-wrapper">
+    <div class="scene-col">
+    <div class="sidebar-frame" id="sidebar-points">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">CRM 会员运营</span>
+        <div class="sidebar-header-actions">
+          <div class="header-icon-btn" title="导出">↗</div>
+          <div class="header-icon-btn" title="设置">⚙</div>
+        </div>
+      </div>
+      <div class="sidebar-nav-tabs">
+        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab">客户动态</div>
+        <div class="nav-tab">沟通记录</div>
+        <div class="nav-tab active">积分记录</div>
+      </div>
+      <div class="sidebar-body">
+
+        <!-- 积分概览 -->
+        <div style="padding: 12px 16px 0;">
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #FFF7E9, #FFE4BA); border-radius: var(--radius-card); border: 1px solid rgba(255, 125, 0, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #FF7D00, #D25F00); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">珠</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">龙珠</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">3</div>
+            </div>
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E9FFF8, #BCEDDD); border-radius: var(--radius-card); border: 1px solid rgba(54, 165, 144, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #36A590, #14796D); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">碎</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">碎片</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">12</div>
+            </div>
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E8F4FF, #C3E1FE); border-radius: var(--radius-card); border: 1px solid rgba(50, 124, 251, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #327CFB, #085EF0); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">值</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">术值</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">186</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 筛选 -->
+        <div style="display: flex; gap: 6px; padding: 10px 16px;">
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-accent-orange-1); color: var(--color-accent-orange-6); border-radius: var(--radius-pill); cursor: pointer;">全部</span>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">获取</span>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">消耗</span>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <!-- 积分明细列表 -->
+        <div style="padding: 0 16px 12px;">
+
+          <!-- 获取记录 -->
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">发布优质文章</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">原创文章《AI视频实操分享》被评为精华帖</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-08 14:30</div>
+          </div>
+
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+2 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标《小红书AI视频赛道》获得中标</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-07 16:00</div>
+          </div>
+
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">参与航海实战</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">成为AI视频变现航海教练</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-06 10:20</div>
+          </div>
+
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">参与社区活动</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">参与会员日话题讨论</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-05 09:00</div>
+          </div>
+
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 龙珠</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标被引用为超级标线索</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-02 14:00</div>
+          </div>
+
+          <!-- 消耗记录 -->
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">抵扣会员费</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-100 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分生财有术会员费</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-25 11:20</div>
+          </div>
+
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">抵扣高阶项目费</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-2 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分高阶航海、教练陪跑项目费用</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-20 16:30</div>
+          </div>
+
+          <div style="padding: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">兑换咨询权益</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-1 龙珠</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">申请生财团队商业IP定位咨询</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-05 09:00</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    <div class="scene-label">场景5：积分记录</div>
+    </div>
+    <div class="prd-panel" data-prd-key="delivery-s5">
+      <div class="prd-title">交付-场景5 · 积分记录</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">积分体系（换算关系，页面不展示）</div>
+        <div class="prd-card-body">1 龙珠 = 7 碎片 = 350 术值（即 1 碎片 = 50 术值）
+三种积分按稀缺度排列：龙珠 > 碎片 > 术值</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">积分概览</div>
+        <div class="prd-card-body">顶部 3 张并排卡片（龙珠 → 碎片 → 术值）
+每张显示：图标 + 类型名 + 当前余额（大号数字）
+渐变背景：龙珠橙 / 碎片绿 / 术值蓝</div>
+      </div>
+      <div class="prd-card" style="--accent: #52C41A;">
+        <div class="prd-card-title">获取方式（发放）</div>
+        <div class="prd-card-body">参与社区活动　+1术值起（特定活动/反馈/志愿者）
+　龙珠贵人计划赠送　+1碎片
+挖掘赚钱机会　风向标中标 +2术值；超级标 +1碎片～+1龙珠
+发布优质文章　精华帖 +1碎片～+2龙珠；悬赏发帖 瓜分1龙珠
+参与航海实战　航海教练 +1碎片起
+参与线下聚会　分享嘉宾 +1碎片起
+航淘家俱乐部　分享嘉宾 +1碎片起（邀请制）</div>
+      </div>
+      <div class="prd-card" style="--accent: #F54A45;">
+        <div class="prd-card-title">兑换权益（消耗）</div>
+        <div class="prd-card-body">抵扣会员费　生财会员 消耗100术值起；航海家 消耗1龙珠起
+抵扣高阶项目费　航海/陪跑 消耗2碎片起；深海圈 消耗5碎片起
+抵扣联合办公租金　联合办公/SCAI实验室 消耗1碎片起
+抵扣线下大会费　培训空间 消耗1龙珠；航海家大会 消耗1碎片起
+兑换周边　消耗1术值起
+兑换咨询权益　商业IP 消耗3龙珠起；神龙特权(亦仁1v1) 消耗7龙珠；孵化投资 消耗1龙珠起（邀请制）</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">筛选 + 明细列表</div>
+        <div class="prd-card-body">筛选标签：全部 / 获取 / 消耗（Pill 按钮切换）
+列表项结构：
+　圆点（获取=绿 / 消耗=红）+ 来源/用途 + 变动量（右侧）
+　副标题：备注说明
+　时间：MM-DD HH:mm
+按时间倒序排列</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -2286,19 +2472,6 @@ AI 画像总结 → 红色渐变「流失预警」风格
       list.style.display = hasVisible ? '' : 'none';
     });
   }
-  // 点击沟通时间轴条目，滚动到对应日期的聊天记录
-  function scrollToChatDate(date) {
-    var el = document.getElementById('chatDate-' + date);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    document.querySelectorAll('.chat-date-highlight').forEach(function(e) {
-      e.classList.remove('chat-date-highlight');
-    });
-    void el.offsetWidth;
-    el.classList.add('chat-date-highlight');
-    setTimeout(function() { el.classList.remove('chat-date-highlight'); }, 1500);
-  }
-
   // AI Chat Summary — click to generate
   function generateChatAiSummary() {
     var btn = document.getElementById('chatAiGenBtn');
