@@ -495,6 +495,46 @@
     color: #D25F00;
   }
 
+  /* 渠道标签 */
+  .channel-qw {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    border: 1px solid var(--color-primary-2);
+  }
+  .channel-gw {
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    border: 1px solid #FFE4BA;
+  }
+  .channel-active {
+    outline: 2px solid currentColor;
+    outline-offset: -1px;
+  }
+  /* 鱼丸渠道小图标 */
+  .yuwan-channel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+    font-size: 0;
+  }
+  .yuwan-channel-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+  .yuwan-channel-icon.icon-qw {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .yuwan-channel-icon.icon-gw {
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+  }
+
   /* Friend status */
   .friend-ok { color: var(--color-success-6); }
   .friend-deleted { color: var(--color-danger-6); }
@@ -1178,6 +1218,27 @@
   }
   .activity-sub-chip .chip-count {
     font-weight: 600;
+  }
+  .chip-tooltip-float {
+    position: fixed;
+    background: #18181B;
+    color: #FAFAFA;
+    font-size: 11px;
+    line-height: 18px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .chip-tooltip-float::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: #18181B;
   }
 
   /* 积分记录 */
@@ -1872,6 +1933,11 @@
           <div class="filter-row">
             <input class="filter-input wide" type="text" placeholder="昵称/手机号/星球编号">
 <select class="filter-select sm">
+              <option value="">渠道</option>
+              <option>企微</option>
+              <option>个微</option>
+            </select>
+            <select class="filter-select sm">
               <option value="">好友状态</option>
               <option>双向好友</option>
               <option>客户删除</option>
@@ -1958,6 +2024,7 @@
                 <th class="col-delivery">会员身份</th>
                 <th>鱼丸</th>
                 <th class="col-delivery">专属服务</th>
+                <th style="width:60px; text-align:center;">渠道</th>
                 <th>好友状态</th>
                 <th class="col-delivery">会员状态</th>
                 <th class="col-delivery">加入时间</th>
@@ -1985,6 +2052,7 @@
                 <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 580</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2024-02-15</td>
@@ -2013,6 +2081,7 @@
                 <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
                 <td>鱼丸 320</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2023-06-10</td>
@@ -2041,11 +2110,41 @@
                 <td class="col-delivery">—</td>
                 <td>鱼丸 150</td>
                 <td class="col-delivery"><strong>李李</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2025-01-15</td>
                 <td class="col-delivery">2026-08-20</td>
                 <td class="col-delivery"><strong>1年</strong></td>
+                <td><span class="tag tag-default">高净值客户</span> <span class="tag tag-default">续费3次</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <!-- ===== 客户1: 张晓峰 — 个微 ===== -->
+              <tr>
+                <td>87191</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span></td>
+                <td>鱼丸 580</td>
+                <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-gw">个微</span></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2024-02-15</td>
+                <td class="col-delivery">2027-03-15</td>
+                <td class="col-delivery"><strong>3年</strong></td>
                 <td><span class="tag tag-default">高净值客户</span> <span class="tag tag-default">续费3次</span></td>
                 <td class="sticky-right" style="text-align:center;">
                   <button class="btn btn-text" onclick="openDetail()">详情</button>
@@ -2070,6 +2169,7 @@
                 <td class="col-delivery"><span class="tag tag-role-zhongcao">种草官</span></td>
                 <td>鱼丸 230</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-deleted">客户删除</span></td>
                 <td class="col-delivery"><span class="tag tag-danger">过期</span></td>
                 <td class="col-delivery">2024-03-30</td>
@@ -2098,6 +2198,7 @@
                 <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
                 <td>鱼丸 180</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-deleted">客户删除</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2024-09-15</td>
@@ -2110,7 +2211,7 @@
                 </td>
               </tr>
 
-              <!-- ===== 客户3: 王大锤 — 仅官网（鱼丸45） ===== -->
+              <!-- ===== 客户3: 王大锤 — 仅个微（鱼丸45） ===== -->
               <tr>
                 <td>54093</td>
                 <td>
@@ -2127,7 +2228,8 @@
                 <td class="col-delivery"><span class="tag tag-role-zhiyuan">志愿者</span></td>
                 <td>鱼丸 45</td>
                 <td class="col-delivery"><strong>麻球</strong></td>
-                <td><span class="friend-deleted">双向删除</span></td>
+                <td style="text-align:center;"><span class="tag channel-gw">个微</span></td>
+                <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2025-08-20</td>
                 <td class="col-delivery">2026-08-20</td>
@@ -2156,6 +2258,7 @@
                 <td class="col-delivery"><span class="tag tag-role-zuju">组局官</span> <span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 1,200</td>
                 <td class="col-delivery"><strong>麻球</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2022-06-08</td>
@@ -2184,11 +2287,41 @@
                 <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
                 <td>鱼丸 800</td>
                 <td class="col-delivery"><strong>麻球</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2023-01-20</td>
                 <td class="col-delivery">2027-01-20</td>
                 <td class="col-delivery"><strong>4年</strong></td>
+                <td><span class="tag tag-default">KOL</span> <span class="tag tag-default">老会员</span></td>
+                <td class="sticky-right" style="text-align:center;">
+                  <button class="btn btn-text" onclick="openDetail()">详情</button>
+                  <button class="btn btn-text">打标签</button>
+                </td>
+              </tr>
+              <!-- ===== 客户4: 赵小云 — 个微 ===== -->
+              <tr>
+                <td>76218</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
+                    <div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
+                    </div>
+                  </div>
+                </td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
+                <td class="col-delivery"><span class="tag tag-role-zuju">组局官</span> <span class="tag tag-role-chuanshu">传术师</span></td>
+                <td>鱼丸 1,200</td>
+                <td class="col-delivery"><strong>麻球</strong></td>
+                <td style="text-align:center;"><span class="tag channel-gw">个微</span></td>
+                <td><span class="friend-ok">双向好友</span></td>
+                <td class="col-delivery"><span class="tag tag-success">在期</span></td>
+                <td class="col-delivery">2022-06-08</td>
+                <td class="col-delivery">2027-06-08</td>
+                <td class="col-delivery"><strong>5年</strong></td>
                 <td><span class="tag tag-default">KOL</span> <span class="tag tag-default">老会员</span></td>
                 <td class="sticky-right" style="text-align:center;">
                   <button class="btn btn-text" onclick="openDetail()">详情</button>
@@ -2213,6 +2346,7 @@
                 <td class="col-delivery">—</td>
                 <td>鱼丸 90</td>
                 <td class="col-delivery"><strong>李李</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-warning">待续费</span></td>
                 <td class="col-delivery">2025-04-01</td>
@@ -2242,6 +2376,7 @@
                 <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span> <span class="tag tag-role-zhiyuan">志愿者</span></td>
                 <td>鱼丸 350</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2024-12-25</td>
@@ -2270,6 +2405,7 @@
                 <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
                 <td>鱼丸 280</td>
                 <td class="col-delivery"><strong>潇墨</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2025-03-10</td>
@@ -2298,6 +2434,7 @@
                 <td class="col-delivery">—</td>
                 <td>鱼丸 120</td>
                 <td class="col-delivery"><strong>李李</strong></td>
+                <td style="text-align:center;"><span class="tag channel-qw">企微</span></td>
                 <td><span class="friend-ok">双向好友</span></td>
                 <td class="col-delivery"><span class="tag tag-success">在期</span></td>
                 <td class="col-delivery">2025-06-01</td>
@@ -2353,7 +2490,7 @@
           </div>
           <div>
             <div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a> <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
-            <div class="detail-note">备注：副业达人</div>
+            <div class="detail-note"><span class="detail-note-text" id="detailNoteText">备注：副业达人</span><svg class="detail-note-edit" onclick="editDetailNote()" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;cursor:pointer;color:var(--color-text-4);vertical-align:middle;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg><input class="detail-note-input" id="detailNoteInput" style="display:none;font-size:12px;color:var(--color-text-3);border:1px solid var(--color-primary-6);border-radius:4px;padding:1px 6px;outline:none;width:120px;" /></div>
             <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
               <span class="tag tag-role-chuanshu" style="font-size:11px; height:18px;">传术师</span>
               <span class="tag tag-role-hanghj" style="font-size:11px; height:18px;">航海家</span>
@@ -2426,8 +2563,8 @@
           </div>
         </div>
 
-        <!-- 高频参与项目 -->
-        <div class="detail-section-title">高频参与项目</div>
+        <!-- 高频参与航海 -->
+        <div class="detail-section-title">高频参与航海</div>
         <div class="freq-projects">
           <span class="freq-project-tag">AI视频变现<span class="freq-count">×3</span></span>
           <span class="freq-project-tag">小红书运营<span class="freq-count">×1</span></span>
@@ -2517,8 +2654,8 @@
             <!-- ===== 1. 基础信息 ===== -->
             <tr><td class="section-header" colspan="4">基础信息</td></tr>
             <tr>
-              <th>客户ID</th><td>188123</td>
               <th>星球编号</th><td>87191</td>
+              <th>客户ID</th><td>188123</td>
             </tr>
             <tr>
               <th>星球昵称</th><td>峰哥聊副业</td>
@@ -2551,7 +2688,113 @@
               </td>
             </tr>
 
-            <!-- ===== 2. 个人信息 ===== -->
+            <!-- ===== 2. 会员信息 — 官网会员（鱼丸 580） ===== -->
+            <tr><td class="section-header" colspan="4">会员信息 — 官网会员（鱼丸 580）</td></tr>
+            <tr>
+              <th>会员类型</th><td><span class="tag type-guanwang" style="height:20px; font-size:11px;">官网会员</span></td>
+              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
+            </tr>
+            <tr>
+              <th>鱼丸</th><td>鱼丸 580 <span class="yuwan-channel-icon icon-qw" title="企微"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m17.326 8.158l-.003-.007a6.6 6.6 0 0 0-1.178-1.674c-1.266-1.307-3.067-2.19-5.102-2.417a9.3 9.3 0 0 0-2.124 0h-.001c-2.061.228-3.882 1.107-5.14 2.405a6.7 6.7 0 0 0-1.194 1.682A5.7 5.7 0 0 0 2 10.657c0 1.106.332 2.218.988 3.201l.006.01c.391.594 1.092 1.39 1.637 1.83l.983.793l-.208.875l.527-.267l.708-.358l.761.225c.467.137.955.227 1.517.29h.005q.515.06 1.026.059c.355 0 .724-.02 1.095-.06a9 9 0 0 0 1.346-.258c.095.7.43 1.337.932 1.81c-.658.208-1.352.358-2.061.436c-.442.048-.883.072-1.312.072q-.627 0-1.253-.072a10.7 10.7 0 0 1-1.861-.36l-2.84 1.438s-.29.131-.44.131c-.418 0-.702-.285-.702-.704c0-.252.067-.598.128-.84l.394-1.653c-.728-.586-1.563-1.544-2.052-2.287A7.76 7.76 0 0 1 0 10.658a7.7 7.7 0 0 1 .787-3.39a8.7 8.7 0 0 1 1.551-2.19c1.61-1.665 3.878-2.73 6.359-3.006a11.3 11.3 0 0 1 2.565 0c2.47.275 4.712 1.353 6.323 3.017a8.6 8.6 0 0 1 1.539 2.192c.466.945.769 1.937.769 2.978a3.06 3.06 0 0 0-2-.005c-.001-.644-.189-1.329-.564-2.09zm4.125 6.977l-.024-.024l-.024-.018l-.024-.018l-.096-.095a4.24 4.24 0 0 1-1.169-2.192q0-.038-.006-.075l-.006-.056l-.035-.144a1.3 1.3 0 0 0-.358-.61a1.386 1.386 0 0 0-1.957 0a1.4 1.4 0 0 0 0 1.963c.191.191.418.311.668.371c.024.012.06.012.084.012q.019 0 .041.006q.023.005.042.006a4.24 4.24 0 0 1 2.231 1.186c.048.048.096.095.131.143a.323.323 0 0 0 .466 0a.35.35 0 0 0 .036-.455m-1.05 4.37l-.025.025c-.119.096-.31.096-.453-.036a.326.326 0 0 1 0-.467c.047-.036.094-.083.141-.13l.002-.002a4.27 4.27 0 0 0 1.187-2.28q.005-.024.006-.043c0-.024 0-.06.012-.084a1.386 1.386 0 0 1 2.326-.67a1.4 1.4 0 0 1 0 1.964c-.167.18-.382.299-.608.359l-.143.036l-.057.005q-.035.006-.075.007a4.2 4.2 0 0 0-2.183 1.173l-.095.096q-.009.01-.018.024t-.018.024m-4.392-1.053l.024.024l.024.018q.015.009.024.018l.096.096a4.25 4.25 0 0 1 1.169 2.19q0 .04.006.076q.005.03.006.057l.035.143c.06.228.18.443.358.611c.537.539 1.42.539 1.957 0a1.4 1.4 0 0 0 0-1.964a1.4 1.4 0 0 0-.668-.371c-.024-.012-.06-.012-.084-.012q-.018 0-.041-.006l-.042-.006a4.25 4.25 0 0 1-2.231-1.185a1.4 1.4 0 0 1-.131-.144a.323.323 0 0 0-.466 0a.325.325 0 0 0-.036.455m1.039-4.358l.024-.024a.32.32 0 0 1 .453.035a.326.326 0 0 1 0 .467c-.047.036-.094.083-.141.13l-.002.002a4.27 4.27 0 0 0-1.187 2.281l-.006.042c0 .024 0 .06-.012.084a1.386 1.386 0 0 1-2.326.67a1.4 1.4 0 0 1 0-1.963c.166-.18.381-.3.608-.36l.143-.035q.026 0 .056-.006q.037-.005.075-.006a4.2 4.2 0 0 0 2.183-1.174l.096-.095l.018-.025z"/></svg></span><span class="yuwan-channel-icon icon-gw" title="个微"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.176 14.429c-2.665 0-4.826-1.8-4.826-4.018 0-2.22 2.159-4.02 4.824-4.02S16 8.191 16 10.411c0 1.21-.65 2.301-1.666 3.036a.32.32 0 0 0-.12.366l.218.81a.6.6 0 0 1 .029.117.166.166 0 0 1-.162.162.2.2 0 0 1-.092-.03l-1.057-.61a.5.5 0 0 0-.256-.074.5.5 0 0 0-.142.021 5.7 5.7 0 0 1-1.576.22M9.064 9.542a.647.647 0 1 0 .557-1 .645.645 0 0 0-.646.647.6.6 0 0 0 .09.353Zm3.232.001a.646.646 0 1 0 .546-1 .645.645 0 0 0-.644.644.63.63 0 0 0 .098.356"/><path d="M0 6.826c0 1.455.781 2.765 2.001 3.656a.385.385 0 0 1 .143.439l-.161.6-.1.373a.5.5 0 0 0-.032.14.19.19 0 0 0 .193.193q.06 0 .111-.029l1.268-.733a.6.6 0 0 1 .308-.088q.088 0 .171.025a6.8 6.8 0 0 0 1.625.26 4.5 4.5 0 0 1-.177-1.251c0-2.936 2.785-5.02 5.824-5.02l.15.002C10.587 3.429 8.392 2 5.796 2 2.596 2 0 4.16 0 6.826m4.632-1.555a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0m3.875 0a.77.77 0 1 1-1.54 0 .77.77 0 0 1 1.54 0"/></svg></span></td>
+              <th>专属服务</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value"><strong>潇墨</strong></span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <select class="profile-edit-select">
+                    <option value="潇墨" selected>潇墨</option>
+                    <option value="李李">李李</option>
+                    <option value="蓝鲸">蓝鲸</option>
+                  </select>
+                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>会员到期时间</th><td>2027-03-15</td>
+              <th>加入方式</th><td>续费</td>
+            </tr>
+            <tr>
+              <th>加入金额</th><td>¥3,365.00</td>
+              <th>续费次数</th><td>3</td>
+            </tr>
+            <tr>
+              <th>是否领取体验卡</th><td>是</td>
+              <th>领取体验卡时间</th><td>2024-01-12 09:00</td>
+            </tr>
+
+            <!-- ===== 2b. 会员信息 — 航海会员（鱼丸 320） ===== -->
+            <tr><td class="section-header" colspan="4">会员信息 — 航海会员（鱼丸 320）</td></tr>
+            <tr>
+              <th>会员类型</th><td><span class="tag type-hanghai" style="height:20px; font-size:11px;">航海会员</span></td>
+              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
+            </tr>
+            <tr>
+              <th>鱼丸</th><td>鱼丸 320 <span class="yuwan-channel-icon icon-qw" title="企微"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m17.326 8.158l-.003-.007a6.6 6.6 0 0 0-1.178-1.674c-1.266-1.307-3.067-2.19-5.102-2.417a9.3 9.3 0 0 0-2.124 0h-.001c-2.061.228-3.882 1.107-5.14 2.405a6.7 6.7 0 0 0-1.194 1.682A5.7 5.7 0 0 0 2 10.657c0 1.106.332 2.218.988 3.201l.006.01c.391.594 1.092 1.39 1.637 1.83l.983.793l-.208.875l.527-.267l.708-.358l.761.225c.467.137.955.227 1.517.29h.005q.515.06 1.026.059c.355 0 .724-.02 1.095-.06a9 9 0 0 0 1.346-.258c.095.7.43 1.337.932 1.81c-.658.208-1.352.358-2.061.436c-.442.048-.883.072-1.312.072q-.627 0-1.253-.072a10.7 10.7 0 0 1-1.861-.36l-2.84 1.438s-.29.131-.44.131c-.418 0-.702-.285-.702-.704c0-.252.067-.598.128-.84l.394-1.653c-.728-.586-1.563-1.544-2.052-2.287A7.76 7.76 0 0 1 0 10.658a7.7 7.7 0 0 1 .787-3.39a8.7 8.7 0 0 1 1.551-2.19c1.61-1.665 3.878-2.73 6.359-3.006a11.3 11.3 0 0 1 2.565 0c2.47.275 4.712 1.353 6.323 3.017a8.6 8.6 0 0 1 1.539 2.192c.466.945.769 1.937.769 2.978a3.06 3.06 0 0 0-2-.005c-.001-.644-.189-1.329-.564-2.09zm4.125 6.977l-.024-.024l-.024-.018l-.024-.018l-.096-.095a4.24 4.24 0 0 1-1.169-2.192q0-.038-.006-.075l-.006-.056l-.035-.144a1.3 1.3 0 0 0-.358-.61a1.386 1.386 0 0 0-1.957 0a1.4 1.4 0 0 0 0 1.963c.191.191.418.311.668.371c.024.012.06.012.084.012q.019 0 .041.006q.023.005.042.006a4.24 4.24 0 0 1 2.231 1.186c.048.048.096.095.131.143a.323.323 0 0 0 .466 0a.35.35 0 0 0 .036-.455m-1.05 4.37l-.025.025c-.119.096-.31.096-.453-.036a.326.326 0 0 1 0-.467c.047-.036.094-.083.141-.13l.002-.002a4.27 4.27 0 0 0 1.187-2.28q.005-.024.006-.043c0-.024 0-.06.012-.084a1.386 1.386 0 0 1 2.326-.67a1.4 1.4 0 0 1 0 1.964c-.167.18-.382.299-.608.359l-.143.036l-.057.005q-.035.006-.075.007a4.2 4.2 0 0 0-2.183 1.173l-.095.096q-.009.01-.018.024t-.018.024m-4.392-1.053l.024.024l.024.018q.015.009.024.018l.096.096a4.25 4.25 0 0 1 1.169 2.19q0 .04.006.076q.005.03.006.057l.035.143c.06.228.18.443.358.611c.537.539 1.42.539 1.957 0a1.4 1.4 0 0 0 0-1.964a1.4 1.4 0 0 0-.668-.371c-.024-.012-.06-.012-.084-.012q-.018 0-.041-.006l-.042-.006a4.25 4.25 0 0 1-2.231-1.185a1.4 1.4 0 0 1-.131-.144a.323.323 0 0 0-.466 0a.325.325 0 0 0-.036.455m1.039-4.358l.024-.024a.32.32 0 0 1 .453.035a.326.326 0 0 1 0 .467c-.047.036-.094.083-.141.13l-.002.002a4.27 4.27 0 0 0-1.187 2.281l-.006.042c0 .024 0 .06-.012.084a1.386 1.386 0 0 1-2.326.67a1.4 1.4 0 0 1 0-1.963c.166-.18.381-.3.608-.36l.143-.035q.026 0 .056-.006q.037-.005.075-.006a4.2 4.2 0 0 0 2.183-1.174l.096-.095l.018-.025z"/></svg></span></td>
+              <th>专属服务</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value"><strong>潇墨</strong></span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <select class="profile-edit-select">
+                    <option value="潇墨" selected>潇墨</option>
+                    <option value="李李">李李</option>
+                    <option value="蓝鲸">蓝鲸</option>
+                  </select>
+                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>会员到期时间</th><td>2026-12-01</td>
+              <th>加入方式</th><td>购买</td>
+            </tr>
+            <tr>
+              <th>加入金额</th><td>¥1,999.00</td>
+              <th>续费次数</th><td>1</td>
+            </tr>
+
+            <!-- ===== 2c. 会员信息 — 深海圈会员（鱼丸 150） ===== -->
+            <tr><td class="section-header" colspan="4">会员信息 — 深海圈会员（鱼丸 150）</td></tr>
+            <tr>
+              <th>会员类型</th><td><span class="tag type-shenhai" style="height:20px; font-size:11px;">深海圈会员</span></td>
+              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
+            </tr>
+            <tr>
+              <th>鱼丸</th><td>鱼丸 150 <span class="yuwan-channel-icon icon-qw" title="企微"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m17.326 8.158l-.003-.007a6.6 6.6 0 0 0-1.178-1.674c-1.266-1.307-3.067-2.19-5.102-2.417a9.3 9.3 0 0 0-2.124 0h-.001c-2.061.228-3.882 1.107-5.14 2.405a6.7 6.7 0 0 0-1.194 1.682A5.7 5.7 0 0 0 2 10.657c0 1.106.332 2.218.988 3.201l.006.01c.391.594 1.092 1.39 1.637 1.83l.983.793l-.208.875l.527-.267l.708-.358l.761.225c.467.137.955.227 1.517.29h.005q.515.06 1.026.059c.355 0 .724-.02 1.095-.06a9 9 0 0 0 1.346-.258c.095.7.43 1.337.932 1.81c-.658.208-1.352.358-2.061.436c-.442.048-.883.072-1.312.072q-.627 0-1.253-.072a10.7 10.7 0 0 1-1.861-.36l-2.84 1.438s-.29.131-.44.131c-.418 0-.702-.285-.702-.704c0-.252.067-.598.128-.84l.394-1.653c-.728-.586-1.563-1.544-2.052-2.287A7.76 7.76 0 0 1 0 10.658a7.7 7.7 0 0 1 .787-3.39a8.7 8.7 0 0 1 1.551-2.19c1.61-1.665 3.878-2.73 6.359-3.006a11.3 11.3 0 0 1 2.565 0c2.47.275 4.712 1.353 6.323 3.017a8.6 8.6 0 0 1 1.539 2.192c.466.945.769 1.937.769 2.978a3.06 3.06 0 0 0-2-.005c-.001-.644-.189-1.329-.564-2.09zm4.125 6.977l-.024-.024l-.024-.018l-.024-.018l-.096-.095a4.24 4.24 0 0 1-1.169-2.192q0-.038-.006-.075l-.006-.056l-.035-.144a1.3 1.3 0 0 0-.358-.61a1.386 1.386 0 0 0-1.957 0a1.4 1.4 0 0 0 0 1.963c.191.191.418.311.668.371c.024.012.06.012.084.012q.019 0 .041.006q.023.005.042.006a4.24 4.24 0 0 1 2.231 1.186c.048.048.096.095.131.143a.323.323 0 0 0 .466 0a.35.35 0 0 0 .036-.455m-1.05 4.37l-.025.025c-.119.096-.31.096-.453-.036a.326.326 0 0 1 0-.467c.047-.036.094-.083.141-.13l.002-.002a4.27 4.27 0 0 0 1.187-2.28q.005-.024.006-.043c0-.024 0-.06.012-.084a1.386 1.386 0 0 1 2.326-.67a1.4 1.4 0 0 1 0 1.964c-.167.18-.382.299-.608.359l-.143.036l-.057.005q-.035.006-.075.007a4.2 4.2 0 0 0-2.183 1.173l-.095.096q-.009.01-.018.024t-.018.024m-4.392-1.053l.024.024l.024.018q.015.009.024.018l.096.096a4.25 4.25 0 0 1 1.169 2.19q0 .04.006.076q.005.03.006.057l.035.143c.06.228.18.443.358.611c.537.539 1.42.539 1.957 0a1.4 1.4 0 0 0 0-1.964a1.4 1.4 0 0 0-.668-.371c-.024-.012-.06-.012-.084-.012q-.018 0-.041-.006l-.042-.006a4.25 4.25 0 0 1-2.231-1.185a1.4 1.4 0 0 1-.131-.144a.323.323 0 0 0-.466 0a.325.325 0 0 0-.036.455m1.039-4.358l.024-.024a.32.32 0 0 1 .453.035a.326.326 0 0 1 0 .467c-.047.036-.094.083-.141.13l-.002.002a4.27 4.27 0 0 0-1.187 2.281l-.006.042c0 .024 0 .06-.012.084a1.386 1.386 0 0 1-2.326.67a1.4 1.4 0 0 1 0-1.963c.166-.18.381-.3.608-.36l.143-.035q.026 0 .056-.006q.037-.005.075-.006a4.2 4.2 0 0 0 2.183-1.174l.096-.095l.018-.025z"/></svg></span></td>
+              <th>专属服务</th>
+              <td>
+                <span class="profile-editable">
+                  <span class="profile-value"><strong>李李</strong></span>
+                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                </span>
+                <span class="profile-edit-form">
+                  <select class="profile-edit-select">
+                    <option value="潇墨">潇墨</option>
+                    <option value="李李" selected>李李</option>
+                    <option value="蓝鲸">蓝鲸</option>
+                  </select>
+                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>会员到期时间</th><td>2026-08-20</td>
+              <th>加入方式</th><td>购买</td>
+            </tr>
+            <tr>
+              <th>加入金额</th><td>¥699.00</td>
+              <th>续费次数</th><td>0</td>
+            </tr>
+
+            <!-- ===== 3. 个人信息 ===== -->
             <tr><td class="section-header" colspan="4">个人信息</td></tr>
             <tr>
               <th>城市</th>
@@ -2638,118 +2881,8 @@
               <td colspan="3"><span class="tag tag-default" style="margin:1px 2px;">流量渠道</span> <span class="tag tag-default" style="margin:1px 2px;">变现指导</span> <span class="tag tag-default" style="margin:1px 2px;">供应链资源</span></td>
             </tr>
 
-            <!-- ===== 3. 会员信息 — 官网会员（鱼丸 580） ===== -->
-            <tr><td class="section-header" colspan="4">会员信息 — 官网会员（鱼丸 580）</td></tr>
-            <tr>
-              <th>会员类型</th><td><span class="tag type-guanwang" style="height:20px; font-size:11px;">官网会员</span></td>
-              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
-            </tr>
-            <tr>
-              <th>鱼丸</th><td>鱼丸 580</td>
-              <th>专属服务</th>
-              <td>
-                <span class="profile-editable">
-                  <span class="profile-value"><strong>潇墨</strong></span>
-                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
-                </span>
-                <span class="profile-edit-form">
-                  <select class="profile-edit-select">
-                    <option value="潇墨" selected>潇墨</option>
-                    <option value="李李">李李</option>
-                    <option value="蓝鲸">蓝鲸</option>
-                  </select>
-                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>会员到期时间</th><td>2027-03-15</td>
-              <th>加入方式</th><td>续费</td>
-            </tr>
-            <tr>
-              <th>加入金额</th><td>¥3,365.00</td>
-              <th>续费次数</th><td>3</td>
-            </tr>
-            <tr>
-              <th>是否领取体验卡</th><td>是</td>
-              <th>领取体验卡时间</th><td>2024-01-12 09:00</td>
-            </tr>
-
-            <!-- ===== 3b. 会员信息 — 航海会员（鱼丸 320） ===== -->
-            <tr><td class="section-header" colspan="4">会员信息 — 航海会员（鱼丸 320）</td></tr>
-            <tr>
-              <th>会员类型</th><td><span class="tag type-hanghai" style="height:20px; font-size:11px;">航海会员</span></td>
-              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
-            </tr>
-            <tr>
-              <th>鱼丸</th><td>鱼丸 320</td>
-              <th>专属服务</th>
-              <td>
-                <span class="profile-editable">
-                  <span class="profile-value"><strong>潇墨</strong></span>
-                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
-                </span>
-                <span class="profile-edit-form">
-                  <select class="profile-edit-select">
-                    <option value="潇墨" selected>潇墨</option>
-                    <option value="李李">李李</option>
-                    <option value="蓝鲸">蓝鲸</option>
-                  </select>
-                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>会员到期时间</th><td>2026-12-01</td>
-              <th>加入方式</th><td>购买</td>
-            </tr>
-            <tr>
-              <th>加入金额</th><td>¥1,999.00</td>
-              <th>续费次数</th><td>1</td>
-            </tr>
-
-            <!-- ===== 3c. 会员信息 — 深海圈会员（鱼丸 150） ===== -->
-            <tr><td class="section-header" colspan="4">会员信息 — 深海圈会员（鱼丸 150）</td></tr>
-            <tr>
-              <th>会员类型</th><td><span class="tag type-shenhai" style="height:20px; font-size:11px;">深海圈会员</span></td>
-              <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
-            </tr>
-            <tr>
-              <th>鱼丸</th><td>鱼丸 150</td>
-              <th>专属服务</th>
-              <td>
-                <span class="profile-editable">
-                  <span class="profile-value"><strong>李李</strong></span>
-                  <button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
-                </span>
-                <span class="profile-edit-form">
-                  <select class="profile-edit-select">
-                    <option value="潇墨">潇墨</option>
-                    <option value="李李" selected>李李</option>
-                    <option value="蓝鲸">蓝鲸</option>
-                  </select>
-                  <button class="profile-save-btn" onclick="saveEditField(this, 'select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>会员到期时间</th><td>2026-08-20</td>
-              <th>加入方式</th><td>购买</td>
-            </tr>
-            <tr>
-              <th>加入金额</th><td>¥699.00</td>
-              <th>续费次数</th><td>0</td>
-            </tr>
-
-            <!-- ===== 4. 交付服务 ===== -->
-            <tr><td class="section-header" colspan="4">交付服务</td></tr>
-            <tr>
-              <th>企微好友状态</th><td><span class="friend-ok">双向好友</span></td>
-              <th></th><td></td>
-            </tr>
+            <!-- ===== 4. 其他信息 ===== -->
+            <tr><td class="section-header" colspan="4">其他信息</td></tr>
             <tr>
               <th>首次添加时间</th><td>2024-02-15 10:22</td>
               <th>入群时间</th><td>2024-02-15 11:00</td>
@@ -2854,20 +2987,20 @@
         <div class="tab-panel" data-panel="activity">
           <!-- 一级筛选：按来源平台（4列网格） -->
           <div class="activity-source-grid">
-            <div class="activity-source-item" data-filter="community" data-subs='[{"label":"发帖","value":"5","filter":"community-post"},{"label":"阅读","value":"32","filter":"community-read"},{"label":"评论","value":"18","filter":"community-comment"},{"label":"点赞","value":"40","filter":"community-like"},{"label":"投锚","value":"4","filter":"community-anchor"},{"label":"收藏","value":"12","filter":"community-collect"}]' onclick="toggleSourceFilterPC(this)">
-              <span class="activity-source-value">111</span>
+            <div class="activity-source-item" data-filter="community" data-subs='[{"label":"发帖","value":"5","filter":"community-post","breakdown":[{"name":"每日思考","count":2},{"name":"项目实操","count":1},{"name":"生财朋友圈","count":1},{"name":"问题求助","count":1}]},{"label":"阅读","value":"32","filter":"community-read"},{"label":"评论","value":"18","filter":"community-comment"},{"label":"点赞","value":"40","filter":"community-like"},{"label":"投锚","value":"4","filter":"community-anchor"},{"label":"收藏","value":"12","filter":"community-collect"},{"label":"搜索","value":"8","filter":"community-search"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">119</span>
               <span class="activity-source-label">官网社区</span>
             </div>
             <div class="activity-source-item" data-filter="circle" data-subs='[{"label":"发帖","value":"3","filter":"circle-post"},{"label":"阅读","value":"8","filter":"circle-read"},{"label":"评论","value":"5","filter":"circle-comment"},{"label":"点赞","value":"5","filter":"circle-like"},{"label":"投锚","value":"2","filter":"circle-anchor"}]' onclick="toggleSourceFilterPC(this)">
               <span class="activity-source-value">23</span>
               <span class="activity-source-label">深海圈</span>
             </div>
-            <div class="activity-source-item" data-filter="voyage" data-subs='[{"label":"上船","value":"2","filter":"voyage-join"},{"label":"下船","value":"1","filter":"voyage-leave"},{"label":"打卡","value":"2","filter":"voyage-checkin"},{"label":"打卡失败","value":"1","filter":"voyage-fail"}]' onclick="toggleSourceFilterPC(this)">
-              <span class="activity-source-value">5</span>
+            <div class="activity-source-item" data-filter="voyage" data-subs='[{"label":"上船","value":"2","filter":"voyage-join"},{"label":"下船","value":"1","filter":"voyage-leave"},{"label":"打卡","value":"2","filter":"voyage-checkin"},{"label":"打卡失败","value":"1","filter":"voyage-fail"},{"label":"保证金退款","value":"1","filter":"voyage-refund"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">6</span>
               <span class="activity-source-label">航海</span>
             </div>
-            <div class="activity-source-item" data-filter="gathering" data-subs='[{"label":"发起","value":"1","filter":"gathering-create"},{"label":"取消","value":"1","filter":"gathering-cancel"},{"label":"导入嘉宾","value":"1","filter":"gathering-import"},{"label":"报名","value":"2","filter":"gathering-signup"},{"label":"退出","value":"1","filter":"gathering-quit"},{"label":"签到","value":"2","filter":"gathering-checkin"},{"label":"反馈","value":"2","filter":"gathering-feedback"}]' onclick="toggleSourceFilterPC(this)">
-              <span class="activity-source-value">10</span>
+            <div class="activity-source-item" data-filter="gathering" data-subs='[{"label":"发起","value":"1","filter":"gathering-create"},{"label":"取消","value":"1","filter":"gathering-cancel"},{"label":"导入嘉宾","value":"1","filter":"gathering-import"},{"label":"报名","value":"2","filter":"gathering-signup"},{"label":"退出","value":"1","filter":"gathering-quit"},{"label":"签到","value":"2","filter":"gathering-checkin"},{"label":"反馈","value":"2","filter":"gathering-feedback"},{"label":"保证金退款","value":"1","filter":"gathering-refund"}]' onclick="toggleSourceFilterPC(this)">
+              <span class="activity-source-value">11</span>
               <span class="activity-source-label">聚会</span>
             </div>
           </div>
@@ -2896,12 +3029,20 @@
                 <div class="timeline-desc">收藏了「2026小红书运营指南 · 从0到1」</div>
               </div>
             </div>
+            <div class="timeline-item" data-activity="community-search community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">11:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">搜索</div>
+                <div class="timeline-desc">搜索了「<span class="hl">AI视频变现方法</span>」</div>
+              </div>
+            </div>
             <div class="timeline-item" data-activity="community-post community">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-time">10:05</div>
               <div class="timeline-card">
-                <div class="timeline-title">表单填写</div>
-                <div class="timeline-desc">填写了表单「体验营课前调研问卷」</div>
+                <div class="timeline-title">发表内容</div>
+                <div class="timeline-desc">发表了 <span class="hl">#每日思考</span>「关于AI视频赛道的3个底层思考」</div>
               </div>
             </div>
 
@@ -2923,12 +3064,28 @@
                 <div class="timeline-desc">在 <span class="hl">#小红书起号航海</span> 打卡了「Day 8 · 发布第一篇笔记」，审核未通过</div>
               </div>
             </div>
+            <div class="timeline-item" data-activity="community-search community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">19:10</div>
+              <div class="timeline-card">
+                <div class="timeline-title">搜索</div>
+                <div class="timeline-desc">搜索了「<span class="hl">小红书起号教程</span>」</div>
+              </div>
+            </div>
             <div class="timeline-item" data-activity="community-comment community">
               <div class="timeline-dot"></div>
               <div class="timeline-time">18:40</div>
               <div class="timeline-card">
                 <div class="timeline-title">发表评论</div>
                 <div class="timeline-desc">在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了，剪辑效率提升很多」</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="community-search community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-time">16:45</div>
+              <div class="timeline-card">
+                <div class="timeline-title">搜索</div>
+                <div class="timeline-desc">搜索了「<span class="hl">副业赚钱 月入过万</span>」</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="circle-read circle">
@@ -3051,6 +3208,14 @@
               <div class="timeline-card">
                 <div class="timeline-title">下船 <span class="tag" style="font-size:10px; height:16px; margin-left:4px; background:var(--color-danger-1); color:var(--color-danger-6); border:1px solid var(--color-danger-2);">小红书赛道</span></div>
                 <div class="timeline-desc">退出了 <span class="hl">小红书起号</span> 航海，原因：时间冲突</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="voyage-refund voyage">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">17:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">保证金退款完成 <span class="tag tag-success" style="font-size:10px; height:16px; margin-left:4px;">小红书赛道</span></div>
+                <div class="timeline-desc"><span class="hl">小红书起号</span> 航海保证金 ¥299 已退款至原支付账户</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="circle-post circle">
@@ -3228,6 +3393,14 @@
               <div class="timeline-card">
                 <div class="timeline-title">退出聚会</div>
                 <div class="timeline-desc">退出了「北京站 · 知识付费圆桌会」，原因：时间冲突</div>
+              </div>
+            </div>
+            <div class="timeline-item" data-activity="gathering-refund gathering">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-time">10:30</div>
+              <div class="timeline-card">
+                <div class="timeline-title">保证金退款完成 <span class="tag tag-success" style="font-size:10px; height:16px; margin-left:4px;">北京站</span></div>
+                <div class="timeline-desc">「北京站 · 知识付费圆桌会」保证金 ¥99 已退款至原支付账户</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="gathering-checkin gathering">
@@ -3821,7 +3994,7 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260309c" data-prd-view="list">
+<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310a" data-prd-view="list">
   <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
 
   <!-- Section 1: 概述 -->
@@ -3833,24 +4006,35 @@
     <div class="prd-item">管理层无法在一个视图中掌握客户全生命周期数据</div>
     <div class="prd-label">目标</div>
     <div class="prd-item">在现有列表页和详情弹窗中<strong>增加交付侧数据展示</strong></div>
-    <div class="prd-item">以<strong>企微好友关系（1V1）</strong>为数据维度</div>
+    <div class="prd-item">支持<strong>企微 + 个微双渠道</strong>好友关系管理，以渠道 × 客户类型为数据维度</div>
     <div class="prd-item">实现销售 + 交付数据的统一视图</div>
     <div class="prd-label">核心设计原则</div>
-    <div class="prd-item"><strong>一客户多行</strong>：同一客户可能有多条企微好友关系（销售 + 官网交付 + 航海家交付），每条关系展开为独立行</div>
+    <div class="prd-item"><strong>一客户多行</strong>：同一客户可能有多条好友关系（企微/个微 × 官网/航海/深海圈），每条关系展开为独立行</div>
+    <div class="prd-item"><strong>渠道并存</strong>：客户可能只有企微、只有个微、或两者都有，每种渠道各生成一条记录</div>
     <div class="prd-item"><strong>列表精简</strong>：交付侧仅在列表展示关键字段，完整数据在详情抽屉查看</div>
   </div>
 
   <!-- Section 2: 数据模型 -->
   <div class="prd-section" data-prd-context="list" id="prd-s2">
     <div class="prd-section-title green">2. 数据模型</div>
-    <div class="prd-label">企微好友关系类型</div>
-    <div class="prd-item"><strong>销售</strong> — 客户与销售企微号的好友关系，对应「专属销售」字段</div>
-    <div class="prd-item"><strong>官网交付</strong> — 客户与官网交付企微号的好友关系，对应「专属服务」字段</div>
-    <div class="prd-item"><strong>深海圈</strong> — 客户与深海圈企微号的好友关系，对应「专属服务」字段</div>
+    <div class="prd-label">联系渠道 <span class="prd-tag-new">NEW</span></div>
+    <div class="prd-item">客户与运营人员的好友关系分为<strong>两种渠道</strong>：</div>
+    <div class="prd-item"><strong>企微</strong> — 通过企业微信添加的好友关系（列表绿色标签，详情企微 logo 图标）</div>
+    <div class="prd-item"><strong>个微</strong> — 通过个人微信添加的好友关系（列表橙色标签，详情微信 logo 图标）</div>
+    <div class="prd-item">同一客户可能<strong>只有企微、只有个微、或两者都有</strong>。每种渠道各生成独立的列表记录</div>
+    <div class="prd-item">同一鱼丸可同时关联企微和个微，在详情页的鱼丸字段后用图标标识已关联的渠道</div>
+    <div class="prd-label">好友关系类型（客户类型维度）</div>
+    <div class="prd-item"><strong>官网交付</strong> — 客户与官网交付号的好友关系，对应「专属服务」字段</div>
+    <div class="prd-item"><strong>航海</strong> — 客户与航海号的好友关系</div>
+    <div class="prd-item"><strong>深海圈</strong> — 客户与深海圈号的好友关系，对应「专属服务」字段</div>
     <div class="prd-item">官网和深海圈由<em>不同交付人员</em>负责</div>
     <div class="prd-label">好友状态（通用字段）</div>
-    <div class="prd-item">好友状态<strong>不区分销售/交付</strong>，统一描述该条企微好友关系的当前状态</div>
+    <div class="prd-item">好友状态<strong>不区分渠道和角色</strong>，统一描述该条好友关系的当前状态</div>
     <div class="prd-item">状态值：双向好友 / 客户删除 / 双向删除</div>
+    <div class="prd-label">列表行生成规则</div>
+    <div class="prd-item">一条记录 = <strong>渠道（企微/个微）× 客户类型（官网/航海/深海圈）</strong></div>
+    <div class="prd-item">示例：峰哥聊副业有 3 条企微行（官网+航海+深海圈）+ 1 条个微行 = 4 行</div>
+    <div class="prd-item">示例：大锤日记仅有个微、没有企微 = 1 行（纯个微客户）</div>
   </div>
 
   <!-- Section 3: 搜索区 -->
@@ -3858,6 +4042,7 @@
     <div class="prd-section-title orange">3. 搜索区（共 3 行）</div>
     <div class="prd-label">第 1 行</div>
     <div class="prd-item">昵称/手机号/星球编号 — 文本输入，昵称模糊搜索；手机号/星球编号精确搜索</div>
+    <div class="prd-item"><strong>渠道</strong> <span class="prd-tag-new">NEW</span> — 下拉单选：企微 / 个微。筛选后仅显示对应渠道的记录行</div>
     <div class="prd-item">好友状态 — 下拉：好友 / 客户删除 / 双向删除</div>
     <div class="prd-item">鱼丸：根据当前角色显示对应的选项，如果数据权限只允许查看自己，鱼丸的搜索字段不显示，列表默认显示全部自己的鱼丸账号</div>
     <div class="prd-item">标签：点击后打开标签的弹窗</div>
@@ -3867,7 +4052,7 @@
     <div class="prd-item"><strong>专属服务</strong> — 下拉：交付人员列表</div>
     <div class="prd-item"><strong>会员状态</strong> — 下拉：在期/往期/待/过期/待续费/体验营</div>
     <div class="prd-item"><strong>会员到期时间</strong> — 日期范围，筛选即将到期/已过期客户</div>
-    <div class="prd-item"><strong>添加时间</strong> — 日期范围，筛选客户添加企微的时间段</div>
+    <div class="prd-item"><strong>添加时间</strong> — 日期范围，筛选客户添加好友（企微/个微）的时间段</div>
     <div class="prd-item"><strong>最近跟进时间</strong> — 日期范围，筛选最近跟进过的客户</div>
     <div class="prd-label">已删除搜索项</div>
     <div class="prd-item" style="text-decoration:line-through; color:var(--color-text-4);">客户状态 / 专属销售 / 客户等级 / 体验营期数 / 是否领取体验卡 / 客户来源</div>
@@ -3884,7 +4069,8 @@
     <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 允许多个，逗号分隔。枚举值：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家</div>
     <div class="prd-item"><strong>鱼丸</strong> — 原有字段，显示鱼丸账号名称</div>
     <div class="prd-item"><strong>专属服务</strong> <span class="prd-tag-new">NEW</span> — 交付人员名</div>
-    <div class="prd-item"><strong>好友状态</strong> — 通用字段，该行企微好友关系的状态（双向好友/客户删除/双向删除）</div>
+    <div class="prd-item"><strong>渠道</strong> <span class="prd-tag-new">NEW</span> — 位于「专属服务」与「好友状态」之间。企微 = 绿色标签（teal），个微 = 橙色标签（orange）</div>
+    <div class="prd-item"><strong>好友状态</strong> — 该行好友关系的状态（双向好友/客户删除/双向删除），对应当前渠道的好友关系</div>
     <div class="prd-item"><strong>会员状态</strong> <span class="prd-tag-new">NEW</span> — 在期/过期/待续费/体验营圈友</div>
     <div class="prd-item"><strong>加入时间</strong> <span class="prd-tag-new">NEW</span> — 会员加入日期</div>
     <div class="prd-item"><strong>会员到期</strong> <span class="prd-tag-new">NEW</span> — 会员到期日期</div>
@@ -3957,10 +4143,11 @@
     <div class="prd-item"><strong>需要资源</strong> <span class="prd-tag-new">NEW</span> — 以标签形式展示，如 流量渠道、变现指导</div>
     <div class="prd-label">3. 会员信息</div>
     <div class="prd-item">会员类型 / 会员状态 / 会员到期时间 / 加入方式 / <strong>加入金额</strong>（取值：最近一次会员订单的金额）/ 续费次数</div>
+    <div class="prd-item"><strong>鱼丸渠道标识</strong> <span class="prd-tag-new">NEW</span> — 鱼丸名称后附 16×16px 渠道图标：企微（绿底 + 企业微信 logo）/ 个微（橙底 + 微信 logo）。一个鱼丸可同时显示两个图标，表示该鱼丸已关联的所有渠道</div>
     <div class="prd-item">是否领取体验卡 / 领取体验卡时间</div>
     <div class="prd-label">4. 交付服务</div>
     <div class="prd-item"><strong>专属服务</strong>（<span class="prd-tag-new">可编辑</span>）— 下拉选项仅显示该客户已添加的鱼丸对应的专属服务人员，格式：「人员名（鱼丸 XXX）」</div>
-    <div class="prd-item">企微好友状态 / 首次添加时间 / 入群时间</div>
+    <div class="prd-item">好友状态（按渠道分别显示）/ 首次添加时间 / 入群时间</div>
     <div class="prd-item"><strong>是否进入个微群聊</strong> — 是/否（只要在任意一个个微群聊则显示"是"）/ <strong>是否进入企微群聊</strong> — 是/否</div>
     <div class="prd-label">编辑交互</div>
     <div class="prd-item">hover 字段显示铅笔图标 → 点击进入行内编辑模式 → 确认/取消按钮保存</div>
@@ -4316,6 +4503,22 @@ function toggleSourceFilterPC(el) {
       chip.setAttribute('data-sub-filter', s.filter);
       chip.innerHTML = s.label + ' <span class="chip-count">' + s.value + '</span>';
       chip.onclick = function() { toggleSubFilterPC(this, filterVal); };
+      if (s.breakdown && s.breakdown.length) {
+        chip.addEventListener('mouseenter', function(e) {
+          var tip = document.createElement('div');
+          tip.className = 'chip-tooltip-float';
+          tip.id = '_chipTip';
+          tip.innerHTML = s.breakdown.map(function(b) { return b.name + ' ' + b.count; }).join('<br>');
+          document.body.appendChild(tip);
+          var r = chip.getBoundingClientRect();
+          tip.style.left = (r.left + r.width / 2 - tip.offsetWidth / 2) + 'px';
+          tip.style.top = (r.bottom + 6) + 'px';
+        });
+        chip.addEventListener('mouseleave', function() {
+          var t = document.getElementById('_chipTip');
+          if (t) t.remove();
+        });
+      }
       subBar.appendChild(chip);
     });
     subBar.classList.add('visible');
@@ -4418,6 +4621,25 @@ function togglePhone(el) {
   }
 }
 
+// 备注编辑
+function editDetailNote() {
+  var textEl = document.getElementById('detailNoteText');
+  var inputEl = document.getElementById('detailNoteInput');
+  var raw = textEl.textContent.replace(/^备注[：:]/, '');
+  inputEl.value = raw;
+  textEl.style.display = 'none';
+  textEl.nextElementSibling.style.display = 'none';
+  inputEl.style.display = 'inline-block';
+  inputEl.focus();
+  inputEl.onblur = inputEl.onkeydown = function(e) {
+    if (e.type === 'keydown' && e.key !== 'Enter') return;
+    textEl.textContent = '备注：' + inputEl.value;
+    textEl.style.display = '';
+    textEl.nextElementSibling.style.display = '';
+    inputEl.style.display = 'none';
+  };
+}
+
 // 点击沟通时间轴条目，滚动到对应日期的聊天记录
 function scrollToChatDate(date) {
   var el = document.getElementById('chatDate-' + date);
@@ -4432,6 +4654,7 @@ function scrollToChatDate(date) {
   el.classList.add('chat-date-highlight');
   setTimeout(function() { el.classList.remove('chat-date-highlight'); }, 1500);
 }
+
 </script>
 <script src="prd-editor.js"></script>
 
