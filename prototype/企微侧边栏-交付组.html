@@ -913,6 +913,21 @@
   .timeline-dot.dot-blue { background: var(--color-info-6); }
   .timeline-dot.dot-orange { background: var(--color-accent-orange-6); }
   .timeline-dot.dot-green { background: var(--color-success-6); }
+  .timeline-dot.dot-teal { background: var(--color-primary-6); }
+  .timeline-dot.dot-danger { background: var(--color-danger-6); }
+
+  /* 沟通时间轴：最新高亮，其余置灰 */
+  .tab-content[data-tab="comms"] .timeline-dot {
+    background: var(--color-text-4);
+  }
+  .tab-content[data-tab="comms"] .timeline-item:first-child .timeline-dot {
+    background: var(--color-primary-6);
+    width: 11px;
+    height: 11px;
+    left: 0px;
+    top: 13px;
+    border: 2px solid var(--color-primary-1);
+  }
   .timeline-head {
     display: flex;
     align-items: center;
@@ -2389,92 +2404,76 @@
           <span class="section-action" style="color: var(--color-text-4); font-size: 11px;">近30天</span>
         </div>
         <div class="timeline-section">
-          <div class="timeline-date-header">2025-12-19</div>
           <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">2轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">12-19 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">2轮对话</span>
               </div>
               <div class="timeline-desc">用户咨询航海打卡规则，确认了AI视频变现航海的提交格式。交流较简短，用户情绪积极。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-12-16</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">3轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">12-16 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">3轮对话</span>
               </div>
               <div class="timeline-desc">讨论AI视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-12-12</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">4轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">12-12 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">4轮对话</span>
               </div>
               <div class="timeline-desc">用户主动分享了第一条AI视频的数据（播放量200+），询问如何优化封面和标题。推荐了爆款标题公式。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-12-08</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">5轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">12-08 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">5轮对话</span>
               </div>
               <div class="timeline-desc">用户询问AI视频工具推荐，对比了剪映和CapCut。最终选择剪映，沟通较深入。</div>
             </div>
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">1轮对话 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-type">12-08 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-time">1轮对话</span>
               </div>
               <div class="timeline-desc">用户在个微上发了一条语音，确认剪映会员开通方式。已回复操作步骤。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-12-01</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">6轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">12-01 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">6轮对话</span>
               </div>
               <div class="timeline-desc">首次深入沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。引导加入航海。</div>
             </div>
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">2轮对话 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-type">12-01 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-time">2轮对话</span>
               </div>
               <div class="timeline-desc">用户在个微上咨询航海报名流程，确认付款方式后完成报名。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-11-25</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">2轮对话 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-type">11-25 · <span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">2轮对话</span>
               </div>
               <div class="timeline-desc">新人入圈引导，发送了欢迎消息和新手任务说明。用户回复了基本信息。</div>
             </div>
-          </div>
-
-          <div class="timeline-date-header">2025-11-20</div>
-          <div class="timeline-list">
             <div class="timeline-item">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
-                <span class="timeline-type">1轮对话 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-type">11-20 · <span class="followup-tl-ai-tag">AI</span>个微沟通</span>
+                <span class="timeline-time">1轮对话</span>
               </div>
               <div class="timeline-desc">首次触达，用户咨询会员权益，简短回复后未继续。</div>
             </div>
@@ -2831,11 +2830,13 @@
 总结文本　AI 分析近期沟通内容</div>
       </div>
       <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">沟通时间轴 + 备注</div>
-        <div class="prd-card-body">时间倒序展示沟通记录
-存在对话的才会在0点出发AI计算
-日期 + [AI] 自动总结标签 + 内容摘要
-每条含 AI 智能分析标签（如 选题困难、方向不明等）</div>
+        <div class="prd-card-title">沟通时间轴</div>
+        <div class="prd-card-body">时间倒序展示，近30天沟通记录
+存在对话的才会在0点触发AI计算
+格式：左侧「MM-DD · AI 企微/个微沟通」，右侧「N轮对话」
+同一天有企微+个微沟通则分别生成2条记录
+竖线串联圆点，最新一条圆点高亮（主色），其余置灰
+每条含 AI 智能总结摘要</div>
       </div>
     </div>
     <div class="prd-panel" data-prd-tab="points" data-prd-key="delivery-s5" data-prd-version="20260310a">
