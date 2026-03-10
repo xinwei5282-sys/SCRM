@@ -180,8 +180,8 @@
   /* ===== 三 Tab 导航栏 ===== */
   .sidebar-nav-tabs {
     display: flex;
-    gap: 6px;
-    padding: 6px 16px;
+    gap: 4px;
+    padding: 6px 12px;
     background: var(--color-fill-3);
     flex-shrink: 0;
   }
@@ -222,42 +222,6 @@
   .sidebar-body::-webkit-scrollbar-track { background: transparent; }
 
   /* ===== 子 Tab 导航（概览 / 档案） ===== */
-  .sub-tabs {
-    display: flex;
-    gap: 0;
-    padding: 0 16px;
-    border-bottom: 1px solid var(--color-border-default);
-    flex-shrink: 0;
-    background: var(--color-fill-1);
-    position: sticky;
-    top: 0;
-    z-index: 2;
-  }
-  .sub-tab {
-    padding: 8px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text-3);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .sub-tab:hover {
-    color: var(--color-text-2);
-  }
-  .sub-tab.active {
-    color: var(--color-primary-6);
-    border-bottom-color: var(--color-primary-6);
-    font-weight: 600;
-  }
-  .sub-tab-content {
-    display: none;
-  }
-  .sub-tab-content.active {
-    display: block;
-  }
-
   /* ===== 身份卡片 ===== */
   .identity-card {
     padding: 16px;
@@ -1281,7 +1245,7 @@
 <div class="scenes-row">
 
   <!-- ======================================================
-       场景1：用户画像（主视图）
+       场景1：概览（主视图）
        ====================================================== -->
   <div class="scene-wrapper">
     <div class="scene-col">
@@ -1297,19 +1261,14 @@
 
       <!-- Tab 导航 -->
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab active">用户画像</div>
+        <div class="nav-tab active">概览</div>
+        <div class="nav-tab">客户档案</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab">沟通记录</div>
         <div class="nav-tab">积分记录</div>
       </div>
 
       <div class="sidebar-body">
-        <!-- 子Tab：概览 / 档案 -->
-        <div class="sub-tabs">
-          <div class="sub-tab active" data-sub="overview">概览</div>
-          <div class="sub-tab" data-sub="profile">档案</div>
-        </div>
-        <div class="sub-tab-content active" data-sub="overview">
         <!-- 身份卡片（含内联 AI 总结按钮） -->
         <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar">林</div>
@@ -1559,61 +1518,6 @@
             </div>
           </div>
         </div>
-        </div><!-- /sub-tab-content overview -->
-
-        <div class="sub-tab-content" data-sub="profile">
-        <!-- 个人信息 -->
-        <div class="section-header">
-          <span class="section-title">个人信息</span>
-        </div>
-        <div class="personal-info-section">
-          <div class="personal-info-grid">
-            <div class="personal-info-item">
-              <span class="personal-info-label">岗位方向</span>
-              <span class="personal-info-value">独立开发者</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">工作年限</span>
-              <span class="personal-info-value">5年</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">年收入</span>
-              <span class="personal-info-value">30万</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">感兴趣领域</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">AI应用</span>
-                <span class="tag-sm">短视频</span>
-                <span class="tag-sm">知识付费</span>
-                <span class="tag-sm">电商</span>
-              </div>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">个人介绍</span>
-              <span class="personal-info-value text-long">5年副业经验，专注AI视频创作和自媒体运营。曾在某互联网公司从事产品工作，2023年开始全职做独立开发者。</span>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">加入原因</span>
-              <span class="personal-info-value text-long">希望学习更多变现方法，认识同频的人，找到适合自己的副业赛道</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">提供资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">AI视频制作</span>
-                <span class="tag-sm">短视频剪辑</span>
-              </div>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">需要资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">流量渠道</span>
-                <span class="tag-sm">变现指导</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div><!-- /sub-tab-content profile -->
       </div>
 
       <!-- 底部操作栏 -->
@@ -1623,24 +1527,22 @@
         </button>
       </div>
     </div>
-    <div class="scene-label">场景1：用户画像</div>
+    <div class="scene-label">场景1：概览</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310d">
-      <div class="prd-title">交付-场景1 · 用户画像</div>
+    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310e">
+      <div class="prd-title">交付-场景1 · 概览</div>
       <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">用户画像 · 子Tab 结构</div>
-        <div class="prd-card-body">拆为两个子Tab
+        <div class="prd-card-title">顶级Tab结构（5个）</div>
+        <div class="prd-card-body">原「用户画像」拆为「概览」「客户档案」两个顶级Tab
 
-概览（默认）
+概览（本场景）
 　身份卡片 + 标签 + AI画像总结 + 关键指标 + 会员信息
 　+ 新人进度 + 高频参与项目 + 客户标签 + 最近跟进
 
-档案
+客户档案
 　个人信息（岗位/工作年限/年收入/兴趣/介绍/资源等）
 
-交互
-　点击子Tab切换显示对应面板
-　子Tab sticky 固定在 sidebar-body 顶部</div>
+完整Tab顺序：概览 | 客户档案 | 客户动态 | 沟通记录 | 积分记录</div>
       </div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">会员身份卡片</div>
@@ -1744,7 +1646,8 @@
       </div>
 
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab">概览</div>
+        <div class="nav-tab">客户档案</div>
         <div class="nav-tab active">客户动态</div>
         <div class="nav-tab">沟通记录</div>
         <div class="nav-tab">积分记录</div>
@@ -2224,7 +2127,8 @@
       </div>
 
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab">概览</div>
+        <div class="nav-tab">客户档案</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab active">沟通记录</div>
         <div class="nav-tab">积分记录</div>
@@ -2378,7 +2282,8 @@
       </div>
 
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab active">用户画像</div>
+        <div class="nav-tab active">概览</div>
+        <div class="nav-tab">客户档案</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab">沟通记录</div>
         <div class="nav-tab">积分记录</div>
@@ -2391,12 +2296,6 @@
       </div>
 
       <div class="sidebar-body">
-        <!-- 子Tab：概览 / 档案 -->
-        <div class="sub-tabs">
-          <div class="sub-tab active" data-sub="overview">概览</div>
-          <div class="sub-tab" data-sub="profile">档案</div>
-        </div>
-        <div class="sub-tab-content active" data-sub="overview">
         <!-- 身份卡片 -->
         <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar" style="opacity: 0.7;">赵</div>
@@ -2581,60 +2480,6 @@
             </div>
           </div>
         </div>
-        </div><!-- /sub-tab-content overview -->
-
-        <div class="sub-tab-content" data-sub="profile">
-        <!-- 个人信息 -->
-        <div class="section-header">
-          <span class="section-title">个人信息</span>
-        </div>
-        <div class="personal-info-section">
-          <div class="personal-info-grid">
-            <div class="personal-info-item">
-              <span class="personal-info-label">岗位方向</span>
-              <span class="personal-info-value">电商创业者</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">工作年限</span>
-              <span class="personal-info-value">8年</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">年收入</span>
-              <span class="personal-info-value">500万+</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">感兴趣领域</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">跨境电商</span>
-                <span class="tag-sm">出海</span>
-                <span class="tag-sm">私域流量</span>
-              </div>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">个人介绍</span>
-              <span class="personal-info-value text-long">深圳电商创业者，8年跨境电商经验，年营收500W+。目前在探索私域流量体系搭建，降低获客成本。</span>
-            </div>
-            <div class="personal-info-item full-width">
-              <span class="personal-info-label">加入原因</span>
-              <span class="personal-info-value text-long">想学习私域运营方法，找到跨境电商圈子的同行交流</span>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">提供资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">电商运营</span>
-                <span class="tag-sm">供应链</span>
-              </div>
-            </div>
-            <div class="personal-info-item">
-              <span class="personal-info-label">需要资源</span>
-              <div class="personal-info-tags">
-                <span class="tag-sm">私域流量</span>
-                <span class="tag-sm">品牌营销</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div><!-- /sub-tab-content profile -->
       </div>
 
       <!-- 底部操作栏 -->
@@ -2646,12 +2491,12 @@
     </div>
     <div class="scene-label">场景4：预警态</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310d">
+    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310e">
       <div class="prd-title">交付-场景4 · 预警态</div>
       <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">用户画像 · 子Tab 结构</div>
-        <div class="prd-card-body">同场景1，概览含运营相关内容，档案仅含个人信息
-预警横幅位于子Tab上方，不受Tab切换影响</div>
+        <div class="prd-card-title">顶级Tab结构</div>
+        <div class="prd-card-body">同场景1，5个顶级Tab
+预警横幅位于Tab栏下方、内容区上方，不受Tab切换影响</div>
       </div>
       <div class="prd-card" style="--accent: #F54A45;">
         <div class="prd-card-title">预警触发条件</div>
@@ -2706,7 +2551,8 @@ AI 画像总结 → 红色渐变「流失预警」风格
         </div>
       </div>
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab">用户画像</div>
+        <div class="nav-tab">概览</div>
+        <div class="nav-tab">客户档案</div>
         <div class="nav-tab">客户动态</div>
         <div class="nav-tab">沟通记录</div>
         <div class="nav-tab active">积分记录</div>
@@ -3036,22 +2882,6 @@ AI 画像总结 → 红色渐变「流失预警」风格
     }, 1500);
   }
 
-  // 子Tab切换
-  document.querySelectorAll('.sub-tabs').forEach(function(tabsBar) {
-    tabsBar.querySelectorAll('.sub-tab').forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        var target = this.dataset.sub;
-        var body = this.closest('.sidebar-body');
-        // 切换tab激活态
-        tabsBar.querySelectorAll('.sub-tab').forEach(function(t) { t.classList.remove('active'); });
-        this.classList.add('active');
-        // 切换内容面板
-        body.querySelectorAll('.sub-tab-content').forEach(function(panel) {
-          panel.classList.toggle('active', panel.dataset.sub === target);
-        });
-      });
-    });
-  });
 
 </script>
 
