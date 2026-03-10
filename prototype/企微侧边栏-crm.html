@@ -110,6 +110,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: clamp(320px, 40vw, 768px);
   }
   .scene-label {
     font-size: 13px;
@@ -126,15 +127,19 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 700px;
+    max-height: calc(100vh - 120px);
     overflow-y: auto;
     flex-shrink: 0;
   }
 
-  /* ===== 侧边栏容器 ===== */
+  /* ===== 侧边栏容器（自适应宽度） ===== */
   .sidebar-frame {
-    width: 360px;
-    height: 700px;
+    width: 100%;
+    min-width: 280px;
+    max-width: 768px;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    max-height: 860px;
     background: var(--color-fill-1);
     border-radius: var(--radius-card);
     box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
@@ -142,6 +147,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    container-type: inline-size;
+    container-name: sidebar;
   }
 
   /* ===== 侧边栏头部 ===== */
@@ -1570,6 +1577,41 @@
     margin-top: 8px;
     margin-left: 0;
     justify-content: flex-end;
+  }
+
+  /* ===== 容器查询：窄屏（<340px） ===== */
+  @container sidebar (max-width: 339px) {
+    .sidebar-nav-tabs { gap: 2px; padding: 6px 8px; }
+    .nav-tab { font-size: 11px; height: 26px; }
+    .identity-card { padding: 12px; gap: 10px; }
+    .avatar { width: 40px; height: 40px; font-size: 15px; }
+    .identity-nickname { font-size: 14px; }
+    .metrics-grid.metrics-5col { grid-template-columns: repeat(3, 1fr); }
+    .metrics-grid.metrics-4col { grid-template-columns: repeat(2, 1fr); }
+    .metrics-grid.metrics-3col { grid-template-columns: repeat(2, 1fr); }
+    .status-tags-bar { padding: 0 12px 10px; }
+    .section-header { padding: 10px 12px 6px; }
+    .followup-modal { padding: 12px; }
+  }
+
+  /* ===== 容器查询：宽屏（>500px，Pad） ===== */
+  @container sidebar (min-width: 500px) {
+    .identity-card { padding: 20px; gap: 16px; }
+    .avatar { width: 56px; height: 56px; font-size: 20px; }
+    .identity-nickname { font-size: 18px; }
+    .identity-meta { font-size: 13px; }
+    .metrics-grid.metrics-5col { grid-template-columns: repeat(5, 1fr); }
+    .metrics-grid.metrics-4col { grid-template-columns: repeat(4, 1fr); }
+    .metrics-grid.metrics-3col { grid-template-columns: repeat(3, 1fr); }
+    .status-tags-bar { padding: 0 20px 14px; }
+    .section-header { padding: 14px 20px 8px; }
+    .nav-tab { font-size: 13px; height: 30px; }
+    .form-methods { gap: 8px; }
+  }
+
+  /* ===== 容器查询：超宽屏（>650px） ===== */
+  @container sidebar (min-width: 650px) {
+    .identity-card { padding: 24px 20px; }
   }
 </style>
 </head>
