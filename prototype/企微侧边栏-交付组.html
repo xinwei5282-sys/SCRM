@@ -221,6 +221,43 @@
   }
   .sidebar-body::-webkit-scrollbar-track { background: transparent; }
 
+  /* ===== 子 Tab 导航（概览 / 档案） ===== */
+  .sub-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-border-default);
+    flex-shrink: 0;
+    background: var(--color-fill-1);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .sub-tab {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .sub-tab:hover {
+    color: var(--color-text-2);
+  }
+  .sub-tab.active {
+    color: var(--color-primary-6);
+    border-bottom-color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .sub-tab-content {
+    display: none;
+  }
+  .sub-tab-content.active {
+    display: block;
+  }
+
   /* ===== 身份卡片 ===== */
   .identity-card {
     padding: 16px;
@@ -1267,6 +1304,12 @@
       </div>
 
       <div class="sidebar-body">
+        <!-- 子Tab：概览 / 档案 -->
+        <div class="sub-tabs">
+          <div class="sub-tab active" data-sub="overview">概览</div>
+          <div class="sub-tab" data-sub="profile">档案</div>
+        </div>
+        <div class="sub-tab-content active" data-sub="overview">
         <!-- 身份卡片（含内联 AI 总结按钮） -->
         <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar">林</div>
@@ -1409,9 +1452,9 @@
             </div>
           </div>
         </div>
+        </div><!-- /sub-tab-content overview -->
 
-        <div class="divider-thick"></div>
-
+        <div class="sub-tab-content" data-sub="profile">
         <!-- 新人进度 -->
         <div class="section-header">
           <span class="section-title">新人进度</span>
@@ -1571,6 +1614,7 @@
             </div>
           </div>
         </div>
+        </div><!-- /sub-tab-content profile -->
       </div>
 
       <!-- 底部操作栏 -->
@@ -1582,8 +1626,22 @@
     </div>
     <div class="scene-label">场景1：用户画像</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310b">
+    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310c">
       <div class="prd-title">交付-场景1 · 用户画像</div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">用户画像 · 子Tab 结构</div>
+        <div class="prd-card-body">内容过长（~1500px），拆为两个子Tab
+
+概览（默认）
+　身份卡片 + 标签 + AI画像总结 + 关键指标 + 会员信息
+
+档案
+　新人进度 + 个人信息 + 高频参与项目 + 客户标签 + 最近跟进
+
+交互
+　点击子Tab切换显示对应面板
+　子Tab 固定在 sidebar-body 顶部，不随内容滚动</div>
+      </div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">会员身份卡片</div>
         <div class="prd-card-body">头像　　来源 企微 ｜ 规则 取姓氏首字
@@ -2333,6 +2391,12 @@
       </div>
 
       <div class="sidebar-body">
+        <!-- 子Tab：概览 / 档案 -->
+        <div class="sub-tabs">
+          <div class="sub-tab active" data-sub="overview">概览</div>
+          <div class="sub-tab" data-sub="profile">档案</div>
+        </div>
+        <div class="sub-tab-content active" data-sub="overview">
         <!-- 身份卡片 -->
         <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar" style="opacity: 0.7;">赵</div>
@@ -2411,9 +2475,9 @@
             </div>
           </div>
         </div>
+        </div><!-- /sub-tab-content overview -->
 
-        <div class="divider-thick"></div>
-
+        <div class="sub-tab-content" data-sub="profile">
         <!-- 新人进度 -->
         <div class="section-header">
           <span class="section-title">新人进度</span>
@@ -2571,6 +2635,7 @@
             </div>
           </div>
         </div>
+        </div><!-- /sub-tab-content profile -->
       </div>
 
       <!-- 底部操作栏 -->
@@ -2582,8 +2647,13 @@
     </div>
     <div class="scene-label">场景4：预警态</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310b">
+    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310c">
       <div class="prd-title">交付-场景4 · 预警态</div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">用户画像 · 子Tab 结构</div>
+        <div class="prd-card-body">同场景1，拆为「概览」「档案」两个子Tab
+预警横幅位于子Tab上方，不受Tab切换影响</div>
+      </div>
       <div class="prd-card" style="--accent: #F54A45;">
         <div class="prd-card-title">预警触发条件</div>
         <div class="prd-card-body">连续沉默 N 天（如 15 天）
@@ -2966,6 +3036,23 @@ AI 画像总结 → 红色渐变「流失预警」风格
       card.classList.add('visible');
     }, 1500);
   }
+
+  // 子Tab切换
+  document.querySelectorAll('.sub-tabs').forEach(function(tabsBar) {
+    tabsBar.querySelectorAll('.sub-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var target = this.dataset.sub;
+        var body = this.closest('.sidebar-body');
+        // 切换tab激活态
+        tabsBar.querySelectorAll('.sub-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        // 切换内容面板
+        body.querySelectorAll('.sub-tab-content').forEach(function(panel) {
+          panel.classList.toggle('active', panel.dataset.sub === target);
+        });
+      });
+    });
+  });
 
 </script>
 
