@@ -587,6 +587,57 @@
   .friend-ok { color: var(--color-success-6); font-weight: 500; }
   .friend-deleted { color: var(--color-danger-6); font-weight: 500; }
 
+  /* ===== 个人信息 ===== */
+  .personal-info-section {
+    padding: 0 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .personal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+  .personal-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .personal-info-item.full-width {
+    grid-column: 1 / -1;
+  }
+  .personal-info-label {
+    font-size: 11px;
+    color: var(--color-text-4);
+    line-height: 16px;
+  }
+  .personal-info-value {
+    font-size: 13px;
+    color: var(--color-text-1);
+    line-height: 20px;
+  }
+  .personal-info-value.text-long {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 18px;
+  }
+  .personal-info-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .personal-info-tags .tag-sm {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-xs);
+    font-size: 11px;
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+
   /* ===== 关键指标（与销售组一致） ===== */
   .metrics-grid {
     padding: 12px 16px;
@@ -1397,6 +1448,60 @@
 
         <div class="divider-thick"></div>
 
+        <!-- 个人信息 -->
+        <div class="section-header">
+          <span class="section-title">个人信息</span>
+        </div>
+        <div class="personal-info-section">
+          <div class="personal-info-grid">
+            <div class="personal-info-item">
+              <span class="personal-info-label">岗位方向</span>
+              <span class="personal-info-value">独立开发者</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">工作年限</span>
+              <span class="personal-info-value">5年</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">年收入</span>
+              <span class="personal-info-value">30万</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">感兴趣领域</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">AI应用</span>
+                <span class="tag-sm">短视频</span>
+                <span class="tag-sm">知识付费</span>
+                <span class="tag-sm">电商</span>
+              </div>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">个人介绍</span>
+              <span class="personal-info-value text-long">5年副业经验，专注AI视频创作和自媒体运营。曾在某互联网公司从事产品工作，2023年开始全职做独立开发者。</span>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">加入原因</span>
+              <span class="personal-info-value text-long">希望学习更多变现方法，认识同频的人，找到适合自己的副业赛道</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">提供资源</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">AI视频制作</span>
+                <span class="tag-sm">短视频剪辑</span>
+              </div>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">需要资源</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">流量渠道</span>
+                <span class="tag-sm">变现指导</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
         <!-- 高频参与项目 -->
         <div class="section-header">
           <span class="section-title">高频参与项目</span>
@@ -1477,7 +1582,7 @@
     </div>
     <div class="scene-label">场景1：用户画像</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310a">
+    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310b">
       <div class="prd-title">交付-场景1 · 用户画像</div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">会员身份卡片</div>
@@ -1528,6 +1633,23 @@
 　短板　　　　用户自述
 　目标 &amp; 展望　用户目标描述
 　来源　新手任务系统</div>
+      </div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">个人信息</div>
+        <div class="prd-card-body">位置　新人进度下方、高频项目上方
+2列网格布局，紧凑展示
+
+字段清单：
+　岗位方向　　来源 星球问卷
+　工作年限　　来源 星球问卷
+　年收入　　　来源 星球问卷
+　感兴趣领域　标签形式，来源 星球问卷
+　个人介绍　　全宽长文本，来源 星球
+　加入原因　　全宽长文本，来源 星球
+　提供资源　　标签形式，来源 星球
+　需要资源　　标签形式，来源 星球
+
+注：城市 / 职业 / 行业已在身份卡片 identity-meta 中显示</div>
       </div>
       <div class="prd-card" style="--accent: #757980;">
         <div class="prd-card-title">高频项目 + 标签 + 跟进</div>
@@ -2328,6 +2450,59 @@
 
         <div class="divider-thick"></div>
 
+        <!-- 个人信息 -->
+        <div class="section-header">
+          <span class="section-title">个人信息</span>
+        </div>
+        <div class="personal-info-section">
+          <div class="personal-info-grid">
+            <div class="personal-info-item">
+              <span class="personal-info-label">岗位方向</span>
+              <span class="personal-info-value">电商创业者</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">工作年限</span>
+              <span class="personal-info-value">8年</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">年收入</span>
+              <span class="personal-info-value">500万+</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">感兴趣领域</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">跨境电商</span>
+                <span class="tag-sm">出海</span>
+                <span class="tag-sm">私域流量</span>
+              </div>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">个人介绍</span>
+              <span class="personal-info-value text-long">深圳电商创业者，8年跨境电商经验，年营收500W+。目前在探索私域流量体系搭建，降低获客成本。</span>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">加入原因</span>
+              <span class="personal-info-value text-long">想学习私域运营方法，找到跨境电商圈子的同行交流</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">提供资源</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">电商运营</span>
+                <span class="tag-sm">供应链</span>
+              </div>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">需要资源</span>
+              <div class="personal-info-tags">
+                <span class="tag-sm">私域流量</span>
+                <span class="tag-sm">品牌营销</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
         <!-- 高频参与项目 -->
         <div class="section-header">
           <span class="section-title">高频参与项目</span>
@@ -2407,7 +2582,7 @@
     </div>
     <div class="scene-label">场景4：预警态</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310a">
+    <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310b">
       <div class="prd-title">交付-场景4 · 预警态</div>
       <div class="prd-card" style="--accent: #F54A45;">
         <div class="prd-card-title">预警触发条件</div>
