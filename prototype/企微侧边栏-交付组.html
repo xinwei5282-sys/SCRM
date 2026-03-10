@@ -588,40 +588,7 @@
   .friend-ok { color: var(--color-success-6); font-weight: 500; }
   .friend-deleted { color: var(--color-danger-6); font-weight: 500; }
 
-  /* ===== 基础信息表格 ===== */
-  .basic-info-table {
-    padding: 0 16px 4px;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--color-border-default);
-    border-radius: var(--radius-card);
-    margin: 0 16px 8px;
-    overflow: hidden;
-  }
-  .basic-info-row {
-    display: grid;
-    grid-template-columns: 60px 1fr 60px 1fr;
-    border-bottom: 1px solid var(--color-border-default);
-    min-height: 32px;
-  }
-  .basic-info-row:last-child { border-bottom: none; }
-  .basic-info-label {
-    font-size: 12px;
-    color: var(--color-text-3);
-    padding: 7px 8px;
-    background: var(--color-fill-2);
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-  }
-  .basic-info-value {
-    font-size: 12px;
-    color: var(--color-text-1);
-    padding: 7px 8px;
-    display: flex;
-    align-items: center;
-    word-break: break-all;
-  }
+  /* ===== 基础信息（复用 personal-info 样式） ===== */
 
   /* ===== 个人信息 ===== */
   .personal-info-section {
@@ -1615,27 +1582,31 @@
 
       <div class="sidebar-body">
         <!-- 基础信息 -->
-        <div class="section-header" style="justify-content: center;">
-          <span class="section-title" style="color: var(--color-primary-6);">基础信息</span>
+        <div class="section-header">
+          <span class="section-title">基础信息</span>
         </div>
-        <div class="basic-info-table">
-          <div class="basic-info-row">
-            <span class="basic-info-label">星球编号</span>
-            <span class="basic-info-value">28456</span>
-            <span class="basic-info-label">星球昵称</span>
-            <span class="basic-info-value">林小鱼</span>
-          </div>
-          <div class="basic-info-row">
-            <span class="basic-info-label">性别</span>
-            <span class="basic-info-value">女</span>
-            <span class="basic-info-label">手机号</span>
-            <span class="basic-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">👁</span></span>
-          </div>
-          <div class="basic-info-row">
-            <span class="basic-info-label">微信号</span>
-            <span class="basic-info-value">linxiaoyu_ai</span>
-            <span class="basic-info-label"></span>
-            <span class="basic-info-value"></span>
+        <div class="personal-info-section">
+          <div class="personal-info-grid">
+            <div class="personal-info-item">
+              <span class="personal-info-label">星球编号</span>
+              <span class="personal-info-value">28456</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">星球昵称</span>
+              <span class="personal-info-value">林小鱼</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">性别</span>
+              <span class="personal-info-value">女</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">手机号</span>
+              <span class="personal-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">👁</span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">微信号</span>
+              <span class="personal-info-value">linxiaoyu_ai</span>
+            </div>
           </div>
         </div>
 
