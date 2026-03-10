@@ -146,6 +146,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    container-type: inline-size;
+    container-name: sidebar;
   }
 
   /* ===== 侧边栏头部 ===== */
@@ -1467,6 +1469,47 @@
     font-size: 32px;
     margin-bottom: 8px;
     opacity: 0.5;
+  }
+
+  /* ===== 容器查询：窄屏（<340px） ===== */
+  @container sidebar (max-width: 339px) {
+    .sidebar-nav-tabs { gap: 2px; padding: 6px 8px; }
+    .nav-tab { font-size: 11px; height: 26px; }
+    .identity-card { padding: 12px; gap: 10px; }
+    .avatar { width: 40px; height: 40px; font-size: 15px; }
+    .identity-nickname { font-size: 14px; }
+    .metrics-grid.metrics-5col { grid-template-columns: repeat(3, 1fr); }
+    .metrics-grid.metrics-4col { grid-template-columns: repeat(2, 1fr); }
+    .status-tags-bar { padding: 0 12px 10px; }
+    .section-header { padding: 10px 12px 6px; }
+    .personal-info-section { padding: 0 12px 8px; }
+    .member-subsection-header { padding: 10px 12px 6px; }
+    .followup-modal { padding: 12px; }
+  }
+
+  /* ===== 容器查询：宽屏（>500px，Pad） ===== */
+  @container sidebar (min-width: 500px) {
+    .identity-card { padding: 20px; gap: 16px; }
+    .avatar { width: 56px; height: 56px; font-size: 20px; }
+    .identity-nickname { font-size: 18px; }
+    .identity-meta { font-size: 13px; }
+    .personal-info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px 16px; }
+    .newcomer-grid { grid-template-columns: repeat(3, 1fr); }
+    .metrics-grid.metrics-5col { grid-template-columns: repeat(5, 1fr); }
+    .metrics-grid.metrics-4col { grid-template-columns: repeat(4, 1fr); }
+    .status-tags-bar { padding: 0 20px 14px; }
+    .section-header { padding: 14px 20px 8px; }
+    .personal-info-section { padding: 0 20px 10px; }
+    .member-subsection-header { padding: 14px 20px 8px; }
+    .nav-tab { font-size: 13px; height: 30px; }
+    .form-methods { gap: 8px; }
+  }
+
+  /* ===== 容器查询：超宽屏（>650px） ===== */
+  @container sidebar (min-width: 650px) {
+    .personal-info-grid { grid-template-columns: repeat(4, 1fr); }
+    .newcomer-grid { grid-template-columns: repeat(4, 1fr); }
+    .identity-card { padding: 24px 20px; }
   }
 </style>
 </head>
