@@ -570,6 +570,35 @@
   .member-status-tag.status-active { background: var(--color-success-1); color: var(--color-success-6); }
   .member-status-tag.status-expired { background: var(--color-danger-1); color: var(--color-danger-6); }
 
+  /* 推荐人信息 */
+  .recommender-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .recommender-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-5), var(--color-primary-6));
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .recommender-name {
+    font-size: 12px;
+    color: var(--color-text-1);
+    font-weight: 500;
+  }
+  .recommender-star {
+    font-size: 10px;
+    color: var(--color-text-4);
+  }
+
   /* ===== 基础信息（复用 personal-info 样式） ===== */
 
   /* ===== 个人信息 ===== */
@@ -1756,6 +1785,10 @@
               <span class="personal-info-value">林小鱼</span>
             </div>
             <div class="personal-info-item">
+              <span class="personal-info-label">触达昵称</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '林小鱼')">林小鱼<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+            </div>
+            <div class="personal-info-item">
               <span class="personal-info-label">性别</span>
               <span class="personal-info-value">女</span>
             </div>
@@ -1791,6 +1824,10 @@
             <div class="personal-info-item">
               <span class="personal-info-label">专属服务</span>
               <span class="personal-info-value editable" onclick="startEdit(this, '潇墨')">潇墨<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">推荐人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">张</span><span class="recommender-name">张大富</span><span class="recommender-star">NO.10086</span></span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -1877,6 +1914,10 @@
             <div class="personal-info-item">
               <span class="personal-info-label">专属服务</span>
               <span class="personal-info-value editable" onclick="startEdit(this, '李李')">李李<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">推荐人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">王</span><span class="recommender-name">王小明</span><span class="recommender-star">NO.20135</span></span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
