@@ -597,6 +597,11 @@
   .identity-meta .sep {
     color: var(--color-border-default);
   }
+  .phone-mask { display: inline-flex; align-items: center; gap: 2px; cursor: default; }
+  .phone-mask .phone-eye { display: none; width: 14px; height: 14px; cursor: pointer; color: var(--color-text-4); flex-shrink: 0; transition: color 100ms; }
+  .phone-mask:hover .phone-eye { display: inline-block; }
+  .phone-mask .phone-eye:hover { color: var(--color-text-2); }
+  .phone-mask.revealed .phone-eye { display: inline-block; color: var(--color-primary-6); }
 
   /* ===== 第二区：状态标签栏 ===== */
   .status-tags-bar {
@@ -1603,7 +1608,7 @@
             </div>
             <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
             <div class="identity-meta">
-              <span>186****7890</span>
+              <span class="phone-mask" data-masked="186****7890" data-phone="18632107890" onclick="togglePhone(this)"><span class="phone-text">186****7890</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
               <span class="sep">|</span>
               <span>8体</span>
             </div>
@@ -2271,7 +2276,7 @@
             </div>
             <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
             <div class="identity-meta">
-              <span>139****5566</span>
+              <span class="phone-mask" data-masked="139****5566" data-phone="13987655566" onclick="togglePhone(this)"><span class="phone-text">139****5566</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
               <span class="sep">·</span>
               <span>8体</span>
             </div>
@@ -2624,6 +2629,20 @@
 
 <script>
   /* ── AI 画像总结生成 ── */
+  // 手机号脱敏 — hover 显示眼睛，点击切换明文/脱敏
+  function togglePhone(el) {
+    var textEl = el.querySelector('.phone-text');
+    var masked = el.getAttribute('data-masked');
+    var phone = el.getAttribute('data-phone');
+    if (textEl.textContent === masked) {
+      textEl.textContent = phone;
+      el.classList.add('revealed');
+    } else {
+      textEl.textContent = masked;
+      el.classList.remove('revealed');
+    }
+  }
+
   function generateAiSummary(btn) {
     var genCard = document.getElementById('aiPortraitGenCard');
     var card = document.getElementById('aiSummary-profile');

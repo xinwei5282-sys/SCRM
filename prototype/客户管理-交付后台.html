@@ -394,6 +394,11 @@
   .customer-name .icon-external { width: 12px; height: 12px; color: var(--color-text-4); flex-shrink: 0; opacity: 0; transition: opacity 100ms; }
   .customer-info:hover .icon-external { opacity: 1; color: var(--color-primary-6); }
   .customer-phone { font-size: 12px; color: var(--color-text-3); }
+  .phone-mask { display: inline-flex; align-items: center; gap: 2px; cursor: default; }
+  .phone-mask .phone-eye { display: none; width: 14px; height: 14px; cursor: pointer; color: var(--color-text-4); flex-shrink: 0; transition: color 100ms; }
+  .phone-mask:hover .phone-eye { display: inline-block; }
+  .phone-mask .phone-eye:hover { color: var(--color-text-2); }
+  .phone-mask.revealed .phone-eye { display: inline-block; color: var(--color-primary-6); }
 
   /* Tags / Badges */
   .tag {
@@ -1973,7 +1978,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">138****2736</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2002,7 +2007,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">138****2736</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2031,7 +2036,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">138****2736</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2063,7 +2068,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">186****0413</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="186****0413" data-phone="18632100413" onclick="togglePhone(this)"><span class="phone-text">186****0413</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2092,7 +2097,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">186****0413</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="186****0413" data-phone="18632100413" onclick="togglePhone(this)"><span class="phone-text">186****0413</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2123,7 +2128,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">大锤日记</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">159****8821</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="159****8821" data-phone="15976888821" onclick="togglePhone(this)"><span class="phone-text">159****8821</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2154,7 +2159,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">177****6655</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2183,7 +2188,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">177****6655</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2214,7 +2219,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">强哥电商笔记</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">135****9074</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="135****9074" data-phone="13598769074" onclick="togglePhone(this)"><span class="phone-text">135****9074</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2246,7 +2251,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">152****3318</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2275,7 +2280,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">152****3318</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2304,7 +2309,7 @@
                     </div>
                     <div>
                       <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a><svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-                      <div class="customer-phone">152****3318</div>
+                      <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
@@ -2694,7 +2699,7 @@
               <th>企微好友状态</th><td><span class="friend-ok">双向好友</span></td>
             </tr>
             <tr>
-              <th>首次添加交付时间</th><td>2024-02-15 10:22</td>
+              <th>首次添加时间</th><td>2024-02-15 10:22</td>
               <th>入群时间</th><td>2024-02-15 11:00</td>
             </tr>
             <tr>
@@ -3903,7 +3908,7 @@
     <div class="prd-item">是否领取体验卡 / 领取体验卡时间</div>
     <div class="prd-label">4. 交付服务</div>
     <div class="prd-item"><strong>专属服务</strong>（<span class="prd-tag-new">可编辑</span>）— 下拉选项仅显示该客户已添加的鱼丸对应的专属服务人员，格式：「人员名（鱼丸 XXX）」</div>
-    <div class="prd-item">企微好友状态 / 首次添加交付时间 / 入群时间</div>
+    <div class="prd-item">企微好友状态 / 首次添加时间 / 入群时间</div>
     <div class="prd-item"><strong>是否进入个微群聊</strong> — 是/否（只要在任意一个个微群聊则显示"是"）/ <strong>是否进入企微群聊</strong> — 是/否</div>
     <div class="prd-label">编辑交互</div>
     <div class="prd-item">hover 字段显示铅笔图标 → 点击进入行内编辑模式 → 确认/取消按钮保存</div>
@@ -4348,6 +4353,20 @@ var ds = document.querySelector('.detail-sidebar');
 if (ds) ds.addEventListener('click', function() { scrollToPrd('prd-s7'); });
 var _origOpen = openDetail;
 openDetail = function() { _origOpen(); setTimeout(function() { scrollToPrd('prd-s6'); }, 100); };
+
+// 手机号脱敏 — hover 显示眼睛，点击切换明文/脱敏
+function togglePhone(el) {
+  var textEl = el.querySelector('.phone-text');
+  var masked = el.getAttribute('data-masked');
+  var phone = el.getAttribute('data-phone');
+  if (textEl.textContent === masked) {
+    textEl.textContent = phone;
+    el.classList.add('revealed');
+  } else {
+    textEl.textContent = masked;
+    el.classList.remove('revealed');
+  }
+}
 
 // 点击沟通时间轴条目，滚动到对应日期的聊天记录
 function scrollToChatDate(date) {
