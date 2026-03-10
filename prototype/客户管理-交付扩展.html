@@ -1420,12 +1420,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--color-fill-6);
+    background: #242528;
     color: #fff;
     font-size: 12px;
     padding: 6px 16px;
     border-radius: 6px;
-    z-index: 800;
+    z-index: 9999;
     pointer-events: none;
     animation: copyToastAnim 1.2s ease forwards;
   }
@@ -2756,6 +2756,10 @@
               <th>是否领取体验卡</th><td>是</td>
               <th>领取体验卡时间</th><td>2024-01-12 09:00</td>
             </tr>
+            <tr>
+              <th>推荐人</th><td><span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#51B7A1,#36A590);color:#fff;font-size:10px;font-weight:700;">王</span><span>王大力</span><span style="color:#757980;font-size:11px;">NO.23456</span></span></td>
+              <th></th><td></td>
+            </tr>
 
             <!-- ===== 2b. 会员信息 — 航海会员（鱼丸 320） ===== -->
             <tr><td class="section-header" colspan="4">会员信息 — 航海会员（鱼丸 320）</td></tr>
@@ -2823,6 +2827,10 @@
             <tr>
               <th>加入金额</th><td>¥699.00</td>
               <th>续费次数</th><td>0</td>
+            </tr>
+            <tr>
+              <th>推荐人</th><td><span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#51B7A1,#36A590);color:#fff;font-size:10px;font-weight:700;">张</span><span>张晓峰</span><span style="color:#757980;font-size:11px;">NO.87191</span></span></td>
+              <th></th><td></td>
             </tr>
 
             <!-- ===== 3. 个人信息 ===== -->
@@ -4025,7 +4033,7 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310a" data-prd-view="list">
+<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310c" data-prd-view="list">
   <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
 
   <!-- Section 1: 概述 -->
@@ -4162,8 +4170,8 @@
     <div class="prd-section-title green">7. 客户档案 Tab</div>
     <div class="prd-item">以四栏表格（th-td-th-td）展示，按分组用 section-header 分隔</div>
     <div class="prd-label">1. 基础信息</div>
-    <div class="prd-item">客户ID / 星球编号 / 星球昵称 / 性别</div>
-    <div class="prd-item"><strong>手机号</strong>（脱敏，<span class="prd-tag-new">可编辑</span>）/ <strong>微信号</strong>（<span class="prd-tag-new">可编辑</span>）</div>
+    <div class="prd-item">客户ID / <strong>星球编号</strong>（<span class="prd-tag-new">点击复制</span>）/ <strong>星球昵称</strong>（<span class="prd-tag-new">点击复制</span>）/ 性别</div>
+    <div class="prd-item"><strong>手机号</strong>（脱敏显示，<span class="prd-tag-new">点击复制完整号码</span>）/ <strong>微信号</strong>（<span class="prd-tag-new">点击复制</span>）</div>
     <div class="prd-label">2. 个人信息</div>
     <div class="prd-item"><strong>城市</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>职业</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>岗位方向</strong>（<span class="prd-tag-new">可编辑</span>）</div>
     <div class="prd-item"><strong>参加工作年限</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>年收入</strong>（<span class="prd-tag-new">可编辑</span>）</div>
@@ -4174,6 +4182,7 @@
     <div class="prd-item"><strong>需要资源</strong> <span class="prd-tag-new">NEW</span> — 以标签形式展示，如 流量渠道、变现指导</div>
     <div class="prd-label">3. 会员信息</div>
     <div class="prd-item">会员类型 / 会员状态 / 会员到期时间 / 加入方式 / <strong>加入金额</strong>（取值：最近一次会员订单的金额）/ 续费次数</div>
+    <div class="prd-item"><strong>推荐人</strong> <span class="prd-tag-new">NEW</span> — 头像（20px 圆形，主色渐变）+ 昵称 + 星球编号；每个会员类型各自展示对应推荐人</div>
     <div class="prd-item"><strong>鱼丸渠道标识</strong> <span class="prd-tag-new">NEW</span> — 鱼丸名称后附 16×16px 渠道图标：企微（绿底 + 企业微信 logo）/ 个微（橙底 + 微信 logo）。一个鱼丸可同时显示两个图标，表示该鱼丸已关联的所有渠道</div>
     <div class="prd-item">是否领取体验卡 / 领取体验卡时间</div>
     <div class="prd-label">4. 交付服务</div>
@@ -4440,18 +4449,24 @@ function generateAiSummary() {
 
 // Profile inline edit
 function copyText(text) {
+  // 1. 复制到剪贴板
   var ta = document.createElement('textarea');
   ta.value = text;
-  ta.style.cssText = 'position:fixed;left:-9999px';
+  ta.style.cssText = 'position:fixed;left:-9999px;opacity:0';
   document.body.appendChild(ta);
   ta.select();
-  document.execCommand('copy');
+  try { document.execCommand('copy'); } catch(e) {}
   ta.remove();
+  // 2. 显示 toast（纯内联样式，不依赖 CSS class）
   var toast = document.createElement('div');
-  toast.className = 'copy-toast';
   toast.textContent = '已复制';
+  toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#242528;color:#fff;font-size:13px;padding:8px 20px;border-radius:6px;z-index:99999;pointer-events:none;opacity:0;transition:opacity 0.2s;';
   document.body.appendChild(toast);
-  setTimeout(function() { toast.remove(); }, 1200);
+  // 强制重绘后再显示
+  toast.offsetHeight;
+  toast.style.opacity = '1';
+  setTimeout(function() { toast.style.opacity = '0'; }, 800);
+  setTimeout(function() { toast.remove(); }, 1100);
 }
 
 function startEditField(btn) {
