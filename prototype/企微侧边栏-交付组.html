@@ -13,6 +13,7 @@
   :root {
     --color-primary-1: #E9FFF8;
     --color-primary-2: #BCEDDD;
+    --color-primary-5: #51B7A1;
     --color-primary-6: #36A590;
     --color-primary-7: #248F80;
 
@@ -578,15 +579,16 @@
   }
   .recommender-avatar {
     width: 18px;
+    min-width: 18px;
     height: 18px;
+    line-height: 18px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--color-primary-5), var(--color-primary-6));
     color: #fff;
     font-size: 9px;
     font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
+    text-align: center;
     flex-shrink: 0;
   }
   .recommender-name {
@@ -648,7 +650,7 @@
     border-color: var(--color-border-hover);
     background: var(--color-fill-hover);
   }
-  .personal-info-value .edit-icon {
+  .edit-icon {
     display: none;
     width: 12px;
     height: 12px;
@@ -656,8 +658,43 @@
     vertical-align: middle;
     margin-left: 2px;
   }
-  .personal-info-value.editable:hover .edit-icon {
+  .editable:hover .edit-icon {
     display: inline;
+  }
+  /* 点击复制 */
+  .copyable {
+    cursor: pointer;
+    position: relative;
+    border-radius: 4px;
+    padding: 0 2px;
+    margin: 0 -2px;
+    transition: background 0.1s;
+  }
+  .copyable:hover {
+    background: var(--color-fill-hover);
+  }
+  .copyable:active {
+    background: var(--color-primary-1);
+  }
+  .copy-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-fill-6);
+    color: var(--color-text-7);
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    z-index: 800;
+    pointer-events: none;
+    animation: copyToastAnim 1.2s ease forwards;
+  }
+  @keyframes copyToastAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
   }
   .editable-input-wrap {
     display: flex;
@@ -980,6 +1017,16 @@
   .timeline-desc .hl {
     color: var(--color-primary-6);
     font-weight: 500;
+  }
+  .timeline-link {
+    color: var(--color-text-2);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+  .timeline-link:hover {
+    color: var(--color-primary-6);
+    text-decoration: underline;
   }
   .timeline-duration {
     display: inline-flex;
@@ -1596,8 +1643,8 @@
           <div class="avatar">林</div>
           <div class="identity-info" style="flex: 1; min-width: 0;">
             <div class="identity-name-row">
-              <span class="identity-nickname">林小鱼</span>
-              <span class="identity-star-id">NO.28456</span>
+              <span class="identity-nickname copyable" onclick="copyText(this, '林小鱼')">林小鱼</span>
+              <span class="identity-star-id copyable" onclick="copyText(this, 'NO.28456')">NO.28456</span>
               <span class="channel-tag channel-qw">企微</span>
             </div>
             <div class="identity-meta">
@@ -1778,7 +1825,7 @@
           <div class="personal-info-grid">
             <div class="personal-info-item">
               <span class="personal-info-label">星球编号</span>
-              <span class="personal-info-value">28456</span>
+              <span class="personal-info-value copyable" onclick="copyText(this, '28456')">28456</span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">星球昵称</span>
@@ -1794,11 +1841,11 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">手机号</span>
-              <span class="personal-info-value editable" onclick="startEdit(this, '186****3721')">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span><svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+              <span class="personal-info-value copyable" onclick="copyText(this, '18612343721')">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">微信号</span>
-              <span class="personal-info-value editable" onclick="startEdit(this, 'linxiaoyu_ai')">linxiaoyu_ai<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+              <span class="personal-info-value copyable" onclick="copyText(this, 'linxiaoyu_ai')">linxiaoyu_ai</span>
             </div>
           </div>
         </div>
@@ -1828,6 +1875,10 @@
             <div class="personal-info-item">
               <span class="personal-info-label">推荐人</span>
               <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">张</span><span class="recommender-name">张大富</span><span class="recommender-star">NO.10086</span></span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">分销人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">李</span><span class="recommender-name">李明月</span><span class="recommender-star">NO.15678</span></span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -1918,6 +1969,10 @@
             <div class="personal-info-item">
               <span class="personal-info-label">推荐人</span>
               <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">王</span><span class="recommender-name">王小明</span><span class="recommender-star">NO.20135</span></span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">分销人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">赵</span><span class="recommender-name">赵一鸣</span><span class="recommender-star">NO.30456</span></span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">会员到期时间</span>
@@ -2700,27 +2755,28 @@
     </div>
     <div class="scene-label">交互版：点击 Tab 切换</div>
     </div>
-    <div class="prd-panel active" data-prd-tab="overview" data-prd-key="delivery-s1" data-prd-version="20260310f">
+    <div class="prd-panel active" data-prd-tab="overview" data-prd-key="delivery-s1" data-prd-version="20260310h">
       <div class="prd-title">交付-场景1 · 概览</div>
       <div class="prd-card" style="--accent: #586E93;">
         <div class="prd-card-title">顶级Tab结构（5个）</div>
-        <div class="prd-card-body">原「用户画像」拆为「概览」「客户档案」两个顶级Tab
+        <div class="prd-card-body">完整Tab顺序：概览 | 客户档案 | 客户动态 | 沟通记录 | 积分记录
 
 概览（本场景）
-　身份卡片 + 标签 + AI画像总结 + 关键指标
-　+ 新人进度 + 高频参与航海 + 客户标签 + 最近跟进
+　身份卡片 + 身份&amp;阶段标签 + AI画像总结
+　+ 关键指标 + 新人进度 + 高频参与航海
+　+ 客户标签 + 最近跟进
 
-客户档案
-　会员信息（会员卡片 + 鱼丸 + 专属服务 + 好友状态）
-　+ 个人信息（岗位/工作年限/年收入/兴趣/介绍/资源等）
-
-完整Tab顺序：概览 | 客户档案 | 客户动态 | 沟通记录 | 积分记录</div>
+全局交互
+　点击复制　昵称 / 星球编号 / 手机号 / 微信号
+　　→ 自动复制到剪贴板，显示「已复制」toast
+　点击编辑　备注 / 触达昵称 / 专属服务
+　　→ 弹出输入框 + 确认/取消</div>
       </div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">会员身份卡片</div>
         <div class="prd-card-body">头像　　来源 企微 ｜ 规则 取姓氏首字
-昵称　　来源 企微
-星球编号　来源 星球
+昵称　　来源 企微 ｜ 点击复制
+星球编号　来源 星球 ｜ 点击复制
 渠道标签　企微（绿） / 个微（橙）｜ 标识当前聊天渠道
 基础信息　城市 · 职业 · 行业（来源 星球问卷）
 备注　　来源 CRM ｜ 点击编辑
@@ -2737,26 +2793,12 @@
 预警态　红色渐变「流失预警」风格，直接展示
 来源　　AI 模型基于用户行为数据生成</div>
       </div>
-      <div class="prd-card" style="--accent: #36A590;">
-        <div class="prd-card-title">会员信息 + 专属服务</div>
-        <div class="prd-card-body">位置　关键指标下方、新人进度上方
-按会员类型分卡片（官网会员 / 航海会员 / 深海圈会员）
-每张卡片含：
-　会员类型　蓝标签(官网) / 绿标签(航海) / 橙标签(深海圈)
-　会员状态　在期(绿) / 即将到期(红) / 已过期(红)
-　鱼丸　　鱼丸账号名 + 渠道图标（企微logo / 个微logo）
-　　渠道图标　16×16px，企微=绿底+企业微信logo，个微=橙底+微信logo
-　　同一鱼丸可能同时有企微+个微双图标
-　专属服务　交付人员名（如 潇墨、李李、蓝鲸）
-　好友状态　双向好友(绿) / 客户删除(红)
-来源　鱼丸系统 + 企微好友关系</div>
-      </div>
       <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">活跃度 + 新手任务进度</div>
-        <div class="prd-card-body">活跃度指标（5项网格）
-　连续沉默天数 / 本月活跃天数 / 发帖 / 航海 / 聚会
-　来源　行为数据聚合
-　含「查看详情」入口
+        <div class="prd-card-title">关键指标 + 新人进度</div>
+        <div class="prd-card-body">关键指标（2列网格，3项）
+　会员初始加入　来源 鱼丸系统
+　会员到期时间　来源 鱼丸系统
+　最近跟进　　　来源 CRM
 
 新人进度（作业关键信息卡片）
 　方向 &amp; 赛道　用户选择的探索方向
@@ -2766,53 +2808,49 @@
 　目标 &amp; 展望　用户目标描述
 　来源　新手任务系统</div>
       </div>
-      <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">个人信息</div>
-        <div class="prd-card-body">位置　新人进度下方、高频项目上方
-2列网格布局，紧凑展示
-
-字段清单：
-　岗位方向　　来源 星球问卷
-　工作年限　　来源 星球问卷
-　年收入　　　来源 星球问卷
-　感兴趣领域　标签形式，来源 星球问卷
-　个人介绍　　全宽长文本，来源 星球
-　加入原因　　全宽长文本，来源 星球
-　提供资源　　标签形式，来源 星球
-　需要资源　　标签形式，来源 星球
-
-注：城市 / 职业 / 行业已在身份卡片 identity-meta 中显示</div>
-      </div>
       <div class="prd-card" style="--accent: #757980;">
-        <div class="prd-card-title">高频项目 + 标签 + 跟进</div>
+        <div class="prd-card-title">高频航海 + 标签 + 跟进</div>
         <div class="prd-card-body">高频参与航海
 　来源　鱼丸航海/聚会记录
 　格式　项目名 ×参与次数
 
-标签（企微标签）
-　基础标签　如 普通在期圈友
-　续费标签　如 续费期
-　兴趣标签　如 AI视频 / 自媒体 / 小红书
-　含「管理标签」入口
+客户标签（3组）
+　企微标签　如 知识付费 / 高活跃 / 深圳
+　行为标签　如 活跃分享者 / 连续签到7天
+　属性标签　如 跨境电商 / 年营收500W+
+　含「+ 添加」入口
 
 最近跟进
 　来源 CRM，显示最近 2 条
 　标注 [AI] 自动生成标签
-　含「查看全部」入口</div>
+　含「更多请前往CRM后台查看」入口</div>
       </div>
     </div>
-    <div class="prd-panel" data-prd-tab="profile" data-prd-key="delivery-s1b" data-prd-version="20260310g">
+    <div class="prd-panel" data-prd-tab="profile" data-prd-key="delivery-s1b" data-prd-version="20260310h">
       <div class="prd-title">交付-场景1b · 客户档案</div>
       <div class="prd-card" style="--accent: #586E93;">
         <div class="prd-card-title">客户档案页</div>
         <div class="prd-card-body">基础信息（表格样式，2列×N行）
-　星球编号　星球昵称　性别　手机号（脱敏+眼睛图标）　微信号
-　不含客户ID（后台字段，不展示）
-
-会员信息（按类型分卡片：官网/航海/深海圈）
-　每张含：会员类型+状态+鱼丸+专属服务+好友状态
-
-个人信息（2列网格）
+　星球编号（点击复制）　触达昵称（可编辑）　星球昵称　性别
+　手机号（脱敏+眼睛图标，点击复制完整号）　微信号（点击复制）
+　不含客户ID（后台字段，不展示）</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">会员信息 + 专属服务</div>
+        <div class="prd-card-body">按会员类型分卡片（官网会员 / 航海会员 / 深海圈会员）
+每张卡片含：
+　会员类型　蓝标签(官网) / 绿标签(航海) / 橙标签(深海圈)
+　会员状态　在期(绿) / 即将到期(红) / 已过期(红)
+　鱼丸　　鱼丸账号名 + 渠道图标（企微/个微）
+　专属服务　交付人员名（如 潇墨、李李、蓝鲸），可编辑
+　好友状态　双向好友(绿) / 客户删除(红)
+　推荐人　　头像（姓氏首字）+ 昵称 + 星球编号
+　关键指标　会员初始加入 + 会员到期时间 + 高频参与航海 + 加入金额 + 续费次数
+来源　鱼丸系统 + 企微好友关系</div>
+      </div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">个人信息</div>
+        <div class="prd-card-body">2列网格布局
 　岗位方向　　来源 星球问卷
 　工作年限　　来源 星球问卷
 　年收入　　　来源 星球问卷
@@ -2962,8 +3000,8 @@
           <div class="avatar" style="opacity: 0.7;">赵</div>
           <div class="identity-info" style="flex: 1; min-width: 0;">
             <div class="identity-name-row">
-              <span class="identity-nickname">赵明远</span>
-              <span class="identity-star-id">NO.31205</span>
+              <span class="identity-nickname copyable" onclick="copyText(this, '赵明远')">赵明远</span>
+              <span class="identity-star-id copyable" onclick="copyText(this, 'NO.31205')">NO.31205</span>
               <span class="channel-tag channel-qw">企微</span>
             </div>
             <div class="identity-meta">
@@ -3194,6 +3232,22 @@ AI 画像总结 → 红色渐变「流失预警」风格
     if (counter) counter.textContent = count + '/500';
   }
 
+  /* ── 点击复制 ── */
+  function copyText(el, text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    var toast = document.createElement('div');
+    toast.className = 'copy-toast';
+    toast.textContent = '已复制';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 1200);
+  }
+
   /* ── 字段内联编辑 ── */
   function startEdit(el, currentVal) {
     if (el.querySelector('.editable-input-wrap')) return;
@@ -3359,6 +3413,14 @@ AI 画像总结 → 红色渐变「流失预警」风格
       card.classList.add('visible');
     }, 1500);
   }
+
+  /* ── 客户动态：「」内容自动转为可点击链接 ── */
+  document.querySelectorAll('.tab-content[data-tab="behavior"] .timeline-desc').forEach(function(desc) {
+    desc.innerHTML = desc.innerHTML.replace(/「([^」]+)」/g, function(match, content) {
+      // 如果内容本身包含 <span class="hl">，保留原样包裹
+      return '「<a class="timeline-link" href="javascript:void(0)" onclick="event.stopPropagation()">' + content + '</a>」';
+    });
+  });
 
   /* ── Tab 切换 ── */
   document.querySelectorAll('.sidebar-nav-tabs .nav-tab[data-tab]').forEach(function(tab) {
