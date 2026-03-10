@@ -2383,79 +2383,93 @@
 
         <div class="divider-thick"></div>
 
-        <!-- 沟通时间轴（近1个月，每日有对话则AI汇总） -->
+        <!-- 沟通时间轴（近1个月，复用客户动态 timeline-* 样式） -->
         <div class="section-header">
           <span class="section-title">沟通时间轴</span>
           <span class="section-action" style="color: var(--color-text-4); font-size: 11px;">近30天</span>
         </div>
-        <div class="followup-timeline">
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot active"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-19 <span class="followup-tl-rounds">· 2轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户咨询航海打卡规则，确认了AI视频变现航海的提交格式。交流较简短，用户情绪积极。</div>
-            </div>
-          </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-16 <span class="followup-tl-rounds">· 3轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>讨论AI视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
+        <div class="timeline-section">
+          <div class="timeline-date-header">2025-12-19</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">2轮对话</span>
+              </div>
+              <div class="timeline-desc">用户咨询航海打卡规则，确认了AI视频变现航海的提交格式。交流较简短，用户情绪积极。</div>
             </div>
           </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-12 <span class="followup-tl-rounds">· 4轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户主动分享了第一条AI视频的数据（播放量200+），询问如何优化封面和标题。推荐了爆款标题公式。</div>
-            </div>
-          </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-08 <span class="followup-tl-rounds">· 5轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>用户询问AI视频工具推荐，对比了剪映和CapCut。最终选择剪映，沟通较深入。</div>
+
+          <div class="timeline-date-header">2025-12-16</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">3轮对话</span>
+              </div>
+              <div class="timeline-desc">讨论AI视频方向，用户反馈卡在选题环节，推荐了小红书案例库。用户表示会尝试跟着航海节奏走。</div>
             </div>
           </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-12-01 <span class="followup-tl-rounds">· 6轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次深入沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。引导加入航海。</div>
-            </div>
-          </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
-              <div class="followup-tl-line"></div>
-            </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-11-25 <span class="followup-tl-rounds">· 2轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>新人入圈引导，发送了欢迎消息和新手任务说明。用户回复了基本信息。</div>
+
+          <div class="timeline-date-header">2025-12-12</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">4轮对话</span>
+              </div>
+              <div class="timeline-desc">用户主动分享了第一条AI视频的数据（播放量200+），询问如何优化封面和标题。推荐了爆款标题公式。</div>
             </div>
           </div>
-          <div class="followup-tl-item">
-            <div class="followup-tl-left">
-              <div class="followup-tl-dot"></div>
+
+          <div class="timeline-date-header">2025-12-08</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">5轮对话</span>
+              </div>
+              <div class="timeline-desc">用户询问AI视频工具推荐，对比了剪映和CapCut。最终选择剪映，沟通较深入。</div>
             </div>
-            <div class="followup-tl-content">
-              <div class="followup-tl-meta">2025-11-20 <span class="followup-tl-rounds">· 1轮对话</span></div>
-              <div class="followup-tl-text"><span class="followup-tl-ai-tag">AI</span>首次触达，用户咨询会员权益，简短回复后未继续。</div>
+          </div>
+
+          <div class="timeline-date-header">2025-12-01</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">6轮对话</span>
+              </div>
+              <div class="timeline-desc">首次深入沟通，了解基础情况。用户自由职业，互联网背景，对自媒体变现感兴趣但无明确方向。引导加入航海。</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-11-25</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">2轮对话</span>
+              </div>
+              <div class="timeline-desc">新人入圈引导，发送了欢迎消息和新手任务说明。用户回复了基本信息。</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2025-11-20</div>
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type"><span class="followup-tl-ai-tag">AI</span>企微沟通</span>
+                <span class="timeline-time">1轮对话</span>
+              </div>
+              <div class="timeline-desc">首次触达，用户咨询会员权益，简短回复后未继续。</div>
             </div>
           </div>
         </div>
