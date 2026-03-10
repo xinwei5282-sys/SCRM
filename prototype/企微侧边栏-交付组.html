@@ -1578,7 +1578,7 @@
               <span class="sep">·</span>
               <span>互联网</span>
             </div>
-            <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
+            <div class="identity-remark editable" onclick="startEdit(this, '杭州自由职业，AI视频方向')">备注：杭州自由职业，AI视频方向<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
           </div>
         </div>
 
@@ -1618,6 +1618,10 @@
 
         <!-- 关键指标（2列） -->
         <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="metric-item">
+            <span class="metric-label">会员初始加入</span>
+            <span class="metric-value">2024-11-15</span>
+          </div>
           <div class="metric-item">
             <span class="metric-label">会员到期时间</span>
             <span class="metric-value">2026-01-15</span>
@@ -1664,9 +1668,9 @@
 
         <div class="divider-thick"></div>
 
-        <!-- 高频参与项目 -->
+        <!-- 高频参与航海 -->
         <div class="section-header">
-          <span class="section-title">高频参与项目</span>
+          <span class="section-title">高频参与航海</span>
         </div>
         <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 6px;">
           <span class="tag-chip tag-interest">AI视频变现 ×2</span>
@@ -2663,7 +2667,7 @@
 
 概览（本场景）
 　身份卡片 + 标签 + AI画像总结 + 关键指标
-　+ 新人进度 + 高频参与项目 + 客户标签 + 最近跟进
+　+ 新人进度 + 高频参与航海 + 客户标签 + 最近跟进
 
 客户档案
 　会员信息（会员卡片 + 鱼丸 + 专属服务 + 好友状态）
@@ -2740,7 +2744,7 @@
       </div>
       <div class="prd-card" style="--accent: #757980;">
         <div class="prd-card-title">高频项目 + 标签 + 跟进</div>
-        <div class="prd-card-body">高频参与项目
+        <div class="prd-card-body">高频参与航海
 　来源　鱼丸航海/聚会记录
 　格式　项目名 ×参与次数
 
@@ -2928,7 +2932,7 @@
               <span class="sep">·</span>
               <span>电商</span>
             </div>
-            <div class="identity-remark">备注：深圳电商创业者，出海方向</div>
+            <div class="identity-remark editable" onclick="startEdit(this, '深圳电商创业者，出海方向')">备注：深圳电商创业者，出海方向<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
           </div>
         </div>
 
@@ -2951,6 +2955,10 @@
 
         <!-- 关键指标（2列） -->
         <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="metric-item">
+            <span class="metric-label">会员初始加入</span>
+            <span class="metric-value">2024-06-20</span>
+          </div>
           <div class="metric-item">
             <span class="metric-label">会员到期时间</span>
             <span class="metric-value" style="color: var(--color-danger-6);">2026-01-05</span>
@@ -2997,9 +3005,9 @@
 
         <div class="divider-thick"></div>
 
-        <!-- 高频参与项目 -->
+        <!-- 高频参与航海 -->
         <div class="section-header">
-          <span class="section-title">高频参与项目</span>
+          <span class="section-title">高频参与航海</span>
         </div>
         <div style="padding: 0 16px 8px; display: flex; flex-wrap: wrap; gap: 6px;">
           <span class="tag-chip tag-interest">出海电商 ×1</span>
@@ -3162,7 +3170,8 @@ AI 画像总结 → 红色渐变「流失预警」风格
     el.querySelector('.edit-confirm').onclick = function(e) {
       e.stopPropagation();
       var newVal = input.value.trim() || currentVal;
-      el.innerHTML = newVal + '<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+      var prefix = el.classList.contains('identity-remark') ? '备注：' : '';
+      el.innerHTML = prefix + newVal + '<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
       el.classList.add('editable');
       el.setAttribute('onclick', "startEdit(this, '" + newVal.replace(/'/g, "\\'") + "')");
     };
