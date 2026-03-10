@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>企微侧边栏 · CRM 会员运营（转化组） - 交互原型</title>
+<title>企微侧边栏 · CRM 会员运营（交付组） - 动态交互原型</title>
 <link rel="stylesheet" href="prd-editor.css">
 <style>
   /* ========================================================
@@ -207,6 +207,10 @@
     color: var(--color-accent-orange-6);
     background: var(--color-accent-orange-1);
   }
+
+  /* ===== Tab 内容切换 ===== */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
 
   /* ===== 滚动区域 ===== */
   .sidebar-body {
@@ -1241,8 +1245,8 @@
 </head>
 <body>
 
-<div class="page-title">企微侧边栏 · CRM 会员运营（转化组）</div>
-<div class="page-subtitle">4个场景 · 用户画像 / 客户动态 / 沟通记录 / 预警态</div>
+<div class="page-title">企微侧边栏 · CRM 会员运营（交付组）</div>
+<div class="page-subtitle">动态交互版 · 点击 Tab 切换内容 ｜ 预警态独立场景</div>
 
 <div class="scenes-row">
 
@@ -1263,14 +1267,16 @@
 
       <!-- Tab 导航 -->
       <div class="sidebar-nav-tabs">
-        <div class="nav-tab active">概览</div>
-        <div class="nav-tab">客户档案</div>
-        <div class="nav-tab">客户动态</div>
-        <div class="nav-tab">沟通记录</div>
-        <div class="nav-tab">积分记录</div>
+        <div class="nav-tab active" data-tab="overview">概览</div>
+        <div class="nav-tab" data-tab="profile">客户档案</div>
+        <div class="nav-tab" data-tab="behavior">客户动态</div>
+        <div class="nav-tab" data-tab="comms">沟通记录</div>
+        <div class="nav-tab" data-tab="points">积分记录</div>
       </div>
 
       <div class="sidebar-body">
+        <!-- ===== Tab: 概览 ===== -->
+        <div class="tab-content active" data-tab="overview">
         <!-- 身份卡片（含内联 AI 总结按钮） -->
         <div class="identity-card" style="align-items: flex-start;">
           <div class="avatar">林</div>
@@ -1442,145 +1448,10 @@
             </div>
           </div>
         </div>
-      </div>
+        </div><!-- /tab-content overview -->
 
-      <!-- 底部操作栏 -->
-      <div class="sidebar-footer">
-        <button class="action-btn btn-primary btn-full">
-          <span class="btn-icon">✎</span> 写跟进
-        </button>
-      </div>
-    </div>
-    <div class="scene-label">场景1：概览</div>
-    </div>
-    <div class="prd-panel" data-prd-key="delivery-s1" data-prd-version="20260310f">
-      <div class="prd-title">交付-场景1 · 概览</div>
-      <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">顶级Tab结构（5个）</div>
-        <div class="prd-card-body">原「用户画像」拆为「概览」「客户档案」两个顶级Tab
-
-概览（本场景）
-　身份卡片 + 标签 + AI画像总结 + 关键指标
-　+ 新人进度 + 高频参与项目 + 客户标签 + 最近跟进
-
-客户档案
-　会员信息（会员卡片 + 鱼丸 + 专属服务 + 好友状态）
-　+ 个人信息（岗位/工作年限/年收入/兴趣/介绍/资源等）
-
-完整Tab顺序：概览 | 客户档案 | 客户动态 | 沟通记录 | 积分记录</div>
-      </div>
-      <div class="prd-card" style="--accent: #36A590;">
-        <div class="prd-card-title">会员身份卡片</div>
-        <div class="prd-card-body">头像　　来源 企微 ｜ 规则 取姓氏首字
-昵称　　来源 企微
-星球编号　来源 星球
-渠道标签　企微（绿） / 个微（橙）｜ 标识当前聊天渠道
-基础信息　城市 · 职业 · 行业（来源 星球问卷）
-备注　　来源 CRM ｜ 点击编辑
-
-身份 &amp; 阶段标签
-　身份标签　传术师 / 组局官 等（来源 社群系统）
-　阶段标签　探索期 / 增长期 等（来源 CRM）</div>
-      </div>
-      <div class="prd-card" style="--accent: #FF7D00;">
-        <div class="prd-card-title">AI 画像总结</div>
-        <div class="prd-card-body">默认态　隐藏，显示「生成 AI 总结」按钮
-生成态　渐变背景卡片，展示 AI 分析内容
-　含复制 / 刷新操作
-预警态　红色渐变「流失预警」风格，直接展示
-来源　　AI 模型基于用户行为数据生成</div>
-      </div>
-      <div class="prd-card" style="--accent: #36A590;">
-        <div class="prd-card-title">会员信息 + 专属服务</div>
-        <div class="prd-card-body">位置　关键指标下方、新人进度上方
-按会员类型分卡片（官网会员 / 航海会员 / 深海圈会员）
-每张卡片含：
-　会员类型　蓝标签(官网) / 绿标签(航海) / 橙标签(深海圈)
-　会员状态　在期(绿) / 即将到期(红) / 已过期(红)
-　鱼丸　　鱼丸账号名 + 渠道图标（企微logo / 个微logo）
-　　渠道图标　16×16px，企微=绿底+企业微信logo，个微=橙底+微信logo
-　　同一鱼丸可能同时有企微+个微双图标
-　专属服务　交付人员名（如 潇墨、李李、蓝鲸）
-　好友状态　双向好友(绿) / 客户删除(红)
-来源　鱼丸系统 + 企微好友关系</div>
-      </div>
-      <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">活跃度 + 新手任务进度</div>
-        <div class="prd-card-body">活跃度指标（5项网格）
-　连续沉默天数 / 本月活跃天数 / 发帖 / 航海 / 聚会
-　来源　行为数据聚合
-　含「查看详情」入口
-
-新人进度（作业关键信息卡片）
-　方向 &amp; 赛道　用户选择的探索方向
-　当前状态　　探索中 / 执行中 / 已变现
-　优势　　　　用户自述
-　短板　　　　用户自述
-　目标 &amp; 展望　用户目标描述
-　来源　新手任务系统</div>
-      </div>
-      <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">个人信息</div>
-        <div class="prd-card-body">位置　新人进度下方、高频项目上方
-2列网格布局，紧凑展示
-
-字段清单：
-　岗位方向　　来源 星球问卷
-　工作年限　　来源 星球问卷
-　年收入　　　来源 星球问卷
-　感兴趣领域　标签形式，来源 星球问卷
-　个人介绍　　全宽长文本，来源 星球
-　加入原因　　全宽长文本，来源 星球
-　提供资源　　标签形式，来源 星球
-　需要资源　　标签形式，来源 星球
-
-注：城市 / 职业 / 行业已在身份卡片 identity-meta 中显示</div>
-      </div>
-      <div class="prd-card" style="--accent: #757980;">
-        <div class="prd-card-title">高频项目 + 标签 + 跟进</div>
-        <div class="prd-card-body">高频参与项目
-　来源　鱼丸航海/聚会记录
-　格式　项目名 ×参与次数
-
-标签（企微标签）
-　基础标签　如 普通在期圈友
-　续费标签　如 续费期
-　兴趣标签　如 AI视频 / 自媒体 / 小红书
-　含「管理标签」入口
-
-最近跟进
-　来源 CRM，显示最近 2 条
-　标注 [AI] 自动生成标签
-　含「查看全部」入口</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================
-       场景1b：客户档案
-       ====================================================== -->
-  <div class="scene-wrapper">
-    <div class="scene-col">
-    <div class="sidebar-frame">
-      <!-- 头部 -->
-      <div class="sidebar-header">
-        <span class="sidebar-header-title">CRM 会员运营</span>
-        <div class="sidebar-header-actions">
-          <div class="header-icon-btn" title="导出">↗</div>
-          <div class="header-icon-btn" title="设置">⚙</div>
-        </div>
-      </div>
-
-      <!-- Tab 导航 -->
-      <div class="sidebar-nav-tabs">
-        <div class="nav-tab">概览</div>
-        <div class="nav-tab active">客户档案</div>
-        <div class="nav-tab">客户动态</div>
-        <div class="nav-tab">沟通记录</div>
-        <div class="nav-tab">积分记录</div>
-      </div>
-
-      <div class="sidebar-body">
+        <!-- ===== Tab: 客户档案 ===== -->
+        <div class="tab-content" data-tab="profile">
         <!-- 基础信息 -->
         <div class="section-header">
           <span class="section-title">基础信息</span>
@@ -1601,7 +1472,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">手机号</span>
-              <span class="personal-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">👁</span></span>
+              <span class="personal-info-value">186****3721 <span style="cursor:pointer; color:var(--color-text-4); font-size:11px;">&#128065;</span></span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">微信号</span>
@@ -1742,59 +1613,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="scene-label">场景1b：客户档案</div>
-    </div>
-    <div class="prd-panel" data-prd-key="delivery-s1b" data-prd-version="20260310g">
-      <div class="prd-title">交付-场景1b · 客户档案</div>
-      <div class="prd-card" style="--accent: #586E93;">
-        <div class="prd-card-title">客户档案页</div>
-        <div class="prd-card-body">基础信息（表格样式，2列×N行）
-　星球编号　星球昵称　性别　手机号（脱敏+眼睛图标）　微信号
-　不含客户ID（后台字段，不展示）
+        </div><!-- /tab-content profile -->
 
-会员信息（按类型分卡片：官网/航海/深海圈）
-　每张含：会员类型+状态+鱼丸+专属服务+好友状态
-
-个人信息（2列网格）
-　岗位方向　　来源 星球问卷
-　工作年限　　来源 星球问卷
-　年收入　　　来源 星球问卷
-　感兴趣领域　标签形式
-　个人介绍　　全宽长文本
-　加入原因　　全宽长文本
-　提供资源　　标签形式
-　需要资源　　标签形式
-
-注：城市/职业/行业已在身份卡片 identity-meta 中显示</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================
-       场景2：客户动态
-       ====================================================== -->
-  <div class="scene-wrapper">
-    <div class="scene-col">
-    <div class="sidebar-frame" id="sidebar-behavior">
-      <div class="sidebar-header">
-        <span class="sidebar-header-title">CRM 会员运营</span>
-        <div class="sidebar-header-actions">
-          <div class="header-icon-btn" title="导出">↗</div>
-          <div class="header-icon-btn" title="设置">⚙</div>
-        </div>
-      </div>
-
-      <div class="sidebar-nav-tabs">
-        <div class="nav-tab">概览</div>
-        <div class="nav-tab">客户档案</div>
-        <div class="nav-tab active">客户动态</div>
-        <div class="nav-tab">沟通记录</div>
-        <div class="nav-tab">积分记录</div>
-      </div>
-
-      <div class="sidebar-body">
+        <!-- ===== Tab: 客户动态 ===== -->
+        <div class="tab-content" data-tab="behavior">
         <!-- 行为统计概览（点击 = 一级筛选，按来源平台） -->
         <div class="metrics-grid metrics-4col">
           <div class="metric-item metric-center metric-filterable" data-filter="community" data-subs='[{"label":"发帖","value":"5","filter":"community-post","breakdown":[{"name":"每日思考","count":2},{"name":"项目实操","count":1},{"name":"生财朋友圈","count":1},{"name":"问题求助","count":1}]},{"label":"阅读","value":"32","filter":"community-read"},{"label":"评论","value":"18","filter":"community-comment"},{"label":"点赞","value":"40","filter":"community-like"},{"label":"投锚","value":"4","filter":"community-anchor"},{"label":"收藏","value":"12","filter":"community-collect"},{"label":"搜索","value":"8","filter":"community-search"}]' onclick="toggleSourceFilter(this)">
@@ -2210,72 +2032,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="scene-label">场景2：客户动态</div>
-    </div>
-    <div class="prd-panel" data-prd-key="delivery-s2">
-      <div class="prd-title">交付-场景2 · 行为动态</div>
-      <div class="prd-card" style="--accent: #FF7D00;">
-        <div class="prd-card-title">Option C 两级筛选</div>
-        <div class="prd-card-body">一级筛选（按来源平台，4列网格）
-　官网社区 / 深海圈 / 航海 / 聚会
-　每格显示累计数量，点击筛选时间线
+        </div><!-- /tab-content behavior -->
 
-二级筛选（按行为子项，chips 横滑）
-　全部 + 各子行为（含数量）
-　如 发帖 5 / 阅读 32 / 评论 18 / 点赞 40 / 投锚 4
-　规则　单选切换，再次点击取消
-　规则　子行为项因一级筛选而变</div>
-      </div>
-      <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">行为时间线</div>
-        <div class="prd-card-body">按日期分组，倒序排列
-日期头　今天 / 昨天 / 具体日期
-
-圆点颜色按来源区分
-　蓝色 = 社区阅读 / 发帖
-　橙色 = 航海相关（打卡 / 参加）
-　绿色 = 收藏 / 聚会
-　红色 = 退出聚会 / 取消聚会
-　灰色 = 评论等
-
-聚会行为
-　组局官：发起聚会 / 取消聚会 / 导入嘉宾
-　圈友：报名 / 退出 / 签到 / 填写反馈
-　组局官操作附带「组局官」角色标签
-　填写反馈需标记角色（嘉宾/组局官），圈友不标记
-
-每条含　类型圆点 + 行为标题 + 时间
-　　　　+ 内容摘要（可选附加阅读时长等）
-无底部操作栏</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================
-       场景3：沟通记录
-       ====================================================== -->
-  <div class="scene-wrapper">
-    <div class="scene-col">
-    <div class="sidebar-frame" id="sidebar-comms">
-      <div class="sidebar-header">
-        <span class="sidebar-header-title">CRM 会员运营</span>
-        <div class="sidebar-header-actions">
-          <div class="header-icon-btn" title="导出">↗</div>
-          <div class="header-icon-btn" title="设置">⚙</div>
-        </div>
-      </div>
-
-      <div class="sidebar-nav-tabs">
-        <div class="nav-tab">概览</div>
-        <div class="nav-tab">客户档案</div>
-        <div class="nav-tab">客户动态</div>
-        <div class="nav-tab active">沟通记录</div>
-        <div class="nav-tab">积分记录</div>
-      </div>
-
-      <div class="sidebar-body">
+        <!-- ===== Tab: 沟通记录 ===== -->
+        <div class="tab-content" data-tab="comms">
         <!-- AI 聊天总结 -->
         <div class="chat-ai-gen-card" id="chatAiGenCard">
           <div class="chat-ai-gen-header">
@@ -2381,29 +2141,189 @@
             </div>
           </div>
         </div>
+        </div><!-- /tab-content comms -->
+
+        <!-- ===== Tab: 积分记录 ===== -->
+        <div class="tab-content" data-tab="points">
+        <!-- 积分概览 -->
+        <div style="padding: 12px 16px 0;">
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #FFF7E9, #FFE4BA); border-radius: var(--radius-card); border: 1px solid rgba(255, 125, 0, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #FF7D00, #D25F00); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">珠</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">龙珠</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">3</div>
+            </div>
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E9FFF8, #BCEDDD); border-radius: var(--radius-card); border: 1px solid rgba(54, 165, 144, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #36A590, #14796D); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">碎</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">碎片</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">12</div>
+            </div>
+            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E8F4FF, #C3E1FE); border-radius: var(--radius-card); border: 1px solid rgba(50, 124, 251, 0.15);">
+              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #327CFB, #085EF0); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">值</span>
+                <span style="font-size: 11px; color: var(--color-text-3);">术值</span>
+              </div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">186</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 筛选 -->
+        <div style="display: flex; gap: 6px; padding: 10px 16px;">
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-accent-orange-1); color: var(--color-accent-orange-6); border-radius: var(--radius-pill); cursor: pointer;">全部</span>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">获取</span>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">消耗</span>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <!-- 积分明细列表 -->
+        <div style="padding: 0 16px 12px;">
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">发布优质文章</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">原创文章《AI视频实操分享》被评为精华帖</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-08 14:30</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+2 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标《小红书AI视频赛道》获得中标</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-07 16:00</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">参与航海实战</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">成为AI视频变现航海教练</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-06 10:20</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">参与社区活动</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">参与会员日话题讨论</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-05 09:00</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 龙珠</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标被引用为超级标线索</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-02 14:00</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">抵扣会员费</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-100 术值</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分生财有术会员费</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-25 11:20</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">抵扣高阶项目费</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-2 碎片</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分高阶航海、教练陪跑项目费用</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-20 16:30</div>
+          </div>
+          <div style="padding: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
+                <span style="font-size: 13px; color: var(--color-text-1);">兑换咨询权益</span>
+              </div>
+              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-1 龙珠</span>
+            </div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">申请生财团队商业IP定位咨询</div>
+            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-05 09:00</div>
+          </div>
+        </div>
+        </div><!-- /tab-content points -->
 
       </div>
+
+      <!-- 底部操作栏 -->
+      <div class="sidebar-footer" data-footer="overview">
+        <button class="action-btn btn-primary btn-full">
+          <span class="btn-icon">✎</span> 写跟进
+        </button>
+      </div>
     </div>
-    <div class="scene-label">场景3：沟通记录</div>
+    <div class="scene-label">交互版：点击 Tab 切换</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-s3">
-      <div class="prd-title">交付-场景3 · 沟通记录</div>
+    <div class="prd-panel" data-prd-key="delivery-interactive" data-prd-version="20260310h">
+      <div class="prd-title">交付 · 动态交互版</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">交互说明</div>
+        <div class="prd-card-body">5个Tab可点击切换，内容区动态显隐
+底部「写跟进」按钮仅概览Tab显示
+切换Tab时滚动位置自动重置</div>
+      </div>
       <div class="prd-card" style="--accent: #36A590;">
-        <div class="prd-card-title">AI 聊天总结</div>
-        <div class="prd-card-body">默认显示「AI 生成聊天记录总结」按钮
-点击后生成（按钮→生成中...→卡片淡入）
-渐变背景卡片
-友好度　★ 评分（1-5 星，如 ★★★★☆）
-续费意愿　文字标签
-　颜色　观望中=橙色 / 积极=绿色 / 消极=红色
-总结文本　AI 分析近期沟通内容</div>
+        <div class="prd-card-title">Tab 1 · 概览</div>
+        <div class="prd-card-body">身份卡片 + 标签 + AI画像总结
+关键指标 + 新人进度
+高频参与项目 + 客户标签
+最近跟进（2条）</div>
+      </div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">Tab 2 · 客户档案</div>
+        <div class="prd-card-body">基础信息（星球编号/昵称/性别/手机/微信）
+会员信息（官网/航海/深海圈 分卡片）
+个人信息（岗位/年限/收入/兴趣/介绍等）</div>
       </div>
       <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">沟通时间轴 + 备注</div>
-        <div class="prd-card-body">时间倒序展示沟通记录
-存在对话的才会在0点出发AI计算
-日期 + [AI] 自动总结标签 + 内容摘要
-每条含 AI 智能分析标签（如 选题困难、方向不明等）</div>
+        <div class="prd-card-title">Tab 3 · 客户动态</div>
+        <div class="prd-card-body">两级筛选（来源平台 → 行为子项）
+行为时间线（按日期分组倒序）
+无底部操作栏</div>
+      </div>
+      <div class="prd-card" style="--accent: #52C41A;">
+        <div class="prd-card-title">Tab 4 · 沟通记录</div>
+        <div class="prd-card-body">AI 沟通总结（点击生成）
+沟通时间轴（近30天 AI 汇总）
+无底部操作栏</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">Tab 5 · 积分记录</div>
+        <div class="prd-card-body">积分概览（龙珠/碎片/术值 3卡片）
+筛选（全部/获取/消耗）
+积分明细列表
+无底部操作栏</div>
       </div>
     </div>
   </div>
@@ -2599,7 +2519,7 @@
         </button>
       </div>
     </div>
-    <div class="scene-label">场景4：预警态</div>
+    <div class="scene-label">场景2：预警态（静态）</div>
     </div>
     <div class="prd-panel" data-prd-key="delivery-s4" data-prd-version="20260310f">
       <div class="prd-title">交付-场景4 · 预警态</div>
@@ -2643,216 +2563,6 @@ AI 画像总结 → 红色渐变「流失预警」风格
         <div class="prd-card-body">底部操作栏仍可用
 写跟进 / 备注 / 更多
 可正常执行跟进和备注操作</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================
-       场景5：积分记录
-       ====================================================== -->
-  <div class="scene-wrapper">
-    <div class="scene-col">
-    <div class="sidebar-frame" id="sidebar-points">
-      <div class="sidebar-header">
-        <span class="sidebar-header-title">CRM 会员运营</span>
-        <div class="sidebar-header-actions">
-          <div class="header-icon-btn" title="导出">↗</div>
-          <div class="header-icon-btn" title="设置">⚙</div>
-        </div>
-      </div>
-      <div class="sidebar-nav-tabs">
-        <div class="nav-tab">概览</div>
-        <div class="nav-tab">客户档案</div>
-        <div class="nav-tab">客户动态</div>
-        <div class="nav-tab">沟通记录</div>
-        <div class="nav-tab active">积分记录</div>
-      </div>
-      <div class="sidebar-body">
-
-        <!-- 积分概览 -->
-        <div style="padding: 12px 16px 0;">
-          <div style="display: flex; gap: 8px;">
-            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #FFF7E9, #FFE4BA); border-radius: var(--radius-card); border: 1px solid rgba(255, 125, 0, 0.15);">
-              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #FF7D00, #D25F00); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">珠</span>
-                <span style="font-size: 11px; color: var(--color-text-3);">龙珠</span>
-              </div>
-              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">3</div>
-            </div>
-            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E9FFF8, #BCEDDD); border-radius: var(--radius-card); border: 1px solid rgba(54, 165, 144, 0.15);">
-              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #36A590, #14796D); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">碎</span>
-                <span style="font-size: 11px; color: var(--color-text-3);">碎片</span>
-              </div>
-              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">12</div>
-            </div>
-            <div style="flex: 1; padding: 10px; background: linear-gradient(135deg, #E8F4FF, #C3E1FE); border-radius: var(--radius-card); border: 1px solid rgba(50, 124, 251, 0.15);">
-              <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #327CFB, #085EF0); color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center;">值</span>
-                <span style="font-size: 11px; color: var(--color-text-3);">术值</span>
-              </div>
-              <div style="font-size: 20px; font-weight: 700; color: var(--color-text-1);">186</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 筛选 -->
-        <div style="display: flex; gap: 6px; padding: 10px 16px;">
-          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-accent-orange-1); color: var(--color-accent-orange-6); border-radius: var(--radius-pill); cursor: pointer;">全部</span>
-          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">获取</span>
-          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; font-size: 11px; font-weight: 500; background: var(--color-fill-3); color: var(--color-text-3); border-radius: var(--radius-pill); cursor: pointer;">消耗</span>
-        </div>
-
-        <div class="divider-line"></div>
-
-        <!-- 积分明细列表 -->
-        <div style="padding: 0 16px 12px;">
-
-          <!-- 获取记录 -->
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">发布优质文章</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">原创文章《AI视频实操分享》被评为精华帖</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-08 14:30</div>
-          </div>
-
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+2 术值</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标《小红书AI视频赛道》获得中标</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-07 16:00</div>
-          </div>
-
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">参与航海实战</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 碎片</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">成为AI视频变现航海教练</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-06 10:20</div>
-          </div>
-
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">参与社区活动</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 术值</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">参与会员日话题讨论</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-05 09:00</div>
-          </div>
-
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">挖掘赚钱机会</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-success-6);">+1 龙珠</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">风向标被引用为超级标线索</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">03-02 14:00</div>
-          </div>
-
-          <!-- 消耗记录 -->
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">抵扣会员费</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-100 术值</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分生财有术会员费</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-25 11:20</div>
-          </div>
-
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border-1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">抵扣高阶项目费</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-2 碎片</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">抵扣部分高阶航海、教练陪跑项目费用</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-20 16:30</div>
-          </div>
-
-          <div style="padding: 10px 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-danger-6); flex-shrink: 0;"></span>
-                <span style="font-size: 13px; color: var(--color-text-1);">兑换咨询权益</span>
-              </div>
-              <span style="font-size: 13px; font-weight: 600; color: var(--color-danger-6);">-1 龙珠</span>
-            </div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">申请生财团队商业IP定位咨询</div>
-            <div style="margin-left: 12px; margin-top: 2px; font-size: 11px; color: var(--color-text-4);">02-05 09:00</div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-    <div class="scene-label">场景5：积分记录</div>
-    </div>
-    <div class="prd-panel" data-prd-key="delivery-s5">
-      <div class="prd-title">交付-场景5 · 积分记录</div>
-      <div class="prd-card" style="--accent: #FF7D00;">
-        <div class="prd-card-title">积分体系（换算关系，页面不展示）</div>
-        <div class="prd-card-body">1 龙珠 = 7 碎片 = 350 术值（即 1 碎片 = 50 术值）
-三种积分按稀缺度排列：龙珠 > 碎片 > 术值</div>
-      </div>
-      <div class="prd-card" style="--accent: #36A590;">
-        <div class="prd-card-title">积分概览</div>
-        <div class="prd-card-body">顶部 3 张并排卡片（龙珠 → 碎片 → 术值）
-每张显示：图标 + 类型名 + 当前余额（大号数字）
-渐变背景：龙珠橙 / 碎片绿 / 术值蓝</div>
-      </div>
-      <div class="prd-card" style="--accent: #52C41A;">
-        <div class="prd-card-title">获取方式（发放）</div>
-        <div class="prd-card-body">参与社区活动　+1术值起（特定活动/反馈/志愿者）
-　龙珠贵人计划赠送　+1碎片
-挖掘赚钱机会　风向标中标 +2术值；超级标 +1碎片～+1龙珠
-发布优质文章　精华帖 +1碎片～+2龙珠；悬赏发帖 瓜分1龙珠
-参与航海实战　航海教练 +1碎片起
-参与线下聚会　分享嘉宾 +1碎片起
-航淘家俱乐部　分享嘉宾 +1碎片起（邀请制）</div>
-      </div>
-      <div class="prd-card" style="--accent: #F54A45;">
-        <div class="prd-card-title">兑换权益（消耗）</div>
-        <div class="prd-card-body">抵扣会员费　生财会员 消耗100术值起；航海家 消耗1龙珠起
-抵扣高阶项目费　航海/陪跑 消耗2碎片起；深海圈 消耗5碎片起
-抵扣联合办公租金　联合办公/SCAI实验室 消耗1碎片起
-抵扣线下大会费　培训空间 消耗1龙珠；航海家大会 消耗1碎片起
-兑换周边　消耗1术值起
-兑换咨询权益　商业IP 消耗3龙珠起；神龙特权(亦仁1v1) 消耗7龙珠；孵化投资 消耗1龙珠起（邀请制）</div>
-      </div>
-      <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">筛选 + 明细列表</div>
-        <div class="prd-card-body">筛选标签：全部 / 获取 / 消耗（Pill 按钮切换）
-列表项结构：
-　圆点（获取=绿 / 消耗=红）+ 来源/用途 + 变动量（右侧）
-　副标题：备注说明
-　时间：MM-DD HH:mm
-按时间倒序排列</div>
       </div>
     </div>
   </div>
@@ -2949,7 +2659,7 @@ AI 画像总结 → 红色渐变「流失预警」风格
   }
 
   function applyTimelineFilter(sourceFilter, subFilter) {
-    var section = document.querySelector('.sidebar-body .timeline-section');
+    var section = document.querySelector('#sidebar-profile .tab-content[data-tab="behavior"] .timeline-section');
     if (!section) return;
 
     section.querySelectorAll('.timeline-item').forEach(function(item) {
@@ -2992,6 +2702,32 @@ AI 画像总结 → 红色渐变「流失预警」风格
     }, 1500);
   }
 
+  /* ── Tab 切换 ── */
+  document.querySelectorAll('.sidebar-nav-tabs .nav-tab[data-tab]').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var frame = this.closest('.sidebar-frame');
+      var targetTab = this.getAttribute('data-tab');
+
+      // 切换 nav-tab active
+      frame.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+
+      // 切换 tab-content
+      frame.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+      var target = frame.querySelector('.tab-content[data-tab="' + targetTab + '"]');
+      if (target) target.classList.add('active');
+
+      // 底部操作栏显隐（仅概览时显示）
+      var footer = frame.querySelector('.sidebar-footer[data-footer]');
+      if (footer) {
+        footer.style.display = (targetTab === 'overview') ? '' : 'none';
+      }
+
+      // 重置 sidebar-body 滚动位置
+      var body = frame.querySelector('.sidebar-body');
+      if (body) body.scrollTop = 0;
+    });
+  });
 
 </script>
 
