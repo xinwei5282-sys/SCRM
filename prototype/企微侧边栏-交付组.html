@@ -109,6 +109,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: clamp(320px, 40vw, 768px);
   }
   .scene-label {
     font-size: 13px;
@@ -125,15 +126,19 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 700px;
+    max-height: calc(100vh - 120px);
     overflow-y: auto;
     flex-shrink: 0;
   }
 
-  /* ===== 侧边栏容器 ===== */
+  /* ===== 侧边栏容器（自适应宽度） ===== */
   .sidebar-frame {
-    width: 360px;
-    height: 700px;
+    width: 100%;
+    min-width: 280px;
+    max-width: 768px;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    max-height: 860px;
     background: var(--color-fill-1);
     border-radius: var(--radius-card);
     box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
