@@ -211,8 +211,8 @@
   /* ===== Tab 内容切换 ===== */
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .prd-tab-card { display: none; }
-  .prd-tab-card.active { display: block; }
+  .prd-panel[data-prd-tab] { display: none; }
+  .prd-panel[data-prd-tab].active { display: flex; }
 
   /* ===== 滚动区域 ===== */
   .sidebar-body {
@@ -2287,41 +2287,53 @@
     </div>
     <div class="scene-label">交互版：点击 Tab 切换</div>
     </div>
-    <div class="prd-panel" data-prd-key="delivery-interactive" data-prd-version="20260310h">
-      <div class="prd-title">交付 · 动态交互版</div>
-      <div class="prd-card prd-tab-card" data-prd-tab="overview" style="--accent: #FF7D00;">
+    <div class="prd-panel active" data-prd-tab="overview" data-prd-key="delivery-overview" data-prd-version="20260310a">
+      <div class="prd-title">概览</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
         <div class="prd-card-title">交互说明</div>
         <div class="prd-card-body">5个Tab可点击切换，内容区动态显隐
 底部「写跟进」按钮仅概览Tab显示
 切换Tab时滚动位置自动重置</div>
       </div>
-      <div class="prd-card prd-tab-card" data-prd-tab="overview" style="--accent: #36A590;">
-        <div class="prd-card-title">概览</div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">内容结构</div>
         <div class="prd-card-body">身份卡片 + 标签 + AI画像总结
 关键指标 + 新人进度
 高频参与项目 + 客户标签
 最近跟进（2条）</div>
       </div>
-      <div class="prd-card prd-tab-card" data-prd-tab="profile" style="--accent: #586E93;">
-        <div class="prd-card-title">客户档案</div>
+    </div>
+    <div class="prd-panel" data-prd-tab="profile" data-prd-key="delivery-profile" data-prd-version="20260310a">
+      <div class="prd-title">客户档案</div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">内容结构</div>
         <div class="prd-card-body">基础信息（星球编号/昵称/性别/手机/微信）
 会员信息（官网/航海/深海圈 分卡片）
 个人信息（岗位/年限/收入/兴趣/介绍等）</div>
       </div>
-      <div class="prd-card prd-tab-card" data-prd-tab="behavior" style="--accent: #327CFB;">
-        <div class="prd-card-title">客户动态</div>
+    </div>
+    <div class="prd-panel" data-prd-tab="behavior" data-prd-key="delivery-behavior" data-prd-version="20260310a">
+      <div class="prd-title">客户动态</div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">内容结构</div>
         <div class="prd-card-body">两级筛选（来源平台 → 行为子项）
 行为时间线（按日期分组倒序）
 无底部操作栏</div>
       </div>
-      <div class="prd-card prd-tab-card" data-prd-tab="comms" style="--accent: #52C41A;">
-        <div class="prd-card-title">沟通记录</div>
+    </div>
+    <div class="prd-panel" data-prd-tab="comms" data-prd-key="delivery-comms" data-prd-version="20260310a">
+      <div class="prd-title">沟通记录</div>
+      <div class="prd-card" style="--accent: #52C41A;">
+        <div class="prd-card-title">内容结构</div>
         <div class="prd-card-body">AI 沟通总结（点击生成）
 沟通时间轴（近30天 AI 汇总）
 无底部操作栏</div>
       </div>
-      <div class="prd-card prd-tab-card" data-prd-tab="points" style="--accent: #FF7D00;">
-        <div class="prd-card-title">积分记录</div>
+    </div>
+    <div class="prd-panel" data-prd-tab="points" data-prd-key="delivery-points" data-prd-version="20260310a">
+      <div class="prd-title">积分记录</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">内容结构</div>
         <div class="prd-card-body">积分概览（龙珠/碎片/术值 3卡片）
 筛选（全部/获取/消耗）
 积分明细列表
@@ -2728,8 +2740,9 @@ AI 画像总结 → 红色渐变「流失预警」风格
       // 同步右侧 PRD 面板
       var wrapper = frame.closest('.scene-wrapper');
       if (wrapper) {
-        wrapper.querySelectorAll('.prd-tab-card').forEach(function(c) { c.classList.remove('active'); });
-        wrapper.querySelectorAll('.prd-tab-card[data-prd-tab="' + targetTab + '"]').forEach(function(c) { c.classList.add('active'); });
+        wrapper.querySelectorAll('.prd-panel[data-prd-tab]').forEach(function(p) { p.classList.remove('active'); });
+        var targetPanel = wrapper.querySelector('.prd-panel[data-prd-tab="' + targetTab + '"]');
+        if (targetPanel) targetPanel.classList.add('active');
       }
 
       // 重置 sidebar-body 滚动位置
@@ -2738,10 +2751,7 @@ AI 画像总结 → 红色渐变「流失预警」风格
     });
   });
 
-  // 初始化：激活 overview 的 PRD 卡片
-  document.querySelectorAll('.prd-tab-card[data-prd-tab="overview"]').forEach(function(c) {
-    c.classList.add('active');
-  });
+  // 初始化：overview PRD 面板已在 HTML 中标记 active，无需额外操作
 
 </script>
 
