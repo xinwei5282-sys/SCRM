@@ -23,7 +23,7 @@
  */
 (function() {
   'use strict';
-  var PRD_READONLY = false; // ← 切换：true=只读  false=可编辑
+  var PRD_READONLY = true; // ← 切换：true=只读  false=可编辑
 
   // ================================================================
   //  工具函数

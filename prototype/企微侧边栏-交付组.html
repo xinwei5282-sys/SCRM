@@ -262,6 +262,20 @@
     align-items: center;
     gap: 8px;
   }
+  .identity-backend-link {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color-text-4);
+    transition: color 100ms;
+  }
+  .identity-backend-link:hover {
+    color: var(--color-primary-6);
+  }
+  .identity-backend-link svg {
+    width: 14px;
+    height: 14px;
+  }
   .identity-nickname {
     font-size: 16px;
     font-weight: 700;
@@ -1644,6 +1658,7 @@
           <div class="identity-info" style="flex: 1; min-width: 0;">
             <div class="identity-name-row">
               <span class="identity-nickname copyable" onclick="copyText(this, '林小鱼')">林小鱼</span>
+              <a class="identity-backend-link" href="javascript:void(0)" title="在后台查看" onclick="window.open('客户管理-交付扩展.html','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
               <span class="identity-star-id copyable" onclick="copyText(this, 'NO.28456')">NO.28456</span>
               <span class="channel-tag channel-qw">企微</span>
             </div>
@@ -3001,6 +3016,7 @@
           <div class="identity-info" style="flex: 1; min-width: 0;">
             <div class="identity-name-row">
               <span class="identity-nickname copyable" onclick="copyText(this, '赵明远')">赵明远</span>
+              <a class="identity-backend-link" href="javascript:void(0)" title="在后台查看" onclick="window.open('客户管理-交付扩展.html','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
               <span class="identity-star-id copyable" onclick="copyText(this, 'NO.31205')">NO.31205</span>
               <span class="channel-tag channel-qw">企微</span>
             </div>
@@ -3244,6 +3260,14 @@ AI 画像总结 → 红色渐变「流失预警」风格
     var toast = document.createElement('div');
     toast.className = 'copy-toast';
     toast.textContent = '已复制';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 1200);
+  }
+
+  function showToast(msg) {
+    var toast = document.createElement('div');
+    toast.className = 'copy-toast';
+    toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(function() { toast.remove(); }, 1200);
   }

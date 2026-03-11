@@ -365,6 +365,16 @@
     color: var(--color-primary-6);
     font-weight: 500;
   }
+  .timeline-link {
+    color: var(--color-text-2);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+  .timeline-link:hover {
+    color: var(--color-primary-6);
+    text-decoration: underline;
+  }
   .timeline-duration {
     display: inline-flex;
     align-items: center;
@@ -563,6 +573,40 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+  .identity-backend-link {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color-text-4);
+    transition: color 100ms;
+  }
+  .identity-backend-link:hover {
+    color: var(--color-primary-6);
+  }
+  .identity-backend-link svg {
+    width: 14px;
+    height: 14px;
+  }
+  .copy-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-fill-6);
+    color: var(--color-text-7);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: fadeInOut 1.2s ease forwards;
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
   }
   .identity-nickname {
     font-size: 16px;
@@ -1651,6 +1695,7 @@
           <div class="identity-info">
             <div class="identity-name-row">
               <span class="identity-nickname">林小鱼</span>
+              <a class="identity-backend-link" href="javascript:void(0)" title="在后台查看" onclick="window.open('客户管理-交付扩展.html','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
               <span class="identity-star-id">NO.28456</span>
             </div>
             <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
@@ -2243,6 +2288,14 @@
 </div>
 
 <script>
+  function showToast(msg) {
+    var toast = document.createElement('div');
+    toast.className = 'copy-toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 1200);
+  }
+
   /* ── AI 画像总结生成 ── */
   // 手机号脱敏 — hover 显示眼睛，点击切换明文/脱敏
   function togglePhone(el) {
@@ -2422,6 +2475,13 @@
       // 重置 sidebar-body 滚动位置
       var body = frame.querySelector('.sidebar-body');
       if (body) body.scrollTop = 0;
+    });
+  });
+
+  /* ── 客户动态：「」内容自动转为可点击链接 ── */
+  document.querySelectorAll('.tab-content[data-tab="activity"] .timeline-desc').forEach(function(desc) {
+    desc.innerHTML = desc.innerHTML.replace(/「([^」]+)」/g, function(match, content) {
+      return '「<a class="timeline-link" href="javascript:void(0)" onclick="event.stopPropagation()">' + content + '</a>」';
     });
   });
 
