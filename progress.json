@@ -139,11 +139,11 @@
         "PRD面板可编辑"
       ],
       "priority": 8,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [6, 7],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:36:00+08:00",
+      "completed_at": "2026-03-12T15:37:00+08:00",
+      "notes": "PRD面板6个section，data-prd-view 3视图联动，引入prd-editor.css/js"
     }
   ]
 }
