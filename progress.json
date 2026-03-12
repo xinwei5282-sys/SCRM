@@ -66,11 +66,11 @@
         "筛选区有搜索框和分类/状态筛选"
       ],
       "priority": 4,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [1],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:32:00+08:00",
+      "completed_at": "2026-03-12T15:33:00+08:00",
+      "notes": "8列表格、15条mock数据、toggle开关、搜索筛选、分页"
     },
     {
       "id": 5,
