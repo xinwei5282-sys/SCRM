@@ -85,11 +85,11 @@
         "底部有预估匹配人数和保存/取消按钮"
       ],
       "priority": 5,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [4],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:33:00+08:00",
+      "completed_at": "2026-03-12T15:34:00+08:00",
+      "notes": "960px Drawer含完整表单、触发条件组、可折叠移除条件、执行配置、预估匹配"
     },
     {
       "id": 6,
