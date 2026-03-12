@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人群包管理 - MA 营销自动化</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  /* Header */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Page Title */
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+
+  /* ======== Search Filters ======== */
+  .filter-area {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover {
+    border-color: var(--color-border-hover);
+  }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .filter-input::placeholder { color: var(--color-text-4); }
+  .filter-input.wide { min-width: 220px; }
+
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* Buttons */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+  .btn-text {
+    background: none;
+    color: var(--color-primary-6);
+    padding: 0 4px;
+    height: auto;
+  }
+  .btn-text:hover { color: var(--color-primary-7); }
+  .btn-danger-text {
+    background: none;
+    color: var(--color-danger-6);
+    padding: 0 4px;
+    height: auto;
+  }
+  .btn-danger-text:hover { opacity: 0.8; }
+
+  /* ======== Table ======== */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    vertical-align: middle;
+  }
+  .data-table tr:hover td {
+    background: var(--color-fill-hover);
+  }
+  .name-link {
+    color: var(--color-primary-6);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .name-link:hover { color: var(--color-primary-7); text-decoration: underline; }
+  .cell-desc {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-text-3);
+  }
+  .cell-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-primary {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-warning {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .tag-default {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+
+  /* ======== Pagination ======== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .pagination-bar .total { margin-right: 8px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active {
+    background: var(--color-primary-6);
+    color: white;
+    border-color: var(--color-primary-6);
+  }
+  .page-btn.disabled {
+    color: var(--color-text-4);
+    cursor: not-allowed;
+    border-color: var(--color-border-default);
+  }
+  .page-size-select {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 6px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  /* ======== Modal / Drawer ======== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+  }
+  .modal-overlay.show { display: block; }
+  .modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card) 0 0 var(--radius-card);
+    width: 960px;
+    max-width: calc(100vw - 80px);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    animation: drawerIn 250ms ease-out;
+    z-index: 401;
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .modal-overlay.hiding .modal {
+    animation: drawerOut 200ms ease-in forwards;
+  }
+  @keyframes drawerOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    gap: 12px;
+  }
+  .modal-back {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-back:hover { background: var(--color-fill-hover); }
+  .modal-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-close:hover { background: var(--color-fill-hover); }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* ======== Rule Builder Form ======== */
+  .rb-form-area {
+    margin-bottom: 24px;
+  }
+  .rb-form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .rb-form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-2);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+  .rb-form-input {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    flex: 1;
+    max-width: 400px;
+    transition: border-color 150ms;
+  }
+  .rb-form-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-form-input::placeholder { color: var(--color-text-4); }
+  .rb-radio-group {
+    display: flex;
+    gap: 16px;
+  }
+  .rb-radio {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-2);
+    cursor: pointer;
+  }
+  .rb-radio input[type="radio"] {
+    accent-color: var(--color-primary-6);
+  }
+
+  /* ======== Rule Builder Rules Area ======== */
+  .rb-rules-area {
+    margin-bottom: 20px;
+  }
+  .rb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rb-section-title .icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+  .rb-section-title .icon-include {
+    background: var(--color-primary-6);
+  }
+  .rb-section-title .icon-exclude {
+    background: var(--color-danger-6);
+  }
+
+  /* Condition Group */
+  .rb-group {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    margin-bottom: 12px;
+    background: var(--color-fill-1);
+  }
+  .rb-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .rb-group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .rb-group-logic-select {
+    height: 26px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .rb-group-delete {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+  }
+  .rb-group-delete:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+
+  .rb-group-body {
+    padding: 12px 14px;
+  }
+
+  /* Condition Row */
+  .rb-condition-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .rb-condition-row:last-of-type { margin-bottom: 0; }
+
+  .rb-condition-select {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    transition: border-color 150ms;
+  }
+  .rb-condition-select:hover { border-color: var(--color-border-hover); }
+  .rb-condition-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+  .rb-condition-select.type-select {
+    font-weight: 600;
+    color: var(--color-primary-6);
+    background-color: var(--color-primary-1);
+    border-color: var(--color-primary-2);
+    min-width: 80px;
+  }
+
+  .rb-condition-input {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    outline: none;
+    width: 60px;
+    transition: border-color 150ms;
+  }
+  .rb-condition-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+
+  .rb-condition-text {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .rb-condition-remove {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .rb-condition-remove:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+
+  /* Logic Connector (AND/OR between conditions) */
+  .rb-logic-connector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 4px 16px;
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .rb-logic-connector::before,
+  .rb-logic-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 40px;
+  }
+
+  /* OR Connector (between groups) */
+  .rb-or-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-3);
+  }
+  .rb-or-connector::before,
+  .rb-or-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 80px;
+  }
+
+  /* Add buttons */
+  .rb-add-condition {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-condition:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+
+  .rb-add-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-group:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+
+  /* Divider between include and exclude */
+  .rb-divider {
+    height: 1px;
+    background: var(--color-border-default);
+    margin: 24px 0;
+  }
+
+  /* Exclude section */
+  .rb-exclude-section {
+    display: none;
+  }
+  .rb-exclude-section.visible { display: block; }
+
+  .rb-add-exclude-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border: 1px dashed var(--color-danger-6);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-danger-6);
+    transition: all 100ms;
+    opacity: 0.7;
+  }
+  .rb-add-exclude-btn:hover {
+    opacity: 1;
+    background: var(--color-danger-1);
+  }
+
+  /* Footer */
+  .rb-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: rgba(242, 245, 247, 0.5);
+  }
+  .rb-estimate {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .rb-estimate-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-1);
+  }
+  .rb-estimate-time {
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .rb-footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ======== Toast ======== */
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #242528;
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 20px;
+    border-radius: 6px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: toastAnim 1.5s ease forwards;
+  }
+  @keyframes toastAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+  body.prd-on .modal { right: 380px; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  .prd-panel[data-prd-view="list"] .prd-section[data-prd-context="builder"] { display: none; }
+  .prd-panel[data-prd-view="builder"] .prd-section[data-prd-context="list"] { display: none; }
+  .prd-context-hint { font-size: 12px; color: var(--color-text-3); margin-bottom: 12px; padding: 6px 10px; background: #FFF5E6; border-radius: 6px; text-align: center; }
+  .prd-section.prd-active { background: #FFF8EE; border-radius: 8px; box-shadow: 0 0 0 2px var(--color-accent-orange-6); transition: box-shadow 0.3s, background 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle Button -->
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="layout">
+  <!-- ======== Sidebar ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item">
+        <span>首页</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>客户</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>内容</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item" style="font-weight:600; color: var(--color-text-1);">
+        <span>营销</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-sub">
+        <div class="menu-item active">人群包管理</div>
+        <div class="menu-item">自动化流程</div>
+        <div class="menu-item">触达记录</div>
+      </div>
+      <div class="menu-item">
+        <span>数据</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>设置</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ======== Main ======== -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">运</div>
+        <span style="font-size:13px;">运营小李</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="page-card">
+        <!-- Page Title Bar -->
+        <div class="page-title-bar">
+          <span class="page-title">人群包管理</span>
+          <button class="btn btn-primary" onclick="openRuleBuilder('create')">+ 新建人群包</button>
+        </div>
+
+        <!-- Filter Area -->
+        <div class="filter-area">
+          <div class="filter-row">
+            <input class="filter-input wide" type="text" placeholder="搜索人群包名称...">
+            <div class="filter-actions">
+              <button class="btn btn-primary">查询</button>
+              <button class="btn btn-secondary">清空</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:200px;">名称</th>
+                <th style="width:220px;">描述</th>
+                <th style="width:90px;">人数</th>
+                <th style="width:100px;">刷新方式</th>
+                <th style="width:160px;">更新时间</th>
+                <th style="width:100px;">创建人</th>
+                <th style="width:140px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', '高价值活跃用户')">高价值活跃用户</a></td>
+                <td><span class="cell-desc">传术师/航海家中近30天评论>=10次的用户</span></td>
+                <td>1,234</td>
+                <td><span class="tag tag-primary">每日自动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
+                <td>运营小李</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', '高价值活跃用户')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('高价值活跃用户')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('高价值活跃用户')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', '续费召回目标')">续费召回目标</a></td>
+                <td><span class="cell-desc">会员即将到期或已过期，近期未登录的用户</span></td>
+                <td>856</td>
+                <td><span class="tag tag-primary">每日自动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
+                <td>运营小张</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', '续费召回目标')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('续费召回目标')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('续费召回目标')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', 'VIP专属服务')">VIP专属服务</a></td>
+                <td><span class="cell-desc">客户等级为S或A的高价值用户</span></td>
+                <td>328</td>
+                <td><span class="tag tag-default">手动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-10 14:30</td>
+                <td>运营小李</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', 'VIP专属服务')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('VIP专属服务')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('VIP专属服务')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', '航海活跃参与者')">航海活跃参与者</a></td>
+                <td><span class="cell-desc">近7天参加航海且发帖>=3次的活跃用户</span></td>
+                <td>562</td>
+                <td><span class="tag tag-primary">每日自动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
+                <td>运营小王</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', '航海活跃参与者')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('航海活跃参与者')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('航海活跃参与者')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', '沉默用户召回')">沉默用户召回</a></td>
+                <td><span class="cell-desc">超过90天未登录的已过期会员</span></td>
+                <td>2,108</td>
+                <td><span class="tag tag-default">手动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-08 16:20</td>
+                <td>运营小张</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', '沉默用户召回')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('沉默用户召回')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('沉默用户召回')">删除</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a class="name-link" onclick="openRuleBuilder('edit', '新手任务完成用户')">新手任务完成用户</a></td>
+                <td><span class="cell-desc">完成全部新手任务的新会员</span></td>
+                <td>445</td>
+                <td><span class="tag tag-primary">每日自动</span></td>
+                <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
+                <td>运营小李</td>
+                <td>
+                  <div class="cell-actions">
+                    <button class="btn-text" onclick="openRuleBuilder('edit', '新手任务完成用户')">编辑</button>
+                    <button class="btn-text" onclick="copyAudience('新手任务完成用户')">复制</button>
+                    <button class="btn-danger-text" onclick="deleteAudience('新手任务完成用户')">删除</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+          <span class="total">共 6 条</span>
+          <button class="page-btn disabled">&lt;</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn disabled">&gt;</button>
+          <select class="page-size-select">
+            <option>10 条/页</option>
+            <option>20 条/页</option>
+            <option>50 条/页</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Rule Builder Drawer ======== -->
+<div class="modal-overlay" id="ruleBuilderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-back" onclick="closeRuleBuilder()" title="返回列表">←</button>
+      <span class="modal-title" id="rbTitle">新建人群包</span>
+      <button class="modal-close" onclick="closeRuleBuilder()" title="关闭">×</button>
+    </div>
+    <div class="modal-body" id="rbBody">
+
+      <!-- Form Area -->
+      <div class="rb-form-area">
+        <div class="rb-form-row">
+          <label class="rb-form-label">名称</label>
+          <input class="rb-form-input" id="rbName" type="text" placeholder="输入人群包名称（最多50字）" maxlength="50">
+        </div>
+        <div class="rb-form-row">
+          <label class="rb-form-label">描述</label>
+          <input class="rb-form-input" id="rbDesc" type="text" placeholder="简要描述人群包用途">
+        </div>
+        <div class="rb-form-row">
+          <label class="rb-form-label">刷新方式</label>
+          <div class="rb-radio-group">
+            <label class="rb-radio"><input type="radio" name="refreshMode" value="manual" checked> 手动</label>
+            <label class="rb-radio"><input type="radio" name="refreshMode" value="daily"> 每日自动</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rules Area -->
+      <div class="rb-rules-area">
+
+        <!-- Include Section -->
+        <div class="rb-section-title">
+          <span class="icon icon-include">✓</span>
+          满足以下条件的用户
+        </div>
+
+        <div id="includeGroups">
+          <!-- Group 1 (default) -->
+          <div class="rb-group" data-group-index="1">
+            <div class="rb-group-header">
+              <div class="rb-group-header-left">
+                <span>条件组 1</span>
+                <span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>
+                <select class="rb-group-logic-select" onchange="updateLogicLabels(this)">
+                  <option value="and">且（AND）</option>
+                  <option value="or">或（OR）</option>
+                </select>
+              </div>
+              <button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>
+            </div>
+            <div class="rb-group-body">
+              <!-- Condition Row: Attribute -->
+              <div class="rb-condition-row">
+                <select class="rb-condition-select type-select" onchange="switchConditionType(this)">
+                  <option value="attribute" selected>用户属性</option>
+                  <option value="event">用户行为</option>
+                  <option value="audience">人群包</option>
+                </select>
+                <select class="rb-condition-select" style="min-width:110px;">
+                  <option value="">选择维度</option>
+                  <option>会员状态</option>
+                  <option>客户等级</option>
+                  <option>到期时间</option>
+                  <option>注册时间</option>
+                  <option>身份标签</option>
+                  <option>好友状态</option>
+                </select>
+                <select class="rb-condition-select" style="min-width:80px;">
+                  <option value="">操作符</option>
+                  <option>等于</option>
+                  <option>不等于</option>
+                  <option>包含</option>
+                  <option>不包含</option>
+                  <option>为空</option>
+                  <option>不为空</option>
+                  <option>N天内</option>
+                  <option>N天前</option>
+                </select>
+                <select class="rb-condition-select" style="min-width:100px;">
+                  <option value="">选择值</option>
+                  <option>在期</option>
+                  <option>已过期</option>
+                  <option>未开通</option>
+                </select>
+                <button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>
+              </div>
+
+              <button class="rb-add-condition" onclick="addCondition(this)">+ 添加条件</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="rb-add-group" onclick="addGroup('include')">+ 添加条件组（OR）</button>
+
+        <!-- Divider -->
+        <div class="rb-divider"></div>
+
+        <!-- Exclude Section -->
+        <div id="excludeArea">
+          <div class="rb-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <span class="icon icon-exclude">✕</span>
+              排除以下条件的用户
+            </span>
+            <button class="rb-add-exclude-btn" id="addExcludeBtn" onclick="showExcludeSection()">+ 添加排除</button>
+          </div>
+
+          <div class="rb-exclude-section" id="excludeGroups">
+            <!-- Exclude groups will be added here -->
+          </div>
+
+          <button class="rb-add-group" id="addExcludeGroupBtn" onclick="addGroup('exclude')" style="display:none;">+ 添加排除组（OR）</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="rb-footer">
+      <div class="rb-estimate">
+        <span>预估人数：</span>
+        <span class="rb-estimate-count" id="estimateCount">--</span>
+        <span class="rb-estimate-time" id="estimateTime"></span>
+        <button class="btn btn-outline" onclick="estimateAudience()" style="height:28px; font-size:12px;">⟳ 预估人数</button>
+      </div>
+      <div class="rb-footer-actions">
+        <button class="btn btn-secondary" onclick="closeRuleBuilder()">取消</button>
+        <button class="btn btn-primary" onclick="saveAudience()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PRD Annotation Panel ======== -->
+<div class="prd-panel" data-prd-key="audience-mgmt" data-prd-version="20260312a" data-prd-view="list">
+  <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
+
+  <!-- Section 1: 需求概述 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-label">背景</div>
+    <div class="prd-item">MA 营销自动化需要精准圈选目标用户群体</div>
+    <div class="prd-item">v2.0 仅支持属性条件 + 2 层嵌套，无法满足行为筛选和组合运算</div>
+    <div class="prd-label">目标</div>
+    <div class="prd-item">支持<strong>属性条件、事件条件、人群包条件</strong>三种条件类型</div>
+    <div class="prd-item">支持条件组间 OR、组内 AND/OR 可切换</div>
+    <div class="prd-item">支持满足区 + 排除区，实现交集/并集/差集运算</div>
+    <div class="prd-item">提供可视化规则构建器，无需技术背景即可配置</div>
+  </div>
+
+  <!-- Section 2: 列表页 -->
+  <div class="prd-section" data-prd-context="list" id="prd-s2">
+    <div class="prd-section-title green">2. 列表页</div>
+    <div class="prd-label">列表字段（7列）</div>
+    <div class="prd-item"><strong>名称</strong> — 可点击进入编辑</div>
+    <div class="prd-item"><strong>描述</strong> — 简要描述</div>
+    <div class="prd-item"><strong>人数</strong> — 最近一次计算结果</div>
+    <div class="prd-item"><strong>刷新方式</strong> — 手动 / 每日自动</div>
+    <div class="prd-item"><strong>更新时间</strong> — 最近修改或刷新时间</div>
+    <div class="prd-item"><strong>创建人</strong> — 创建者名称</div>
+    <div class="prd-item"><strong>操作</strong> — 编辑 / 复制 / 删除</div>
+    <div class="prd-label">列表功能</div>
+    <div class="prd-item">搜索：按名称模糊搜索</div>
+    <div class="prd-item">排序：按更新时间倒序（默认）</div>
+    <div class="prd-item">新建：进入规则构建器</div>
+  </div>
+
+  <!-- Section 3: 规则逻辑模型 -->
+  <div class="prd-section" data-prd-context="builder" id="prd-s3">
+    <div class="prd-section-title orange">3. 规则逻辑模型</div>
+    <div class="prd-label">结构</div>
+    <div class="prd-item"><strong>满足区</strong>：条件组1 OR 条件组2 OR ...</div>
+    <div class="prd-item"><strong>排除区</strong>：排除组1 OR 排除组2 OR ...</div>
+    <div class="prd-item"><strong>计算</strong>：最终人群 = (满足) - (排除)</div>
+    <div class="prd-label">逻辑层级</div>
+    <div class="prd-item">满足区 vs 排除区：差集（-）</div>
+    <div class="prd-item">组间：OR（固定）</div>
+    <div class="prd-item">组内条件间：AND / OR（可切换）</div>
+  </div>
+
+  <!-- Section 4: 条件类型 -->
+  <div class="prd-section" data-prd-context="builder" id="prd-s4">
+    <div class="prd-section-title green">4. 条件类型</div>
+    <div class="prd-label">属性条件</div>
+    <div class="prd-item">[维度] [操作符] [值]</div>
+    <div class="prd-item">示例：会员状态 等于 在期</div>
+    <div class="prd-label">事件条件</div>
+    <div class="prd-item">[做过/没做过] [事件] [次数] [时间窗口]</div>
+    <div class="prd-item">示例：做过 发帖 >=5次 近30天</div>
+    <div class="prd-label">人群包条件</div>
+    <div class="prd-item">[属于/不属于] [人群包名称]</div>
+    <div class="prd-item">示例：属于 活跃用户包</div>
+  </div>
+
+  <!-- Section 5: 交互规则 -->
+  <div class="prd-section" data-prd-context="builder" id="prd-s5">
+    <div class="prd-section-title orange">5. 交互规则</div>
+    <div class="prd-item"><strong>添加条件</strong>：在当前组末尾新增，默认属性条件</div>
+    <div class="prd-item"><strong>删除条件</strong>：组内最后一个条件不可删除</div>
+    <div class="prd-item"><strong>添加条件组</strong>：满足区最多 10 组</div>
+    <div class="prd-item"><strong>删除条件组</strong>：至少保留一个满足组</div>
+    <div class="prd-item"><strong>切换条件类型</strong>：该行重新渲染</div>
+    <div class="prd-item"><strong>预估人数</strong>：异步计算，显示人数和时间</div>
+    <div class="prd-item"><strong>保存</strong>：校验规则完整性后保存</div>
+  </div>
+
+  <!-- Section 6: 校验规则 -->
+  <div class="prd-section" data-prd-context="builder" id="prd-s6">
+    <div class="prd-section-title green">6. 校验规则</div>
+    <div class="prd-item"><strong>名称</strong>：必填，最长 50 字符</div>
+    <div class="prd-item"><strong>条件完整性</strong>：必填字段不能为空</div>
+    <div class="prd-item"><strong>组非空</strong>：每组至少 1 个条件</div>
+    <div class="prd-item"><strong>满足区非空</strong>：至少 1 个满足组</div>
+    <div class="prd-item"><strong>人群包引用</strong>：不能自引用，不能循环引用</div>
+    <div class="prd-label">非功能需求</div>
+    <div class="prd-item">满足区最多 10 组，排除区最多 5 组</div>
+    <div class="prd-item">每组最多 10 个条件</div>
+    <div class="prd-item">预估计算超时 30 秒</div>
+    <div class="prd-item">自动刷新频率：每日凌晨 2:00</div>
+  </div>
+
+</div><!-- /prd-panel -->
+
+<script>
+// ============================================================
+// Condition Row Templates
+// ============================================================
+var conditionTemplates = {
+  attribute: function() {
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute" selected>用户属性</option>' +
+      '<option value="event">用户行为</option>' +
+      '<option value="audience">人群包</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:110px;">' +
+      '<option value="">选择维度</option><option>会员状态</option><option>客户等级</option><option>到期时间</option><option>注册时间</option><option>身份标签</option><option>好友状态</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option><option>等于</option><option>不等于</option><option>包含</option><option>不包含</option><option>为空</option><option>不为空</option><option>N天内</option><option>N天前</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:100px;">' +
+      '<option value="">选择值</option><option>在期</option><option>已过期</option><option>未开通</option>' +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  },
+  event: function() {
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option>' +
+      '<option value="event" selected>用户行为</option>' +
+      '<option value="audience">人群包</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option value="did">做过</option><option value="did_not">没做过</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option value="">选择事件</option><option>发帖</option><option>评论</option><option>阅读</option><option>点赞</option><option>投锚</option><option>收藏</option><option>参加航海</option><option>登录</option><option>搜索</option><option>观看直播</option><option>直播评论</option><option>支付订单</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:50px;">' +
+      '<option>>=</option><option><=</option><option>=</option>' +
+      '</select>' +
+      '<input class="rb-condition-input" type="number" value="1" min="1" style="width:50px;">' +
+      '<span class="rb-condition-text">次</span>' +
+      '<select class="rb-condition-select" style="min-width:100px;">' +
+      '<option>过去7天</option><option>过去30天</option><option>过去90天</option><option>今天</option><option>本周</option><option>本月</option>' +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  },
+  audience: function() {
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option>' +
+      '<option value="event">用户行为</option>' +
+      '<option value="audience" selected>人群包</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:100px;">' +
+      '<option value="in">属于</option><option value="not_in">不属于</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:150px;">' +
+      '<option value="">选择人群包</option><option>高价值活跃用户</option><option>续费召回目标</option><option>VIP专属服务</option><option>航海活跃参与者</option><option>沉默用户召回</option><option>新手任务完成用户</option>' +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
+};
+
+// ============================================================
+// Edit Mode Presets (示例数据)
+// ============================================================
+var editPresets = {
+  '续费召回目标': {
+    name: '续费召回目标',
+    desc: '会员即将到期或已过期，近期未登录的用户',
+    refresh: 'daily',
+    includeGroups: [
+      {
+        logic: 'and',
+        conditions: [
+          { type: 'attribute', dimension: '会员状态', operator: '等于', value: '在期' },
+          { type: 'attribute', dimension: '到期时间', operator: 'N天内', value: '30' },
+          { type: 'event', occurrence: 'did_not', event: '登录', count: '', window: '过去7天' }
+        ]
+      },
+      {
+        logic: 'and',
+        conditions: [
+          { type: 'attribute', dimension: '会员状态', operator: '等于', value: '已过期' },
+          { type: 'attribute', dimension: '到期时间', operator: 'N天内', value: '90' }
+        ]
+      }
+    ],
+    excludeGroups: [
+      {
+        logic: 'or',
+        conditions: [
+          { type: 'attribute', dimension: '客户等级', operator: '等于', value: 'S' },
+          { type: 'audience', operator: 'in', audienceName: 'VIP专属服务' }
+        ]
+      }
+    ]
+  }
+};
+
+// ============================================================
+// Modal open/close
+// ============================================================
+var includeGroupCount = 1;
+var excludeGroupCount = 0;
+
+function openRuleBuilder(mode, name) {
+  var el = document.getElementById('ruleBuilderModal');
+  el.classList.remove('hiding');
+  el.classList.add('show');
+  setPrdView('builder');
+
+  if (mode === 'edit' && name && editPresets[name]) {
+    loadPreset(editPresets[name]);
+    document.getElementById('rbTitle').textContent = '编辑人群包';
+  } else if (mode === 'edit') {
+    document.getElementById('rbTitle').textContent = '编辑人群包';
+    document.getElementById('rbName').value = name || '';
+    // Keep default single group for non-preset items
+    resetBuilder();
+  } else {
+    document.getElementById('rbTitle').textContent = '新建人群包';
+    resetBuilder();
+  }
+}
+
+function closeRuleBuilder() {
+  var el = document.getElementById('ruleBuilderModal');
+  el.classList.add('hiding');
+  setTimeout(function() {
+    el.classList.remove('show', 'hiding');
+  }, 200);
+  setPrdView('list');
+}
+
+// Close on overlay click
+document.getElementById('ruleBuilderModal').addEventListener('click', function(e) {
+  if (e.target === this) closeRuleBuilder();
+});
+
+function resetBuilder() {
+  document.getElementById('rbName').value = '';
+  document.getElementById('rbDesc').value = '';
+  document.querySelector('input[name="refreshMode"][value="manual"]').checked = true;
+  document.getElementById('estimateCount').textContent = '--';
+  document.getElementById('estimateTime').textContent = '';
+
+  // Reset include groups
+  includeGroupCount = 1;
+  var ig = document.getElementById('includeGroups');
+  ig.innerHTML = createGroupHTML(1, 'and', 'include');
+
+  // Reset exclude
+  excludeGroupCount = 0;
+  var eg = document.getElementById('excludeGroups');
+  eg.innerHTML = '';
+  eg.classList.remove('visible');
+  document.getElementById('addExcludeBtn').style.display = '';
+  document.getElementById('addExcludeGroupBtn').style.display = 'none';
+}
+
+function loadPreset(preset) {
+  document.getElementById('rbName').value = preset.name;
+  document.getElementById('rbDesc').value = preset.desc;
+  if (preset.refresh === 'daily') {
+    document.querySelector('input[name="refreshMode"][value="daily"]').checked = true;
+  } else {
+    document.querySelector('input[name="refreshMode"][value="manual"]').checked = true;
+  }
+  document.getElementById('estimateCount').textContent = '--';
+  document.getElementById('estimateTime').textContent = '';
+
+  // Build include groups
+  var ig = document.getElementById('includeGroups');
+  ig.innerHTML = '';
+  includeGroupCount = 0;
+  preset.includeGroups.forEach(function(g, i) {
+    includeGroupCount++;
+    var html = createGroupHTMLWithConditions(includeGroupCount, g.logic, 'include', g.conditions);
+    ig.insertAdjacentHTML('beforeend', html);
+    if (i < preset.includeGroups.length - 1) {
+      ig.insertAdjacentHTML('beforeend', '<div class="rb-or-connector">或（OR）</div>');
+    }
+  });
+
+  // Build exclude groups
+  var eg = document.getElementById('excludeGroups');
+  eg.innerHTML = '';
+  excludeGroupCount = 0;
+  if (preset.excludeGroups && preset.excludeGroups.length > 0) {
+    eg.classList.add('visible');
+    document.getElementById('addExcludeBtn').style.display = 'none';
+    document.getElementById('addExcludeGroupBtn').style.display = '';
+    preset.excludeGroups.forEach(function(g, i) {
+      excludeGroupCount++;
+      var html = createGroupHTMLWithConditions(excludeGroupCount, g.logic, 'exclude', g.conditions);
+      eg.insertAdjacentHTML('beforeend', html);
+      if (i < preset.excludeGroups.length - 1) {
+        eg.insertAdjacentHTML('beforeend', '<div class="rb-or-connector">或（OR）</div>');
+      }
+    });
+  } else {
+    eg.classList.remove('visible');
+    document.getElementById('addExcludeBtn').style.display = '';
+    document.getElementById('addExcludeGroupBtn').style.display = 'none';
+  }
+}
+
+// ============================================================
+// Group creation
+// ============================================================
+function createGroupHTML(index, logic, section) {
+  var label = section === 'exclude' ? '排除组' : '条件组';
+  return '<div class="rb-group" data-group-index="' + index + '">' +
+    '<div class="rb-group-header">' +
+    '<div class="rb-group-header-left">' +
+    '<span>' + label + ' ' + index + '</span>' +
+    '<span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>' +
+    '<select class="rb-group-logic-select" onchange="updateLogicLabels(this)">' +
+    '<option value="and"' + (logic === 'and' ? ' selected' : '') + '>且（AND）</option>' +
+    '<option value="or"' + (logic === 'or' ? ' selected' : '') + '>或（OR）</option>' +
+    '</select>' +
+    '</div>' +
+    '<button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>' +
+    '</div>' +
+    '<div class="rb-group-body">' +
+    '<div class="rb-condition-row">' + conditionTemplates.attribute() + '</div>' +
+    '<button class="rb-add-condition" onclick="addCondition(this)">+ 添加条件</button>' +
+    '</div></div>';
+}
+
+function createGroupHTMLWithConditions(index, logic, section, conditions) {
+  var label = section === 'exclude' ? '排除组' : '条件组';
+  var logicText = logic === 'and' ? '且' : '或';
+  var rows = '';
+  conditions.forEach(function(c, i) {
+    if (i > 0) {
+      rows += '<div class="rb-logic-connector">' + logicText + '</div>';
+    }
+    rows += '<div class="rb-condition-row">' + buildConditionRow(c) + '</div>';
+  });
+
+  return '<div class="rb-group" data-group-index="' + index + '">' +
+    '<div class="rb-group-header">' +
+    '<div class="rb-group-header-left">' +
+    '<span>' + label + ' ' + index + '</span>' +
+    '<span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>' +
+    '<select class="rb-group-logic-select" onchange="updateLogicLabels(this)">' +
+    '<option value="and"' + (logic === 'and' ? ' selected' : '') + '>且（AND）</option>' +
+    '<option value="or"' + (logic === 'or' ? ' selected' : '') + '>或（OR）</option>' +
+    '</select>' +
+    '</div>' +
+    '<button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>' +
+    '</div>' +
+    '<div class="rb-group-body">' +
+    rows +
+    '<button class="rb-add-condition" onclick="addCondition(this)">+ 添加条件</button>' +
+    '</div></div>';
+}
+
+function buildConditionRow(c) {
+  if (c.type === 'attribute') {
+    var dimOptions = ['会员状态','客户等级','到期时间','注册时间','身份标签','好友状态'];
+    var opOptions = ['等于','不等于','包含','不包含','为空','不为空','N天内','N天前'];
+    var valOptions = ['在期','已过期','未开通','S','A','B','C'];
+
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute" selected>用户属性</option><option value="event">用户行为</option><option value="audience">人群包</option></select>' +
+      '<select class="rb-condition-select" style="min-width:110px;">' +
+      '<option value="">选择维度</option>' + dimOptions.map(function(d) { return '<option' + (d === c.dimension ? ' selected' : '') + '>' + d + '</option>'; }).join('') +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option>' + opOptions.map(function(o) { return '<option' + (o === c.operator ? ' selected' : '') + '>' + o + '</option>'; }).join('') +
+      '</select>' +
+      (c.operator === 'N天内' || c.operator === 'N天前' ?
+        '<input class="rb-condition-input" type="number" value="' + (c.value || '') + '" style="width:60px;">' :
+        '<select class="rb-condition-select" style="min-width:100px;"><option value="">选择值</option>' + valOptions.map(function(v) { return '<option' + (v === c.value ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>'
+      ) +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
+  if (c.type === 'event') {
+    var events = ['发帖','评论','阅读','点赞','投锚','收藏','参加航海','登录','搜索','观看直播','直播评论','支付订单'];
+    var windows = ['过去7天','过去30天','过去90天','今天','本周','本月'];
+    var isDid = c.occurrence !== 'did_not';
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option><option value="event" selected>用户行为</option><option value="audience">人群包</option></select>' +
+      '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option value="did"' + (isDid ? ' selected' : '') + '>做过</option><option value="did_not"' + (!isDid ? ' selected' : '') + '>没做过</option></select>' +
+      '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option value="">选择事件</option>' + events.map(function(e) { return '<option' + (e === c.event ? ' selected' : '') + '>' + e + '</option>'; }).join('') +
+      '</select>' +
+      (isDid && c.count !== '' ? (
+        '<select class="rb-condition-select" style="min-width:50px;"><option>>=</option><option><=</option><option>=</option></select>' +
+        '<input class="rb-condition-input" type="number" value="' + (c.count || 1) + '" min="1" style="width:50px;">' +
+        '<span class="rb-condition-text">次</span>'
+      ) : '') +
+      '<select class="rb-condition-select" style="min-width:100px;">' +
+      windows.map(function(w) { return '<option' + (w === c.window ? ' selected' : '') + '>' + w + '</option>'; }).join('') +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
+  if (c.type === 'audience') {
+    var packs = ['高价值活跃用户','续费召回目标','VIP专属服务','航海活跃参与者','沉默用户召回','新手任务完成用户'];
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="audience" selected>人群包</option></select>' +
+      '<select class="rb-condition-select" style="min-width:100px;">' +
+      '<option value="in"' + (c.operator === 'in' ? ' selected' : '') + '>属于</option><option value="not_in"' + (c.operator === 'not_in' ? ' selected' : '') + '>不属于</option></select>' +
+      '<select class="rb-condition-select" style="min-width:150px;">' +
+      '<option value="">选择人群包</option>' + packs.map(function(p) { return '<option' + (p === c.audienceName ? ' selected' : '') + '>' + p + '</option>'; }).join('') +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
+  return '';
+}
+
+// ============================================================
+// Add / Remove Groups
+// ============================================================
+function addGroup(section) {
+  var container, count, label;
+  if (section === 'include') {
+    container = document.getElementById('includeGroups');
+    includeGroupCount++;
+    count = includeGroupCount;
+    // Add OR connector before new group
+    container.insertAdjacentHTML('beforeend', '<div class="rb-or-connector">或（OR）</div>');
+    container.insertAdjacentHTML('beforeend', createGroupHTML(count, 'and', 'include'));
+  } else {
+    container = document.getElementById('excludeGroups');
+    excludeGroupCount++;
+    count = excludeGroupCount;
+    if (count > 1) {
+      container.insertAdjacentHTML('beforeend', '<div class="rb-or-connector">或（OR）</div>');
+    }
+    container.insertAdjacentHTML('beforeend', createGroupHTML(count, 'and', 'exclude'));
+  }
+}
+
+function removeGroup(btn) {
+  var group = btn.closest('.rb-group');
+  var container = group.parentElement;
+  var groups = container.querySelectorAll('.rb-group');
+
+  // Don't delete the last include group
+  if (container.id === 'includeGroups' && groups.length <= 1) {
+    showToast('至少保留一个满足条件组');
+    return;
+  }
+
+  // Remove adjacent OR connector
+  var prev = group.previousElementSibling;
+  var next = group.nextElementSibling;
+  if (prev && prev.classList.contains('rb-or-connector')) {
+    prev.remove();
+  } else if (next && next.classList.contains('rb-or-connector')) {
+    next.remove();
+  }
+
+  group.remove();
+
+  // If no exclude groups left, hide section
+  if (container.id === 'excludeGroups') {
+    var remaining = container.querySelectorAll('.rb-group');
+    if (remaining.length === 0) {
+      container.classList.remove('visible');
+      document.getElementById('addExcludeBtn').style.display = '';
+      document.getElementById('addExcludeGroupBtn').style.display = 'none';
+      excludeGroupCount = 0;
+    }
+  }
+}
+
+// ============================================================
+// Add / Remove Conditions
+// ============================================================
+function addCondition(btn) {
+  var body = btn.closest('.rb-group-body');
+  var logicSelect = body.closest('.rb-group').querySelector('.rb-group-logic-select');
+  var logicText = logicSelect.value === 'and' ? '且' : '或';
+
+  var connector = document.createElement('div');
+  connector.className = 'rb-logic-connector';
+  connector.textContent = logicText;
+
+  var row = document.createElement('div');
+  row.className = 'rb-condition-row';
+  row.innerHTML = conditionTemplates.attribute();
+
+  body.insertBefore(connector, btn);
+  body.insertBefore(row, btn);
+}
+
+function removeCondition(btn) {
+  var row = btn.closest('.rb-condition-row');
+  var body = row.closest('.rb-group-body');
+  var rows = body.querySelectorAll('.rb-condition-row');
+
+  if (rows.length <= 1) {
+    showToast('组内至少保留一个条件');
+    return;
+  }
+
+  // Remove adjacent logic connector
+  var prev = row.previousElementSibling;
+  var next = row.nextElementSibling;
+  if (prev && prev.classList.contains('rb-logic-connector')) {
+    prev.remove();
+  } else if (next && next.classList.contains('rb-logic-connector')) {
+    next.remove();
+  }
+
+  row.remove();
+}
+
+// ============================================================
+// Switch Condition Type
+// ============================================================
+function switchConditionType(select) {
+  var type = select.value;
+  var row = select.closest('.rb-condition-row');
+  row.innerHTML = conditionTemplates[type]();
+}
+
+// ============================================================
+// AND/OR Logic Labels
+// ============================================================
+function updateLogicLabels(select) {
+  var body = select.closest('.rb-group').querySelector('.rb-group-body');
+  var text = select.value === 'and' ? '且' : '或';
+  body.querySelectorAll('.rb-logic-connector').forEach(function(c) {
+    c.textContent = text;
+  });
+}
+
+// ============================================================
+// Show Exclude Section
+// ============================================================
+function showExcludeSection() {
+  var eg = document.getElementById('excludeGroups');
+  eg.classList.add('visible');
+  document.getElementById('addExcludeBtn').style.display = 'none';
+  document.getElementById('addExcludeGroupBtn').style.display = '';
+  excludeGroupCount++;
+  eg.innerHTML = createGroupHTML(excludeGroupCount, 'or', 'exclude');
+}
+
+// ============================================================
+// Estimate Audience
+// ============================================================
+function estimateAudience() {
+  var countEl = document.getElementById('estimateCount');
+  var timeEl = document.getElementById('estimateTime');
+  countEl.textContent = '计算中...';
+  countEl.style.color = 'var(--color-text-3)';
+  timeEl.textContent = '';
+
+  setTimeout(function() {
+    var count = Math.floor(Math.random() * 3000) + 200;
+    countEl.textContent = count.toLocaleString() + ' 人';
+    countEl.style.color = 'var(--color-text-1)';
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    timeEl.textContent = '（' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + h + ':' + m + '）';
+  }, 1500);
+}
+
+// ============================================================
+// Save / Copy / Delete
+// ============================================================
+function saveAudience() {
+  var name = document.getElementById('rbName').value.trim();
+  if (!name) {
+    showToast('请输入人群包名称');
+    return;
+  }
+  showToast('人群包已保存');
+  setTimeout(function() { closeRuleBuilder(); }, 800);
+}
+
+function copyAudience(name) {
+  showToast('已复制「' + name + '」');
+}
+
+function deleteAudience(name) {
+  if (confirm('确定删除「' + name + '」？删除后不可恢复。')) {
+    showToast('已删除「' + name + '」');
+  }
+}
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(text) {
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 1600);
+}
+
+// ============================================================
+// PRD Panel
+// ============================================================
+function togglePRD() {
+  document.body.classList.toggle('prd-on');
+}
+
+function setPrdView(view) {
+  var panel = document.querySelector('.prd-panel');
+  var hint = document.getElementById('prdContextHint');
+  if (panel) panel.setAttribute('data-prd-view', view);
+  if (hint) hint.textContent = view === 'builder' ? '当前：规则构建器' : '当前：列表页';
+}
+
+// PRD auto-scroll
+var prdTimer = null;
+function scrollToPrd(id) {
+  if (!document.body.classList.contains('prd-on')) return;
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.prd-section.prd-active').forEach(function(s) { s.classList.remove('prd-active'); });
+  el.classList.add('prd-active');
+  clearTimeout(prdTimer);
+  prdTimer = setTimeout(function() { el.classList.remove('prd-active'); }, 2500);
+}
+
+// Click handlers for PRD scroll
+var fa = document.querySelector('.filter-area');
+if (fa) fa.addEventListener('click', function() { scrollToPrd('prd-s2'); });
+var dt = document.querySelector('.data-table thead');
+if (dt) dt.addEventListener('click', function() { scrollToPrd('prd-s2'); });
+</script>
+<script src="prd-editor.js"></script>
+
+</body>
+</html>
