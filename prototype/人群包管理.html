@@ -163,9 +163,11 @@
   .filter-row {
     display: flex;
     gap: 12px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
     align-items: center;
   }
+  .filter-row:last-child { margin-bottom: 0; }
   .filter-input,
   .filter-select {
     height: 32px;
@@ -243,20 +245,19 @@
     background: none;
     color: var(--color-primary-6);
     padding: 0 4px;
-    height: auto;
   }
   .btn-text:hover { color: var(--color-primary-7); }
   .btn-danger-text {
     background: none;
     color: var(--color-danger-6);
     padding: 0 4px;
-    height: auto;
   }
   .btn-danger-text:hover { opacity: 0.8; }
 
   /* ======== Table ======== */
   .table-wrapper {
     overflow-x: auto;
+    position: relative;
   }
   .data-table {
     width: 100%;
@@ -271,11 +272,15 @@
     white-space: nowrap;
     border-bottom: 1px solid var(--color-border-default);
     color: var(--color-text-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
   .data-table td {
     padding: 10px 12px;
     border-bottom: 1px solid var(--color-border-default);
     vertical-align: middle;
+    white-space: nowrap;
   }
   .data-table tr:hover td {
     background: var(--color-fill-hover);
@@ -802,12 +807,12 @@
     transform: translate(-50%, -50%);
     background: #242528;
     color: #fff;
-    font-size: 13px;
-    padding: 8px 20px;
+    font-size: 12px;
+    padding: 6px 16px;
     border-radius: 6px;
     z-index: 9999;
     pointer-events: none;
-    animation: toastAnim 1.5s ease forwards;
+    animation: toastAnim 1.2s ease forwards;
   }
   @keyframes toastAnim {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
@@ -1836,7 +1841,7 @@ function showToast(text) {
   el.className = 'toast';
   el.textContent = text;
   document.body.appendChild(el);
-  setTimeout(function() { el.remove(); }, 1600);
+  setTimeout(function() { el.remove(); }, 1300);
 }
 
 // ============================================================
