@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动化标签管理 - CDP 数据平台</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  /* Header */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ======== View Tabs (顶层视图切换) ======== */
+  .view-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .view-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    white-space: nowrap;
+  }
+  .view-tab:hover { color: var(--color-text-1); }
+  .view-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+
+  /* View Containers */
+  .view-overview,
+  .view-rules { display: none; }
+  .view-overview.active,
+  .view-rules.active { display: block; }
+
+  /* ======== Stats Bar ======== */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .stat-card {
+    background: var(--color-fill-3);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    line-height: 1.2;
+  }
+  .stat-value .stat-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text-3);
+    margin-left: 2px;
+  }
+
+  /* ======== Category Tabs (分类标签) ======== */
+  .category-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .category-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .category-tab:hover { color: var(--color-text-1); }
+  .category-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+  .category-tab .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+  }
+  .category-tab.active .count {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+
+  /* ======== Tag Cards Grid ======== */
+  .tag-cards-area {
+    padding: 16px 20px;
+  }
+  .tag-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .tag-card {
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 150ms;
+  }
+  .tag-card:hover {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 2px 8px rgba(54, 165, 144, 0.1);
+  }
+  .tag-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .tag-card-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: 20px;
+  }
+  .tag-card-code {
+    font-size: 11px;
+    color: var(--color-text-4);
+    font-family: monospace;
+    background: var(--color-fill-3);
+    padding: 1px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .tag-card-values {
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tag-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .tag-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .tag-card-rules {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
+  /* ======== Buttons ======== */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+  .btn-text {
+    background: none;
+    color: var(--color-primary-6);
+    padding: 0 4px;
+  }
+  .btn-text:hover { color: var(--color-primary-7); }
+  .btn-danger-text {
+    background: none;
+    color: var(--color-danger-6);
+    padding: 0 4px;
+  }
+  .btn-danger-text:hover { opacity: 0.8; }
+
+  /* ======== Search Filters ======== */
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  .filter-area {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover { border-color: var(--color-border-hover); }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .filter-input::placeholder { color: var(--color-text-4); }
+  .filter-input.wide { min-width: 220px; }
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* ======== Table ======== */
+  .table-wrapper { overflow-x: auto; }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .data-table tr:hover td { background: var(--color-fill-hover); }
+  .name-link {
+    color: var(--color-primary-6);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .name-link:hover { color: var(--color-primary-7); text-decoration: underline; }
+  .cell-desc {
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--color-text-3);
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-primary {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-warning {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .tag-default {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .tag-info {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .tag-success {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-danger {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+
+  /* ======== Toggle Switch ======== */
+  .toggle-switch {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .toggle-switch input { display: none; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--color-fill-3-hover);
+    border-radius: 10px;
+    transition: all 150ms;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 150ms;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle-switch input:checked + .toggle-slider {
+    background: var(--color-primary-6);
+  }
+  .toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(16px);
+  }
+
+  /* ======== Pagination ======== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .pagination-bar .total { margin-right: 8px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active {
+    background: var(--color-primary-6);
+    color: white;
+    border-color: var(--color-primary-6);
+  }
+  .page-btn.disabled {
+    color: var(--color-text-4);
+    cursor: not-allowed;
+  }
+
+  /* ======== Modal / Drawer ======== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+  }
+  .modal-overlay.show { display: block; }
+  .modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card) 0 0 var(--radius-card);
+    width: 960px;
+    max-width: calc(100vw - 80px);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    animation: drawerIn 250ms ease-out;
+    z-index: 401;
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .modal-overlay.hiding .modal {
+    animation: drawerOut 200ms ease-in forwards;
+  }
+  @keyframes drawerOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    gap: 12px;
+  }
+  .modal-back {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-back:hover { background: var(--color-fill-hover); }
+  .modal-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-close:hover { background: var(--color-fill-hover); }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* ======== Rule Builder Form ======== */
+  .rb-form-area { margin-bottom: 24px; }
+  .rb-form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .rb-form-row.align-top { align-items: flex-start; }
+  .rb-form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-2);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+  .rb-form-input {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    flex: 1;
+    max-width: 400px;
+    transition: border-color 150ms;
+  }
+  .rb-form-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-form-input::placeholder { color: var(--color-text-4); }
+  .rb-form-textarea {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    flex: 1;
+    max-width: 400px;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+    transition: border-color 150ms;
+  }
+  .rb-form-textarea:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-form-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 28px 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    appearance: none;
+    background: var(--color-fill-1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    transition: border-color 150ms;
+  }
+  .rb-form-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-radio-group {
+    display: flex;
+    gap: 16px;
+  }
+  .rb-radio {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-2);
+    cursor: pointer;
+  }
+  .rb-radio input[type="radio"] { accent-color: var(--color-primary-6); }
+
+  /* ======== Rule Builder Rules Area ======== */
+  .rb-rules-area { margin-bottom: 20px; }
+  .rb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rb-section-title .icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+  .rb-section-title .icon-include { background: var(--color-primary-6); }
+  .rb-section-title .icon-remove { background: var(--color-warning-6); }
+
+  /* Condition Group */
+  .rb-group {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    margin-bottom: 12px;
+    background: var(--color-fill-1);
+  }
+  .rb-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .rb-group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .rb-group-logic-select {
+    height: 26px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .rb-group-delete {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+  }
+  .rb-group-delete:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+  .rb-group-body { padding: 12px 14px; }
+
+  /* Condition Row */
+  .rb-condition-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .rb-condition-row:last-of-type { margin-bottom: 0; }
+  .rb-condition-select {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    transition: border-color 150ms;
+  }
+  .rb-condition-select:hover { border-color: var(--color-border-hover); }
+  .rb-condition-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+  .rb-condition-select.type-select {
+    font-weight: 600;
+    color: var(--color-primary-6);
+    background-color: var(--color-primary-1);
+    border-color: var(--color-primary-2);
+    min-width: 80px;
+  }
+  .rb-condition-input {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    outline: none;
+    width: 60px;
+    transition: border-color 150ms;
+  }
+  .rb-condition-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+  .rb-condition-text {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .rb-condition-remove {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .rb-condition-remove:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+
+  .rb-logic-connector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 4px 16px;
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .rb-logic-connector::before,
+  .rb-logic-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 40px;
+  }
+
+  .rb-group-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0;
+  }
+  .rb-group-connector::before,
+  .rb-group-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 80px;
+  }
+  .rb-group-connector-select {
+    height: 26px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  .rb-add-condition {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-condition:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .rb-add-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-group:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+
+  /* Collapsible Section */
+  .rb-collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .rb-collapsible-header .arrow {
+    font-size: 12px;
+    color: var(--color-text-4);
+    transition: transform 150ms;
+  }
+  .rb-collapsible-header.collapsed .arrow {
+    transform: rotate(-90deg);
+  }
+  .rb-collapsible-body {
+    display: block;
+  }
+  .rb-collapsible-body.collapsed {
+    display: none;
+  }
+
+  /* Footer */
+  .rb-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: rgba(242, 245, 247, 0.5);
+  }
+  .rb-estimate {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .rb-estimate-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-1);
+  }
+  .rb-footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ======== Detail Dialog (居中弹窗) ======== */
+  .dialog-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+  }
+  .dialog-overlay.show { display: flex; }
+  .detail-dialog {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    width: 480px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-modal);
+    animation: dialogIn 200ms ease-out;
+  }
+  @keyframes dialogIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .detail-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .detail-dialog-header h3 { font-size: 16px; font-weight: 600; }
+  .detail-dialog-close {
+    background: none; border: none; font-size: 18px; color: var(--color-text-3); cursor: pointer;
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-btn);
+  }
+  .detail-dialog-close:hover { background: var(--color-fill-hover); }
+  .detail-dialog-body { padding: 16px; overflow-y: auto; flex: 1; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-3);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .detail-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .detail-info-label { color: var(--color-text-3); }
+  .detail-info-value { color: var(--color-text-1); font-weight: 500; }
+
+  /* Distribution Bar */
+  .distribution-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .distribution-label {
+    font-size: 12px;
+    color: var(--color-text-2);
+    min-width: 80px;
+    text-align: right;
+  }
+  .distribution-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+    overflow: hidden;
+  }
+  .distribution-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-xs);
+    background: var(--color-primary-6);
+    transition: width 300ms ease;
+  }
+  .distribution-pct {
+    font-size: 12px;
+    color: var(--color-text-3);
+    min-width: 36px;
+  }
+  .detail-rule-list {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-rule-item {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--color-text-2);
+    border-bottom: 1px solid var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-rule-item:last-child { border-bottom: none; }
+  .detail-rule-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    flex-shrink: 0;
+  }
+
+  /* ======== Toast ======== */
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #242528;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: toastAnim 1.2s ease forwards;
+  }
+  @keyframes toastAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+  body.prd-on .modal { right: 380px; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  .prd-panel[data-prd-view="overview"] .prd-section[data-prd-context="rules"] { display: none; }
+  .prd-panel[data-prd-view="overview"] .prd-section[data-prd-context="editor"] { display: none; }
+  .prd-panel[data-prd-view="rules"] .prd-section[data-prd-context="overview"] { display: none; }
+  .prd-panel[data-prd-view="rules"] .prd-section[data-prd-context="editor"] { display: none; }
+  .prd-panel[data-prd-view="editor"] .prd-section[data-prd-context="overview"] { display: none; }
+  .prd-panel[data-prd-view="editor"] .prd-section[data-prd-context="rules"] { display: none; }
+  .prd-context-hint { font-size: 12px; color: var(--color-text-3); margin-bottom: 12px; padding: 6px 10px; background: #FFF5E6; border-radius: 6px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle Button -->
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="layout">
+  <!-- ======== Sidebar ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item">
+        <span>首页</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>客户</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>内容</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item">
+        <span>营销</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-item" style="font-weight:600; color: var(--color-text-1);">
+        <span>数据</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+      <div class="menu-sub">
+        <div class="menu-item active">自动化标签</div>
+        <div class="menu-item">评分模型</div>
+        <div class="menu-item">数据看板</div>
+      </div>
+      <div class="menu-item">
+        <span>设置</span>
+        <span class="arrow">&#8250;</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ======== Main ======== -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">运</div>
+        <span style="font-size:13px;">运营小李</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="page-card">
+        <!-- View Tabs -->
+        <div class="view-tabs">
+          <div class="view-tab active" onclick="switchView('overview')">标签总览</div>
+          <div class="view-tab" onclick="switchView('rules')">规则管理</div>
+        </div>
+
+        <!-- ============ View: Overview ============ -->
+        <div class="view-overview active" id="viewOverview">
+          <!-- Stats Bar -->
+          <div class="stats-bar">
+            <div class="stat-card">
+              <div class="stat-label">总标签数</div>
+              <div class="stat-value">60<span class="stat-unit">个</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">已启用规则</div>
+              <div class="stat-value">18<span class="stat-unit">条</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日更新标签数</div>
+              <div class="stat-value">1,247<span class="stat-unit">人次</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">标签覆盖率</div>
+              <div class="stat-value">89.2<span class="stat-unit">%</span></div>
+            </div>
+          </div>
+
+          <!-- Category Tabs -->
+          <div class="category-tabs" id="categoryTabs">
+            <div class="category-tab active" onclick="switchCategory('identity')">身份标签<span class="count">14</span></div>
+            <div class="category-tab" onclick="switchCategory('behavioral')">行为标签<span class="count">10</span></div>
+            <div class="category-tab" onclick="switchCategory('transactional')">交易标签<span class="count">10</span></div>
+            <div class="category-tab" onclick="switchCategory('lifecycle')">生命周期<span class="count">8</span></div>
+            <div class="category-tab" onclick="switchCategory('preference')">偏好标签<span class="count">8</span></div>
+            <div class="category-tab" onclick="switchCategory('social')">社交标签<span class="count">8</span></div>
+          </div>
+
+          <!-- Tag Cards -->
+          <div class="tag-cards-area">
+            <div class="tag-cards-grid" id="tagCardsGrid">
+              <!-- JS rendered -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ View: Rules ============ -->
+        <div class="view-rules" id="viewRules">
+          <!-- Page Title -->
+          <div class="page-title-bar">
+            <span class="page-title">规则管理</span>
+            <button class="btn btn-primary" onclick="openRuleEditor('create')">+ 新建规则</button>
+          </div>
+          <!-- Filter -->
+          <div class="filter-area">
+            <div class="filter-row">
+              <input class="filter-input wide" type="text" placeholder="搜索规则名称...">
+              <select class="filter-select" style="min-width:130px;">
+                <option value="">全部分类</option>
+                <option>行为标签</option>
+                <option>生命周期</option>
+                <option>交易标签</option>
+                <option>社交标签</option>
+                <option>偏好标签</option>
+              </select>
+              <select class="filter-select" style="min-width:100px;">
+                <option value="">全部状态</option>
+                <option>已启用</option>
+                <option>已禁用</option>
+              </select>
+              <div class="filter-actions">
+                <button class="btn btn-primary">查询</button>
+                <button class="btn btn-secondary">清空</button>
+              </div>
+            </div>
+          </div>
+          <!-- Table -->
+          <div class="table-wrapper">
+            <table class="data-table" id="rulesTable">
+              <thead>
+                <tr>
+                  <th style="width:170px;">规则名</th>
+                  <th style="width:90px;">标签分类</th>
+                  <th style="width:160px;">打标结果</th>
+                  <th style="width:200px;">触发条件摘要</th>
+                  <th style="width:70px;">频率</th>
+                  <th style="width:60px;">优先级</th>
+                  <th style="width:70px;">状态</th>
+                  <th style="width:160px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="rulesTableBody">
+                <!-- JS rendered -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Pagination -->
+          <div class="pagination-bar">
+            <span class="total">共 15 条</span>
+            <button class="page-btn disabled">&lsaquo;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">&rsaquo;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Rule Editor Drawer ======== -->
+<div class="modal-overlay" id="ruleEditorOverlay" onclick="closeRuleEditor()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <button class="modal-back" onclick="closeRuleEditor()">&#8592;</button>
+      <span class="modal-title" id="ruleEditorTitle">新建规则</span>
+      <button class="modal-close" onclick="closeRuleEditor()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Basic Info -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">基本信息</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">规则名称</span>
+          <input class="rb-form-input" id="ruleName" placeholder="输入规则名称">
+        </div>
+        <div class="rb-form-row align-top">
+          <span class="rb-form-label">规则描述</span>
+          <textarea class="rb-form-textarea" id="ruleDesc" placeholder="输入规则描述（可选）"></textarea>
+        </div>
+      </div>
+
+      <!-- Tag Config -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">标签配置</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签分类</span>
+          <select class="rb-form-select" id="tagCategory" onchange="onTagCategoryChange()" style="min-width:140px;">
+            <option value="">请选择分类</option>
+            <option value="identity">身份标签</option>
+            <option value="behavioral">行为标签</option>
+            <option value="transactional">交易标签</option>
+            <option value="lifecycle">生命周期</option>
+            <option value="preference">偏好标签</option>
+            <option value="social">社交标签</option>
+          </select>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签代码</span>
+          <select class="rb-form-select" id="tagCode" onchange="onTagCodeChange()" style="min-width:180px;">
+            <option value="">请先选择分类</option>
+          </select>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签值</span>
+          <input class="rb-form-input" id="tagValue" placeholder="输入或选择标签值" style="max-width:240px;">
+        </div>
+      </div>
+
+      <!-- Trigger Conditions -->
+      <div class="rb-rules-area" id="triggerConditions">
+        <div class="rb-section-title">
+          <span class="icon icon-include">&#10003;</span>
+          触发条件
+        </div>
+        <div id="triggerGroupsContainer">
+          <!-- JS rendered -->
+        </div>
+        <button class="rb-add-group" onclick="addGroup('trigger')">+ 添加条件组</button>
+      </div>
+
+      <!-- Auto Remove Conditions (Collapsible) -->
+      <div class="rb-rules-area">
+        <div class="rb-collapsible-header collapsed" onclick="toggleRemoveSection()">
+          <span class="rb-section-title" style="margin-bottom:0;">
+            <span class="icon icon-remove">&#8722;</span>
+            自动移除条件
+          </span>
+          <span class="arrow" id="removeArrow">&#9660;</span>
+          <span style="font-size:12px; color:var(--color-text-4); margin-left:4px;">（可选）</span>
+        </div>
+        <div class="rb-collapsible-body collapsed" id="removeConditionsBody">
+          <div id="removeGroupsContainer">
+            <!-- JS rendered -->
+          </div>
+          <button class="rb-add-group" onclick="addGroup('remove')">+ 添加移除条件组</button>
+        </div>
+      </div>
+
+      <!-- Execution Config -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">执行配置</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">计算频率</span>
+          <div class="rb-radio-group">
+            <label class="rb-radio"><input type="radio" name="freq" value="realtime"> 实时</label>
+            <label class="rb-radio"><input type="radio" name="freq" value="daily" checked> 每日</label>
+            <label class="rb-radio"><input type="radio" name="freq" value="weekly"> 每周</label>
+          </div>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">优先级</span>
+          <input class="rb-form-input" id="rulePriority" type="number" value="10" min="1" max="100" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">数字越小优先级越高</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">冷却期</span>
+          <input class="rb-form-input" id="ruleCooldown" type="number" value="" placeholder="可选" min="0" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">天（防止频繁打标）</span>
+        </div>
+      </div>
+    </div>
+    <div class="rb-footer">
+      <div class="rb-estimate">
+        <span>预估匹配</span>
+        <span class="rb-estimate-count" id="estimateCount">--</span>
+        <span>人</span>
+      </div>
+      <div class="rb-footer-actions">
+        <button class="btn btn-secondary" onclick="closeRuleEditor()">取消</button>
+        <button class="btn btn-primary" onclick="saveRule()">保存规则</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Tag Detail Dialog ======== -->
+<div class="dialog-overlay" id="tagDetailOverlay" onclick="closeTagDetail()">
+  <div class="detail-dialog" onclick="event.stopPropagation()">
+    <div class="detail-dialog-header">
+      <h3 id="tagDetailTitle">标签详情</h3>
+      <button class="detail-dialog-close" onclick="closeTagDetail()">&#10005;</button>
+    </div>
+    <div class="detail-dialog-body" id="tagDetailBody">
+      <!-- JS rendered -->
+    </div>
+  </div>
+</div>
+
+<!-- ======== PRD Panel ======== -->
+<div class="prd-panel" data-prd-key="tag-mgmt" data-prd-version="1" data-prd-view="overview">
+  <div class="prd-title" contenteditable="true">自动化标签管理 PRD</div>
+
+  <div class="prd-context-hint" id="prdContextHint">当前视图：标签总览</div>
+
+  <!-- 通用 Section -->
+  <div class="prd-section" id="prd-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-item">让运营人员能<strong>查看标签体系 + 管理自动打标规则 + 编辑规则条件</strong></div>
+    <div class="prd-item">标签来源：CDP 标签体系框架，6 大类 60+ 标签</div>
+    <div class="prd-item">规则来源：自动打标规则库，25 条规则（本页展示 15 条）</div>
+    <div class="prd-item">三个视图：标签总览（默认）/ 规则管理 / 规则编辑器（Drawer）</div>
+  </div>
+
+  <!-- Overview 视图 -->
+  <div class="prd-section" data-prd-context="overview" id="prd-s2">
+    <div class="prd-section-title green">2. 标签总览</div>
+    <div class="prd-label">统计栏</div>
+    <div class="prd-item">4 个指标：总标签数 / 已启用规则数 / 今日更新标签数 / 覆盖率</div>
+    <div class="prd-label">分类 Tab</div>
+    <div class="prd-item">6 个分类：身份(14) / 行为(10) / 交易(10) / 生命周期(8) / 偏好(8) / 社交(8)</div>
+    <div class="prd-item">Tab 切换刷新卡片列表</div>
+    <div class="prd-label">标签卡片</div>
+    <div class="prd-item">Grid 布局每行 3 张</div>
+    <div class="prd-item">卡片信息：标签名 / 代码 / 取值范围 / 更新频率 / 关联规则数</div>
+    <div class="prd-item">点击卡片 → 弹出标签详情弹窗</div>
+  </div>
+
+  <!-- Rules 视图 -->
+  <div class="prd-section" data-prd-context="rules" id="prd-s3">
+    <div class="prd-section-title blue">3. 规则管理</div>
+    <div class="prd-label">表格列</div>
+    <div class="prd-item">规则名 / 标签分类 / 打标结果 / 条件摘要 / 频率 / 优先级 / 状态 / 操作</div>
+    <div class="prd-label">筛选</div>
+    <div class="prd-item">搜索框 + 分类下拉 + 状态下拉（启用/禁用/全部）</div>
+    <div class="prd-label">操作</div>
+    <div class="prd-item">编辑 → 打开规则编辑器 Drawer</div>
+    <div class="prd-item">复制 → 以副本方式打开</div>
+    <div class="prd-item">删除 → 确认后删除</div>
+    <div class="prd-item">状态 Toggle 开关 → 启用/禁用</div>
+  </div>
+
+  <!-- Editor 视图 -->
+  <div class="prd-section" data-prd-context="editor" id="prd-s4">
+    <div class="prd-section-title green">4. 规则编辑器</div>
+    <div class="prd-label">基本信息</div>
+    <div class="prd-item">规则名称（必填）+ 规则描述（可选）</div>
+    <div class="prd-label">标签配置</div>
+    <div class="prd-item">分类 → 标签代码 → 标签值 三级联动</div>
+    <div class="prd-label">触发条件</div>
+    <div class="prd-item">属性条件 + 事件条件，组内 AND/OR，组间 且/或/且非</div>
+    <div class="prd-label">自动移除条件（可选折叠）</div>
+    <div class="prd-item">同样的条件构建器，当条件满足时自动移除标签</div>
+    <div class="prd-label">执行配置</div>
+    <div class="prd-item">计算频率：实时 / 每日 / 每周</div>
+    <div class="prd-item">优先级：数字越小越优先（默认 10）</div>
+    <div class="prd-item">冷却期：天数，防止频繁打标</div>
+  </div>
+
+  <div class="prd-section" id="prd-s5">
+    <div class="prd-section-title red">5. 校验规则</div>
+    <div class="prd-item">规则名称不能为空</div>
+    <div class="prd-item">必须选择标签分类和标签代码</div>
+    <div class="prd-item">触发条件至少有一个条件组</div>
+    <div class="prd-item">条件组内至少有一个条件</div>
+    <div class="prd-item">同一标签+标签值不能有重复的启用规则</div>
+  </div>
+
+  <div class="prd-section" id="prd-s6">
+    <div class="prd-section-title blue">6. 交互规则</div>
+    <div class="prd-item">编辑规则 → 预填已有数据</div>
+    <div class="prd-item">删除规则 → 二次确认弹窗</div>
+    <div class="prd-item">Toggle 状态 → Toast 提示</div>
+    <div class="prd-item">保存规则 → 校验 → Toast 成功/失败</div>
+    <div class="prd-item">预估匹配人数：基于条件模拟计算</div>
+    <div class="prd-item">标签详情弹窗：展示取值分布 + 关联规则列表</div>
+  </div>
+</div>
+
+<script src="prd-editor.js"></script>
+<script>
+// ================================================================
+//  Mock Data
+// ================================================================
+
+var tagData = {
+  identity: [
+    { name: '会员等级', code: 'id_member_level', values: '体验会员 / 正式会员 / 老会员(续费>=2次)', source: '鱼丸系统', freq: '实时', rules: 2 },
+    { name: '入圈期数', code: 'id_member_period', values: '第 8 期、第 9 期', source: '鱼丸系统', freq: '订单触发', rules: 0 },
+    { name: '客户等级', code: 'id_customer_level', values: 'S / A / B / C / D', source: 'CRM 系统', freq: '手动/规则', rules: 1 },
+    { name: '社群角色', code: 'id_role', values: '普通圈友 / 传术师 / 航海家 / 管理员', source: '鱼丸系统', freq: '系统同步', rules: 1 },
+    { name: '来源渠道', code: 'id_source_channel', values: '视频号 / 公众号 / 合作导流 / 小红书', source: 'CRM 系统', freq: '首次添加', rules: 0 },
+    { name: '来源类型', code: 'id_source_type', values: '自然流量 / 付费投放 / KOC推荐 / 老带新', source: 'CRM 系统', freq: '首次添加', rules: 0 },
+    { name: '推荐人', code: 'id_referrer', values: '用户ID/昵称', source: 'CRM 系统', freq: '首次添加', rules: 1 },
+    { name: '专属销售', code: 'id_sales_owner', values: '员工名', source: 'CRM 系统', freq: '分配时', rules: 0 },
+    { name: '专属服务', code: 'id_service_owner', values: '员工名', source: 'CRM 系统', freq: '分配时', rules: 0 },
+    { name: '好友状态', code: 'id_wechat_status', values: '好友 / 客户删除 / 随身删除 / 未添加', source: '企微同步', freq: '实时', rules: 1 },
+    { name: '体验营期数', code: 'id_trial_batch', values: '9体139 / 9体137', source: 'CRM 系统', freq: '报名时', rules: 0 },
+    { name: '所在城市', code: 'id_region', values: '北京、上海、深圳', source: '体验营调研', freq: '填写时', rules: 0 },
+    { name: '职业类型', code: 'id_occupation', values: '互联网 / 金融 / 自由职业 / 实体经营', source: '体验营调研', freq: '填写时', rules: 0 },
+    { name: '收入层级', code: 'id_income_tier', values: '<10w / 10-30w / 30-50w / 50-100w / >100w', source: '体验营调研', freq: '填写时', rules: 0 }
+  ],
+  behavioral: [
+    { name: '登录频率', code: 'beh_login_freq', values: '高频(>=20天) / 中频(10-19) / 低频(3-9) / 极低(<3)', source: '行为事件', freq: '每日', rules: 2, distribution: [{label:'高频',pct:15},{label:'中频',pct:28},{label:'低频',pct:35},{label:'极低',pct:22}] },
+    { name: '内容消费深度', code: 'beh_content_depth', values: '深度读者 / 浏览型 / 低消费', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '内容创作者', code: 'beh_content_creator', values: '高产(>=10篇) / 活跃(3-9) / 偶尔(1-2) / 未发帖', source: '行为事件', freq: '每日', rules: 2 },
+    { name: '互动活跃度', code: 'beh_interaction_level', values: '高互动(>=30) / 中互动(10-29) / 低互动(1-9) / 零互动', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '航海参与', code: 'beh_voyage_active', values: '航海达人(>=3次) / 体验过(1-2) / 从未参加', source: '行为事件', freq: '每日', rules: 1 }
+  ],
+  transactional: [
+    { name: '累计消费金额', code: 'txn_total_spent', values: '高消费(>=10000) / 中(3000-9999) / 低(<3000)', source: '订单系统', freq: '支付触发', rules: 1 },
+    { name: '购买次数', code: 'txn_purchase_count', values: '多次(>=5) / 几次(2-4) / 首次(1)', source: '订单系统', freq: '支付触发', rules: 0 },
+    { name: '续费次数', code: 'txn_renewal_count', values: '0 / 1 / 2 / 3+', source: '订单系统', freq: '续费触发', rules: 2 },
+    { name: '续费状态', code: 'txn_renewal_status', values: '首年 / 已续费 / 待续费 / 已过期', source: '订单系统', freq: '每日', rules: 3 },
+    { name: '到期倒计时', code: 'txn_expire_countdown', values: '具体天数（负数=已过期天数）', source: '订单系统', freq: '每日', rules: 2 }
+  ],
+  lifecycle: [
+    { name: '生命周期阶段', code: 'lc_stage', values: 'visitor / prospect / trial / paid / active / core / silent / churn_risk', source: '模型计算', freq: '每日', rules: 3 },
+    { name: '健康度等级', code: 'lc_health', values: '健康(>=80) / 良好(60-79) / 一般(40-59) / 风险(20-39) / 危险(<20)', source: '评分引擎', freq: '每日', rules: 1 },
+    { name: '流失风险', code: 'lc_churn_risk', values: '高风险 / 中风险 / 低风险 / 无风险', source: '评分引擎', freq: '每日', rules: 3, distribution: [{label:'高风险',pct:8},{label:'中风险',pct:15},{label:'低风险',pct:32},{label:'无风险',pct:45}] },
+    { name: '参与度层级', code: 'lc_engagement_tier', values: 'L1核心 / L2活跃 / L3参与 / L4浏览 / L5沉默', source: '评分引擎', freq: '每日', rules: 1 },
+    { name: '成长趋势', code: 'lc_growth_trend', values: '上升 / 平稳 / 下降 / 急降', source: '模型计算', freq: '每周', rules: 2 },
+    { name: '新手引导状态', code: 'lc_onboarding', values: '已完成 / 进行中 / 未开始 / 不适用', source: '任务系统', freq: '实时', rules: 1 },
+    { name: 'RFM 分群', code: 'lc_rfm_segment', values: 'champion / loyal / potential / new / attention / about_to_sleep / hibernating / lost', source: '评分引擎', freq: '每日', rules: 0 },
+    { name: '续费窗口', code: 'lc_renewal_window', values: '黄金期 / 紧迫期 / 最后期 / 已过期 / 不适用', source: '模型计算', freq: '每日', rules: 3 }
+  ],
+  preference: [
+    { name: '偏好话题 TOP3', code: 'pref_top_topics', values: '短视频 / 电商 / 自媒体 / AI应用', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '内容格式偏好', code: 'pref_content_format', values: '长文 / 短帖 / 直播 / 航海项目', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '学习阶段', code: 'pref_learning_stage', values: '入门探索 / 方向选择 / 深度实践 / 经验分享', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '赚钱方向兴趣', code: 'pref_earning_interest', values: '短视频带货 / 知识付费 / 跨境电商 / 本地生活', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '社群参与风格', code: 'pref_community_style', values: '内容创作者 / 互动者 / 潜水者 / 求助者', source: '行为分析', freq: '每月', rules: 1 }
+  ],
+  social: [
+    { name: '推荐人数', code: 'soc_referral_count', values: '超级推荐人(>=10) / 活跃推荐(3-9) / 有推荐(1-2) / 无推荐', source: 'CRM 系统', freq: '推荐触发', rules: 1 },
+    { name: '社群影响力', code: 'soc_influence_score', values: '高(Top10%) / 中(Top30%) / 低(Bottom70%)', source: '行为聚合', freq: '每周', rules: 1 },
+    { name: '评论回复率', code: 'soc_reply_ratio', values: '高互动(>5) / 中(1-5) / 低(<1)', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '社交圈规模', code: 'soc_network_size', values: '广泛(>50人) / 适中(10-50) / 窄(1-9) / 孤立', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '分销身份', code: 'soc_is_distributor', values: '是 / 否', source: 'CRM 系统', freq: '—', rules: 0 }
+  ]
+};
+
+var rulesData = [
+  { id: 1, name: '沉默用户', category: '行为标签', result: 'beh_silent: 30天沉默', condition: '付费会员 AND 近30天无有效行为', freq: '每日', priority: 5, enabled: true },
+  { id: 2, name: '深度沉默', category: '行为标签', result: 'beh_silent: 60天沉默', condition: '付费会员 AND 近60天无有效行为', freq: '每日', priority: 4, enabled: true },
+  { id: 3, name: '疑似放弃', category: '行为标签', result: 'beh_silent: 90天沉默', condition: '付费会员 AND 近90天无有效行为', freq: '每日', priority: 3, enabled: true },
+  { id: 4, name: '活跃回归', category: '生命周期', result: 'lc_growth_trend: 回归活跃', condition: '曾沉默 AND 近7天有效行为>=3天', freq: '每日', priority: 10, enabled: true },
+  { id: 5, name: '新人黄金期', category: '生命周期', result: 'lc_onboarding: 新手引导中', condition: '注册<=7天 AND 新手任务<80%', freq: '实时', priority: 8, enabled: true },
+  { id: 6, name: '续费窗口-黄金期', category: '生命周期', result: 'lc_renewal_window: 黄金期', condition: '到期前60-30天 AND 续费倾向>=60', freq: '每日', priority: 6, enabled: true },
+  { id: 7, name: '续费风险', category: '生命周期', result: 'lc_churn_risk: 续费风险', condition: '到期前30天 AND 未续费 AND 倾向<50', freq: '每日', priority: 5, enabled: true },
+  { id: 8, name: '续费紧迫', category: '生命周期', result: 'lc_churn_risk: 续费紧迫', condition: '到期前7天 AND 未续费', freq: '每日', priority: 3, enabled: true },
+  { id: 9, name: '到期未续', category: '交易标签', result: 'txn_renewal_status: 已过期待挽回', condition: '已过期 AND 过期<=30天', freq: '每日', priority: 4, enabled: true },
+  { id: 10, name: '续费老客', category: '交易标签', result: 'txn_renewal_count: 忠实老客', condition: '续费次数>=2', freq: '支付触发', priority: 10, enabled: true },
+  { id: 11, name: '内容创作者', category: '行为标签', result: 'beh_content_creator: 活跃创作者', condition: '近30天发帖>=5篇', freq: '每日', priority: 10, enabled: true },
+  { id: 12, name: '精华作者', category: '行为标签', result: 'beh_content_creator: 精华作者', condition: '近90天精华帖>=3篇', freq: '每周', priority: 10, enabled: true },
+  { id: 13, name: '航海达人', category: '行为标签', result: 'beh_voyage_active: 航海达人', condition: '近180天航海>=3次', freq: '每周', priority: 10, enabled: false },
+  { id: 14, name: '超级推荐人', category: '社交标签', result: 'soc_referral_count: 超级推荐人', condition: '累计推荐付费用户>=5人', freq: '推荐触发', priority: 10, enabled: true },
+  { id: 15, name: '参与度急降', category: '生命周期', result: 'lc_growth_trend: 急降', condition: '近30天参与度比前30天下降>=40%', freq: '每周', priority: 5, enabled: true }
+];
+
+var tagDetailData = {
+  'beh_login_freq': { distribution: [{label:'高频(>=20天)',pct:15,color:'#36A590'},{label:'中频(10-19天)',pct:28,color:'#51B7A1'},{label:'低频(3-9天)',pct:35,color:'#FA9A1D'},{label:'极低(<3天)',pct:22,color:'#F54A45'}], rules: ['沉默用户（30天无行为）','深度沉默（60天无行为）'], lastUpdate: '2026-03-12 08:00' },
+  'lc_churn_risk': { distribution: [{label:'高风险',pct:8,color:'#F54A45'},{label:'中风险',pct:15,color:'#FA9A1D'},{label:'低风险',pct:32,color:'#51B7A1'},{label:'无风险',pct:45,color:'#36A590'}], rules: ['续费风险','续费紧迫','续费窗口-黄金期'], lastUpdate: '2026-03-12 08:00' }
+};
+
+// ================================================================
+//  View Switching
+// ================================================================
+
+function switchView(view) {
+  document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.view-overview, .view-rules').forEach(function(v) { v.classList.remove('active'); });
+  if (view === 'overview') {
+    document.querySelectorAll('.view-tab')[0].classList.add('active');
+    document.getElementById('viewOverview').classList.add('active');
+  } else {
+    document.querySelectorAll('.view-tab')[1].classList.add('active');
+    document.getElementById('viewRules').classList.add('active');
+  }
+  // PRD context
+  var prdPanel = document.querySelector('.prd-panel');
+  if (prdPanel) {
+    prdPanel.setAttribute('data-prd-view', view);
+    var hint = document.getElementById('prdContextHint');
+    if (hint) hint.textContent = '当前视图：' + (view === 'overview' ? '标签总览' : '规则管理');
+  }
+}
+
+// ================================================================
+//  Category Tabs
+// ================================================================
+
+function switchCategory(cat) {
+  document.querySelectorAll('.category-tab').forEach(function(t) { t.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  renderTagCards(cat);
+}
+
+function renderTagCards(cat) {
+  var grid = document.getElementById('tagCardsGrid');
+  var tags = tagData[cat] || [];
+  grid.innerHTML = '';
+  tags.forEach(function(tag) {
+    var card = document.createElement('div');
+    card.className = 'tag-card';
+    card.onclick = function() { openTagDetail(cat, tag); };
+    card.innerHTML =
+      '<div class="tag-card-header">' +
+        '<span class="tag-card-name">' + tag.name + '</span>' +
+        '<span class="tag-card-code">' + tag.code + '</span>' +
+      '</div>' +
+      '<div class="tag-card-values">' + tag.values + '</div>' +
+      '<div class="tag-card-meta">' +
+        '<span class="tag-card-meta-item">&#128337; ' + tag.freq + '</span>' +
+        '<span class="tag-card-meta-item">&#128196; ' + tag.source + '</span>' +
+        (tag.rules > 0 ? '<span class="tag-card-meta-item tag-card-rules">&#9881; ' + tag.rules + ' 条规则</span>' : '') +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ================================================================
+//  Tag Detail Dialog
+// ================================================================
+
+function openTagDetail(cat, tag) {
+  var overlay = document.getElementById('tagDetailOverlay');
+  var title = document.getElementById('tagDetailTitle');
+  var body = document.getElementById('tagDetailBody');
+
+  title.textContent = tag.name;
+
+  var catNames = { identity: '身份标签', behavioral: '行为标签', transactional: '交易标签', lifecycle: '生命周期', preference: '偏好标签', social: '社交标签' };
+
+  var html = '<div class="detail-section">' +
+    '<div class="detail-section-title">基本信息</div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">标签代码</span><span class="detail-info-value" style="font-family:monospace;">' + tag.code + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">标签分类</span><span class="detail-info-value">' + (catNames[cat] || cat) + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">数据来源</span><span class="detail-info-value">' + tag.source + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">更新频率</span><span class="detail-info-value">' + tag.freq + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">取值范围</span><span class="detail-info-value" style="font-size:12px;max-width:240px;word-break:break-all;">' + tag.values + '</span></div>' +
+  '</div>';
+
+  // Distribution
+  var detail = tagDetailData[tag.code];
+  if (detail && detail.distribution) {
+    html += '<div class="detail-section"><div class="detail-section-title">取值分布</div>';
+    detail.distribution.forEach(function(d) {
+      html += '<div class="distribution-item">' +
+        '<span class="distribution-label">' + d.label + '</span>' +
+        '<div class="distribution-bar-bg"><div class="distribution-bar-fill" style="width:' + d.pct + '%;background:' + d.color + ';"></div></div>' +
+        '<span class="distribution-pct">' + d.pct + '%</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  } else {
+    // Generate mock distribution
+    var vals = tag.values.split(' / ');
+    if (vals.length >= 2 && vals.length <= 6) {
+      var colors = ['#36A590','#51B7A1','#FA9A1D','#F54A45','#327CFB','#757980'];
+      var pcts = [];
+      var remain = 100;
+      for (var i = 0; i < vals.length - 1; i++) {
+        var p = Math.floor(Math.random() * (remain / (vals.length - i) * 1.5)) + 5;
+        pcts.push(p);
+        remain -= p;
+      }
+      pcts.push(remain);
+      html += '<div class="detail-section"><div class="detail-section-title">取值分布</div>';
+      vals.forEach(function(v, idx) {
+        html += '<div class="distribution-item">' +
+          '<span class="distribution-label">' + v.trim() + '</span>' +
+          '<div class="distribution-bar-bg"><div class="distribution-bar-fill" style="width:' + pcts[idx] + '%;background:' + colors[idx % colors.length] + ';"></div></div>' +
+          '<span class="distribution-pct">' + pcts[idx] + '%</span>' +
+        '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  // Related rules
+  if (tag.rules > 0) {
+    html += '<div class="detail-section"><div class="detail-section-title">关联规则</div><ul class="detail-rule-list">';
+    if (detail && detail.rules) {
+      detail.rules.forEach(function(r) {
+        html += '<li class="detail-rule-item"><span class="detail-rule-dot"></span>' + r + '</li>';
+      });
+    } else {
+      for (var j = 0; j < tag.rules; j++) {
+        html += '<li class="detail-rule-item"><span class="detail-rule-dot"></span>规则 ' + (j+1) + '</li>';
+      }
+    }
+    html += '</ul></div>';
+  }
+
+  // Last update
+  html += '<div class="detail-section">' +
+    '<div class="detail-info-row"><span class="detail-info-label">最近更新</span><span class="detail-info-value" style="color:var(--color-text-3);">' + (detail ? detail.lastUpdate : '2026-03-12 08:00') + '</span></div>' +
+  '</div>';
+
+  body.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+function closeTagDetail() {
+  document.getElementById('tagDetailOverlay').classList.remove('show');
+}
+
+// ================================================================
+//  Rules Table
+// ================================================================
+
+function renderRulesTable() {
+  var tbody = document.getElementById('rulesTableBody');
+  tbody.innerHTML = '';
+  rulesData.forEach(function(rule) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><a class="name-link" onclick="openRuleEditor(\'edit\', ' + rule.id + ')">' + rule.name + '</a></td>' +
+      '<td><span class="tag tag-default">' + rule.category + '</span></td>' +
+      '<td><span style="font-family:monospace;font-size:12px;color:var(--color-text-2);">' + rule.result + '</span></td>' +
+      '<td><span class="cell-desc">' + rule.condition + '</span></td>' +
+      '<td>' + rule.freq + '</td>' +
+      '<td style="text-align:center;">' + rule.priority + '</td>' +
+      '<td><label class="toggle-switch"><input type="checkbox" ' + (rule.enabled ? 'checked' : '') + ' onchange="toggleRuleStatus(' + rule.id + ', this.checked)"><span class="toggle-slider"></span></label></td>' +
+      '<td style="text-align:center;">' +
+        '<button class="btn btn-text" onclick="openRuleEditor(\'edit\', ' + rule.id + ')">编辑</button>' +
+        '<button class="btn btn-text" onclick="copyRule(' + rule.id + ')">复制</button>' +
+        '<button class="btn btn-danger-text" onclick="deleteRule(' + rule.id + ')">删除</button>' +
+      '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleRuleStatus(id, enabled) {
+  rulesData.forEach(function(r) { if (r.id === id) r.enabled = enabled; });
+  showToast(enabled ? '规则已启用' : '规则已禁用');
+}
+
+function copyRule(id) {
+  showToast('规则已复制');
+}
+
+function deleteRule(id) {
+  if (!confirm('确定要删除此规则？')) return;
+  rulesData = rulesData.filter(function(r) { return r.id !== id; });
+  renderRulesTable();
+  showToast('规则已删除');
+}
+
+// ================================================================
+//  Rule Editor
+// ================================================================
+
+var triggerGroups = [];
+var removeGroups = [];
+var currentEditRuleId = null;
+
+var tagCodeOptions = {
+  identity: ['id_member_level','id_member_period','id_customer_level','id_role','id_source_channel','id_wechat_status'],
+  behavioral: ['beh_login_freq','beh_content_depth','beh_content_creator','beh_interaction_level','beh_voyage_active','beh_silent_days'],
+  transactional: ['txn_total_spent','txn_purchase_count','txn_renewal_count','txn_renewal_status','txn_expire_countdown'],
+  lifecycle: ['lc_stage','lc_health','lc_churn_risk','lc_engagement_tier','lc_growth_trend','lc_onboarding','lc_renewal_window'],
+  preference: ['pref_top_topics','pref_content_format','pref_learning_stage','pref_community_style'],
+  social: ['soc_referral_count','soc_influence_score','soc_is_distributor']
+};
+
+var editPresets = {
+  1: { name: '沉默用户', desc: '识别30天无有效行为的付费会员，自动打标为沉默用户', category: 'behavioral', code: 'beh_silent_days', value: '30天沉默', freq: 'daily', priority: 5, cooldown: 7, groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '会员状态', op: '等于', val: '付费会员' },{ type: 'event', action: '没做过', event: '任意有效行为', count: '1', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '任意有效行为', count: '1', window: '近 7 天' }] }] },
+  7: { name: '续费风险', desc: '到期前30天且续费倾向分低于50的会员', category: 'lifecycle', code: 'lc_churn_risk', value: '续费风险', freq: 'daily', priority: 5, cooldown: '', groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '到期倒计时', op: '小于等于', val: '30' },{ type: 'attribute', dim: '续费状态', op: '等于', val: '未续费' },{ type: 'attribute', dim: '续费倾向分', op: '小于', val: '50' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '续费成功', count: '1', window: '全部时间' }] }] },
+  11: { name: '内容创作者', desc: '近30天发帖5篇以上的活跃创作者', category: 'behavioral', code: 'beh_content_creator', value: '活跃创作者', freq: 'daily', priority: 10, cooldown: '', groups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '5', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '2', window: '近 30 天' }] }] }
+};
+
+function openRuleEditor(mode, ruleId) {
+  currentEditRuleId = ruleId || null;
+  var overlay = document.getElementById('ruleEditorOverlay');
+  var title = document.getElementById('ruleEditorTitle');
+  title.textContent = mode === 'edit' ? '编辑规则' : '新建规则';
+
+  // Reset
+  document.getElementById('ruleName').value = '';
+  document.getElementById('ruleDesc').value = '';
+  document.getElementById('tagCategory').value = '';
+  document.getElementById('tagCode').innerHTML = '<option value="">请先选择分类</option>';
+  document.getElementById('tagValue').value = '';
+  document.getElementById('rulePriority').value = '10';
+  document.getElementById('ruleCooldown').value = '';
+  document.querySelectorAll('input[name="freq"]').forEach(function(r) { r.checked = r.value === 'daily'; });
+  document.getElementById('estimateCount').textContent = '--';
+
+  // Reset groups
+  triggerGroups = [];
+  removeGroups = [];
+
+  if (mode === 'edit' && editPresets[ruleId]) {
+    var preset = editPresets[ruleId];
+    document.getElementById('ruleName').value = preset.name;
+    document.getElementById('ruleDesc').value = preset.desc;
+    document.getElementById('tagCategory').value = preset.category;
+    onTagCategoryChange();
+    document.getElementById('tagCode').value = preset.code;
+    document.getElementById('tagValue').value = preset.value;
+    document.getElementById('rulePriority').value = preset.priority;
+    document.getElementById('ruleCooldown').value = preset.cooldown;
+    document.querySelectorAll('input[name="freq"]').forEach(function(r) { r.checked = r.value === preset.freq; });
+    triggerGroups = JSON.parse(JSON.stringify(preset.groups || []));
+    removeGroups = JSON.parse(JSON.stringify(preset.removeGroups || []));
+
+    // Show remove section if has data
+    if (removeGroups.length > 0) {
+      document.querySelector('.rb-collapsible-header').classList.remove('collapsed');
+      document.getElementById('removeConditionsBody').classList.remove('collapsed');
+    } else {
+      document.querySelector('.rb-collapsible-header').classList.add('collapsed');
+      document.getElementById('removeConditionsBody').classList.add('collapsed');
+    }
+
+    estimateMatch();
+  } else {
+    // Default: 1 empty group
+    triggerGroups = [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '', op: '等于', val: '' }] }];
+    document.querySelector('.rb-collapsible-header').classList.add('collapsed');
+    document.getElementById('removeConditionsBody').classList.add('collapsed');
+  }
+
+  renderGroups('trigger');
+  renderGroups('remove');
+  overlay.classList.add('show');
+
+  // PRD context
+  var prdPanel = document.querySelector('.prd-panel');
+  if (prdPanel) {
+    prdPanel.setAttribute('data-prd-view', 'editor');
+    var hint = document.getElementById('prdContextHint');
+    if (hint) hint.textContent = '当前视图：规则编辑器';
+  }
+}
+
+function closeRuleEditor() {
+  var overlay = document.getElementById('ruleEditorOverlay');
+  overlay.classList.add('hiding');
+  setTimeout(function() {
+    overlay.classList.remove('show', 'hiding');
+    // Restore PRD context
+    var activeTab = document.querySelector('.view-tab.active');
+    var view = activeTab && activeTab.textContent.includes('规则') ? 'rules' : 'overview';
+    var prdPanel = document.querySelector('.prd-panel');
+    if (prdPanel) {
+      prdPanel.setAttribute('data-prd-view', view);
+      var hint = document.getElementById('prdContextHint');
+      if (hint) hint.textContent = '当前视图：' + (view === 'rules' ? '规则管理' : '标签总览');
+    }
+  }, 200);
+}
+
+// ================================================================
+//  Condition Groups
+// ================================================================
+
+function renderGroups(section) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  var container = document.getElementById(section + 'GroupsContainer');
+  container.innerHTML = '';
+
+  groups.forEach(function(group, gi) {
+    if (gi > 0) {
+      var connector = document.createElement('div');
+      connector.className = 'rb-group-connector';
+      connector.innerHTML = '<select class="rb-group-connector-select" onchange="updateGroupConnector(\'' + section + '\', ' + gi + ', this.value)">' +
+        '<option value="AND">且 (AND)</option><option value="OR">或 (OR)</option><option value="AND_NOT">且非 (NOT)</option></select>';
+      container.appendChild(connector);
+    }
+
+    var groupEl = document.createElement('div');
+    groupEl.className = 'rb-group';
+
+    var header = '<div class="rb-group-header"><div class="rb-group-header-left">条件组 ' + (gi + 1) +
+      ' <select class="rb-group-logic-select" onchange="updateGroupLogic(\'' + section + '\', ' + gi + ', this.value)">' +
+      '<option value="AND"' + (group.logic === 'AND' ? ' selected' : '') + '>且 (AND)</option>' +
+      '<option value="OR"' + (group.logic === 'OR' ? ' selected' : '') + '>或 (OR)</option></select></div>' +
+      '<button class="rb-group-delete" onclick="removeGroup(\'' + section + '\', ' + gi + ')" title="删除条件组">&#10005;</button></div>';
+
+    var body = '<div class="rb-group-body">';
+    group.conditions.forEach(function(cond, ci) {
+      if (ci > 0) {
+        body += '<div class="rb-logic-connector">' + (group.logic === 'AND' ? '且' : '或') + '</div>';
+      }
+      body += renderConditionRow(section, gi, ci, cond);
+    });
+    body += '<button class="rb-add-condition" onclick="addCondition(\'' + section + '\', ' + gi + ')">+ 添加条件</button>';
+    body += '</div>';
+
+    groupEl.innerHTML = header + body;
+    container.appendChild(groupEl);
+  });
+}
+
+function renderConditionRow(section, gi, ci, cond) {
+  var html = '<div class="rb-condition-row">';
+  html += '<select class="rb-condition-select type-select" onchange="switchConditionType(\'' + section + '\', ' + gi + ', ' + ci + ', this.value)">' +
+    '<option value="attribute"' + (cond.type === 'attribute' ? ' selected' : '') + '>属性</option>' +
+    '<option value="event"' + (cond.type === 'event' ? ' selected' : '') + '>事件</option></select>';
+
+  if (cond.type === 'attribute') {
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.dim || '选择属性') + '</option><option>会员状态</option><option>客户等级</option><option>续费状态</option><option>续费倾向分</option><option>到期倒计时</option><option>沉默天数</option><option>登录天数</option><option>入圈期数</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>大于</option><option>小于</option><option>大于等于</option><option>小于等于</option><option>包含</option></select>';
+    html += '<input class="rb-condition-input" style="width:100px;" value="' + (cond.val || '') + '" placeholder="值">';
+  } else {
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.action || '做过') + '</option><option>做过</option><option>没做过</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.event || '选择事件') + '</option><option>登录</option><option>阅读</option><option>发帖</option><option>评论</option><option>点赞</option><option>参加航海</option><option>观看直播</option><option>续费成功</option><option>任意有效行为</option></select>';
+    html += '<span class="rb-condition-text">≥</span>';
+    html += '<input class="rb-condition-input" style="width:50px;" value="' + (cond.count || '1') + '">';
+    html += '<span class="rb-condition-text">次</span>';
+    html += '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option>' + (cond.window || '近 30 天') + '</option><option>近 7 天</option><option>近 30 天</option><option>近 90 天</option><option>近 180 天</option><option>全部时间</option></select>';
+  }
+
+  html += '<button class="rb-condition-remove" onclick="removeCondition(\'' + section + '\', ' + gi + ', ' + ci + ')">&#10005;</button>';
+  html += '</div>';
+  return html;
+}
+
+function addGroup(section) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups.push({ logic: 'AND', conditions: [{ type: 'attribute', dim: '', op: '等于', val: '' }] });
+  renderGroups(section);
+}
+
+function removeGroup(section, gi) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  if (groups.length <= 1 && section === 'trigger') { showToast('至少保留一个条件组'); return; }
+  groups.splice(gi, 1);
+  renderGroups(section);
+}
+
+function addCondition(section, gi) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].conditions.push({ type: 'attribute', dim: '', op: '等于', val: '' });
+  renderGroups(section);
+}
+
+function removeCondition(section, gi, ci) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  if (groups[gi].conditions.length <= 1) { showToast('至少保留一个条件'); return; }
+  groups[gi].conditions.splice(ci, 1);
+  renderGroups(section);
+}
+
+function switchConditionType(section, gi, ci, type) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].conditions[ci] = { type: type };
+  renderGroups(section);
+}
+
+function updateGroupLogic(section, gi, logic) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].logic = logic;
+  renderGroups(section);
+}
+
+function updateGroupConnector(section, gi, val) {}
+
+// ================================================================
+//  Tag Config Cascading
+// ================================================================
+
+function onTagCategoryChange() {
+  var cat = document.getElementById('tagCategory').value;
+  var codeSelect = document.getElementById('tagCode');
+  codeSelect.innerHTML = '<option value="">请选择标签代码</option>';
+  if (cat && tagCodeOptions[cat]) {
+    tagCodeOptions[cat].forEach(function(code) {
+      codeSelect.innerHTML += '<option value="' + code + '">' + code + '</option>';
+    });
+  }
+}
+
+function onTagCodeChange() {}
+
+// ================================================================
+//  Collapsible
+// ================================================================
+
+function toggleRemoveSection() {
+  var header = document.querySelector('.rb-collapsible-header');
+  var body = document.getElementById('removeConditionsBody');
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+  if (!body.classList.contains('collapsed') && removeGroups.length === 0) {
+    removeGroups = [{ logic: 'AND', conditions: [{ type: 'event', dim: '', op: '', val: '' }] }];
+    renderGroups('remove');
+  }
+}
+
+// ================================================================
+//  Estimate & Save
+// ================================================================
+
+function estimateMatch() {
+  var count = Math.floor(Math.random() * 3000) + 200;
+  document.getElementById('estimateCount').textContent = count.toLocaleString();
+}
+
+function saveRule() {
+  var name = document.getElementById('ruleName').value.trim();
+  if (!name) { showToast('请输入规则名称'); return; }
+  var cat = document.getElementById('tagCategory').value;
+  if (!cat) { showToast('请选择标签分类'); return; }
+  showToast('规则已保存');
+  closeRuleEditor();
+}
+
+// ================================================================
+//  PRD & Toast
+// ================================================================
+
+function togglePRD() {
+  document.body.classList.toggle('prd-on');
+}
+
+function showToast(msg) {
+  var existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 1300);
+}
+
+// ================================================================
+//  Init
+// ================================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderTagCards('identity');
+  renderRulesTable();
+});
+</script>
+</body>
+</html>
