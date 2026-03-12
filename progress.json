@@ -104,11 +104,11 @@
         "编辑模式预填数据正确"
       ],
       "priority": 6,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [5],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:34:00+08:00",
+      "completed_at": "2026-03-12T15:35:00+08:00",
+      "notes": "完整JS交互：open/close动画、条件增删、标签联动、折叠、预估、3条预填数据"
     },
     {
       "id": 7,
