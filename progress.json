@@ -31,11 +31,11 @@
         "Tab上显示标签计数"
       ],
       "priority": 2,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [1],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:30:00+08:00",
+      "completed_at": "2026-03-12T15:31:00+08:00",
+      "notes": "4个统计卡片+6个分类Tab+switchCategory JS"
     },
     {
       "id": 3,
