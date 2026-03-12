@@ -106,6 +106,32 @@
     align-items: flex-start;
     gap: 16px;
   }
+  /* PRD 面板默认隐藏，点击按钮触发 */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
   .scene-col {
     display: flex;
     flex-direction: column;
@@ -118,19 +144,22 @@
     margin-top: var(--space-lg);
   }
 
-  /* PRD 面板：页面特定布局覆盖（基础样式见 prd-editor.css） */
+  /* PRD 面板：默认隐藏，body.prd-on 时显示 */
   .prd-panel {
     width: 320px;
     background: #F2F5F7;
     border-radius: var(--radius-card);
     padding: 16px;
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 10px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     flex-shrink: 0;
   }
+  body.prd-on .prd-panel { display: flex; }
+  body.prd-on .prd-panel[data-prd-tab] { display: none; }
+  body.prd-on .prd-panel[data-prd-tab].active { display: flex; }
 
   /* ===== 侧边栏容器（自适应宽度） ===== */
   .sidebar-frame {
@@ -1044,6 +1073,34 @@
     white-space: nowrap;
   }
 
+  /* 推荐人/分销人信息 */
+  .recommender-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .recommender-avatar {
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    color: var(--color-primary-7);
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .recommender-name {
+    font-size: 13px;
+    color: var(--color-text-1);
+  }
+  .recommender-star {
+    font-size: 11px;
+    color: var(--color-text-3);
+  }
+
   /* ===== 第五区：体验营调研（加强样式） ===== */
   .survey-card {
     margin: 0 16px 0;
@@ -1651,14 +1708,17 @@
   /* ===== Tab 内容切换 ===== */
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .prd-panel[data-prd-tab] { display: none; }
-  .prd-panel[data-prd-tab].active { display: flex; }
+  /* 旧规则已移至 body.prd-on 块内 */
 </style>
 </head>
 <body>
 
 <div class="page-title">企微侧边栏 · CRM 客户管理</div>
 <div class="page-subtitle">PC 端企业微信聊天侧边栏 · 动态交互版 · 点击 Tab 切换内容</div>
+
+<button class="prd-toggle" onclick="document.body.classList.toggle('prd-on')">
+  <span class="dot"></span>PRD 标注
+</button>
 
 <div class="scenes-row">
 
@@ -1805,6 +1865,10 @@
             <span class="info-value">陈小美</span>
           </div>
           <div class="info-row">
+            <span class="info-label">分销人</span>
+            <span class="info-value"><span class="recommender-info"><span class="recommender-avatar">张</span><span class="recommender-name">张大力</span><span class="recommender-star">NO.12580</span></span></span>
+          </div>
+          <div class="info-row">
             <span class="info-label">添加时间</span>
             <span class="info-value">2025-10-15</span>
           </div>
@@ -1852,30 +1916,14 @@
         <!-- ── Tab: 客户动态 ── -->
         <div class="tab-content" data-tab="activity">
         <!-- 行为统计概览（点击筛选时间线） -->
-        <div class="metrics-grid metrics-3col">
-          <div class="metric-item metric-center metric-filterable" data-filter="post" onclick="toggleMetricFilter(this)">
-            <span class="metric-value">5</span>
-            <span class="metric-label">发帖</span>
-          </div>
+        <div class="metrics-grid metrics-2col">
           <div class="metric-item metric-center metric-filterable" data-filter="read" onclick="toggleMetricFilter(this)">
             <span class="metric-value">32</span>
             <span class="metric-label">阅读</span>
           </div>
-          <div class="metric-item metric-center metric-filterable" data-filter="comment" onclick="toggleMetricFilter(this)">
-            <span class="metric-value">23</span>
-            <span class="metric-label">评论</span>
-          </div>
-          <div class="metric-item metric-center metric-filterable" data-filter="like" onclick="toggleMetricFilter(this)">
-            <span class="metric-value">45</span>
-            <span class="metric-label">点赞</span>
-          </div>
-          <div class="metric-item metric-center metric-filterable" data-filter="anchor" onclick="toggleMetricFilter(this)">
-            <span class="metric-value">6</span>
-            <span class="metric-label">投锚</span>
-          </div>
-          <div class="metric-item metric-center metric-filterable" data-filter="collect" onclick="toggleMetricFilter(this)">
-            <span class="metric-value">12</span>
-            <span class="metric-label">收藏</span>
+          <div class="metric-item metric-center metric-filterable" data-filter="search" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">18</span>
+            <span class="metric-label">搜索</span>
           </div>
         </div>
 
@@ -1894,35 +1942,45 @@
               <span class="timeline-duration">3min</span>
             </div>
 
-            <div class="timeline-item" data-activity="collect">
-              <div class="timeline-dot dot-green"></div>
+            <div class="timeline-item" data-activity="search">
+              <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
-                <span class="timeline-type">收藏</span>
-                <span class="timeline-time">14:20</span>
+                <span class="timeline-type">搜索</span>
+                <span class="timeline-time">11:45</span>
               </div>
-              <div class="timeline-desc">林小鱼收藏了「2025小红书运营指南 · 从0到1」</div>
+              <div class="timeline-desc">林小鱼搜索了「小红书起号」</div>
             </div>
 
-            <div class="timeline-item" data-activity="form" style="border-bottom: none;">
-              <div class="timeline-dot dot-green"></div>
+            <div class="timeline-item" data-activity="read">
+              <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
-                <span class="timeline-type">表单填写</span>
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">10:20</span>
+              </div>
+              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#自媒体变现</span> 「2025小红书运营指南 · 从0到1」</div>
+              <span class="timeline-duration">8min</span>
+            </div>
+
+            <div class="timeline-item" data-activity="search" style="border-bottom: none;">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">搜索</span>
                 <span class="timeline-time">10:05</span>
               </div>
-              <div class="timeline-desc">林小鱼填写了表单「体验营课前调研问卷」</div>
+              <div class="timeline-desc">林小鱼搜索了「自媒体变现」</div>
             </div>
           </div>
 
           <!-- 昨天 -->
           <div class="timeline-date-header">昨天 · 2025-12-19</div>
           <div class="timeline-list">
-            <div class="timeline-item" data-activity="comment">
+            <div class="timeline-item" data-activity="search">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
-                <span class="timeline-type">发表评论</span>
+                <span class="timeline-type">搜索</span>
                 <span class="timeline-time">18:40</span>
               </div>
-              <div class="timeline-desc">林小鱼在 <span class="hl">#AI工具推荐</span> 评论了「这个工具太好用了，剪辑效率提升很多」</div>
+              <div class="timeline-desc">林小鱼搜索了「AI工具推荐」</div>
             </div>
 
             <div class="timeline-item" data-activity="read" style="border-bottom: none;">
@@ -1931,7 +1989,7 @@
                 <span class="timeline-type">阅读内容</span>
                 <span class="timeline-time">10:15</span>
               </div>
-              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#自媒体变现</span> 「小红书起号的5个关键动作」</div>
+              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#AI工具推荐</span> 「这5个AI剪辑工具让你效率翻倍」</div>
               <span class="timeline-duration">5min</span>
             </div>
           </div>
@@ -1939,22 +1997,23 @@
           <!-- 前天之前显示具体日期 -->
           <div class="timeline-date-header">2025-12-18</div>
           <div class="timeline-list">
-            <div class="timeline-item" data-activity="anchor">
-              <div class="timeline-dot dot-teal"></div>
-              <div class="timeline-head">
-                <span class="timeline-type">投锚</span>
-                <span class="timeline-time">20:30</span>
-              </div>
-              <div class="timeline-desc">林小鱼给 <span class="hl">#实操复盘</span>「我的AI视频制作之路」投了锚</div>
-            </div>
-
-            <div class="timeline-item" data-activity="post" style="border-bottom: none;">
+            <div class="timeline-item" data-activity="read">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
-                <span class="timeline-type">发表内容</span>
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">20:30</span>
+              </div>
+              <div class="timeline-desc">林小鱼阅读了 <span class="hl">#实操复盘</span> 「我的AI视频制作之路」</div>
+              <span class="timeline-duration">6min</span>
+            </div>
+
+            <div class="timeline-item" data-activity="search" style="border-bottom: none;">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">搜索</span>
                 <span class="timeline-time">09:20</span>
               </div>
-              <div class="timeline-desc">林小鱼发表了 <span class="hl">#实操复盘</span>「我的AI视频制作之路」</div>
+              <div class="timeline-desc">林小鱼搜索了「AI视频制作」</div>
             </div>
           </div>
         </div>
