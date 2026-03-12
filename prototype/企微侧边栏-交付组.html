@@ -1742,7 +1742,7 @@
         <!-- 关键指标（2列） -->
         <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="metric-item">
-            <span class="metric-label">会员初始加入</span>
+            <span class="metric-label">会员首次加入时间</span>
             <span class="metric-value">2024-11-15</span>
           </div>
           <div class="metric-item">
@@ -2164,7 +2164,7 @@
                 <span class="timeline-type">搜索</span>
                 <span class="timeline-time">11:30</span>
               </div>
-              <div class="timeline-desc">搜索了「<span class="hl">AI视频变现方法</span>」</div>
+              <div class="timeline-desc">搜索了「AI视频变现方法」</div>
             </div>
             <div class="timeline-item" data-activity="community-post community">
               <div class="timeline-dot dot-blue"></div>
@@ -2200,7 +2200,7 @@
                 <span class="timeline-type">搜索</span>
                 <span class="timeline-time">19:10</span>
               </div>
-              <div class="timeline-desc">搜索了「<span class="hl">小红书起号教程</span>」</div>
+              <div class="timeline-desc">搜索了「小红书起号教程」</div>
             </div>
             <div class="timeline-item" data-activity="community-comment community">
               <div class="timeline-dot"></div>
@@ -2216,7 +2216,7 @@
                 <span class="timeline-type">搜索</span>
                 <span class="timeline-time">16:45</span>
               </div>
-              <div class="timeline-desc">搜索了「<span class="hl">副业赚钱 月入过万</span>」</div>
+              <div class="timeline-desc">搜索了「副业赚钱 月入过万」</div>
             </div>
             <div class="timeline-item" data-activity="circle-read circle">
               <div class="timeline-dot dot-blue"></div>
@@ -2843,7 +2843,7 @@
       <div class="prd-card" style="--accent: #327CFB;">
         <div class="prd-card-title">关键指标 + 新人进度</div>
         <div class="prd-card-body">关键指标（2列网格，3项）
-　会员初始加入　来源 鱼丸系统
+　会员首次加入时间　来源 鱼丸系统
 　会员到期时间　来源 鱼丸系统
 　最近跟进　　　来源 CRM
 
@@ -2892,7 +2892,7 @@
 　专属服务　交付人员名（如 潇墨、李李、蓝鲸），可编辑
 　好友状态　双向好友(绿) / 客户删除(红)
 　推荐人　　头像（姓氏首字）+ 昵称 + 星球编号
-　关键指标　会员初始加入 + 会员到期时间 + 高频参与航海 + 加入金额 + 续费次数
+　关键指标　会员首次加入时间 + 会员到期时间 + 高频参与航海 + 加入金额 + 续费次数
 来源　鱼丸系统 + 企微好友关系</div>
       </div>
       <div class="prd-card" style="--accent: #586E93;">
@@ -3083,7 +3083,7 @@
         <!-- 关键指标（2列） -->
         <div class="metrics-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="metric-item">
-            <span class="metric-label">会员初始加入</span>
+            <span class="metric-label">会员首次加入时间</span>
             <span class="metric-value">2024-06-20</span>
           </div>
           <div class="metric-item">
@@ -3470,10 +3470,9 @@ AI 画像总结 → 红色渐变「流失预警」风格
     }, 1500);
   }
 
-  /* ── 客户动态：「」内容自动转为可点击链接 ── */
-  document.querySelectorAll('.tab-content[data-tab="behavior"] .timeline-desc').forEach(function(desc) {
+  /* ── 客户动态：「」内容自动转为可点击链接（搜索类不跳转） ── */
+  document.querySelectorAll('.tab-content[data-tab="behavior"] .timeline-item:not([data-activity*="search"]) .timeline-desc').forEach(function(desc) {
     desc.innerHTML = desc.innerHTML.replace(/「([^」]+)」/g, function(match, content) {
-      // 如果内容本身包含 <span class="hl">，保留原样包裹
       return '「<a class="timeline-link" href="javascript:void(0)" onclick="event.stopPropagation()">' + content + '</a>」';
     });
   });

@@ -735,8 +735,8 @@
   .detail-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
   .detail-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
   .detail-name-link:hover { color: var(--color-primary-6); }
-  .detail-name-link .icon-external { width: 14px; height: 14px; min-width: 14px; flex-shrink: 0; color: var(--color-text-4); opacity: 0; transition: opacity 100ms; }
-  .detail-name-link:hover .icon-external { opacity: 1; color: var(--color-primary-6); }
+  .detail-name-link .icon-external { width: 14px; height: 14px; min-width: 14px; flex-shrink: 0; color: var(--color-text-4); transition: color 100ms; }
+  .detail-name-link:hover .icon-external { color: var(--color-primary-6); }
   .detail-note { font-size: 12px; color: var(--color-text-3); margin-bottom: 8px; }
   .detail-tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .detail-section-title {
@@ -2522,7 +2522,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
           </div>
           <div>
-            <div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页" onclick="copyText('峰哥聊副业')">峰哥聊副业</a> <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
+            <div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a> <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
             <div class="detail-note"><span class="detail-note-text" id="detailNoteText">备注：副业达人</span><svg class="detail-note-edit" onclick="editDetailNote()" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;cursor:pointer;color:var(--color-text-4);vertical-align:middle;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg><input class="detail-note-input" id="detailNoteInput" style="display:none;font-size:12px;color:var(--color-text-3);border:1px solid var(--color-primary-6);border-radius:4px;padding:1px 6px;outline:none;width:120px;" /></div>
             <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
               <span class="tag tag-role-chuanshu" style="font-size:11px; height:18px;">传术师</span>
@@ -3073,7 +3073,7 @@
               <div class="timeline-time">11:30</div>
               <div class="timeline-card">
                 <div class="timeline-title">搜索</div>
-                <div class="timeline-desc">搜索了「<span class="hl">AI视频变现方法</span>」</div>
+                <div class="timeline-desc">搜索了「AI视频变现方法」</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="community-post community">
@@ -3108,7 +3108,7 @@
               <div class="timeline-time">19:10</div>
               <div class="timeline-card">
                 <div class="timeline-title">搜索</div>
-                <div class="timeline-desc">搜索了「<span class="hl">小红书起号教程</span>」</div>
+                <div class="timeline-desc">搜索了「小红书起号教程」</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="community-comment community">
@@ -3124,7 +3124,7 @@
               <div class="timeline-time">16:45</div>
               <div class="timeline-card">
                 <div class="timeline-title">搜索</div>
-                <div class="timeline-desc">搜索了「<span class="hl">副业赚钱 月入过万</span>」</div>
+                <div class="timeline-desc">搜索了「副业赚钱 月入过万」</div>
               </div>
             </div>
             <div class="timeline-item" data-activity="circle-read circle">

@@ -257,7 +257,8 @@
     flex-shrink: 0;
   }
   .sidebar-search-input {
-    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
     height: 30px;
     padding: 0 10px 0 30px;
     border: 1px solid var(--color-border-default);
@@ -278,6 +279,7 @@
   .search-input-wrap {
     position: relative;
     flex: 1;
+    width: 100%;
   }
   .search-input-icon {
     position: absolute;
@@ -1073,6 +1075,63 @@
     white-space: nowrap;
   }
 
+  /* 可编辑字段 */
+  .info-value.editable {
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: var(--radius-xs);
+    border: 1px solid transparent;
+    transition: all 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .info-value.editable:hover {
+    border-color: var(--color-border-hover);
+    background: var(--color-fill-hover);
+  }
+  .edit-icon {
+    display: none;
+    width: 12px;
+    height: 12px;
+    color: var(--color-text-3);
+    flex-shrink: 0;
+    margin-left: 2px;
+  }
+  .editable:hover .edit-icon { display: inline; }
+  .editable-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .editable-input-wrap input {
+    flex: 1;
+    height: 24px;
+    padding: 0 6px;
+    border: 1px solid var(--color-primary-6);
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    min-width: 0;
+  }
+  .editable-input-wrap .edit-confirm,
+  .editable-input-wrap .edit-cancel {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .editable-input-wrap .edit-confirm { background: var(--color-primary-6); color: #fff; }
+  .editable-input-wrap .edit-cancel { background: var(--color-fill-3); color: var(--color-text-3); }
+
   /* 推荐人/分销人信息 */
   .recommender-info {
     display: inline-flex;
@@ -1758,7 +1817,7 @@
               <a class="identity-backend-link" href="javascript:void(0)" title="在后台查看" onclick="window.open('客户管理-交付扩展.html','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
               <span class="identity-star-id">NO.28456</span>
             </div>
-            <div class="identity-remark">备注：杭州自由职业，AI视频方向</div>
+            <div class="identity-remark editable" onclick="startEdit(this, '杭州自由职业，AI视频方向')">备注：杭州自由职业，AI视频方向<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
             <div class="identity-meta">
               <span class="phone-mask" data-masked="186****7890" data-phone="18632107890" onclick="togglePhone(this)"><span class="phone-text">186****7890</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
               <span class="sep">|</span>
@@ -1862,10 +1921,10 @@
           </div>
           <div class="info-row">
             <span class="info-label">专属销售</span>
-            <span class="info-value">陈小美</span>
+            <span class="info-value editable" onclick="startEdit(this, '陈小美')">陈小美<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
           </div>
           <div class="info-row">
-            <span class="info-label">分销人</span>
+            <span class="info-label">推荐人</span>
             <span class="info-value"><span class="recommender-info"><span class="recommender-avatar">张</span><span class="recommender-name">张大力</span><span class="recommender-star">NO.12580</span></span></span>
           </div>
           <div class="info-row">
@@ -1916,7 +1975,7 @@
         <!-- ── Tab: 客户动态 ── -->
         <div class="tab-content" data-tab="activity">
         <!-- 行为统计概览（点击筛选时间线） -->
-        <div class="metrics-grid metrics-2col">
+        <div class="metrics-grid metrics-3col">
           <div class="metric-item metric-center metric-filterable" data-filter="read" onclick="toggleMetricFilter(this)">
             <span class="metric-value">32</span>
             <span class="metric-label">阅读</span>
@@ -1924,6 +1983,10 @@
           <div class="metric-item metric-center metric-filterable" data-filter="search" onclick="toggleMetricFilter(this)">
             <span class="metric-value">18</span>
             <span class="metric-label">搜索</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="live" onclick="toggleMetricFilter(this)">
+            <span class="metric-value">7</span>
+            <span class="metric-label">直播间</span>
           </div>
         </div>
 
@@ -1961,11 +2024,21 @@
               <span class="timeline-duration">8min</span>
             </div>
 
+            <div class="timeline-item" data-activity="live">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">直播间互动</span>
+                <span class="timeline-time">10:05</span>
+              </div>
+              <div class="timeline-desc">林小鱼观看了直播「AI视频创作实战分享」</div>
+              <span class="timeline-duration">进入10:05 · 观看25min · 评论3条</span>
+            </div>
+
             <div class="timeline-item" data-activity="search" style="border-bottom: none;">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
                 <span class="timeline-type">搜索</span>
-                <span class="timeline-time">10:05</span>
+                <span class="timeline-time">09:30</span>
               </div>
               <div class="timeline-desc">林小鱼搜索了「自媒体变现」</div>
             </div>
@@ -1983,7 +2056,7 @@
               <div class="timeline-desc">林小鱼搜索了「AI工具推荐」</div>
             </div>
 
-            <div class="timeline-item" data-activity="read" style="border-bottom: none;">
+            <div class="timeline-item" data-activity="read">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
                 <span class="timeline-type">阅读内容</span>
@@ -1991,6 +2064,16 @@
               </div>
               <div class="timeline-desc">林小鱼阅读了 <span class="hl">#AI工具推荐</span> 「这5个AI剪辑工具让你效率翻倍」</div>
               <span class="timeline-duration">5min</span>
+            </div>
+
+            <div class="timeline-item" data-activity="live" style="border-bottom: none;">
+              <div class="timeline-dot dot-teal"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">直播间互动</span>
+                <span class="timeline-time">09:00</span>
+              </div>
+              <div class="timeline-desc">林小鱼观看了直播「小红书起号答疑专场」</div>
+              <span class="timeline-duration">进入09:00 · 观看42min · 评论5条</span>
             </div>
           </div>
 
@@ -2173,7 +2256,7 @@
     </div>
     <div class="scene-label">交互版：点击 Tab 切换</div>
     </div>
-    <div class="prd-panel active" data-prd-tab="portrait" data-prd-key="crm-s1" data-prd-version="20260309a">
+    <div class="prd-panel active" data-prd-tab="portrait" data-prd-key="crm-s1" data-prd-version="20260312a">
       <div class="prd-title">客户画像 字段说明</div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">客户身份卡片</div>
@@ -2194,6 +2277,17 @@
 好友状态　来源 企微实时回调（如 双向好友）
 多人跟进　规则 多个销售跟进时显示
 分销　　　规则 分销渠道客户显示</div>
+      </div>
+      <div class="prd-card" style="--accent: #00CBD0;">
+        <div class="prd-card-title">AI 画像总结</div>
+        <div class="prd-card-body">位置　状态标签下方
+触发　点击「生成画像总结」按钮
+来源　基于客户全维度数据（行为、订单、标签、跟进记录），AI 自动生成
+内容　客户画像分析摘要（约 100-200 字）
+交互　生成前显示引导卡片 + 生成按钮
+　　　生成后显示摘要文本 + 刷新/收起操作
+　　　支持重新生成（刷新按钮）
+　　　支持收起/展开切换</div>
       </div>
       <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">体验营调研</div>
@@ -2241,7 +2335,7 @@
 　联动　提交后刷新跟进列表</div>
       </div>
     </div>
-    <div class="prd-panel" data-prd-tab="activity" data-prd-key="crm-s2" data-prd-version="20260309a">
+    <div class="prd-panel" data-prd-tab="activity" data-prd-key="crm-s2" data-prd-version="20260312b">
       <div class="prd-title">客户动态 字段说明</div>
       <div class="prd-card" style="--accent: #757980;">
         <div class="prd-card-title">页面结构</div>
@@ -2252,11 +2346,11 @@
       </div>
       <div class="prd-card" style="--accent: #FF7D00;">
         <div class="prd-card-title">行为统计网格</div>
-        <div class="prd-card-body">网格布局　2行 × 3列
-指标项　发帖 / 阅读 / 评论 / 点赞 / 投锚 / 收藏
+        <div class="prd-card-body">网格布局　1行 × 3列
+指标项　阅读 / 搜索 / 直播间
 每格显示该类型累计数量
-交互　点击指标格筛选时间线
-来源　鱼丸平台行为事件流</div>
+交互　点击指标格筛选时间线（单选切换）
+来源　鱼丸平台行为事件流 + 直播系统</div>
       </div>
       <div class="prd-card" style="--accent: #327CFB;">
         <div class="prd-card-title">日期分组规则</div>
@@ -2290,10 +2384,17 @@
 
 发表内容
 　来源　鱼丸发帖事件 ｜ 蓝色圆点
-　格式　发表了 #{话题}「{标题}」</div>
+　格式　发表了 #{话题}「{标题}」
+
+直播间互动
+　来源　直播系统事件 ｜ 绿色圆点
+　格式　观看了直播「{直播标题}」
+　附加　首次进入时间 · 观看总时长 · 评论条数
+　规则　搜索关键词不可点击，直播标题支持跳转
+　统计　客户动态顶部指标栏「直播间」累计参与次数</div>
       </div>
     </div>
-    <div class="prd-panel" data-prd-tab="orders" data-prd-key="crm-s3" data-prd-version="20260309a">
+    <div class="prd-panel" data-prd-tab="orders" data-prd-key="crm-s3" data-prd-version="20260312a">
       <div class="prd-title">订单列表 字段说明</div>
       <div class="prd-card" style="--accent: #757980;">
         <div class="prd-card-title">页面结构</div>
@@ -2537,8 +2638,41 @@
     });
   });
 
-  /* ── 客户动态：「」内容自动转为可点击链接 ── */
-  document.querySelectorAll('.tab-content[data-tab="activity"] .timeline-desc').forEach(function(desc) {
+  /* ── 可编辑字段 ── */
+  function startEdit(el, originalValue) {
+    if (el.querySelector('.editable-input-wrap')) return;
+    var text = originalValue || el.textContent.trim();
+    el.innerHTML = '<div class="editable-input-wrap">' +
+      '<input type="text" value="' + text + '" />' +
+      '<button class="edit-confirm" onclick="event.stopPropagation(); saveEdit(this)">✓</button>' +
+      '<button class="edit-cancel" onclick="event.stopPropagation(); cancelEdit(this, \'' + text.replace(/'/g, "\\'") + '\')">✕</button>' +
+      '</div>';
+    var input = el.querySelector('input');
+    input.focus();
+    input.select();
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') saveEdit(input);
+      if (e.key === 'Escape') cancelEdit(input, text);
+    });
+  }
+  function saveEdit(el) {
+    var wrap = el.closest('.editable-input-wrap');
+    var container = wrap.parentElement;
+    var val = wrap.querySelector('input').value.trim() || '未设置';
+    var prefix = container.classList.contains('identity-remark') ? '备注：' : '';
+    container.innerHTML = prefix + val + '<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+    container.setAttribute('onclick', "startEdit(this, '" + val.replace(/'/g, "\\'") + "')");
+  }
+  function cancelEdit(el, originalValue) {
+    var wrap = el.closest('.editable-input-wrap');
+    var container = wrap.parentElement;
+    var prefix = container.classList.contains('identity-remark') ? '备注：' : '';
+    container.innerHTML = prefix + originalValue + '<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
+    container.setAttribute('onclick', "startEdit(this, '" + originalValue.replace(/'/g, "\\'") + "')");
+  }
+
+  /* ── 客户动态：「」内容自动转为可点击链接（搜索类不跳转） ── */
+  document.querySelectorAll('.tab-content[data-tab="activity"] .timeline-item:not([data-activity="search"]) .timeline-desc').forEach(function(desc) {
     desc.innerHTML = desc.innerHTML.replace(/「([^」]+)」/g, function(match, content) {
       return '「<a class="timeline-link" href="javascript:void(0)" onclick="event.stopPropagation()">' + content + '</a>」';
     });
