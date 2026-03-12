@@ -122,11 +122,11 @@
         "关闭按钮可关闭对话框"
       ],
       "priority": 7,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [3],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-12T15:35:00+08:00",
+      "completed_at": "2026-03-12T15:36:00+08:00",
+      "notes": "480px居中dialog，含基本信息/取值分布条形图/关联规则/最近更新"
     },
     {
       "id": 8,
