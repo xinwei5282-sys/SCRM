@@ -984,10 +984,7 @@
         <!-- Page Title Bar -->
         <div class="page-title-bar">
           <span class="page-title">人群包管理</span>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline" onclick="openExportDialog()">↓ 导出</button>
-            <button class="btn btn-primary" onclick="openRuleBuilder('create')">+ 新建人群包</button>
-          </div>
+          <button class="btn btn-primary" onclick="openRuleBuilder('create')">+ 新建人群包</button>
         </div>
 
         <!-- Filter Area -->
@@ -1012,7 +1009,7 @@
                 <th style="width:100px;">刷新方式</th>
                 <th style="width:160px;">更新时间</th>
                 <th style="width:100px;">创建人</th>
-                <th style="width:140px;">操作</th>
+                <th style="width:180px;">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -1026,6 +1023,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', '高价值活跃用户')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('高价值活跃用户')">导出</button>
                     <button class="btn-text" onclick="copyAudience('高价值活跃用户')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('高价值活跃用户')">删除</button>
                   </div>
@@ -1041,6 +1039,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', '续费召回目标')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('续费召回目标')">导出</button>
                     <button class="btn-text" onclick="copyAudience('续费召回目标')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('续费召回目标')">删除</button>
                   </div>
@@ -1056,6 +1055,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', 'VIP专属服务')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('VIP专属服务')">导出</button>
                     <button class="btn-text" onclick="copyAudience('VIP专属服务')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('VIP专属服务')">删除</button>
                   </div>
@@ -1071,6 +1071,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', '航海活跃参与者')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('航海活跃参与者')">导出</button>
                     <button class="btn-text" onclick="copyAudience('航海活跃参与者')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('航海活跃参与者')">删除</button>
                   </div>
@@ -1086,6 +1087,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', '沉默用户召回')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('沉默用户召回')">导出</button>
                     <button class="btn-text" onclick="copyAudience('沉默用户召回')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('沉默用户召回')">删除</button>
                   </div>
@@ -1101,6 +1103,7 @@
                 <td>
                   <div class="cell-actions">
                     <button class="btn-text" onclick="openRuleBuilder('edit', '新手任务完成用户')">编辑</button>
+                    <button class="btn-text" onclick="openExportDialog('新手任务完成用户')">导出</button>
                     <button class="btn-text" onclick="copyAudience('新手任务完成用户')">复制</button>
                     <button class="btn-danger-text" onclick="deleteAudience('新手任务完成用户')">删除</button>
                   </div>
@@ -1246,7 +1249,7 @@
 <div class="export-overlay" id="exportOverlay" onclick="if(event.target===this)closeExportDialog()">
   <div class="export-dialog">
     <div class="export-dialog-header">
-      <h3>导出人群包用户</h3>
+      <h3 id="exportDialogTitle">导出人群包用户</h3>
       <button class="export-dialog-close" onclick="closeExportDialog()">×</button>
     </div>
     <div class="export-dialog-body">
@@ -1316,12 +1319,12 @@
     <div class="prd-item"><strong>刷新方式</strong> — 手动 / 每日自动</div>
     <div class="prd-item"><strong>更新时间</strong> — 最近修改或刷新时间</div>
     <div class="prd-item"><strong>创建人</strong> — 创建者名称</div>
-    <div class="prd-item"><strong>操作</strong> — 编辑 / 复制 / 删除</div>
+    <div class="prd-item"><strong>操作</strong> — 编辑 / 导出 / 复制 / 删除</div>
     <div class="prd-label">列表功能</div>
     <div class="prd-item">搜索：按名称模糊搜索</div>
     <div class="prd-item">排序：按更新时间倒序（默认）</div>
     <div class="prd-item">新建：进入规则构建器</div>
-    <div class="prd-item"><strong>导出</strong>：支持自定义字段选择，导出 Excel/CSV 格式</div>
+    <div class="prd-item"><strong>导出</strong>：针对单个人群包，支持自定义字段选择，导出 Excel/CSV</div>
   </div>
 
   <!-- Section 3: 规则逻辑模型 -->
@@ -1837,7 +1840,10 @@ function showToast(text) {
 // ============================================================
 // Export Dialog
 // ============================================================
-function openExportDialog() {
+var currentExportName = '';
+function openExportDialog(name) {
+  currentExportName = name || '';
+  document.getElementById('exportDialogTitle').textContent = '导出「' + name + '」用户';
   document.getElementById('exportOverlay').classList.add('show');
   updateExportCount();
 }
@@ -1870,7 +1876,7 @@ function doExport() {
     return;
   }
   closeExportDialog();
-  showToast('导出任务已提交，请在下载中心查看');
+  showToast('「' + currentExportName + '」导出任务已提交，请在下载中心查看');
 }
 // Add change listener for checkboxes
 document.getElementById('exportFieldGrid').addEventListener('change', function() { updateExportCount(); });
