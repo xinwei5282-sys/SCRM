@@ -57,11 +57,11 @@
         "标签详情弹窗的分类字段同步更新"
       ],
       "priority": 3,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [2],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-17T11:16:00+08:00",
+      "completed_at": "2026-03-17T11:20:00+08:00",
+      "notes": "Task 3 的所有验收标准在 Task 2 中已一并完成：rulesData 35条覆盖4分类、tagCategory下拉4选项、tagCodeOptions联动、catNames弹窗分类字段均已更新"
     }
   ]
 }
