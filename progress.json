@@ -2,7 +2,7 @@
   "project": "自动化标签体系重构",
   "description": "将自动化标签从 6 分类（按数据类型）重构为 4 分类（全局通用 + 3 产品线），对齐知识付费行业最佳实践",
   "created_at": "2026-03-17T10:00:00+08:00",
-  "updated_at": "2026-03-17T10:00:00+08:00",
+  "updated_at": "2026-03-17T11:15:00+08:00",
   "tasks": [
     {
       "id": 1,
@@ -39,11 +39,11 @@
         "Tab 切换 JS 正常工作"
       ],
       "priority": 2,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [1],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-17T10:31:00+08:00",
+      "completed_at": "2026-03-17T11:15:00+08:00",
+      "notes": "完成全部更新：(1)tagData对象替换为4分类96标签 (2)rulesData从15条更新为35条,覆盖全局15+社区7+航海6+深海6+跨产品线1 (3)tagDetailData更新为新标签代码 (4)catNames映射更新 (5)tagCodeOptions更新为4分类含全部标签代码 (6)editPresets更新引用 (7)分页数从15改为35 (8)初始化renderTagCards改为global"
     },
     {
       "id": 3,
