@@ -1158,6 +1158,8 @@ CDP 新增的**可用于人群包的维度**（v2.0 产品线架构）：
 | 社区偏好话题 | `comm_topic_pref` | 偏好话题 包含 短视频 |
 | 航海完课率 | `nav_completion_rate` | 完课率 >= 90% |
 | 航海报名数 | `nav_enrollment_count` | 报名课程 >= 3 |
+| 俱乐部状态 | `nav_club_status` | 俱乐部 = 活跃会员 |
+| 权益使用率 | `nav_benefits_usage` | 权益使用 >= 80% |
 | 深海圈项目数 | `deep_project_count` | 项目参与 >= 3 |
 | 深海圈角色 | `deep_role` | 角色 = 领航人 |
 

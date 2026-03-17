@@ -94,7 +94,11 @@
     color: var(--color-primary-6);
     font-weight: 600;
   }
-  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); transition: transform 200ms; }
+  .menu-group { }
+  .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
+  .menu-sub { overflow: hidden; max-height: 0; transition: max-height 200ms ease; }
+  .menu-group.open > .menu-sub { max-height: 200px; }
   .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
 
   /* Header */
@@ -301,12 +305,6 @@
     vertical-align: middle;
     color: var(--color-text-3);
   }
-  .cell-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
   /* Tags */
   .tag {
     display: inline-flex;
@@ -942,34 +940,21 @@
   <aside class="sidebar">
     <div class="sidebar-logo">SCRM</div>
     <nav class="sidebar-menu">
-      <div class="menu-item">
-        <span>首页</span>
-        <span class="arrow">&#8250;</span>
+      <div class="menu-item"><span>首页</span></div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>客户</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
+
+          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
+        </div>
       </div>
-      <div class="menu-item">
-        <span>客户</span>
-        <span class="arrow">&#8250;</span>
-      </div>
-      <div class="menu-item">
-        <span>内容</span>
-        <span class="arrow">&#8250;</span>
-      </div>
-      <div class="menu-item" style="font-weight:600; color: var(--color-text-1);">
-        <span>营销</span>
-        <span class="arrow">&#8250;</span>
-      </div>
-      <div class="menu-sub">
-        <div class="menu-item active">人群包管理</div>
-        <div class="menu-item">自动化流程</div>
-        <div class="menu-item">触达记录</div>
-      </div>
-      <div class="menu-item">
-        <span>数据</span>
-        <span class="arrow">&#8250;</span>
-      </div>
-      <div class="menu-item">
-        <span>设置</span>
-        <span class="arrow">&#8250;</span>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>营销</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item active" onclick="event.stopPropagation();">人群包管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
+        </div>
       </div>
     </nav>
   </aside>
@@ -1027,13 +1012,11 @@
                 <td><span class="tag tag-primary">每日自动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
                 <td>运营小李</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', '高价值活跃用户')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('高价值活跃用户')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('高价值活跃用户')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('高价值活跃用户')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', '高价值活跃用户')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('高价值活跃用户')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('高价值活跃用户')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('高价值活跃用户')">删除</button>
                 </td>
               </tr>
               <tr>
@@ -1043,13 +1026,11 @@
                 <td><span class="tag tag-primary">每日自动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
                 <td>运营小张</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', '续费召回目标')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('续费召回目标')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('续费召回目标')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('续费召回目标')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', '续费召回目标')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('续费召回目标')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('续费召回目标')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('续费召回目标')">删除</button>
                 </td>
               </tr>
               <tr>
@@ -1059,13 +1040,11 @@
                 <td><span class="tag tag-default">手动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-10 14:30</td>
                 <td>运营小李</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', 'VIP专属服务')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('VIP专属服务')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('VIP专属服务')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('VIP专属服务')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', 'VIP专属服务')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('VIP专属服务')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('VIP专属服务')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('VIP专属服务')">删除</button>
                 </td>
               </tr>
               <tr>
@@ -1075,13 +1054,11 @@
                 <td><span class="tag tag-primary">每日自动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
                 <td>运营小王</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', '航海活跃参与者')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('航海活跃参与者')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('航海活跃参与者')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('航海活跃参与者')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', '航海活跃参与者')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('航海活跃参与者')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('航海活跃参与者')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('航海活跃参与者')">删除</button>
                 </td>
               </tr>
               <tr>
@@ -1091,13 +1068,11 @@
                 <td><span class="tag tag-default">手动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-08 16:20</td>
                 <td>运营小张</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', '沉默用户召回')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('沉默用户召回')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('沉默用户召回')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('沉默用户召回')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', '沉默用户召回')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('沉默用户召回')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('沉默用户召回')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('沉默用户召回')">删除</button>
                 </td>
               </tr>
               <tr>
@@ -1107,13 +1082,11 @@
                 <td><span class="tag tag-primary">每日自动</span></td>
                 <td style="color:var(--color-text-3);">2026-03-11 08:00</td>
                 <td>运营小李</td>
-                <td>
-                  <div class="cell-actions">
-                    <button class="btn-text" onclick="openRuleBuilder('edit', '新手任务完成用户')">编辑</button>
-                    <button class="btn-text" onclick="openExportDialog('新手任务完成用户')">导出</button>
-                    <button class="btn-text" onclick="copyAudience('新手任务完成用户')">复制</button>
-                    <button class="btn-danger-text" onclick="deleteAudience('新手任务完成用户')">删除</button>
-                  </div>
+                <td style="text-align:center;">
+                    <button class="btn btn-text" onclick="openRuleBuilder('edit', '新手任务完成用户')">编辑</button>
+                    <button class="btn btn-text" onclick="openExportDialog('新手任务完成用户')">导出</button>
+                    <button class="btn btn-text" onclick="copyAudience('新手任务完成用户')">复制</button>
+                    <button class="btn btn-danger-text" onclick="deleteAudience('新手任务完成用户')">删除</button>
                 </td>
               </tr>
             </tbody>
@@ -1195,16 +1168,45 @@
                 <select class="rb-condition-select type-select" onchange="switchConditionType(this)">
                   <option value="attribute" selected>用户属性</option>
                   <option value="event">用户行为</option>
+                  <option value="tag">标签</option>
                   <option value="audience">人群包</option>
                 </select>
                 <select class="rb-condition-select" style="min-width:110px;">
                   <option value="">选择维度</option>
-                  <option>会员状态</option>
-                  <option>客户等级</option>
-                  <option>到期时间</option>
-                  <option>注册时间</option>
-                  <option>身份标签</option>
-                  <option>好友状态</option>
+                  <optgroup label="基础属性">
+                    <option>会员状态</option>
+                    <option>客户等级</option>
+                    <option>到期时间</option>
+                    <option>注册时间</option>
+                    <option>身份角色</option>
+                    <option>好友状态</option>
+                    <option>来源渠道</option>
+                  </optgroup>
+                  <optgroup label="全局通用">
+                    <option>会员等级</option>
+                    <option>累计消费</option>
+                    <option>续费状态</option>
+                    <option>生命周期阶段</option>
+                    <option>健康度</option>
+                    <option>活跃度等级</option>
+                    <option>沉默天数</option>
+                  </optgroup>
+                  <optgroup label="官网社区">
+                    <option>阅读量级</option>
+                    <option>创作者等级</option>
+                    <option>社区影响力</option>
+                    <option>社区角色</option>
+                  </optgroup>
+                  <optgroup label="航海家">
+                    <option>完课率</option>
+                    <option>报名课程数</option>
+                    <option>俱乐部状态</option>
+                  </optgroup>
+                  <optgroup label="深海圈">
+                    <option>参与项目数</option>
+                    <option>项目角色</option>
+                    <option>产出成果数</option>
+                  </optgroup>
                 </select>
                 <select class="rb-condition-select" style="min-width:80px;">
                   <option value="">操作符</option>
@@ -1310,7 +1312,7 @@
     <div class="prd-item">MA 营销自动化需要精准圈选目标用户群体</div>
     <div class="prd-item">v2.0 仅支持属性条件 + 2 层嵌套，无法满足行为筛选和组合运算</div>
     <div class="prd-label">目标</div>
-    <div class="prd-item">支持<strong>属性条件、事件条件、人群包条件</strong>三种条件类型</div>
+    <div class="prd-item">支持<strong>属性条件、事件条件、标签条件、人群包条件</strong>四种条件类型</div>
     <div class="prd-item">支持条件组间<strong>且/或/且非</strong>可切换，组内 AND/OR 可切换</div>
     <div class="prd-item">通过组间逻辑实现交集/并集/差集运算</div>
     <div class="prd-item">提供可视化规则构建器，无需技术背景即可配置</div>
@@ -1357,6 +1359,10 @@
     <div class="prd-label">事件条件</div>
     <div class="prd-item">[做过/没做过] [事件] [次数] [时间窗口]</div>
     <div class="prd-item">示例：做过 发帖 >=5次 近30天</div>
+    <div class="prd-label">标签条件</div>
+    <div class="prd-item">[标签来源] [标签组] [操作符] [标签值]</div>
+    <div class="prd-item">来源：企微标签 / CRM标签 / 自动化标签</div>
+    <div class="prd-item">示例：企微标签 > 转化组 包含 高意向</div>
     <div class="prd-label">人群包条件</div>
     <div class="prd-item">[属于/不属于] [人群包名称]</div>
     <div class="prd-item">示例：属于 活跃用户包</div>
@@ -1394,6 +1400,13 @@
 
 <script>
 // ============================================================
+// Sidebar Menu Toggle
+// ============================================================
+function toggleMenu(group) {
+  group.classList.toggle('open');
+}
+
+// ============================================================
 // Condition Row Templates
 // ============================================================
 var conditionTemplates = {
@@ -1401,10 +1414,16 @@ var conditionTemplates = {
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
       '<option value="attribute" selected>用户属性</option>' +
       '<option value="event">用户行为</option>' +
+      '<option value="tag">标签</option>' +
       '<option value="audience">人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:110px;">' +
-      '<option value="">选择维度</option><option>会员状态</option><option>客户等级</option><option>到期时间</option><option>注册时间</option><option>身份标签</option><option>好友状态</option>' +
+      '<option value="">选择维度</option>' +
+      '<optgroup label="基础属性"><option>会员状态</option><option>客户等级</option><option>到期时间</option><option>注册时间</option><option>身份角色</option><option>好友状态</option><option>来源渠道</option></optgroup>' +
+      '<optgroup label="全局通用"><option>会员等级</option><option>累计消费</option><option>续费状态</option><option>生命周期阶段</option><option>健康度</option><option>活跃度等级</option><option>沉默天数</option></optgroup>' +
+      '<optgroup label="官网社区"><option>阅读量级</option><option>创作者等级</option><option>社区影响力</option><option>社区角色</option></optgroup>' +
+      '<optgroup label="航海家"><option>完课率</option><option>报名课程数</option><option>俱乐部状态</option></optgroup>' +
+      '<optgroup label="深海圈"><option>参与项目数</option><option>项目角色</option><option>产出成果数</option></optgroup>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:80px;">' +
       '<option value="">操作符</option><option>等于</option><option>不等于</option><option>包含</option><option>不包含</option><option>为空</option><option>不为空</option><option>N天内</option><option>N天前</option>' +
@@ -1418,6 +1437,7 @@ var conditionTemplates = {
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
       '<option value="attribute">用户属性</option>' +
       '<option value="event" selected>用户行为</option>' +
+      '<option value="tag">标签</option>' +
       '<option value="audience">人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
@@ -1436,10 +1456,32 @@ var conditionTemplates = {
       '</select>' +
       '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
   },
+  tag: function() {
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option>' +
+      '<option value="event">用户行为</option>' +
+      '<option value="tag" selected>标签</option>' +
+      '<option value="audience">人群包</option>' +
+      '</select>' +
+      '<select class="rb-condition-select tag-source-select" style="min-width:100px;" onchange="onTagSourceChange(this)">' +
+      '<option value="">标签来源</option><option value="wecom">企微标签</option><option value="crm">CRM标签</option><option value="auto">自动化标签</option>' +
+      '</select>' +
+      '<select class="rb-condition-select tag-group-select" style="min-width:110px;" onchange="onTagGroupChange(this)">' +
+      '<option value="">选择标签组</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option><option>包含</option><option>不包含</option><option>等于</option><option>不等于</option>' +
+      '</select>' +
+      '<select class="rb-condition-select tag-value-select" style="min-width:100px;">' +
+      '<option value="">选择标签</option>' +
+      '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  },
   audience: function() {
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
       '<option value="attribute">用户属性</option>' +
       '<option value="event">用户行为</option>' +
+      '<option value="tag">标签</option>' +
       '<option value="audience" selected>人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:100px;">' +
@@ -1451,6 +1493,80 @@ var conditionTemplates = {
       '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
   }
 };
+
+// ============================================================
+// Tag Data (标签数据 — 企微 / CRM / 自动化)
+// ============================================================
+var tagData = {
+  wecom: {
+    label: '企微标签',
+    groups: [
+      { name: '转化组', tags: ['新用户','高粘性客户','高意向','待跟进','已成交'] },
+      { name: '交付组', tags: ['普通会员','体验用户','售后处理中','已完结'] },
+      { name: '运营组', tags: ['高活跃','中活跃','低活跃','沉默用户','群主','群管理员','活跃群员'] },
+      { name: '来源组', tags: ['公众号','小程序','官网','搜索引擎','好友推荐'] }
+    ]
+  },
+  crm: {
+    label: 'CRM标签',
+    groups: [
+      { name: '销售阶段', tags: ['新线索','待联系','已联系','无效线索','需求确认','方案沟通','报价中','已成交','已续费','已流失'] },
+      { name: '客户价值', tags: ['高价值客户','中价值客户','低价值客户','潜力客户'] },
+      { name: '服务管理', tags: ['服务中','待回访','投诉中','已解决'] },
+      { name: '运营分类', tags: ['活动达人','深度阅读','视频偏好','社群活跃','潜水用户'] }
+    ]
+  },
+  auto: {
+    label: '自动化标签',
+    groups: [
+      { name: '全局-身份', tags: ['传术师','航海家','元老会员','新手会员','过期会员','高净值用户','S级客户','A级客户','B级客户','C级客户'] },
+      { name: '全局-交易', tags: ['高消费用户','中消费用户','低消费用户','续费忠诚用户','续费风险用户','已过期待挽回','首购用户'] },
+      { name: '全局-生命周期', tags: ['新手期','成长期','成熟期','沉默期','流失期','回归用户','30天沉默','60天沉默','90天沉默','核心用户','超级推荐人'] },
+      { name: '官网社区-内容', tags: ['重度阅读','中度阅读','轻度阅读','深度阅读者','高产创作者','活跃创作者','精华作者','UGC核心','UGC活跃'] },
+      { name: '官网社区-影响力', tags: ['高互动','中互动','低互动','高影响力','社区领袖','直播重度观众','内容创作者','互动活跃者','深度读者','潜水者'] },
+      { name: '航海家-学习', tags: ['完课优秀','完课良好','完课一般','完课低','作业全勤','学习卡点','航海达人','案例标杆'] },
+      { name: '航海家-俱乐部', tags: ['俱乐部活跃','俱乐部沉默','俱乐部过期','权益充分使用','权益低使用','权益未使用'] },
+      { name: '深海圈-参与', tags: ['项目资深','项目经验','项目体验','深度参与','一般参与','深度阅读者','高讨论活跃'] },
+      { name: '深海圈-角色', tags: ['领航人','船长','水手','观察员','活跃协作','独立参与','高产出','案例标杆'] }
+    ]
+  }
+};
+
+function onTagSourceChange(select) {
+  var row = select.closest('.rb-condition-row');
+  var groupSelect = row.querySelector('.tag-group-select');
+  var valueSelect = row.querySelector('.tag-value-select');
+  var source = select.value;
+
+  // Reset downstream
+  groupSelect.innerHTML = '<option value="">选择标签组</option>';
+  valueSelect.innerHTML = '<option value="">选择标签</option>';
+
+  if (source && tagData[source]) {
+    tagData[source].groups.forEach(function(g) {
+      groupSelect.innerHTML += '<option value="' + g.name + '">' + g.name + '</option>';
+    });
+  }
+}
+
+function onTagGroupChange(select) {
+  var row = select.closest('.rb-condition-row');
+  var sourceSelect = row.querySelector('.tag-source-select');
+  var valueSelect = row.querySelector('.tag-value-select');
+  var source = sourceSelect.value;
+  var groupName = select.value;
+
+  valueSelect.innerHTML = '<option value="">选择标签</option>';
+
+  if (source && groupName && tagData[source]) {
+    var group = tagData[source].groups.find(function(g) { return g.name === groupName; });
+    if (group) {
+      group.tags.forEach(function(t) {
+        valueSelect.innerHTML += '<option>' + t + '</option>';
+      });
+    }
+  }
+}
 
 // ============================================================
 // Edit Mode Presets (示例数据)
@@ -1640,12 +1756,12 @@ function createGroupHTMLWithConditions(index, logic, conditions) {
 
 function buildConditionRow(c) {
   if (c.type === 'attribute') {
-    var dimOptions = ['会员状态','客户等级','到期时间','注册时间','身份标签','好友状态'];
+    var dimOptions = ['会员状态','客户等级','到期时间','注册时间','身份角色','好友状态','来源渠道','会员等级','累计消费','续费状态','生命周期阶段','健康度','活跃度等级','沉默天数','阅读量级','创作者等级','社区影响力','社区角色','完课率','报名课程数','俱乐部状态','参与项目数','项目角色','产出成果数'];
     var opOptions = ['等于','不等于','包含','不包含','为空','不为空','N天内','N天前'];
-    var valOptions = ['在期','已过期','未开通','S','A','B','C'];
+    var valOptions = ['在期','已过期','未开通','S','A','B','C','传术师','航海家','普通圈友','管理员','高','中','低','新手期','成长期','成熟期','沉默期','流失期','优秀','良好','一般','活跃会员','沉默会员','资深','经验','体验','领航人','船长','水手'];
 
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute" selected>用户属性</option><option value="event">用户行为</option><option value="audience">人群包</option></select>' +
+      '<option value="attribute" selected>用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="audience">人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:110px;">' +
       '<option value="">选择维度</option>' + dimOptions.map(function(d) { return '<option' + (d === c.dimension ? ' selected' : '') + '>' + d + '</option>'; }).join('') +
       '</select>' +
@@ -1663,7 +1779,7 @@ function buildConditionRow(c) {
     var windows = ['过去7天','过去30天','过去90天','今天','本周','本月'];
     var isDid = c.occurrence !== 'did_not';
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute">用户属性</option><option value="event" selected>用户行为</option><option value="audience">人群包</option></select>' +
+      '<option value="attribute">用户属性</option><option value="event" selected>用户行为</option><option value="tag">标签</option><option value="audience">人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
       '<option value="did"' + (isDid ? ' selected' : '') + '>做过</option><option value="did_not"' + (!isDid ? ' selected' : '') + '>没做过</option></select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
@@ -1679,10 +1795,38 @@ function buildConditionRow(c) {
       '</select>' +
       '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
   }
+  if (c.type === 'tag') {
+    var src = c.tagSource || '';
+    var grp = c.tagGroup || '';
+    var groupOptions = '';
+    var tagOptions = '';
+    if (src && tagData[src]) {
+      tagData[src].groups.forEach(function(g) {
+        groupOptions += '<option value="' + g.name + '"' + (g.name === grp ? ' selected' : '') + '>' + g.name + '</option>';
+      });
+      if (grp) {
+        var found = tagData[src].groups.find(function(g) { return g.name === grp; });
+        if (found) found.tags.forEach(function(t) {
+          tagOptions += '<option' + (t === c.tagValue ? ' selected' : '') + '>' + t + '</option>';
+        });
+      }
+    }
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag" selected>标签</option><option value="audience">人群包</option></select>' +
+      '<select class="rb-condition-select tag-source-select" style="min-width:100px;" onchange="onTagSourceChange(this)">' +
+      '<option value="">标签来源</option><option value="wecom"' + (src==='wecom'?' selected':'') + '>企微标签</option><option value="crm"' + (src==='crm'?' selected':'') + '>CRM标签</option><option value="auto"' + (src==='auto'?' selected':'') + '>自动化标签</option></select>' +
+      '<select class="rb-condition-select tag-group-select" style="min-width:110px;" onchange="onTagGroupChange(this)">' +
+      '<option value="">选择标签组</option>' + groupOptions + '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option><option' + (c.operator==='包含'?' selected':'') + '>包含</option><option' + (c.operator==='不包含'?' selected':'') + '>不包含</option><option' + (c.operator==='等于'?' selected':'') + '>等于</option><option' + (c.operator==='不等于'?' selected':'') + '>不等于</option></select>' +
+      '<select class="rb-condition-select tag-value-select" style="min-width:100px;">' +
+      '<option value="">选择标签</option>' + tagOptions + '</select>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
   if (c.type === 'audience') {
     var packs = ['高价值活跃用户','续费召回目标','VIP专属服务','航海活跃参与者','沉默用户召回','新手任务完成用户'];
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="audience" selected>人群包</option></select>' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="audience" selected>人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:100px;">' +
       '<option value="in"' + (c.operator === 'in' ? ' selected' : '') + '>属于</option><option value="not_in"' + (c.operator === 'not_in' ? ' selected' : '') + '>不属于</option></select>' +
       '<select class="rb-condition-select" style="min-width:150px;">' +
