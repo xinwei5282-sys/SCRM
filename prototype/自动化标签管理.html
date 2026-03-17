@@ -1271,7 +1271,7 @@
           <div class="stats-bar">
             <div class="stat-card">
               <div class="stat-label">总标签数</div>
-              <div class="stat-value">96<span class="stat-unit">个</span></div>
+              <div class="stat-value">100<span class="stat-unit">个</span></div>
             </div>
             <div class="stat-card">
               <div class="stat-label">已启用规则</div>
@@ -1291,7 +1291,7 @@
           <div class="category-tabs" id="categoryTabs">
             <div class="category-tab active" onclick="switchCategory('global')">全局通用<span class="count">41</span></div>
             <div class="category-tab" onclick="switchCategory('community')">官网社区<span class="count">17</span></div>
-            <div class="category-tab" onclick="switchCategory('navigator')">航海家<span class="count">17</span></div>
+            <div class="category-tab" onclick="switchCategory('navigator')">航海家<span class="count">21</span></div>
             <div class="category-tab" onclick="switchCategory('deepsea')">深海圈<span class="count">21</span></div>
           </div>
 
@@ -1663,7 +1663,12 @@ var tagData = {
     { name: '课程品类偏好', code: 'nav_category_pref', values: '短视频 / 电商 / 写作 / AI / 私域', source: '行为聚合', freq: '每月', rules: 0 },
     { name: '难度偏好', code: 'nav_difficulty_pref', values: '入门 / 进阶 / 高级', source: '行为聚合', freq: '每月', rules: 0 },
     { name: '学习形式偏好', code: 'nav_format_pref', values: '视频课 / 直播课 / 训练营 / 21天挑战', source: '行为聚合', freq: '每月', rules: 0 },
-    { name: '学习时段偏好', code: 'nav_learning_time', values: '早鸟(6-9) / 通勤(9-10) / 午间(12-14) / 晚间(20-23)', source: '行为聚合', freq: '每月', rules: 0 }
+    { name: '学习时段偏好', code: 'nav_learning_time', values: '早鸟(6-9) / 通勤(9-10) / 午间(12-14) / 晚间(20-23)', source: '行为聚合', freq: '每月', rules: 0 },
+    // 俱乐部与权益
+    { name: '俱乐部状态', code: 'nav_club_status', values: '活跃会员 / 沉默会员 / 已过期 / 未加入', source: '航海系统', freq: '实时', rules: 0 },
+    { name: '俱乐部活跃度', code: 'nav_club_activity', values: '高活跃(>=10次) / 一般(3-9次) / 低(<3次) / 无', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '权益使用率', code: 'nav_benefits_usage', values: '充分(>=80%) / 一般(30-79%) / 低(<30%) / 未使用', source: '航海系统', freq: '每周', rules: 0 },
+    { name: '偏好权益类型', code: 'nav_benefits_type', values: '课程折扣 / 专属直播 / 1v1咨询 / 线下活动 / 资料包', source: '行为聚合', freq: '每月', rules: 0 }
   ],
   deepsea: [
     // 内容消费
@@ -1956,7 +1961,7 @@ var tagCodeOptions = {
     'lc_stage','lc_health','lc_churn_risk','lc_engagement_tier','lc_growth_trend','lc_onboarding','lc_renewal_window','lc_first_value_time','lc_silent_days','lc_reactivation','lc_nps_score','lc_satisfaction','lc_login_freq','lc_login_recency','lc_active_days_30d','lc_time_preference','lc_referral_count'
   ],
   community: ['comm_read_volume','comm_read_depth','comm_read_completion','comm_topic_pref','comm_topic_diversity','comm_search_active','comm_post_freq','comm_post_quality','comm_essential_count','comm_creator_tier','comm_content_type','comm_interaction','comm_influence','comm_network_size','comm_role','comm_live_viewer','comm_live_engagement'],
-  navigator: ['nav_enrollment_count','nav_enrollment_recent','nav_completion_rate','nav_homework_rate','nav_checkin_streak','nav_checkin_total','nav_learning_consistency','nav_on_schedule','nav_stuck_point','nav_practice_output','nav_output_quality','nav_improvement_trend','nav_case_study','nav_category_pref','nav_difficulty_pref','nav_format_pref','nav_learning_time'],
+  navigator: ['nav_enrollment_count','nav_enrollment_recent','nav_completion_rate','nav_homework_rate','nav_checkin_streak','nav_checkin_total','nav_learning_consistency','nav_on_schedule','nav_stuck_point','nav_practice_output','nav_output_quality','nav_improvement_trend','nav_case_study','nav_category_pref','nav_difficulty_pref','nav_format_pref','nav_learning_time','nav_club_status','nav_club_activity','nav_benefits_usage','nav_benefits_type'],
   deepsea: ['deep_read_volume','deep_read_depth','deep_discussion_active','deep_topic_pref','deep_project_count','deep_project_recent','deep_project_completion','deep_project_depth','deep_category_pref','deep_output_count','deep_output_quality','deep_revenue_flag','deep_case_study','deep_role','deep_mentoring_count','deep_role_growth','deep_mentor_flag','deep_collab_active','deep_alumni_network','deep_group_active','deep_repeat_collab']
 };
 
