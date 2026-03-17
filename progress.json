@@ -1,149 +1,67 @@
 {
-  "project": "自动化标签管理原型",
-  "description": "创建自动化标签管理 PC 端 HTML 原型页面，包含标签总览、规则管理、规则编辑器三个视图",
-  "created_at": "2026-03-12T14:00:00+08:00",
-  "updated_at": "2026-03-12T14:00:00+08:00",
+  "project": "自动化标签体系重构",
+  "description": "将自动化标签从 6 分类（按数据类型）重构为 4 分类（全局通用 + 3 产品线），对齐知识付费行业最佳实践",
+  "created_at": "2026-03-17T10:00:00+08:00",
+  "updated_at": "2026-03-17T10:00:00+08:00",
   "tasks": [
     {
       "id": 1,
-      "title": "搭建页面骨架和基础 CSS",
-      "description": "复制人群包管理.html 的整体框架（layout/sidebar/header/content），侧边栏菜单高亮数据>自动化标签，:root CSS 变量 + 基础组件 CSS（btn/tag/table/form），新增顶层视图切换 Tab CSS（标签总览/规则管理）",
+      "title": "设计新标签分类体系并更新 CDP 框架文档",
+      "description": "重构 CDP_标签与评分框架.md 第 3 节，将标签从 6 分类改为 4 分类：全局通用（身份+交易+生命周期）、官网社区（内容消费+创作+影响力）、航海家（学习进度+效果+偏好）、深海圈（项目参与+产出+角色+协作），每个产品线标签使用独立前缀",
       "acceptance_criteria": [
-        "HTML 文件 prototype/自动化标签管理.html 存在且可在浏览器打开",
-        "侧边栏显示且'自动化标签'菜单项高亮",
-        "顶部 header 和内容区域正确布局",
-        "视图切换 Tab（标签总览/规则管理）可见"
+        "CDP_标签与评分框架.md 第 3 节更新为 4 个子节（3.2 全局 / 3.3 官网社区 / 3.4 航海家 / 3.5 深海圈）",
+        "每个产品线标签有独立前缀（comm_/nav_/deep_）",
+        "全局标签保留 id_/txn_/lc_ 前缀",
+        "官网社区至少 12 个标签覆盖消费+创作+影响力",
+        "航海家至少 10 个标签覆盖进度+效果+偏好",
+        "深海圈至少 10 个标签覆盖参与+产出+角色+协作",
+        "附录 A 标签命名规范同步更新"
       ],
       "priority": 1,
       "status": "completed",
       "depends_on": [],
-      "started_at": "2026-03-12T14:01:00+08:00",
-      "completed_at": "2026-03-12T15:30:00+08:00",
-      "notes": "页面骨架、sidebar、header、content、view-tabs 全部就位"
+      "started_at": "2026-03-17T10:01:00+08:00",
+      "completed_at": "2026-03-17T10:30:00+08:00",
+      "notes": "重构完成：全局41标签(id14+txn10+lc17) + 官网社区17标签(消费6+创作5+影响力6) + 航海家17标签(进度9+效果4+偏好4) + 深海圈21标签(消费4+参与5+产出4+角色4+协作4) = 总计96标签。同步更新了第5节打标规则(25条→35条)、附录A/B/C、UnifiedCustomerProfile接口"
     },
     {
       "id": 2,
-      "title": "实现标签总览 - 统计栏 + 分类 Tab",
-      "description": "统计栏4个指标卡片（总标签数60/已启用规则18/今日更新1247/覆盖率89.2%），6个分类Tab（身份14/行为10/交易10/生命周期8/偏好8/社交8），Tab切换JS",
+      "title": "更新原型标签总览页面",
+      "description": "修改 prototype/自动化标签管理.html 的标签总览视图：将 6 个分类 Tab 改为 4 个（全局通用/官网社区/航海家/深海圈），更新统计卡片数值，替换所有标签卡片内容为新体系的标签",
       "acceptance_criteria": [
-        "4个统计卡片正确显示数值",
-        "6个分类Tab可点击切换",
-        "Tab上显示标签计数"
+        "分类 Tab 显示 4 个：全局通用、官网社区、航海家、深海圈",
+        "每个 Tab 上的标签计数正确",
+        "统计卡片的总标签数等聚合数值与新标签体系一致",
+        "全局通用 Tab 下显示身份+交易+生命周期标签卡片",
+        "官网社区 Tab 下显示内容消费+创作+影响力标签卡片",
+        "航海家 Tab 下显示学习进度+效果+偏好标签卡片",
+        "深海圈 Tab 下显示参与+产出+角色+协作标签卡片",
+        "Tab 切换 JS 正常工作"
       ],
       "priority": 2,
-      "status": "completed",
+      "status": "pending",
       "depends_on": [1],
-      "started_at": "2026-03-12T15:30:00+08:00",
-      "completed_at": "2026-03-12T15:31:00+08:00",
-      "notes": "4个统计卡片+6个分类Tab+switchCategory JS"
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
     },
     {
       "id": 3,
-      "title": "实现标签总览 - 标签卡片列表",
-      "description": "每个分类下的标签卡片列表（grid布局每行3张），卡片含标签名/代码/取值范围/更新频率/关联规则数，身份标签Tab展示14张卡片，其他Tab各3-5张",
+      "title": "更新原型规则管理和编辑器",
+      "description": "更新规则管理表格的 mock 数据，使标签分类列显示新的 4 分类；更新规则编辑器中的标签分类下拉和标签代码下拉，反映新的产品线标签体系",
       "acceptance_criteria": [
-        "身份标签Tab显示14张卡片",
-        "卡片显示标签名、代码、取值范围等信息",
-        "切换Tab后卡片内容正确更换",
-        "Grid布局每行3张卡片"
+        "规则管理表格的标签分类列显示新分类名",
+        "规则编辑器的标签分类下拉包含 4 个选项",
+        "标签代码下拉根据选中分类联动显示对应标签",
+        "至少 15 条 mock 规则数据覆盖 4 个分类",
+        "标签详情弹窗的分类字段同步更新"
       ],
       "priority": 3,
-      "status": "completed",
+      "status": "pending",
       "depends_on": [2],
-      "started_at": "2026-03-12T15:31:00+08:00",
-      "completed_at": "2026-03-12T15:32:00+08:00",
-      "notes": "身份14张+其他各5张卡片，grid 3列布局，switchCategory JS"
-    },
-    {
-      "id": 4,
-      "title": "实现规则管理列表",
-      "description": "视图切换到规则管理Tab，表格8列（规则名/标签分类/打标结果/条件摘要/频率/优先级/状态/操作），15条mock数据，状态toggle开关，搜索+筛选，分页",
-      "acceptance_criteria": [
-        "切换到规则管理视图显示表格",
-        "表格显示15条规则数据",
-        "状态列有toggle开关",
-        "操作列有编辑/复制/删除按钮",
-        "筛选区有搜索框和分类/状态筛选"
-      ],
-      "priority": 4,
-      "status": "completed",
-      "depends_on": [1],
-      "started_at": "2026-03-12T15:32:00+08:00",
-      "completed_at": "2026-03-12T15:33:00+08:00",
-      "notes": "8列表格、15条mock数据、toggle开关、搜索筛选、分页"
-    },
-    {
-      "id": 5,
-      "title": "实现规则编辑器 Drawer 结构",
-      "description": "960px右侧抽屉Drawer，含modal-header、表单区（规则名称/描述/标签配置/触发条件/自动移除条件/执行配置）、rb-footer（预估匹配+保存取消）",
-      "acceptance_criteria": [
-        "点击编辑或新建按钮打开Drawer",
-        "Drawer包含完整表单区域",
-        "触发条件区有条件组构建器",
-        "自动移除条件区可折叠",
-        "执行配置区有计算频率/优先级/冷却期",
-        "底部有预估匹配人数和保存/取消按钮"
-      ],
-      "priority": 5,
-      "status": "completed",
-      "depends_on": [4],
-      "started_at": "2026-03-12T15:33:00+08:00",
-      "completed_at": "2026-03-12T15:34:00+08:00",
-      "notes": "960px Drawer含完整表单、触发条件组、可折叠移除条件、执行配置、预估匹配"
-    },
-    {
-      "id": 6,
-      "title": "实现规则编辑器 JS 交互",
-      "description": "openRuleEditor/closeRuleEditor，条件构建增删，标签联动（分类→代码→值），自动移除区展开/折叠，预估匹配，保存/复制/删除/切换状态，预填数据",
-      "acceptance_criteria": [
-        "Drawer打开/关闭动画正常",
-        "可添加/删除条件组和条件",
-        "标签分类选择联动标签代码下拉",
-        "自动移除区可展开/折叠",
-        "预估匹配人数显示",
-        "编辑模式预填数据正确"
-      ],
-      "priority": 6,
-      "status": "completed",
-      "depends_on": [5],
-      "started_at": "2026-03-12T15:34:00+08:00",
-      "completed_at": "2026-03-12T15:35:00+08:00",
-      "notes": "完整JS交互：open/close动画、条件增删、标签联动、折叠、预估、3条预填数据"
-    },
-    {
-      "id": 7,
-      "title": "实现标签详情弹窗",
-      "description": "点击标签卡片弹出居中dialog（480px），内容含标签名/代码/分类/取值分布（纯CSS横向条形图）/关联规则列表/最近变更时间",
-      "acceptance_criteria": [
-        "点击标签卡片弹出居中对话框",
-        "对话框显示标签详细信息",
-        "取值分布以横向条形图展示",
-        "关联规则列表可见",
-        "关闭按钮可关闭对话框"
-      ],
-      "priority": 7,
-      "status": "completed",
-      "depends_on": [3],
-      "started_at": "2026-03-12T15:35:00+08:00",
-      "completed_at": "2026-03-12T15:36:00+08:00",
-      "notes": "480px居中dialog，含基本信息/取值分布条形图/关联规则/最近更新"
-    },
-    {
-      "id": 8,
-      "title": "实现 PRD 面板",
-      "description": "prd-panel + prd-toggle，3个视图联动（overview/rules/editor），PRD sections包含需求概述/标签体系/规则引擎/条件类型/交互规则/校验规则，引入prd-editor.css+prd-editor.js",
-      "acceptance_criteria": [
-        "PRD标注按钮可见",
-        "点击PRD标注按钮打开PRD面板",
-        "PRD面板内容与当前视图联动",
-        "PRD面板可编辑"
-      ],
-      "priority": 8,
-      "status": "completed",
-      "depends_on": [6, 7],
-      "started_at": "2026-03-12T15:36:00+08:00",
-      "completed_at": "2026-03-12T15:37:00+08:00",
-      "notes": "PRD面板6个section，data-prd-view 3视图联动，引入prd-editor.css/js"
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
     }
   ]
 }
