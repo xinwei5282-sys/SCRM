@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>标签管理 - SCRM</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px; line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+  .sidebar { width: 200px; min-width: 200px; background: var(--color-fill-1); border-right: 1px solid var(--color-border-default); display: flex; flex-direction: column; }
+  .sidebar-logo { height: 48px; display: flex; align-items: center; padding: 0 16px; font-size: 16px; font-weight: 700; color: var(--color-primary-6); border-bottom: 1px solid var(--color-border-default); }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; cursor: pointer; color: var(--color-text-2); font-size: 14px; transition: background 100ms; }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active { background: var(--color-primary-1); color: var(--color-primary-6); font-weight: 600; }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); transition: transform 200ms; }
+  .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
+  .menu-sub { overflow: hidden; max-height: 0; transition: max-height 200ms ease; }
+  .menu-group.open > .menu-sub { max-height: 200px; }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header { height: 48px; background: var(--color-fill-1); border-bottom: 1px solid var(--color-border-default); display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; gap: 16px; }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .header-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-2); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-primary-6); font-weight: 600; }
+  .content { flex: 1; padding: 16px; overflow-y: auto; }
+
+  /* ======== Page ======== */
+  .page-card { background: var(--color-fill-1); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+  .page-title-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--color-border-default); }
+  .page-title { font-size: 18px; font-weight: 600; line-height: 28px; }
+
+  /* View Tabs */
+  .view-tabs { display: flex; gap: 0; padding: 0 20px; border-bottom: 1px solid var(--color-border-default); }
+  .view-tab { padding: 10px 16px; font-size: 14px; font-weight: 500; color: var(--color-text-3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 150ms; }
+  .view-tab:hover { color: var(--color-text-1); }
+  .view-tab.active { color: var(--color-primary-6); font-weight: 600; border-bottom-color: var(--color-primary-6); }
+  .view-content { display: none; }
+  .view-content.active { display: block; }
+
+  /* Stats Bar */
+  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--color-border-default); }
+  .stat-card { background: var(--color-fill-3); border-radius: var(--radius-btn); padding: 12px 16px; }
+  .stat-label { font-size: 13px; color: var(--color-text-3); margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--color-text-1); line-height: 1.3; }
+  .stat-unit { font-size: 12px; font-weight: 400; color: var(--color-text-4); margin-left: 2px; }
+
+  /* Page Body — left-right */
+  .page-body { display: flex; gap: 0; min-height: calc(100vh - 260px); }
+
+  /* Left Panel */
+  .left-panel { width: 240px; min-width: 240px; background: var(--color-fill-1); border-right: 1px solid var(--color-border-default); display: flex; flex-direction: column; padding: 16px; }
+  .panel-title { font-size: 14px; font-weight: 600; color: var(--color-text-1); margin-bottom: 10px; }
+  .group-search { height: 32px; border: 1px solid var(--color-border-default); border-radius: var(--radius-btn); padding: 0 10px; font-size: 13px; color: var(--color-text-1); background: var(--color-fill-1); outline: none; width: 100%; margin-bottom: 10px; transition: border-color 150ms; }
+  .group-search:hover { border-color: var(--color-border-hover); }
+  .group-search:focus { border-color: var(--color-primary-6); box-shadow: 0 0 0 2px rgba(54,165,144,0.12); }
+  .group-search::placeholder { color: var(--color-text-4); }
+  .group-tree { flex: 1; overflow-y: auto; }
+
+  .group-node { padding: 0 8px; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-radius: var(--radius-btn); font-size: 13px; color: var(--color-text-2); transition: background 100ms; }
+  .group-node:hover { background: var(--color-fill-hover); }
+  .group-node.active { background: var(--color-primary-1); color: var(--color-primary-6); font-weight: 500; }
+  .group-node--parent { font-weight: 600; margin-top: 4px; color: var(--color-text-1); font-size: 13px; height: 32px; }
+  .group-node--parent.active { background: var(--color-primary-1); color: var(--color-primary-6); }
+  .group-node--child { padding-left: 20px; font-size: 13px; height: 32px; }
+  .group-node__name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .group-node__actions { display: none; gap: 4px; flex-shrink: 0; margin-left: 4px; }
+  .group-node:hover .group-node__actions { display: flex; }
+  .group-node__count { font-size: 12px; color: var(--color-text-4); margin-left: 4px; }
+
+  .action-link { font-size: 12px; cursor: pointer; text-decoration: none; transition: color 100ms; }
+  .action-link:hover { opacity: 0.8; }
+  .action-link--primary { color: var(--color-primary-6); }
+  .action-link--danger { color: var(--color-danger-6); }
+  .action-link--teal { color: var(--color-primary-6); }
+
+  /* Table action links */
+  .data-table .action-link { font-size: 13px; }
+
+  .add-group-btn { margin-top: 10px; height: 32px; width: 100%; border: 1px dashed var(--color-border-default); border-radius: var(--radius-btn); background: var(--color-fill-1); color: var(--color-text-3); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 150ms; }
+  .add-group-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); background: var(--color-primary-1); }
+
+  /* Right Panel */
+  .right-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--color-fill-1); overflow: hidden; }
+  .right-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--color-border-default); }
+  .tag-search { height: 32px; border: 1px solid var(--color-border-default); border-radius: var(--radius-btn); padding: 0 10px; font-size: 13px; color: var(--color-text-1); background: var(--color-fill-1); outline: none; width: 220px; transition: border-color 150ms; }
+  .tag-search:hover { border-color: var(--color-border-hover); }
+  .tag-search:focus { border-color: var(--color-primary-6); box-shadow: 0 0 0 2px rgba(54,165,144,0.12); background: var(--color-fill-1); }
+  .tag-search::placeholder { color: var(--color-text-4); }
+
+  .btn { height: 32px; padding: 0 12px; border: none; border-radius: var(--radius-btn); font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; transition: all 100ms; white-space: nowrap; }
+  .btn-primary { background: var(--color-primary-6); color: white; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-teal { background: var(--color-primary-6); color: white; }
+  .btn-teal:hover { opacity: 0.9; }
+  .btn-secondary { background: var(--color-fill-3); color: var(--color-text-1); }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline { background: transparent; color: var(--color-text-1); border: 1px solid var(--color-border-default); }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+
+  /* Table — lives inside right-panel card */
+  .tag-table-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+  .data-table th { background: var(--color-fill-3); font-weight: 600; text-align: left; padding: 10px 12px; white-space: nowrap; color: var(--color-text-2); font-size: 13px; border-bottom: 1px solid var(--color-border-default); }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--color-border-default); vertical-align: middle; color: var(--color-text-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--color-fill-hover); }
+  .count-link { color: var(--color-primary-6); cursor: pointer; text-decoration: none; }
+  .count-link:hover { text-decoration: underline; }
+  .cell-code { font-family: monospace; font-size: 12px; color: var(--color-text-3); background: var(--color-fill-3); padding: 1px 6px; border-radius: 3px; }
+  .cell-desc { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; color: var(--color-text-3); font-size: 13px; }
+  .cell-freq { font-size: 13px; color: var(--color-text-3); }
+  .cell-rules { color: var(--color-primary-6); font-weight: 500; cursor: pointer; }
+
+  /* Tags */
+  .tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: var(--radius-xs); font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .tag-primary { background: var(--color-primary-1); color: var(--color-primary-6); }
+  .tag-success { background: var(--color-success-1); color: var(--color-success-6); }
+  .tag-warning { background: var(--color-warning-1); color: var(--color-warning-6); }
+  .tag-danger { background: var(--color-danger-1); color: var(--color-danger-6); }
+  .tag-info { background: var(--color-info-1); color: var(--color-info-6); }
+  .tag-default { background: var(--color-fill-3); color: var(--color-text-2); }
+
+  /* Toggle Switch */
+  .toggle-switch { position: relative; width: 36px; height: 20px; cursor: pointer; display: inline-block; vertical-align: middle; }
+  .toggle-switch input { display: none; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--color-fill-3-hover); border-radius: 10px; transition: all 150ms; }
+  .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: white; top: 2px; left: 2px; transition: transform 150ms; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+  .toggle-switch input:checked + .toggle-slider { background: var(--color-primary-6); }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+  /* Pagination */
+  .pagination-bar { display: flex; align-items: center; justify-content: flex-end; padding: 12px 12px; gap: 8px; font-size: 13px; color: var(--color-text-3); margin-top: auto; border-top: 1px solid var(--color-border-default); }
+  .page-btn { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-border-default); border-radius: var(--radius-btn); background: white; cursor: pointer; font-size: 13px; color: var(--color-text-2); }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active { background: var(--color-primary-6); color: white; border-color: var(--color-primary-6); }
+  .page-btn.disabled { color: var(--color-text-4); cursor: not-allowed; }
+  .page-size-select { height: 28px; border: 1px solid var(--color-border-default); border-radius: var(--radius-xs); padding: 0 6px; font-size: 13px; color: var(--color-text-2); background: var(--color-fill-1); outline: none; cursor: pointer; appearance: none; padding-right: 22px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; }
+  .jump-input { width: 40px; height: 28px; border: 1px solid var(--color-border-default); border-radius: var(--radius-xs); text-align: center; font-size: 13px; color: var(--color-text-2); outline: none; }
+  .jump-input:focus { border-color: var(--color-primary-6); }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: var(--color-overlay); z-index: 400; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-dialog { background: var(--color-fill-1); border-radius: var(--radius-card); width: 420px; box-shadow: var(--shadow-modal); animation: modalIn 200ms ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--color-border-default); }
+  .modal-header h3 { font-size: 16px; font-weight: 600; }
+  .modal-close { background: none; border: none; font-size: 18px; color: var(--color-text-3); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-btn); }
+  .modal-close:hover { background: var(--color-fill-hover); }
+  .modal-body { padding: 16px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--color-text-2); margin-bottom: 6px; }
+  .form-input { height: 32px; border: 1px solid var(--color-border-default); border-radius: var(--radius-btn); padding: 0 10px; font-size: 13px; color: var(--color-text-1); outline: none; width: 100%; transition: border-color 150ms; }
+  .form-input:focus { border-color: var(--color-primary-6); box-shadow: 0 0 0 3px rgba(54,165,144,0.15); }
+  .form-input::placeholder { color: var(--color-text-4); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--color-border-default); background: rgba(242,245,247,0.5); border-radius: 0 0 var(--radius-card) var(--radius-card); }
+  .btn-cancel { height: 32px; padding: 0 16px; border: 1px solid var(--color-border-default); border-radius: var(--radius-btn); background: var(--color-fill-1); color: var(--color-text-2); font-size: 13px; cursor: pointer; }
+  .btn-cancel:hover { background: var(--color-fill-hover); }
+  .btn-confirm { height: 32px; padding: 0 16px; border: none; border-radius: var(--radius-btn); background: var(--color-primary-6); color: white; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-confirm:hover { opacity: 0.9; }
+
+  /* Auto Tag Detail Drawer */
+  .tag-drawer-overlay { display:none; position:fixed; inset:0; background:var(--color-overlay); z-index:400; }
+  .tag-drawer-overlay.show { display:block; }
+  .tag-drawer { position:fixed; top:0; right:0; width:560px; max-width:calc(100vw - 80px); height:100vh; background:var(--color-fill-1); box-shadow:-4px 0 24px rgba(0,0,0,0.12); z-index:401; display:flex; flex-direction:column; animation:drawerSlideIn 250ms ease-out; }
+  @keyframes drawerSlideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+  .tag-drawer-overlay.hiding .tag-drawer { animation:drawerSlideOut 200ms ease-in forwards; }
+  @keyframes drawerSlideOut { from{transform:translateX(0)} to{transform:translateX(100%)} }
+  .tag-drawer-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--color-border-default); }
+  .tag-drawer-header h3 { font-size:16px; font-weight:600; }
+  .tag-drawer-close { background:none; border:none; font-size:18px; color:var(--color-text-3); cursor:pointer; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-btn); }
+  .tag-drawer-close:hover { background:var(--color-fill-hover); }
+  .tag-drawer-body { flex:1; overflow-y:auto; padding:20px; }
+  .tag-drawer-section { margin-bottom:24px; }
+  .tag-drawer-section-title { font-size:14px; font-weight:600; color:var(--color-text-1); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--color-border-default); }
+  .tag-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; }
+  .tag-info-item { }
+  .tag-info-label { font-size:12px; color:var(--color-text-3); margin-bottom:2px; }
+  .tag-info-value { font-size:13px; color:var(--color-text-1); font-weight:500; }
+  .tag-info-value .cell-code { font-size:12px; }
+  .tag-info-desc { grid-column:1/-1; }
+  .tag-info-desc .tag-info-value { font-weight:400; color:var(--color-text-2); line-height:20px; }
+  .logic-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .logic-table th { background:var(--color-fill-3); font-weight:600; text-align:left; padding:8px 12px; border-bottom:1px solid var(--color-border-default); color:var(--color-text-2); font-size:12px; }
+  .logic-table td { padding:8px 12px; border-bottom:1px solid var(--color-border-default); vertical-align:top; }
+  .logic-table tr:last-child td { border-bottom:none; }
+  .logic-table tr:hover td { background:var(--color-fill-hover); }
+  .logic-value { display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:var(--radius-xs); font-size:12px; font-weight:500; background:var(--color-primary-1); color:var(--color-primary-6); }
+  .logic-condition { color:var(--color-text-2); font-size:13px; }
+  .tag-drawer-footer { padding:12px 20px; border-top:1px solid var(--color-border-default); background:rgba(242,245,247,0.5); display:flex; justify-content:flex-end; gap:8px; }
+
+  /* Toast */
+  .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #242528; color: #fff; font-size: 12px; padding: 6px 16px; border-radius: 6px; z-index: 9999; pointer-events: none; animation: toastAnim 1.2s ease forwards; }
+  @keyframes toastAnim { 0% { opacity:0; transform: translate(-50%,-50%) scale(0.9); } 15% { opacity:1; transform: translate(-50%,-50%) scale(1); } 70% { opacity:1; } 100% { opacity:0; } }
+
+  /* PRD */
+  .prd-toggle { position: fixed; top: 12px; right: 16px; z-index: 900; height: 32px; padding: 0 14px; border: 1px solid var(--color-accent-orange-6); border-radius: var(--radius-btn); background: #FFF7E9; color: var(--color-accent-orange-6); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 150ms; box-shadow: 0 2px 8px rgba(255,125,0,0.15); }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; right: 396px; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+  .prd-panel { display: none; position: fixed; top: 48px; right: 0; width: 380px; height: calc(100vh - 48px); background: #FFFDF7; border-left: 1px solid #F0E6CC; z-index: 500; overflow-y: auto; padding: 20px; box-shadow: -4px 0 16px rgba(0,0,0,0.05); }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+</style>
+</head>
+<body>
+
+<button class="prd-toggle" onclick="togglePRD()"><span class="dot"></span>PRD 标注</button>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item"><span>首页</span></div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>客户</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
+
+          <div class="menu-item active" onclick="event.stopPropagation();">标签管理</div>
+        </div>
+      </div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>营销</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">运</div>
+        <span style="font-size:13px;">运营小李</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-card">
+        <div class="page-title-bar">
+          <div class="page-title">标签管理</div>
+        </div>
+
+        <!-- ===== View Tabs ===== -->
+        <div class="view-tabs">
+          <div class="view-tab active" onclick="switchView('wecom')">企微标签</div>
+          <div class="view-tab" onclick="switchView('crm')">CRM标签</div>
+          <div class="view-tab" onclick="switchView('auto')">自动化标签</div>
+        </div>
+
+        <!-- ============ Tab 1: 企微标签 ============ -->
+        <div class="view-content active" id="viewWecom">
+          <div class="page-body">
+            <div class="left-panel">
+              <div class="panel-title">标签组管理</div>
+              <input class="group-search" type="text" placeholder="标签组名称" oninput="wecom.groupKw=this.value; wecom.renderTree()">
+              <div class="group-tree" id="wecomGroupTree"></div>
+              <button class="add-group-btn" onclick="wecom.openGroupModal('新建', null)">+新建标签组</button>
+            </div>
+            <div class="right-panel">
+              <div class="right-header">
+                <input class="tag-search" type="text" placeholder="标签搜索" oninput="wecom.tagKw=this.value; wecom.page=1; wecom.renderTable()">
+                <button class="btn btn-primary" onclick="wecom.openTagModal('新建')">新 建</button>
+              </div>
+              <div class="tag-table-wrapper">
+                <table class="data-table">
+                  <colgroup><col style="width:60px"><col><col style="width:100px"><col style="width:120px"></colgroup>
+                  <thead><tr><th>ID</th><th>标签名称</th><th>人数</th><th>操作</th></tr></thead>
+                  <tbody id="wecomTagBody"></tbody>
+                </table>
+                <div class="pagination-bar" id="wecomPagination"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Tab 2: CRM标签 ============ -->
+        <div class="view-content" id="viewCrm">
+          <div class="page-body">
+            <div class="left-panel">
+              <div class="panel-title">标签组管理</div>
+              <input class="group-search" type="text" placeholder="标签组名称" oninput="crm.groupKw=this.value; crm.renderTree()">
+              <div class="group-tree" id="crmGroupTree"></div>
+              <button class="add-group-btn" onclick="crm.openGroupModal('新建', null)">+新建标签组</button>
+            </div>
+            <div class="right-panel">
+              <div class="right-header">
+                <input class="tag-search" type="text" placeholder="标签搜索" oninput="crm.tagKw=this.value; crm.page=1; crm.renderTable()">
+                <button class="btn btn-primary" onclick="crm.openTagModal('新建')">新 建</button>
+              </div>
+              <div class="tag-table-wrapper">
+                <table class="data-table">
+                  <colgroup><col style="width:60px"><col><col style="width:100px"><col style="width:120px"></colgroup>
+                  <thead><tr><th>ID</th><th>标签名称</th><th>人数</th><th>操作</th></tr></thead>
+                  <tbody id="crmTagBody"></tbody>
+                </table>
+                <div class="pagination-bar" id="crmPagination"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Tab 3: 自动化标签 ============ -->
+        <div class="view-content" id="viewAuto">
+          <!-- Stats -->
+          <div class="stats-bar">
+            <div class="stat-card"><div class="stat-label">总标签数</div><div class="stat-value">90<span class="stat-unit">个</span></div></div>
+            <div class="stat-card"><div class="stat-label">已启用规则</div><div class="stat-value">24<span class="stat-unit">条</span></div></div>
+            <div class="stat-card"><div class="stat-label">今日更新标签数</div><div class="stat-value">2,831<span class="stat-unit">人次</span></div></div>
+            <div class="stat-card"><div class="stat-label">标签覆盖率</div><div class="stat-value">91.5<span class="stat-unit">%</span></div></div>
+          </div>
+          <div class="page-body">
+            <div class="left-panel">
+              <div class="panel-title">标签分类</div>
+              <input class="group-search" type="text" placeholder="搜索分类" oninput="auto.catKw=this.value; auto.renderTree()">
+              <div class="group-tree" id="autoGroupTree"></div>
+            </div>
+            <div class="right-panel">
+              <div class="right-header">
+                <input class="tag-search" type="text" placeholder="搜索标签名称或代码" oninput="auto.tagKw=this.value; auto.page=1; auto.renderTable()">
+                <button class="btn btn-primary" onclick="auto.openTagModal()">+ 新建标签</button>
+              </div>
+              <div class="tag-table-wrapper">
+                <table class="data-table">
+                  <colgroup><col><col style="width:140px"><col style="width:200px"><col style="width:80px"><col style="width:80px"><col style="width:70px"><col style="width:110px"></colgroup>
+                  <thead><tr>
+                    <th>标签名称</th>
+                    <th>标签代码</th>
+                    <th>取值范围</th>
+                    <th>更新频率</th>
+                    <th>关联规则</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr></thead>
+                  <tbody id="autoTagBody"></tbody>
+                </table>
+                <div class="pagination-bar" id="autoPagination"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.page-card -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-dialog" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modalTitle">新建</h3>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="form-label" id="formLabel">名称</div>
+      <input class="form-input" id="formInput" placeholder="请输入">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-confirm" onclick="handleModalSubmit()">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- Auto Tag Detail Drawer -->
+<div class="tag-drawer-overlay" id="tagDrawerOverlay" onclick="closeTagDrawer()">
+  <div class="tag-drawer" onclick="event.stopPropagation()">
+    <div class="tag-drawer-header">
+      <h3 id="tagDrawerTitle">标签详情</h3>
+      <button class="tag-drawer-close" onclick="closeTagDrawer()">&#10005;</button>
+    </div>
+    <div class="tag-drawer-body" id="tagDrawerBody"></div>
+    <div class="tag-drawer-footer">
+      <button class="btn-cancel" onclick="closeTagDrawer()">关闭</button>
+      <button class="btn-confirm" onclick="closeTagDrawer(); showToast('已保存')">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRD Panel -->
+<div class="prd-panel" data-prd-key="tag-mgmt-merged" data-prd-version="1">
+  <div class="prd-title" contenteditable="true">标签管理 PRD</div>
+  <div class="prd-section">
+    <div class="prd-section-title orange">1. 页面概述</div>
+    <div class="prd-item">标签管理页面包含<strong>企微标签</strong>、<strong>CRM标签</strong>和<strong>自动化标签</strong>三大板块</div>
+    <div class="prd-item">顶部 Tab 切换：企微标签 / CRM标签 / 自动化标签</div>
+    <div class="prd-item">均采用左右分栏布局：左侧分类/分组树 + 右侧标签列表表格</div>
+  </div>
+  <div class="prd-section">
+    <div class="prd-section-title green">2. 企微标签</div>
+    <div class="prd-label">左侧</div>
+    <div class="prd-item">标签组树形管理，支持新建/编辑/删除（hover 显示操作）</div>
+    <div class="prd-item">一级分组支持编辑/删除，不支持新建子组</div>
+    <div class="prd-item">删除前检查分组下是否存在标签</div>
+    <div class="prd-label">右侧</div>
+    <div class="prd-item">表格列：ID / 标签名称 / 人数 / 操作（修改、删除）</div>
+    <div class="prd-item">支持搜索、分页（默认 5 条/页）</div>
+  </div>
+  <div class="prd-section">
+    <div class="prd-section-title green">3. CRM标签</div>
+    <div class="prd-label">左侧</div>
+    <div class="prd-item">标签组：销售阶段 / 客户价值 / 服务管理 / 运营分类 / 默认分组</div>
+    <div class="prd-item">结构和交互与企微标签一致</div>
+    <div class="prd-label">右侧</div>
+    <div class="prd-item">表格列：ID / 标签名称 / 人数 / 操作</div>
+    <div class="prd-item">CRM 标签为系统内部管理标签，不同步企微</div>
+  </div>
+  <div class="prd-section">
+    <div class="prd-section-title blue">4. 自动化标签</div>
+    <div class="prd-label">统计栏</div>
+    <div class="prd-item">总标签数 / 已启用规则 / 今日更新标签数 / 标签覆盖率</div>
+    <div class="prd-label">左侧 — 2 层分组树</div>
+    <div class="prd-item">一级分类：<strong>属性标签</strong>(44) / <strong>行为标签</strong>(46)</div>
+    <div class="prd-item">属性标签子类：基础身份(14) / 交易属性(10) / 计算属性(12) / 偏好属性(8)</div>
+    <div class="prd-item">行为标签子类：内容消费(6) / 内容创作(4) / 学习行为(12) / 社交互动(7) / 项目参与(8) / 平台使用(9)</div>
+    <div class="prd-item">点击一级分类：显示该大类所有标签；点击子类：仅显示该子类标签</div>
+    <div class="prd-label">右侧</div>
+    <div class="prd-item">表格列：标签名称 / 标签代码 / 取值范围 / 更新频率 / 关联规则 / 状态 / 操作</div>
+    <div class="prd-item">渠道来源标签同步企微 2 层分组：id_channel_l1 / id_channel_l2</div>
+    <div class="prd-item">状态 Toggle 开关启用/禁用</div>
+    <div class="prd-item">支持搜索、分页（默认 10 条/页）</div>
+  </div>
+</div>
+
+<script src="prd-editor.js"></script>
+<script>
+// ================================================================
+//  Utils
+// ================================================================
+function toggleMenu(el) { el.classList.toggle('open'); }
+function togglePRD() { document.body.classList.toggle('prd-on'); }
+function showToast(msg) { var t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(function(){t.remove()},1300); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+var currentView = 'wecom';
+var viewMap = { wecom: 0, crm: 1, auto: 2 };
+var viewIds = { wecom: 'viewWecom', crm: 'viewCrm', auto: 'viewAuto' };
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.view-content').forEach(function(v){v.classList.remove('active')});
+  document.querySelectorAll('.view-tab')[viewMap[view]].classList.add('active');
+  document.getElementById(viewIds[view]).classList.add('active');
+}
+
+var _modalCallback = null;
+function handleModalSubmit() {
+  var val = document.getElementById('formInput').value.trim();
+  if (!val) { showToast('请输入名称'); return; }
+  if (_modalCallback) _modalCallback(val);
+  closeModal();
+}
+function openModalForm(title, label, placeholder, defaultVal, callback) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('formLabel').textContent = label;
+  document.getElementById('formInput').placeholder = placeholder;
+  document.getElementById('formInput').value = defaultVal || '';
+  _modalCallback = callback;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+// ================================================================
+//  Pagination Helper
+// ================================================================
+function renderPaginationHTML(containerId, total, page, pageSize, goFn, sizeFn) {
+  var bar = document.getElementById(containerId);
+  var totalPages = Math.max(1, Math.ceil(total / pageSize));
+  var html = '<span style="margin-right:8px">共 '+total+' 条</span>';
+  html += '<button class="page-btn '+(page<=1?'disabled':'')+'" onclick="'+(page>1?goFn+'('+(page-1)+')':'')+'">&lsaquo;</button>';
+  var s = Math.max(1, page-2), e = Math.min(totalPages, s+4);
+  if (e-s<4) s = Math.max(1, e-4);
+  for (var i=s;i<=e;i++) html += '<button class="page-btn '+(i===page?'active':'')+'" onclick="'+goFn+'('+i+')">'+i+'</button>';
+  html += '<button class="page-btn '+(page>=totalPages?'disabled':'')+'" onclick="'+(page<totalPages?goFn+'('+(page+1)+')':'')+'">&rsaquo;</button>';
+  html += '<select class="page-size-select" onchange="'+sizeFn+'(this.value)">';
+  [5,10,20,50].forEach(function(s){ html += '<option value="'+s+'" '+(s===pageSize?'selected':'')+'>'+s+'条/页</option>'; });
+  html += '</select><span>跳至</span><input class="jump-input" value="'+page+'" onkeydown="if(event.key===\'Enter\')'+goFn+'(parseInt(this.value))"><span>页</span>';
+  bar.innerHTML = html;
+}
+
+// ================================================================
+//  企微标签 (wecom)
+// ================================================================
+var wecom = {
+  groupKw: '', tagKw: '', selectedGroup: null, selectedType: null, page: 1, pageSize: 5,
+  // selectedType: null=全部, 'parent'=一级分组, 'child'=二级分组
+  groups: [
+    { id:1, name:'转化组', is_default:false, children:[
+      {id:11,name:'意向客户'},{id:12,name:'企微分组'},{id:13,name:'用户分层'}
+    ]},
+    { id:2, name:'交付组', is_default:false, children:[
+      {id:21,name:'企微分组'},{id:22,name:'售后跟进'}
+    ]},
+    { id:3, name:'运营组', is_default:false, children:[
+      {id:31,name:'活跃度'},{id:32,name:'社群角色'}
+    ]},
+    { id:4, name:'来源组', is_default:false, children:[
+      {id:41,name:'渠道来源'},{id:42,name:'活动来源'}
+    ]},
+    { id:9, name:'默认分组（不可删除）', is_default:true, children:[
+      {id:91,name:'企微分组'}
+    ]}
+  ],
+  tags: [
+    {id:1001,name:'新用户',count:10,gid:11},{id:1002,name:'高粘性客户',count:0,gid:11},
+    {id:1003,name:'高意向',count:238,gid:11},{id:1004,name:'待跟进',count:56,gid:12},
+    {id:1005,name:'已成交',count:1024,gid:12},{id:1006,name:'已流失',count:87,gid:13},
+    {id:1007,name:'VIP客户',count:312,gid:13},{id:1008,name:'普通会员',count:1567,gid:21},
+    {id:1009,name:'体验用户',count:423,gid:21},{id:1010,name:'售后处理中',count:15,gid:22},
+    {id:1011,name:'已完结',count:890,gid:22},{id:1012,name:'高活跃',count:678,gid:31},
+    {id:1013,name:'中活跃',count:1234,gid:31},{id:1014,name:'低活跃',count:2345,gid:31},
+    {id:1015,name:'沉默用户',count:567,gid:31},{id:1016,name:'群主',count:45,gid:32},
+    {id:1017,name:'群管理员',count:128,gid:32},{id:1018,name:'活跃群员',count:890,gid:32},
+    {id:1019,name:'公众号',count:3450,gid:41},{id:1020,name:'小程序',count:2100,gid:41},
+    {id:1021,name:'线下活动',count:180,gid:42},{id:1022,name:'直播引流',count:760,gid:42},
+    {id:1023,name:'朋友圈广告',count:340,gid:42},{id:1024,name:'未分类',count:45,gid:91},
+    {id:1025,name:'待清洗',count:12,gid:91}
+  ],
+
+  getChildIds: function(parentId) {
+    var g = this.groups.find(function(g){return g.id===parentId});
+    return g ? (g.children||[]).map(function(c){return c.id}) : [];
+  },
+
+  renderTree: function() {
+    var c = document.getElementById('wecomGroupTree');
+    var kw = this.groupKw.toLowerCase();
+    var self = this;
+    var html = '<div class="group-node '+(this.selectedGroup===null?'active':'')+'" onclick="wecom.selectAll()"><span class="group-node__name">全部</span></div>';
+    this.groups.forEach(function(g) {
+      var ch = g.children||[];
+      var mp = g.name.toLowerCase().includes(kw);
+      var mc = ch.filter(function(c){return c.name.toLowerCase().includes(kw)});
+      if (kw && !mp && mc.length===0) return;
+      var vc = kw ? (mp?ch:mc) : ch;
+      var isParentActive = self.selectedType==='parent' && self.selectedGroup===g.id;
+      var pa = g.is_default ? '' : '<span class="group-node__actions"><a class="action-link action-link--primary" onclick="event.stopPropagation();wecom.openGroupModal(\'新建\','+g.id+')">新建</a><a class="action-link action-link--primary" onclick="event.stopPropagation();wecom.editParentGroup('+g.id+',\''+g.name+'\')">编辑</a><a class="action-link action-link--danger" onclick="event.stopPropagation();wecom.deleteParentGroup('+g.id+',\''+g.name+'\')">删除</a></span>';
+      html += '<div class="group-node group-node--parent '+(isParentActive?'active':'')+'" onclick="wecom.selectParent('+g.id+')"><span class="group-node__name">'+g.name+'</span>'+pa+'</div>';
+      vc.forEach(function(child) {
+        var isChildActive = self.selectedType==='child' && self.selectedGroup===child.id;
+        var act = g.is_default ? '' : '<span class="group-node__actions"><a class="action-link action-link--primary" onclick="event.stopPropagation();wecom.editChildGroup('+child.id+',\''+child.name+'\')">编辑</a><a class="action-link action-link--danger" onclick="event.stopPropagation();wecom.deleteChildGroup('+child.id+',\''+child.name+'\')">删除</a></span>';
+        html += '<div class="group-node group-node--child '+(isChildActive?'active':'')+'" onclick="wecom.selectChild('+child.id+')"><span class="group-node__name">'+child.name+'</span>'+act+'</div>';
+      });
+    });
+    c.innerHTML = html;
+  },
+
+  renderTable: function() {
+    var self = this;
+    var tags = this.tags;
+    if (this.selectedType==='parent') {
+      var cids = this.getChildIds(this.selectedGroup);
+      tags = tags.filter(function(t){return cids.includes(t.gid)});
+    } else if (this.selectedType==='child') {
+      tags = tags.filter(function(t){return t.gid===self.selectedGroup});
+    }
+    if (this.tagKw) { var kw=this.tagKw.toLowerCase(); tags = tags.filter(function(t){return t.name.toLowerCase().includes(kw)}); }
+    var total = tags.length;
+    var totalP = Math.max(1, Math.ceil(total/this.pageSize));
+    if (this.page > totalP) this.page = totalP;
+    var sl = tags.slice((this.page-1)*this.pageSize, this.page*this.pageSize);
+    var tbody = document.getElementById('wecomTagBody');
+    if (sl.length===0) { tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--color-text-4);padding:40px 0">暂无数据</td></tr>'; }
+    else { tbody.innerHTML = sl.map(function(t){ return '<tr><td>'+t.id+'</td><td>'+t.name+'</td><td><a class="count-link">'+t.count.toLocaleString()+'</a></td><td><a class="action-link action-link--primary" onclick="wecom.openTagModal(\'修改\','+t.id+',\''+t.name+'\')">修改</a>&nbsp;&nbsp;<a class="action-link action-link--danger" onclick="wecom.deleteTag('+t.id+',\''+t.name+'\')">删除</a></td></tr>'; }).join(''); }
+    renderPaginationHTML('wecomPagination', total, this.page, this.pageSize, 'wecom.goPage', 'wecom.setPageSize');
+  },
+
+  selectAll: function() { this.selectedGroup=null; this.selectedType=null; this.page=1; this.renderTree(); this.renderTable(); },
+  selectParent: function(id) { this.selectedGroup=id; this.selectedType='parent'; this.page=1; this.renderTree(); this.renderTable(); },
+  selectChild: function(id) { this.selectedGroup=id; this.selectedType='child'; this.page=1; this.renderTree(); this.renderTable(); },
+  goPage: function(p) { this.page=p; this.renderTable(); },
+  setPageSize: function(v) { this.pageSize=parseInt(v); this.page=1; this.renderTable(); },
+
+  openGroupModal: function(action, parentId) {
+    var self = this;
+    openModalForm(parentId?'新建子标签组':'新建标签组','标签组名称','请输入标签组名称','',function(val){
+      if (parentId) {
+        var g = self.groups.find(function(g){return g.id===parentId});
+        if (g) g.children.push({id:Date.now(),name:val});
+      } else {
+        self.groups.splice(self.groups.length-1,0,{id:Date.now(),name:val,is_default:false,children:[]});
+      }
+      showToast('创建成功'); self.renderTree();
+    });
+  },
+  editParentGroup: function(id, name) {
+    var self = this;
+    openModalForm('编辑标签组','标签组名称','请输入标签组名称',name,function(val){
+      var g = self.groups.find(function(g){return g.id===id});
+      if (g) g.name = val;
+      showToast('修改成功'); self.renderTree();
+    });
+  },
+  deleteParentGroup: function(id, name) {
+    var g = this.groups.find(function(g){return g.id===id});
+    if (!g) return;
+    var cids = (g.children||[]).map(function(c){return c.id});
+    if (this.tags.some(function(t){return cids.includes(t.gid)})) { showToast('该分组下存在标签，不可删除'); return; }
+    if (!confirm('确定要删除标签组「'+name+'」及其所有子分组吗？')) return;
+    var idx = this.groups.indexOf(g);
+    if (idx>=0) this.groups.splice(idx,1);
+    if (this.selectedType==='parent' && this.selectedGroup===id) { this.selectedGroup=null; this.selectedType=null; }
+    if (this.selectedType==='child' && cids.includes(this.selectedGroup)) { this.selectedGroup=null; this.selectedType=null; }
+    showToast('删除成功'); this.renderTree(); this.renderTable();
+  },
+  editChildGroup: function(id, name) {
+    var self = this;
+    openModalForm('编辑标签组','标签组名称','请输入标签组名称',name,function(val){
+      self.groups.forEach(function(g){ (g.children||[]).forEach(function(c){ if(c.id===id) c.name=val; }); });
+      showToast('修改成功'); self.renderTree();
+    });
+  },
+  deleteChildGroup: function(id, name) {
+    if (this.tags.some(function(t){return t.gid===id})) { showToast('该分组下存在标签，不可删除'); return; }
+    if (!confirm('确定要删除标签组「'+name+'」吗？')) return;
+    this.groups.forEach(function(g){ var i=(g.children||[]).findIndex(function(c){return c.id===id}); if(i>=0)g.children.splice(i,1); });
+    if (this.selectedGroup===id) { this.selectedGroup=null; this.selectedType=null; }
+    showToast('删除成功'); this.renderTree(); this.renderTable();
+  },
+  openTagModal: function(action, id, name) {
+    var self = this;
+    if (action==='修改') {
+      openModalForm('修改标签','标签名称','请输入标签名称',name,function(val){
+        var t = self.tags.find(function(t){return t.id===id});
+        if (t) t.name=val;
+        showToast('修改成功'); self.renderTable();
+      });
+    } else {
+      var defaultGid = this.selectedType==='child' ? this.selectedGroup : 91;
+      openModalForm('新建标签','标签名称','请输入标签名称','',function(val){
+        self.tags.push({id:Date.now(),name:val,count:0,gid:defaultGid});
+        showToast('创建成功'); self.renderTable();
+      });
+    }
+  },
+  deleteTag: function(id, name) {
+    if (!confirm('确定要删除标签「'+name+'」吗？')) return;
+    var i = this.tags.findIndex(function(t){return t.id===id});
+    if (i>=0) this.tags.splice(i,1);
+    showToast('删除成功'); this.renderTable();
+  }
+};
+
+// ================================================================
+//  CRM标签 (crm)
+// ================================================================
+var crm = {
+  groupKw: '', tagKw: '', selectedGroup: null, selectedType: null, page: 1, pageSize: 5,
+  groups: [
+    { id:101, name:'销售阶段', is_default:false, children:[
+      {id:1011,name:'线索阶段'},{id:1012,name:'商机阶段'},{id:1013,name:'成交阶段'}
+    ]},
+    { id:102, name:'客户价值', is_default:false, children:[
+      {id:1021,name:'价值分层'},{id:1022,name:'贡献度'}
+    ]},
+    { id:103, name:'服务管理', is_default:false, children:[
+      {id:1031,name:'服务状态'},{id:1032,name:'满意度'}
+    ]},
+    { id:104, name:'运营分类', is_default:false, children:[
+      {id:1041,name:'活动参与'},{id:1042,name:'内容偏好'},{id:1043,name:'社群活跃'}
+    ]},
+    { id:109, name:'默认分组（不可删除）', is_default:true, children:[
+      {id:1091,name:'未分组'}
+    ]}
+  ],
+  tags: [
+    {id:2001,name:'新线索',count:456,gid:1011},{id:2002,name:'待联系',count:123,gid:1011},
+    {id:2003,name:'已联系',count:89,gid:1011},{id:2004,name:'无效线索',count:34,gid:1011},
+    {id:2005,name:'需求确认',count:67,gid:1012},{id:2006,name:'方案沟通',count:45,gid:1012},
+    {id:2007,name:'报价中',count:28,gid:1012},{id:2008,name:'已成交',count:512,gid:1013},
+    {id:2009,name:'已续费',count:234,gid:1013},{id:2010,name:'已流失',count:78,gid:1013},
+    {id:2011,name:'高价值客户',count:156,gid:1021},{id:2012,name:'中价值客户',count:890,gid:1021},
+    {id:2013,name:'低价值客户',count:1234,gid:1021},{id:2014,name:'潜力客户',count:345,gid:1021},
+    {id:2015,name:'高贡献',count:89,gid:1022},{id:2016,name:'中贡献',count:456,gid:1022},
+    {id:2017,name:'低贡献',count:678,gid:1022},
+    {id:2018,name:'服务中',count:234,gid:1031},{id:2019,name:'待回访',count:56,gid:1031},
+    {id:2020,name:'已完结',count:1890,gid:1031},{id:2021,name:'投诉处理',count:12,gid:1031},
+    {id:2022,name:'非常满意',count:567,gid:1032},{id:2023,name:'满意',count:890,gid:1032},
+    {id:2024,name:'一般',count:234,gid:1032},{id:2025,name:'不满意',count:45,gid:1032},
+    {id:2026,name:'线下活动',count:345,gid:1041},{id:2027,name:'线上直播',count:678,gid:1041},
+    {id:2028,name:'训练营',count:123,gid:1041},{id:2029,name:'长文阅读',count:456,gid:1042},
+    {id:2030,name:'短视频',count:789,gid:1042},{id:2031,name:'课程学习',count:234,gid:1042},
+    {id:2032,name:'群活跃用户',count:567,gid:1043},{id:2033,name:'群沉默用户',count:1234,gid:1043},
+    {id:2034,name:'未分组标签',count:23,gid:1091}
+  ],
+
+  getChildIds: function(parentId) {
+    var g = this.groups.find(function(g){return g.id===parentId});
+    return g ? (g.children||[]).map(function(c){return c.id}) : [];
+  },
+
+  renderTree: function() {
+    var c = document.getElementById('crmGroupTree');
+    var kw = this.groupKw.toLowerCase();
+    var self = this;
+    var html = '<div class="group-node '+(this.selectedGroup===null?'active':'')+'" onclick="crm.selectAll()"><span class="group-node__name">全部</span></div>';
+    this.groups.forEach(function(g) {
+      var ch = g.children||[];
+      var mp = g.name.toLowerCase().includes(kw);
+      var mc = ch.filter(function(c){return c.name.toLowerCase().includes(kw)});
+      if (kw && !mp && mc.length===0) return;
+      var vc = kw ? (mp?ch:mc) : ch;
+      var isParentActive = self.selectedType==='parent' && self.selectedGroup===g.id;
+      var pa = g.is_default ? '' : '<span class="group-node__actions"><a class="action-link action-link--primary" onclick="event.stopPropagation();crm.openGroupModal(\'新建\','+g.id+')">新建</a><a class="action-link action-link--primary" onclick="event.stopPropagation();crm.editParentGroup('+g.id+',\''+g.name+'\')">编辑</a><a class="action-link action-link--danger" onclick="event.stopPropagation();crm.deleteParentGroup('+g.id+',\''+g.name+'\')">删除</a></span>';
+      html += '<div class="group-node group-node--parent '+(isParentActive?'active':'')+'" onclick="crm.selectParent('+g.id+')"><span class="group-node__name">'+g.name+'</span>'+pa+'</div>';
+      vc.forEach(function(child) {
+        var isChildActive = self.selectedType==='child' && self.selectedGroup===child.id;
+        var act = g.is_default ? '' : '<span class="group-node__actions"><a class="action-link action-link--primary" onclick="event.stopPropagation();crm.editChildGroup('+child.id+',\''+child.name+'\')">编辑</a><a class="action-link action-link--danger" onclick="event.stopPropagation();crm.deleteChildGroup('+child.id+',\''+child.name+'\')">删除</a></span>';
+        html += '<div class="group-node group-node--child '+(isChildActive?'active':'')+'" onclick="crm.selectChild('+child.id+')"><span class="group-node__name">'+child.name+'</span>'+act+'</div>';
+      });
+    });
+    c.innerHTML = html;
+  },
+
+  renderTable: function() {
+    var self = this;
+    var tags = this.tags;
+    if (this.selectedType==='parent') {
+      var cids = this.getChildIds(this.selectedGroup);
+      tags = tags.filter(function(t){return cids.includes(t.gid)});
+    } else if (this.selectedType==='child') {
+      tags = tags.filter(function(t){return t.gid===self.selectedGroup});
+    }
+    if (this.tagKw) { var kw=this.tagKw.toLowerCase(); tags = tags.filter(function(t){return t.name.toLowerCase().includes(kw)}); }
+    var total = tags.length;
+    var totalP = Math.max(1, Math.ceil(total/this.pageSize));
+    if (this.page > totalP) this.page = totalP;
+    var sl = tags.slice((this.page-1)*this.pageSize, this.page*this.pageSize);
+    var tbody = document.getElementById('crmTagBody');
+    if (sl.length===0) { tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--color-text-4);padding:40px 0">暂无数据</td></tr>'; }
+    else { tbody.innerHTML = sl.map(function(t){ return '<tr><td>'+t.id+'</td><td>'+t.name+'</td><td><a class="count-link">'+t.count.toLocaleString()+'</a></td><td><a class="action-link action-link--primary" onclick="crm.openTagModal(\'修改\','+t.id+',\''+t.name+'\')">修改</a>&nbsp;&nbsp;<a class="action-link action-link--danger" onclick="crm.deleteTag('+t.id+',\''+t.name+'\')">删除</a></td></tr>'; }).join(''); }
+    renderPaginationHTML('crmPagination', total, this.page, this.pageSize, 'crm.goPage', 'crm.setPageSize');
+  },
+
+  selectAll: function() { this.selectedGroup=null; this.selectedType=null; this.page=1; this.renderTree(); this.renderTable(); },
+  selectParent: function(id) { this.selectedGroup=id; this.selectedType='parent'; this.page=1; this.renderTree(); this.renderTable(); },
+  selectChild: function(id) { this.selectedGroup=id; this.selectedType='child'; this.page=1; this.renderTree(); this.renderTable(); },
+  goPage: function(p) { this.page=p; this.renderTable(); },
+  setPageSize: function(v) { this.pageSize=parseInt(v); this.page=1; this.renderTable(); },
+
+  openGroupModal: function(action, parentId) {
+    var self = this;
+    openModalForm(parentId?'新建子标签组':'新建标签组','标签组名称','请输入标签组名称','',function(val){
+      if (parentId) {
+        var g = self.groups.find(function(g){return g.id===parentId});
+        if (g) g.children.push({id:Date.now(),name:val});
+      } else {
+        self.groups.splice(self.groups.length-1,0,{id:Date.now(),name:val,is_default:false,children:[]});
+      }
+      showToast('创建成功'); self.renderTree();
+    });
+  },
+  editParentGroup: function(id, name) {
+    var self = this;
+    openModalForm('编辑标签组','标签组名称','请输入标签组名称',name,function(val){
+      var g = self.groups.find(function(g){return g.id===id});
+      if (g) g.name = val;
+      showToast('修改成功'); self.renderTree();
+    });
+  },
+  deleteParentGroup: function(id, name) {
+    var g = this.groups.find(function(g){return g.id===id});
+    if (!g) return;
+    var cids = (g.children||[]).map(function(c){return c.id});
+    if (this.tags.some(function(t){return cids.includes(t.gid)})) { showToast('该分组下存在标签，不可删除'); return; }
+    if (!confirm('确定要删除标签组「'+name+'」及其所有子分组吗？')) return;
+    var idx = this.groups.indexOf(g);
+    if (idx>=0) this.groups.splice(idx,1);
+    if (this.selectedType==='parent' && this.selectedGroup===id) { this.selectedGroup=null; this.selectedType=null; }
+    if (this.selectedType==='child' && cids.includes(this.selectedGroup)) { this.selectedGroup=null; this.selectedType=null; }
+    showToast('删除成功'); this.renderTree(); this.renderTable();
+  },
+  editChildGroup: function(id, name) {
+    var self = this;
+    openModalForm('编辑标签组','标签组名称','请输入标签组名称',name,function(val){
+      self.groups.forEach(function(g){ (g.children||[]).forEach(function(c){ if(c.id===id) c.name=val; }); });
+      showToast('修改成功'); self.renderTree();
+    });
+  },
+  deleteChildGroup: function(id, name) {
+    if (this.tags.some(function(t){return t.gid===id})) { showToast('该分组下存在标签，不可删除'); return; }
+    if (!confirm('确定要删除标签组「'+name+'」吗？')) return;
+    this.groups.forEach(function(g){ var i=(g.children||[]).findIndex(function(c){return c.id===id}); if(i>=0)g.children.splice(i,1); });
+    if (this.selectedGroup===id) { this.selectedGroup=null; this.selectedType=null; }
+    showToast('删除成功'); this.renderTree(); this.renderTable();
+  },
+  openTagModal: function(action, id, name) {
+    var self = this;
+    if (action==='修改') {
+      openModalForm('修改标签','标签名称','请输入标签名称',name,function(val){
+        var t = self.tags.find(function(t){return t.id===id});
+        if (t) t.name=val;
+        showToast('修改成功'); self.renderTable();
+      });
+    } else {
+      var defaultGid = this.selectedType==='child' ? this.selectedGroup : 1091;
+      openModalForm('新建标签','标签名称','请输入标签名称','',function(val){
+        self.tags.push({id:Date.now(),name:val,count:0,gid:defaultGid});
+        showToast('创建成功'); self.renderTable();
+      });
+    }
+  },
+  deleteTag: function(id, name) {
+    if (!confirm('确定要删除标签「'+name+'」吗？')) return;
+    var i = this.tags.findIndex(function(t){return t.id===id});
+    if (i>=0) this.tags.splice(i,1);
+    showToast('删除成功'); this.renderTable();
+  }
+};
+
+// ================================================================
+//  Tag Drawer
+// ================================================================
+function openTagDrawer(cat, code) {
+  var t = (auto.tags[cat]||[]).find(function(t){return t.code===code});
+  if (!t) return;
+
+  // Find category display name
+  var catName = cat;
+  auto.categories.forEach(function(parent) {
+    parent.children.forEach(function(ch) {
+      if (ch.key === cat) catName = parent.name + ' > ' + ch.name;
+    });
+  });
+
+  document.getElementById('tagDrawerTitle').textContent = t.name + ' — 编辑';
+
+  var html = '';
+  // Basic info section
+  html += '<div class="tag-drawer-section">';
+  html += '<div class="tag-drawer-section-title">基本信息</div>';
+  html += '<div class="tag-info-grid">';
+  html += '<div class="tag-info-item"><div class="tag-info-label">标签名称</div><div class="tag-info-value">'+t.name+'</div></div>';
+  html += '<div class="tag-info-item"><div class="tag-info-label">标签代码</div><div class="tag-info-value"><span class="cell-code">'+t.code+'</span></div></div>';
+  html += '<div class="tag-info-item"><div class="tag-info-label">所属分类</div><div class="tag-info-value">'+catName+'</div></div>';
+  html += '<div class="tag-info-item"><div class="tag-info-label">数据来源</div><div class="tag-info-value">'+(t.source||'—')+'</div></div>';
+  html += '<div class="tag-info-item"><div class="tag-info-label">更新频率</div><div class="tag-info-value">'+t.freq+'</div></div>';
+  html += '<div class="tag-info-item"><div class="tag-info-label">时间窗口</div><div class="tag-info-value">'+(t.window||'—')+'</div></div>';
+  if (t.description) {
+    html += '<div class="tag-info-item tag-info-desc"><div class="tag-info-label">说明</div><div class="tag-info-value">'+t.description+'</div></div>';
+  }
+  html += '</div></div>';
+
+  // Value logic section
+  if (t.logic && t.logic.length > 0) {
+    html += '<div class="tag-drawer-section">';
+    html += '<div class="tag-drawer-section-title">取值逻辑</div>';
+    html += '<table class="logic-table"><thead><tr><th style="width:120px">取值</th><th>判定条件</th></tr></thead><tbody>';
+    t.logic.forEach(function(l) {
+      html += '<tr><td><span class="logic-value">'+l.value+'</span></td><td class="logic-condition">'+l.condition+'</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // Related rules section
+  if (t.rules > 0) {
+    html += '<div class="tag-drawer-section">';
+    html += '<div class="tag-drawer-section-title">关联规则 ('+t.rules+')</div>';
+    html += '<div style="font-size:13px;color:var(--color-text-3)">'+t.rules+' 条自动化规则引用了此标签，<a style="color:var(--color-primary-6);cursor:pointer">查看详情 →</a></div>';
+    html += '</div>';
+  }
+
+  document.getElementById('tagDrawerBody').innerHTML = html;
+  document.getElementById('tagDrawerOverlay').classList.add('show');
+}
+
+function closeTagDrawer() {
+  var overlay = document.getElementById('tagDrawerOverlay');
+  overlay.classList.add('hiding');
+  setTimeout(function(){ overlay.classList.remove('show','hiding'); }, 200);
+}
+
+// ================================================================
+//  自动化标签 (auto)
+// ================================================================
+var auto = {
+  catKw: '', tagKw: '', selectedCat: 'all', selectedType: null, page: 1, pageSize: 10,
+  categories: [
+    { key:'attr', name:'属性标签', children:[
+      {key:'id', name:'基础身份', count:14},
+      {key:'txn', name:'交易属性', count:10},
+      {key:'calc', name:'计算属性', count:12},
+      {key:'pref', name:'偏好属性', count:8}
+    ]},
+    { key:'bhv', name:'行为标签', children:[
+      {key:'read', name:'内容消费', count:6},
+      {key:'create', name:'内容创作', count:4},
+      {key:'learn', name:'学习行为', count:12},
+      {key:'social', name:'社交互动', count:7},
+      {key:'proj', name:'项目参与', count:8},
+      {key:'usage', name:'平台使用', count:9}
+    ]}
+  ],
+  tags: {
+    id: [
+      {name:'会员等级',code:'id_member_level',values:'体验会员 / 正式会员 / 老会员(续费≥2)',freq:'实时',rules:2,enabled:true,source:'鱼丸系统',window:'—',description:'基于用户的会员订单和续费记录自动判定',logic:[{value:'体验会员',condition:'已领取体验卡但未购买正式会员'},{value:'正式会员',condition:'已购买正式会员且在有效期内'},{value:'老会员',condition:'续费次数 ≥ 2 次'}]},
+      {name:'入圈期数',code:'id_member_period',values:'第8期、第9期',freq:'订单触发',rules:0,enabled:true,source:'鱼丸系统',window:'—',description:'根据首次购买会员订单的期数自动标记',logic:[{value:'第N期',condition:'首次购买会员时对应的招募期数'}]},
+      {name:'客户等级',code:'id_customer_level',values:'S / A / B / C / D',freq:'手动/规则',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'综合消费金额、活跃度、续费情况评定',logic:[{value:'S',condition:'CLV Top5% 且续费≥2次'},{value:'A',condition:'CLV Top20% 且近期活跃'},{value:'B',condition:'CLV Top50%'},{value:'C',condition:'CLV Bottom50%'},{value:'D',condition:'未付费或已流失'}]},
+      {name:'社群角色',code:'id_role',values:'普通圈友 / 传术师 / 航海家 / 管理员',freq:'系统同步',rules:1,enabled:true,source:'鱼丸系统',window:'—',description:'系统同步用户在社群中的角色',logic:[{value:'普通圈友',condition:'默认角色'},{value:'传术师',condition:'被官方授予传术师身份'},{value:'航海家',condition:'购买航海家权益'},{value:'管理员',condition:'具有管理权限'}]},
+      {name:'一级渠道',code:'id_channel_l1',values:'视频号 / 公众号 / 合作导流 / 老带新',freq:'首次添加',rules:0,enabled:true,source:'企微活码',window:'—',description:'同步企微标签组名称（一级渠道）',logic:[{value:'视频号',condition:'企微标签组名 = 视频号'},{value:'公众号',condition:'企微标签组名 = 公众号'},{value:'合作导流',condition:'企微标签组名 = 合作导流'},{value:'老带新',condition:'企微标签组名 = 老带新'}]},
+      {name:'二级渠道',code:'id_channel_l2',values:'坤哥直播 / 文末引流 / 小红书',freq:'首次添加',rules:0,enabled:true,source:'企微活码',window:'—',description:'同步企微标签值（二级渠道）',logic:[{value:'具体渠道名',condition:'企微活码标签值，如"坤哥直播""文末引流"等'}]},
+      {name:'推荐人',code:'id_referrer',values:'用户ID/昵称',freq:'首次添加',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'记录推荐人信息',logic:[{value:'用户ID/昵称',condition:'通过推荐链接注册或由销售标记'}]},
+      {name:'专属销售',code:'id_sales_owner',values:'员工名',freq:'分配时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'客户分配的专属销售',logic:[{value:'员工名',condition:'系统自动分配或手动指派'}]},
+      {name:'专属服务',code:'id_service_owner',values:'员工名',freq:'分配时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'客户分配的专属服务人员',logic:[{value:'员工名',condition:'系统自动分配或手动指派'}]},
+      {name:'好友状态',code:'id_wechat_status',values:'好友 / 客户删除 / 员工删除 / 未添加',freq:'实时',rules:1,enabled:true,source:'企微同步',window:'—',description:'实时同步企微好友关系状态',logic:[{value:'好友',condition:'双方互为好友'},{value:'客户删除',condition:'客户删除了员工'},{value:'员工删除',condition:'员工删除了客户'},{value:'未添加',condition:'尚未建立好友关系'}]},
+      {name:'体验营期数',code:'id_trial_batch',values:'9体139 / 9体137',freq:'报名时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'报名体验营时自动标记期数',logic:[{value:'期数编号',condition:'报名体验营时系统自动分配的批次号'}]},
+      {name:'所在城市',code:'id_region',values:'北京、上海、深圳',freq:'填写时',rules:0,enabled:true,source:'体验营调研',window:'—',description:'用户在体验营调研中填写的城市',logic:[{value:'城市名',condition:'用户自行填写'}]},
+      {name:'职业类型',code:'id_occupation',values:'互联网 / 金融 / 自由职业 / 实体经营',freq:'填写时',rules:0,enabled:true,source:'体验营调研',window:'—',description:'用户在体验营调研中填写的职业',logic:[{value:'职业类型',condition:'用户自行填写'}]},
+      {name:'收入层级',code:'id_income_tier',values:'<10w / 10-30w / 30-50w / >100w',freq:'填写时',rules:0,enabled:true,source:'体验营调研',window:'—',description:'用户在体验营调研中填写的收入区间',logic:[{value:'<10w',condition:'年收入 < 10 万'},{value:'10-30w',condition:'年收入 10-30 万'},{value:'30-50w',condition:'年收入 30-50 万'},{value:'>100w',condition:'年收入 > 100 万'}]}
+    ],
+    txn: [
+      {name:'累计消费',code:'txn_total_spent',values:'高(≥10000) / 中(3000-9999) / 低(<3000)',freq:'支付触发',rules:1,enabled:true,source:'订单系统',window:'全历史',description:'累计所有已支付订单的金额总和',logic:[{value:'高消费',condition:'累计消费 ≥ ¥10,000'},{value:'中消费',condition:'累计消费 ¥3,000-9,999'},{value:'低消费',condition:'累计消费 < ¥3,000'}]},
+      {name:'购买次数',code:'txn_purchase_count',values:'多次(≥5) / 几次(2-4) / 首次(1)',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'历史支付成功的订单总数',logic:[{value:'多次',condition:'订单数 ≥ 5'},{value:'几次',condition:'订单数 2-4'},{value:'首次',condition:'订单数 = 1'}]},
+      {name:'最近购买',code:'txn_latest_product',values:'年费会员 / 航海门票 / 深海圈项目',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'—',description:'最近一笔支付成功订单的产品名称',logic:[{value:'产品名',condition:'取最近一笔订单的产品字段'}]},
+      {name:'续费次数',code:'txn_renewal_count',values:'0 / 1 / 2 / 3+',freq:'续费触发',rules:2,enabled:true,source:'订单系统',window:'全历史',description:'会员续费次数（不含首次购买）',logic:[{value:'0',condition:'从未续费'},{value:'1',condition:'续费 1 次'},{value:'2',condition:'续费 2 次'},{value:'3+',condition:'续费 ≥ 3 次'}]},
+      {name:'续费状态',code:'txn_renewal_status',values:'首年 / 已续费 / 待续费 / 已过期',freq:'每日',rules:3,enabled:true,source:'订单系统',window:'—',description:'当前会员续费状态',logic:[{value:'首年',condition:'首次购买会员，尚未到续费周期'},{value:'已续费',condition:'已完成本期续费'},{value:'待续费',condition:'到期前 90 天且未续费'},{value:'已过期',condition:'会员已到期且未续费'}]},
+      {name:'CLV 层级',code:'txn_clv_tier',values:'钻石 / 金 / 银 / 铜',freq:'月度',rules:1,enabled:true,source:'订单系统+行为',window:'全历史',description:'基于消费金额+内容贡献的客户终身价值分层',logic:[{value:'钻石',condition:'CLV Top 5%'},{value:'金',condition:'CLV Top 20%'},{value:'银',condition:'CLV Top 50%'},{value:'铜',condition:'CLV Bottom 50%'}]},
+      {name:'平均客单价',code:'txn_avg_order',values:'具体金额',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'历史所有订单的平均金额',logic:[{value:'具体金额',condition:'总消费金额 ÷ 订单数'}]},
+      {name:'退款标记',code:'txn_refund_flag',values:'有 / 无',freq:'退款事件',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'是否存在退款记录',logic:[{value:'有',condition:'存在至少 1 笔退款订单'},{value:'无',condition:'无退款记录'}]},
+      {name:'会员时长',code:'txn_member_duration',values:'新(≤180天) / 中(181-730) / 老(>730)',freq:'每日',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'累计会员天数（含所有续费期）',logic:[{value:'新',condition:'累计会员天数 ≤ 180 天'},{value:'中',condition:'累计会员天数 181-730 天'},{value:'老',condition:'累计会员天数 > 730 天'}]},
+      {name:'到期倒计时',code:'txn_expire_countdown',values:'具体天数（负数=已过期）',freq:'每日',rules:2,enabled:true,source:'订单系统',window:'—',description:'距离当前会员到期日的天数',logic:[{value:'正数',condition:'距到期还有 N 天'},{value:'0',condition:'今日到期'},{value:'负数',condition:'已过期 N 天'}]}
+    ],
+    calc: [
+      {name:'生命周期阶段',code:'calc_lifecycle',values:'visitor / prospect / trial / paid / active / core / silent / churn_risk',freq:'每日',rules:3,enabled:true,source:'规则引擎',window:'—',description:'基于用户行为和交易状态自动判定的生命周期阶段',logic:[{value:'visitor',condition:'触达但未建立联系'},{value:'prospect',condition:'已添加企微好友'},{value:'trial',condition:'报名体验营'},{value:'paid_member',condition:'支付会员成功'},{value:'active_member',condition:'近30天行为权重 ≥ 5'},{value:'core_member',condition:'满足核心会员评分阈值'},{value:'silent_member',condition:'连续30天无有效行为'},{value:'churn_risk',condition:'到期前60天 + 沉默'}]},
+      {name:'健康度',code:'calc_health',values:'健康(≥80) / 良好(60-79) / 一般(40-59) / 风险 / 危险',freq:'每日',rules:1,enabled:true,source:'评分模型',window:'—',description:'综合活跃度(30%)+内容消费(20%)+社群参与(15%)+交易健康(20%)+服务体验(15%)',logic:[{value:'健康',condition:'健康分 ≥ 80'},{value:'良好',condition:'健康分 60-79'},{value:'一般',condition:'健康分 40-59'},{value:'风险',condition:'健康分 20-39'},{value:'危险',condition:'健康分 < 20'}]},
+      {name:'流失风险',code:'calc_churn_risk',values:'高 / 中 / 低 / 无',freq:'每日',rules:3,enabled:true,source:'预测模型',window:'—',description:'基于续费窗口+活跃度+沉默天数的流失概率预测',logic:[{value:'高',condition:'到期前60天且沉默≥30天'},{value:'中',condition:'到期前90天且活跃度下降'},{value:'低',condition:'活跃但到期前180天内'},{value:'无',condition:'近期续费或非到期窗口'}]},
+      {name:'参与度层级',code:'calc_engagement',values:'L1核心 / L2活跃 / L3参与 / L4浏览 / L5沉默',freq:'每日',rules:1,enabled:true,source:'评分模型',window:'近30天',description:'基于行为权重总和的参与度分层',logic:[{value:'L1核心',condition:'行为权重 ≥ 50'},{value:'L2活跃',condition:'行为权重 20-49'},{value:'L3参与',condition:'行为权重 5-19'},{value:'L4浏览',condition:'行为权重 1-4'},{value:'L5沉默',condition:'行为权重 = 0'}]},
+      {name:'成长趋势',code:'calc_growth_trend',values:'上升 / 平稳 / 下降 / 急降',freq:'每周',rules:2,enabled:true,source:'趋势计算',window:'60天',description:'近30天 vs 前30天的参与度变化率',logic:[{value:'上升',condition:'变化率 > +20%'},{value:'平稳',condition:'变化率 -20% ~ +20%'},{value:'下降',condition:'变化率 -50% ~ -20%'},{value:'急降',condition:'变化率 < -50%'}]},
+      {name:'RFM 分群',code:'calc_rfm',values:'champion / loyal / potential / new / attention / lost',freq:'每日',rules:0,enabled:true,source:'RFM模型',window:'90天',description:'基于 R(最近互动)+F(互动频率)+M(综合价值) 三维评分',logic:[{value:'champion',condition:'R≥4, F≥4, M≥4'},{value:'loyal',condition:'R≥3, F≥4, M≥3'},{value:'potential',condition:'R≥4, F≤3, M≤3'},{value:'new',condition:'R≥4, F=1, M≤2'},{value:'attention',condition:'R=2-3, F=2-3, M=2-3'},{value:'lost',condition:'R=1, F=1, M≤2'}]},
+      {name:'续费窗口',code:'calc_renewal_window',values:'黄金期 / 紧迫期 / 最后期 / 已过期 / 不适用',freq:'每日',rules:3,enabled:true,source:'订单系统',window:'—',description:'基于会员到期日自动判定续费窗口阶段',logic:[{value:'黄金期',condition:'到期前 60-30 天'},{value:'紧迫期',condition:'到期前 30-7 天'},{value:'最后期',condition:'到期前 7-0 天'},{value:'已过期',condition:'已过期'},{value:'不适用',condition:'非付费会员'}]},
+      {name:'活动敏感度',code:'calc_event_sensitivity',values:'高(>70%) / 中(30-70%) / 低(<30%)',freq:'180天',rules:0,enabled:true,source:'行为分析',window:'180天',description:'对运营活动的响应率统计',logic:[{value:'高',condition:'响应率 > 70%'},{value:'中',condition:'响应率 30-70%'},{value:'低',condition:'响应率 < 30%'}]},
+      {name:'新手引导状态',code:'calc_onboarding',values:'已完成 / 进行中 / 未开始 / 不适用',freq:'实时',rules:1,enabled:true,source:'任务系统',window:'—',description:'新手任务完成进度',logic:[{value:'已完成',condition:'所有新手任务均已完成'},{value:'进行中',condition:'部分任务已完成'},{value:'未开始',condition:'未开始任何新手任务'},{value:'不适用',condition:'非新用户'}]},
+      {name:'创作者等级',code:'calc_creator_tier',values:'PGC专业 / UGC核心 / UGC活跃 / UGC潜力 / 非创作者',freq:'每周',rules:1,enabled:true,source:'内容分析',window:'90天',description:'综合发帖量+质量+互动数据评定',logic:[{value:'PGC专业',condition:'精华率>30% 且月发帖≥10'},{value:'UGC核心',condition:'精华率>10% 且月发帖≥5'},{value:'UGC活跃',condition:'月发帖≥3'},{value:'UGC潜力',condition:'月发帖1-2'},{value:'非创作者',condition:'近90天未发帖'}]},
+      {name:'社区影响力',code:'calc_influence',values:'高(Top10%) / 中(Top30%) / 低',freq:'每周',rules:1,enabled:true,source:'社交分析',window:'90天',description:'帖子被阅读/收藏/评论的综合影响力评分',logic:[{value:'高',condition:'影响力分 Top 10%'},{value:'中',condition:'影响力分 Top 30%'},{value:'低',condition:'影响力分 Bottom 70%'}]},
+      {name:'角色成长路径',code:'calc_role_growth',values:'水手→船长→领航人 / 水手→船长 / 水手 / 新人',freq:'事件触发',rules:0,enabled:true,source:'项目系统',window:'全历史',description:'在深海圈项目中从学员到导师的升级历程',logic:[{value:'水手→船长→领航人',condition:'经历了完整的角色成长路径'},{value:'水手→船长',condition:'从学员升级为组长'},{value:'水手',condition:'仅作为学员参与'},{value:'新人',condition:'从未参与深海圈项目'}]}
+    ],
+    pref: [
+      {name:'活跃平台',code:'pref_platform',values:'官网社区 / 航海家 / 深海圈 / 均衡',freq:'90天',rules:0,enabled:true,source:'行为分析',window:'90天',description:'基于各产品线的行为占比判定主要活跃平台',logic:[{value:'官网社区',condition:'社区行为占比 > 60%'},{value:'航海家',condition:'航海行为占比 > 60%'},{value:'深海圈',condition:'深海圈行为占比 > 60%'},{value:'均衡',condition:'无单一平台超过 60%'}]},
+      {name:'赚钱兴趣',code:'pref_earning',values:'短视频 / 知识付费 / 电商 / 本地生活 / AI',freq:'90天',rules:0,enabled:true,source:'内容分析',window:'90天',description:'基于跨平台内容消费+航海参与推断赚钱方向兴趣',logic:[{value:'话题标签',condition:'阅读+互动最多的赚钱方向话题 TOP1'}]},
+      {name:'活跃时段',code:'pref_time',values:'早鸟 / 午间 / 晚间 / 深夜',freq:'90天',rules:0,enabled:true,source:'行为分析',window:'90天',description:'统计用户行为最集中的时间段',logic:[{value:'早鸟',condition:'6-9点行为占比最高'},{value:'午间',condition:'12-14点行为占比最高'},{value:'晚间',condition:'20-23点行为占比最高'},{value:'深夜',condition:'23-2点行为占比最高'}]},
+      {name:'偏好话题',code:'pref_topic',values:'短视频 / 电商 / AI / 自媒体 / 本地生活',freq:'90天',rules:0,enabled:true,source:'内容分析',window:'90天',description:'按阅读+互动次数排序的偏好话题 TOP3',logic:[{value:'话题列表',condition:'取阅读+点赞+评论+收藏行为最多的 3 个话题标签'}]},
+      {name:'课程偏好',code:'pref_course',values:'品类+难度+形式（组合）',freq:'全历史',rules:0,enabled:true,source:'学习系统',window:'全历史',description:'综合报名/完成课程的品类、难度、形式',logic:[{value:'品类+难度+形式',condition:'取历史报名最多的课程品类+完成最多的难度+最常参与的形式'}]},
+      {name:'学习时段',code:'pref_learn_time',values:'早鸟 / 通勤 / 午间 / 晚间',freq:'90天',rules:0,enabled:true,source:'学习系统',window:'90天',description:'学习行为最集中的时间段',logic:[{value:'早鸟',condition:'6-9点学习行为占比最高'},{value:'通勤',condition:'9-10点学习行为占比最高'},{value:'午间',condition:'12-14点学习行为占比最高'},{value:'晚间',condition:'20-23点学习行为占比最高'}]},
+      {name:'权益偏好',code:'pref_benefits',values:'课程折扣 / 专属直播 / 1v1咨询 / 线下活动',freq:'全历史',rules:0,enabled:true,source:'权益系统',window:'全历史',description:'使用最多的权益类别',logic:[{value:'权益类别',condition:'取历史使用次数最多的权益类型'}]},
+      {name:'创作类型',code:'pref_content_type',values:'经验分享 / 方法论 / 资源汇总 / 复盘总结',freq:'90天',rules:0,enabled:true,source:'内容分析',window:'90天',description:'主要创作的内容形式',logic:[{value:'内容类型',condition:'取近90天发帖最多的内容分类标签'}]}
+    ],
+    read: [
+      {name:'阅读量级',code:'read_volume',values:'重度(≥50) / 中度(20-49) / 轻度(5-19) / 极少(<5)',freq:'每日',rules:1,enabled:true,source:'行为日志',window:'近30天',description:'全平台阅读篇数统计（官网社区+深海圈合并）',logic:[{value:'重度',condition:'近30天阅读 ≥ 50 篇'},{value:'中度',condition:'近30天阅读 20-49 篇'},{value:'轻度',condition:'近30天阅读 5-19 篇'},{value:'极少',condition:'近30天阅读 < 5 篇'}]},
+      {name:'阅读深度',code:'read_depth',values:'深度(≥5min) / 中度(2-5min) / 浅层(<2min)',freq:'每日',rules:1,enabled:true,source:'行为日志',window:'近30天',description:'全平台平均阅读停留时长',logic:[{value:'深度',condition:'平均停留 ≥ 5 分钟'},{value:'中度',condition:'平均停留 2-5 分钟'},{value:'浅层',condition:'平均停留 < 2 分钟'}]},
+      {name:'阅读完成率',code:'read_completion',values:'高(>70%) / 中(30-70%) / 低(<30%)',freq:'每日',rules:0,enabled:true,source:'行为日志',window:'近30天',description:'阅读到文章底部的比例',logic:[{value:'高',condition:'完成率 > 70%'},{value:'中',condition:'完成率 30-70%'},{value:'低',condition:'完成率 < 30%'}]},
+      {name:'话题多样性',code:'read_diversity',values:'广泛(≥10) / 聚焦(3-9) / 单一(1-2)',freq:'90天',rules:0,enabled:true,source:'行为日志',window:'90天',description:'近90天浏览的不同话题标签数',logic:[{value:'广泛',condition:'浏览话题 ≥ 10 个'},{value:'聚焦',condition:'浏览话题 3-9 个'},{value:'单一',condition:'浏览话题 1-2 个'}]},
+      {name:'搜索行为',code:'read_search',values:'高频(≥10) / 有搜索(1-9) / 无(0)',freq:'每日',rules:0,enabled:true,source:'行为日志',window:'近30天',description:'搜索功能使用次数',logic:[{value:'高频',condition:'搜索 ≥ 10 次'},{value:'有搜索',condition:'搜索 1-9 次'},{value:'无',condition:'搜索 0 次'}]},
+      {name:'直播参与',code:'read_live',values:'重度(≥5次且>60min) / 普通(1-4次) / 未观看',freq:'每日',rules:1,enabled:true,source:'行为日志',window:'近30天',description:'直播观看次数和时长',logic:[{value:'重度',condition:'观看 ≥ 5 次 且总时长 > 60 分钟'},{value:'普通',condition:'观看 1-4 次'},{value:'未观看',condition:'未观看任何直播'}]}
+    ],
+    create: [
+      {name:'发帖频率',code:'create_freq',values:'高产(≥10) / 活跃(3-9) / 偶尔(1-2) / 无(0)',freq:'每日',rules:2,enabled:true,source:'内容系统',window:'近30天',description:'近30天发帖数量',logic:[{value:'高产',condition:'发帖 ≥ 10 篇'},{value:'活跃',condition:'发帖 3-9 篇'},{value:'偶尔',condition:'发帖 1-2 篇'},{value:'无',condition:'未发帖'}]},
+      {name:'发帖质量',code:'create_quality',values:'高(精华率>30%) / 中(10-30%) / 普通(<10%)',freq:'每周',rules:1,enabled:true,source:'内容系统',window:'90天',description:'精华帖占总发帖的比例',logic:[{value:'高',condition:'精华率 > 30%'},{value:'中',condition:'精华率 10-30%'},{value:'普通',condition:'精华率 < 10%'}]},
+      {name:'精华帖数',code:'create_essential',values:'具体数量',freq:'全历史',rules:0,enabled:true,source:'内容系统',window:'全历史',description:'累计被评为精华的帖子数',logic:[{value:'具体数量',condition:'累计精华帖总数'}]},
+      {name:'直播互动',code:'create_live_engage',values:'高(≥20次) / 一般(5-19) / 低(<5) / 无',freq:'每日',rules:0,enabled:true,source:'直播系统',window:'近30天',description:'近30天直播评论次数',logic:[{value:'高',condition:'评论 ≥ 20 次'},{value:'一般',condition:'评论 5-19 次'},{value:'低',condition:'评论 < 5 次'},{value:'无',condition:'零评论'}]}
+    ],
+    learn: [
+      {name:'累计报名数',code:'learn_enroll_total',values:'多次(≥5) / 几次(2-4) / 首次(1) / 从未',freq:'全历史',rules:1,enabled:true,source:'学习系统',window:'全历史',description:'累计报名航海/课程数',logic:[{value:'多次',condition:'报名 ≥ 5 次'},{value:'几次',condition:'报名 2-4 次'},{value:'首次',condition:'报名 1 次'},{value:'从未',condition:'报名 0 次'}]},
+      {name:'近期报名',code:'learn_enroll_recent',values:'活跃(≥2) / 有参与(1) / 无(0)',freq:'180天',rules:0,enabled:true,source:'学习系统',window:'180天',description:'近180天报名课程数',logic:[{value:'活跃',condition:'报名 ≥ 2 门'},{value:'有参与',condition:'报名 1 门'},{value:'无',condition:'报名 0 门'}]},
+      {name:'完课率',code:'learn_completion',values:'优秀(≥90%) / 良好(70-89%) / 一般(40-69%) / 低(<40%)',freq:'当期',rules:2,enabled:true,source:'学习系统',window:'当期',description:'最近一期课程的完成课时比例',logic:[{value:'优秀',condition:'完课率 ≥ 90%'},{value:'良好',condition:'完课率 70-89%'},{value:'一般',condition:'完课率 40-69%'},{value:'低',condition:'完课率 < 40%'}]},
+      {name:'作业提交率',code:'learn_homework',values:'全勤 / 高(≥80%) / 中(50-79%) / 低(<50%)',freq:'当期',rules:1,enabled:true,source:'学习系统',window:'当期',description:'已提交作业数占应提交总数的比例',logic:[{value:'全勤',condition:'提交率 = 100%'},{value:'高',condition:'提交率 ≥ 80%'},{value:'中',condition:'提交率 50-79%'},{value:'低',condition:'提交率 < 50%'}]},
+      {name:'连续打卡',code:'learn_checkin',values:'具体天数',freq:'当期',rules:0,enabled:true,source:'学习系统',window:'当期',description:'当前连续打卡天数',logic:[{value:'具体天数',condition:'从最近一次打卡起连续不中断的天数'}]},
+      {name:'学习连续性',code:'learn_consistency',values:'高(≥20天) / 中(10-19) / 低(<10)',freq:'每日',rules:1,enabled:true,source:'学习系统',window:'近30天',description:'近30天有学习行为的天数',logic:[{value:'高',condition:'学习天数 ≥ 20 天'},{value:'中',condition:'学习天数 10-19 天'},{value:'低',condition:'学习天数 < 10 天'}]},
+      {name:'进度达标',code:'learn_schedule',values:'超前 / 正常 / 落后 / 严重落后',freq:'当期',rules:1,enabled:true,source:'学习系统',window:'当期',description:'实际进度 vs 计划进度',logic:[{value:'超前',condition:'实际进度 > 计划进度 +10%'},{value:'正常',condition:'实际进度在计划进度 ±10% 内'},{value:'落后',condition:'实际进度 < 计划进度 -10%'},{value:'严重落后',condition:'实际进度 < 计划进度 -30%'}]},
+      {name:'学习卡点',code:'learn_stuck',values:'有卡点(标注课时) / 正常推进',freq:'当期',rules:0,enabled:true,source:'学习系统',window:'当期',description:'连续3天停留在同一课时',logic:[{value:'有卡点',condition:'连续 3 天未推进到下一课时（标注具体课时）'},{value:'正常推进',condition:'正常向下一课时推进'}]},
+      {name:'实操产出',code:'learn_output',values:'高产(≥5) / 一般(1-4) / 无(0)',freq:'当期',rules:1,enabled:true,source:'学习系统',window:'当期',description:'提交的实操作品/报告数',logic:[{value:'高产',condition:'产出 ≥ 5 件'},{value:'一般',condition:'产出 1-4 件'},{value:'无',condition:'产出 0 件'}]},
+      {name:'产出质量',code:'learn_output_quality',values:'优质(≥50%) / 良好(20-49%) / 普通(<20%)',freq:'全历史',rules:0,enabled:true,source:'学习系统',window:'全历史',description:'被评为优秀的作品占比',logic:[{value:'优质',condition:'优秀率 ≥ 50%'},{value:'良好',condition:'优秀率 20-49%'},{value:'普通',condition:'优秀率 < 20%'}]},
+      {name:'学习成长趋势',code:'learn_trend',values:'上升 / 平稳 / 下降',freq:'当期',rules:0,enabled:true,source:'学习系统',window:'当期',description:'近期作业/产出评分与早期对比',logic:[{value:'上升',condition:'近期评分高于早期平均'},{value:'平稳',condition:'近期评分与早期持平'},{value:'下降',condition:'近期评分低于早期平均'}]},
+      {name:'案例标杆',code:'learn_case_study',values:'是 / 否',freq:'全历史',rules:0,enabled:true,source:'学习系统',window:'全历史',description:'是否被选为课程优秀案例',logic:[{value:'是',condition:'曾被选为课程/项目优秀案例'},{value:'否',condition:'未被选为案例'}]}
+    ],
+    social: [
+      {name:'互动活跃度',code:'social_interaction',values:'高(≥30次) / 中(10-29) / 低(1-9) / 无',freq:'每日',rules:1,enabled:true,source:'行为日志',window:'近30天',description:'全平台评论+点赞+投锚+收藏总次数',logic:[{value:'高',condition:'互动 ≥ 30 次'},{value:'中',condition:'互动 10-29 次'},{value:'低',condition:'互动 1-9 次'},{value:'无',condition:'互动 0 次'}]},
+      {name:'讨论活跃度',code:'social_discussion',values:'高(≥20) / 中(5-19) / 低(1-4) / 无',freq:'每日',rules:0,enabled:true,source:'行为日志',window:'近30天',description:'评论+回复次数',logic:[{value:'高',condition:'讨论 ≥ 20 次'},{value:'中',condition:'讨论 5-19 次'},{value:'低',condition:'讨论 1-4 次'},{value:'无',condition:'讨论 0 次'}]},
+      {name:'社交圈规模',code:'social_network',values:'广泛(>50) / 适中(10-50) / 窄(1-9) / 孤立',freq:'90天',rules:0,enabled:true,source:'社交分析',window:'90天',description:'与之互动过的不同用户数',logic:[{value:'广泛',condition:'互动用户 > 50 人'},{value:'适中',condition:'互动用户 10-50 人'},{value:'窄',condition:'互动用户 1-9 人'},{value:'孤立',condition:'互动用户 0 人'}]},
+      {name:'协作活跃度',code:'social_collab',values:'活跃(≥5次) / 有(1-4) / 独立(0)',freq:'180天',rules:0,enabled:true,source:'项目系统',window:'180天',description:'跨项目协作行为次数',logic:[{value:'活跃',condition:'协作 ≥ 5 次'},{value:'有',condition:'协作 1-4 次'},{value:'独立',condition:'协作 0 次'}]},
+      {name:'校友网络',code:'social_alumni',values:'强连接 / 弱连接 / 断联',freq:'180天',rules:0,enabled:true,source:'项目系统',window:'180天',description:'项目结束后与队友的持续互动',logic:[{value:'强连接',condition:'项目结束后仍有持续互动（月均≥3次）'},{value:'弱连接',condition:'项目结束后偶尔互动'},{value:'断联',condition:'项目结束后无互动'}]},
+      {name:'推荐人数',code:'social_referral',values:'超级(≥10) / 活跃(3-9) / 有(1-2) / 无',freq:'全历史',rules:1,enabled:true,source:'CRM 系统',window:'全历史',description:'成功推荐并付费的人数',logic:[{value:'超级',condition:'推荐人数 ≥ 10'},{value:'活跃',condition:'推荐人数 3-9'},{value:'有',condition:'推荐人数 1-2'},{value:'无',condition:'推荐人数 0'}]},
+      {name:'重复组队',code:'social_repeat_team',values:'有(标注次数) / 无',freq:'全历史',rules:0,enabled:true,source:'项目系统',window:'全历史',description:'与同一批人多次参加项目',logic:[{value:'有',condition:'与同一用户共同参与 ≥ 2 个项目'},{value:'无',condition:'无重复组队记录'}]}
+    ],
+    proj: [
+      {name:'累计参与数',code:'proj_total',values:'资深(≥5) / 经验(3-4) / 体验(1-2) / 从未',freq:'全历史',rules:1,enabled:true,source:'项目系统',window:'全历史',description:'历史参加的深海圈项目总数',logic:[{value:'资深',condition:'参与 ≥ 5 个项目'},{value:'经验',condition:'参与 3-4 个项目'},{value:'体验',condition:'参与 1-2 个项目'},{value:'从未',condition:'参与 0 个项目'}]},
+      {name:'近期参与',code:'proj_recent',values:'活跃(≥2) / 有(1) / 无(0)',freq:'180天',rules:0,enabled:true,source:'项目系统',window:'180天',description:'近180天参加项目数',logic:[{value:'活跃',condition:'参与 ≥ 2 个'},{value:'有',condition:'参与 1 个'},{value:'无',condition:'参与 0 个'}]},
+      {name:'项目完成度',code:'proj_completion',values:'优秀完成 / 基本完成 / 中途放弃 / 未开始',freq:'当期',rules:1,enabled:true,source:'项目系统',window:'当期',description:'最近一次项目的完成进度',logic:[{value:'优秀完成',condition:'完成度 ≥ 90% 且产出获好评'},{value:'基本完成',condition:'完成度 ≥ 60%'},{value:'中途放弃',condition:'完成度 < 60% 且已停止参与'},{value:'未开始',condition:'已报名但未开始'}]},
+      {name:'参与深度',code:'proj_depth',values:'深度 / 一般 / 浅层',freq:'当期',rules:0,enabled:true,source:'项目系统',window:'当期',description:'综合出勤+讨论+产出评估',logic:[{value:'深度',condition:'出勤率>90% 且讨论≥10次 且有产出'},{value:'一般',condition:'出勤率>60% 且有讨论'},{value:'浅层',condition:'仅出勤，少讨论无产出'}]},
+      {name:'项目角色',code:'proj_role',values:'领航人 / 船长 / 水手 / 观察员',freq:'当期',rules:0,enabled:true,source:'项目系统',window:'当期',description:'在项目中的身份',logic:[{value:'领航人',condition:'担任项目导师'},{value:'船长',condition:'担任小组组长'},{value:'水手',condition:'普通学员'},{value:'观察员',condition:'旁听参与'}]},
+      {name:'带教人数',code:'proj_mentoring',values:'具体人数',freq:'全历史',rules:0,enabled:true,source:'项目系统',window:'全历史',description:'作为导师/船长带领的学员数',logic:[{value:'具体人数',condition:'累计在项目中带领的学员总数'}]},
+      {name:'导师标识',code:'proj_mentor_flag',values:'是 / 否',freq:'90天',rules:1,enabled:true,source:'社交分析',window:'90天',description:'是否被多人关注或引用',logic:[{value:'是',condition:'近90天被≥5人@提及或引用'},{value:'否',condition:'未达到导师识别阈值'}]},
+      {name:'项目收益',code:'proj_revenue',values:'有(标注金额区间) / 无',freq:'全历史',rules:0,enabled:true,source:'用户自报',window:'全历史',description:'通过项目实际产生的收入',logic:[{value:'有',condition:'用户报告或系统记录有项目相关收益'},{value:'无',condition:'未产生或未报告收益'}]}
+    ],
+    usage: [
+      {name:'登录频率',code:'usage_login_freq',values:'高频(≥20天) / 中(10-19) / 低(3-9) / 极低(<3)',freq:'每日',rules:2,enabled:true,source:'行为日志',window:'近30天',description:'近30天内的登录天数统计（全平台）',logic:[{value:'高频',condition:'登录 ≥ 20 天'},{value:'中频',condition:'登录 10-19 天'},{value:'低频',condition:'登录 3-9 天'},{value:'极低',condition:'登录 < 3 天'}]},
+      {name:'沉默天数',code:'usage_silent_days',values:'具体天数',freq:'每日',rules:2,enabled:true,source:'行为日志',window:'—',description:'距最后一次有效行为的天数',logic:[{value:'具体天数',condition:'今天 - 最后一次有效行为日期'}]},
+      {name:'新手期行为',code:'usage_first_week',values:'高参与(≥5种) / 一般(2-4) / 低(0-1)',freq:'注册后7天',rules:1,enabled:true,source:'行为日志',window:'注册后7天',description:'注册后7天内完成的不同行为类型数',logic:[{value:'高参与',condition:'完成 ≥ 5 种不同行为'},{value:'一般',condition:'完成 2-4 种行为'},{value:'低参与',condition:'完成 0-1 种行为'}]},
+      {name:'俱乐部状态',code:'usage_club_status',values:'活跃 / 沉默 / 已过期 / 未加入',freq:'实时',rules:0,enabled:true,source:'权益系统',window:'—',description:'航海家俱乐部会员状态',logic:[{value:'活跃',condition:'俱乐部有效期内且近30天有互动'},{value:'沉默',condition:'俱乐部有效期内但近30天无互动'},{value:'已过期',condition:'俱乐部会员已过期'},{value:'未加入',condition:'从未购买航海家权益'}]},
+      {name:'俱乐部活跃度',code:'usage_club_active',values:'高(≥10次) / 一般(3-9) / 低(<3) / 无',freq:'每日',rules:0,enabled:true,source:'行为日志',window:'近30天',description:'近30天俱乐部内互动行为次数',logic:[{value:'高',condition:'互动 ≥ 10 次'},{value:'一般',condition:'互动 3-9 次'},{value:'低',condition:'互动 < 3 次'},{value:'无',condition:'无互动'}]},
+      {name:'权益使用率',code:'usage_benefits',values:'充分(≥80%) / 一般(30-79%) / 低(<30%) / 未使用',freq:'当期',rules:0,enabled:true,source:'权益系统',window:'当期',description:'已使用权益占可用权益总数的比例',logic:[{value:'充分',condition:'使用率 ≥ 80%'},{value:'一般',condition:'使用率 30-79%'},{value:'低',condition:'使用率 < 30%'},{value:'未使用',condition:'使用率 = 0%'}]},
+      {name:'圈子活跃度',code:'usage_group_active',values:'活跃(≥20次/月) / 一般(5-19) / 低(<5)',freq:'每日',rules:0,enabled:true,source:'行为日志',window:'近30天',description:'在社群/圈子的发言频率',logic:[{value:'活跃',condition:'发言 ≥ 20 次/月'},{value:'一般',condition:'发言 5-19 次/月'},{value:'低',condition:'发言 < 5 次/月'}]},
+      {name:'分销身份',code:'usage_is_distributor',values:'是 / 否',freq:'—',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'是否为分销客户',logic:[{value:'是',condition:'在分销系统中注册为分销客户'},{value:'否',condition:'非分销客户'}]},
+      {name:'行为角色',code:'usage_community_role',values:'创作者 / 互动者 / 深度读者 / 潜水者 / 求助者',freq:'90天',rules:1,enabled:true,source:'行为分析',window:'90天',description:'基于行为模式分析的社区角色',logic:[{value:'创作者',condition:'发帖为主要行为'},{value:'互动者',condition:'评论/点赞为主要行为'},{value:'深度读者',condition:'长时间阅读为主要行为'},{value:'潜水者',condition:'仅浏览，极少互动'},{value:'求助者',condition:'发帖以提问为主'}]}
+    ]
+  },
+
+  getChildKeys: function(parentKey) {
+    var parent = this.categories.find(function(c){return c.key===parentKey});
+    return parent ? parent.children.map(function(ch){return ch.key}) : [];
+  },
+
+  getAllTags: function() {
+    var all = [];
+    var self = this;
+    Object.keys(this.tags).forEach(function(cat) {
+      self.tags[cat].forEach(function(t) { all.push(Object.assign({}, t, {cat: cat})); });
+    });
+    return all;
+  },
+
+  renderTree: function() {
+    var c = document.getElementById('autoGroupTree');
+    var kw = this.catKw.toLowerCase();
+    var self = this;
+    var totalCount = 0;
+    this.categories.forEach(function(parent){ parent.children.forEach(function(ch){ totalCount += ch.count; }); });
+
+    var html = '<div class="group-node '+(this.selectedCat==='all'?'active':'')+'" onclick="auto.selectCat(\'all\',null)"><span class="group-node__name">全部</span><span class="group-node__count">'+totalCount+'</span></div>';
+    this.categories.forEach(function(parent) {
+      var children = parent.children;
+      var parentMatch = parent.name.toLowerCase().includes(kw);
+      var childMatches = children.filter(function(ch){return ch.name.toLowerCase().includes(kw)});
+      if (kw && !parentMatch && childMatches.length===0) return;
+      var visibleChildren = kw ? (parentMatch ? children : childMatches) : children;
+      var parentCount = 0;
+      children.forEach(function(ch){ parentCount += ch.count; });
+      var isParentActive = self.selectedType==='parent' && self.selectedCat===parent.key;
+      html += '<div class="group-node group-node--parent '+(isParentActive?'active':'')+'" onclick="auto.selectCat(\''+parent.key+'\',\'parent\')"><span class="group-node__name">'+parent.name+'</span><span class="group-node__count">'+parentCount+'</span></div>';
+      visibleChildren.forEach(function(ch) {
+        var isChildActive = self.selectedType==='child' && self.selectedCat===ch.key;
+        html += '<div class="group-node group-node--child '+(isChildActive?'active':'')+'" onclick="auto.selectCat(\''+ch.key+'\',\'child\')"><span class="group-node__name">'+ch.name+'</span><span class="group-node__count">'+ch.count+'</span></div>';
+      });
+    });
+    c.innerHTML = html;
+  },
+
+  renderTable: function() {
+    var self = this;
+    var tags;
+    if (this.selectedCat === 'all') {
+      tags = this.getAllTags();
+    } else if (this.selectedType === 'parent') {
+      var childKeys = this.getChildKeys(this.selectedCat);
+      tags = [];
+      childKeys.forEach(function(k) {
+        (self.tags[k]||[]).forEach(function(t){ tags.push(Object.assign({},t,{cat:k})); });
+      });
+    } else {
+      tags = (this.tags[this.selectedCat]||[]).map(function(t){return Object.assign({},t,{cat:self.selectedCat})});
+    }
+    if (this.tagKw) {
+      var kw = this.tagKw.toLowerCase();
+      tags = tags.filter(function(t){ return t.name.toLowerCase().includes(kw) || t.code.toLowerCase().includes(kw); });
+    }
+    var total = tags.length;
+    var totalP = Math.max(1, Math.ceil(total/this.pageSize));
+    if (this.page > totalP) this.page = totalP;
+    var sl = tags.slice((this.page-1)*this.pageSize, this.page*this.pageSize);
+    var tbody = document.getElementById('autoTagBody');
+    if (sl.length===0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--color-text-4);padding:40px 0">暂无数据</td></tr>';
+    } else {
+      tbody.innerHTML = sl.map(function(t) {
+        return '<tr>'+
+          '<td style="font-weight:500">'+t.name+'</td>'+
+          '<td><span class="cell-code">'+t.code+'</span></td>'+
+          '<td><span class="cell-desc" title="'+t.values+'">'+t.values+'</span></td>'+
+          '<td><span class="cell-freq">'+t.freq+'</span></td>'+
+          '<td>'+(t.rules>0?'<span class="cell-rules">'+t.rules+' 条</span>':'<span style="color:var(--color-text-4)">0</span>')+'</td>'+
+          '<td><label class="toggle-switch"><input type="checkbox" '+(t.enabled?'checked':'')+' onchange="auto.toggleTag(\''+t.cat+'\',\''+t.code+'\',this.checked)"><span class="toggle-slider"></span></label></td>'+
+          '<td><a class="action-link action-link--teal" onclick="auto.editTag(\''+t.cat+'\',\''+t.code+'\')">编辑</a>&nbsp;&nbsp;<a class="action-link action-link--danger" onclick="auto.deleteTag(\''+t.cat+'\',\''+t.code+'\',\''+t.name+'\')">删除</a></td>'+
+        '</tr>';
+      }).join('');
+    }
+    renderPaginationHTML('autoPagination', total, this.page, this.pageSize, 'auto.goPage', 'auto.setPageSize');
+  },
+
+  selectCat: function(cat, type) { this.selectedCat=cat; this.selectedType=type; this.page=1; this.renderTree(); this.renderTable(); },
+  goPage: function(p) { this.page=p; this.renderTable(); },
+  setPageSize: function(v) { this.pageSize=parseInt(v); this.page=1; this.renderTable(); },
+
+  toggleTag: function(cat, code, enabled) {
+    var t = (this.tags[cat]||[]).find(function(t){return t.code===code});
+    if (t) t.enabled = enabled;
+    showToast(enabled ? '已启用' : '已禁用');
+  },
+  editTag: function(cat, code) {
+    openTagDrawer(cat, code);
+  },
+  deleteTag: function(cat, code, name) {
+    if (!confirm('确定要删除标签「'+name+'」吗？')) return;
+    var arr = this.tags[cat]||[];
+    var i = arr.findIndex(function(t){return t.code===code});
+    if (i>=0) arr.splice(i,1);
+    showToast('删除成功'); this.renderTable();
+  },
+  openTagModal: function() {
+    var self = this;
+    openModalForm('新建标签','标签名称','请输入标签名称','',function(val){
+      var targetCat = self.selectedType==='child' ? self.selectedCat : 'id';
+      if (!self.tags[targetCat]) self.tags[targetCat] = [];
+      self.tags[targetCat].push({name:val,code:'custom_'+Date.now(),values:'自定义',freq:'手动',rules:0,enabled:true});
+      showToast('创建成功'); self.renderTable();
+    });
+  }
+};
+
+// ================================================================
+//  Init
+// ================================================================
+wecom.renderTree();
+wecom.renderTable();
+crm.renderTree();
+crm.renderTable();
+auto.renderTree();
+auto.renderTable();
+if (typeof initPrdEditor === 'function') initPrdEditor();
+</script>
+</body>
+</html>
