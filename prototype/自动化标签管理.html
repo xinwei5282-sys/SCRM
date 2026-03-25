@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动化标签管理 - CDP 数据平台</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); transition: transform 200ms; }
+  .menu-group { }
+  .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
+  .menu-sub { overflow: hidden; max-height: 0; transition: max-height 200ms ease; }
+  .menu-group.open > .menu-sub { max-height: 200px; }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  /* Header */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ======== View Tabs (顶层视图切换) ======== */
+  .view-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .view-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    white-space: nowrap;
+  }
+  .view-tab:hover { color: var(--color-text-1); }
+  .view-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+
+  /* View Containers */
+  .view-overview,
+  .view-rules,
+  .view-changelog { display: none; }
+  .view-overview.active,
+  .view-rules.active,
+  .view-changelog.active { display: block; }
+
+  /* ======== Stats Bar ======== */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .stat-card {
+    background: var(--color-fill-3);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    line-height: 1.2;
+  }
+  .stat-value .stat-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text-3);
+    margin-left: 2px;
+  }
+
+  /* ======== Category Tabs (分类标签) ======== */
+  .category-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .category-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .category-tab:hover { color: var(--color-text-1); }
+  .category-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+  .category-tab .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+  }
+  .category-tab.active .count {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+
+  /* ======== Tag Cards Grid ======== */
+  .tag-cards-area {
+    padding: 16px 20px;
+  }
+  .tag-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .tag-card {
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 150ms;
+  }
+  .tag-card:hover {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 2px 8px rgba(54, 165, 144, 0.1);
+  }
+  .tag-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .tag-card-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: 20px;
+  }
+  .tag-card-code {
+    font-size: 11px;
+    color: var(--color-text-4);
+    font-family: monospace;
+    background: var(--color-fill-3);
+    padding: 1px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .tag-card-values {
+    font-size: 12px;
+    color: var(--color-text-3);
+    line-height: 18px;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tag-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .tag-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .tag-card-rules {
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
+  /* ======== Buttons ======== */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+  .btn-text {
+    background: none;
+    color: var(--color-primary-6);
+    padding: 0 4px;
+  }
+  .btn-text:hover { color: var(--color-primary-7); }
+  .btn-danger-text {
+    background: none;
+    color: var(--color-danger-6);
+    padding: 0 4px;
+  }
+  .btn-danger-text:hover { opacity: 0.8; }
+
+  /* ======== Search Filters ======== */
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  .filter-area {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover { border-color: var(--color-border-hover); }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .filter-input::placeholder { color: var(--color-text-4); }
+  .filter-input.wide { min-width: 220px; }
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* ======== Table ======== */
+  .table-wrapper { overflow-x: auto; }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .data-table tr:hover td { background: var(--color-fill-hover); }
+  .name-link {
+    color: var(--color-primary-6);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .name-link:hover { color: var(--color-primary-7); text-decoration: underline; }
+  .cell-desc {
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--color-text-3);
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-primary {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-warning {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .tag-default {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .tag-info {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+  .tag-success {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-danger {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+
+  /* ======== Toggle Switch ======== */
+  .toggle-switch {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .toggle-switch input { display: none; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--color-fill-3-hover);
+    border-radius: 10px;
+    transition: all 150ms;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 150ms;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle-switch input:checked + .toggle-slider {
+    background: var(--color-primary-6);
+  }
+  .toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(16px);
+  }
+
+  /* ======== Pagination ======== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .pagination-bar .total { margin-right: 8px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active {
+    background: var(--color-primary-6);
+    color: white;
+    border-color: var(--color-primary-6);
+  }
+  .page-btn.disabled {
+    color: var(--color-text-4);
+    cursor: not-allowed;
+  }
+
+  /* ======== Modal / Drawer ======== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+  }
+  .modal-overlay.show { display: block; }
+  .modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card) 0 0 var(--radius-card);
+    width: 960px;
+    max-width: calc(100vw - 80px);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    animation: drawerIn 250ms ease-out;
+    z-index: 401;
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .modal-overlay.hiding .modal {
+    animation: drawerOut 200ms ease-in forwards;
+  }
+  @keyframes drawerOut {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    gap: 12px;
+  }
+  .modal-back {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-back:hover { background: var(--color-fill-hover); }
+  .modal-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-3);
+    font-size: 18px;
+  }
+  .modal-close:hover { background: var(--color-fill-hover); }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* ======== Rule Builder Form ======== */
+  .rb-form-area { margin-bottom: 24px; }
+  .rb-form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .rb-form-row.align-top { align-items: flex-start; }
+  .rb-form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-2);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+  .rb-form-input {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    flex: 1;
+    max-width: 400px;
+    transition: border-color 150ms;
+  }
+  .rb-form-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-form-input::placeholder { color: var(--color-text-4); }
+  .rb-form-textarea {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    flex: 1;
+    max-width: 400px;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+    transition: border-color 150ms;
+  }
+  .rb-form-textarea:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-form-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    padding: 0 28px 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    outline: none;
+    appearance: none;
+    background: var(--color-fill-1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    transition: border-color 150ms;
+  }
+  .rb-form-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .rb-radio-group {
+    display: flex;
+    gap: 16px;
+  }
+  .rb-radio {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-2);
+    cursor: pointer;
+  }
+  .rb-radio input[type="radio"] { accent-color: var(--color-primary-6); }
+
+  /* ======== Trigger Type Section ======== */
+  .rb-trigger-type-area { margin-bottom: 24px; }
+  .rb-trigger-options {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .rb-trigger-option {
+    flex: 1;
+    padding: 10px 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    transition: all 150ms;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .rb-trigger-option:last-child { border-right: none; }
+  .rb-trigger-option:hover { background: var(--color-fill-hover); color: var(--color-text-1); }
+  .rb-trigger-option.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .rb-trigger-option .trigger-icon { font-size: 18px; line-height: 1; }
+  .rb-trigger-option .trigger-label { font-size: 12px; }
+  .rb-trigger-sub-form {
+    background: var(--color-fill-3);
+    border-radius: var(--radius-btn);
+    padding: 12px 14px;
+  }
+  .rb-trigger-sub-form .rb-form-row { margin-bottom: 8px; }
+  .rb-trigger-sub-form .rb-form-row:last-child { margin-bottom: 0; }
+  .rb-trigger-hint {
+    font-size: 12px;
+    color: var(--color-text-4);
+    margin-top: 4px;
+  }
+  .rb-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .rb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 13px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    transition: all 100ms;
+  }
+  .rb-chip:hover { border-color: var(--color-primary-6); }
+  .rb-chip.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
+  /* ======== Rule Builder Rules Area ======== */
+  .rb-rules-area { margin-bottom: 20px; }
+  .rb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rb-section-title .icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+  .rb-section-title .icon-include { background: var(--color-primary-6); }
+  .rb-section-title .icon-remove { background: var(--color-warning-6); }
+
+  /* Condition Group */
+  .rb-group {
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    margin-bottom: 12px;
+    background: var(--color-fill-1);
+  }
+  .rb-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .rb-group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .rb-group-logic-select {
+    height: 26px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+  .rb-group-delete {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+  }
+  .rb-group-delete:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+  .rb-group-body { padding: 12px 14px; }
+
+  /* Condition Row */
+  .rb-condition-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .rb-condition-row:last-of-type { margin-bottom: 0; }
+  .rb-condition-select {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    transition: border-color 150ms;
+  }
+  .rb-condition-select:hover { border-color: var(--color-border-hover); }
+  .rb-condition-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+  .rb-condition-select.type-select {
+    font-weight: 600;
+    color: var(--color-primary-6);
+    background-color: var(--color-primary-1);
+    border-color: var(--color-primary-2);
+    min-width: 80px;
+  }
+  .rb-condition-input {
+    height: 28px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-text-1);
+    outline: none;
+    width: 60px;
+    transition: border-color 150ms;
+  }
+  .rb-condition-input:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px rgba(54, 165, 144, 0.15);
+  }
+  .rb-condition-text {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .rb-condition-remove {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-text-4);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .rb-condition-remove:hover { background: var(--color-danger-1); color: var(--color-danger-6); }
+
+  .rb-logic-connector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 4px 16px;
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+  .rb-logic-connector::before,
+  .rb-logic-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 40px;
+  }
+
+  .rb-group-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0;
+  }
+  .rb-group-connector::before,
+  .rb-group-connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+    max-width: 80px;
+  }
+  .rb-group-connector-select {
+    height: 26px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  .rb-add-condition {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-condition:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+  .rb-add-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-3);
+    transition: all 100ms;
+  }
+  .rb-add-group:hover {
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+
+  /* Collapsible Section */
+  .rb-collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .rb-collapsible-header .arrow {
+    font-size: 12px;
+    color: var(--color-text-4);
+    transition: transform 150ms;
+  }
+  .rb-collapsible-header.collapsed .arrow {
+    transform: rotate(-90deg);
+  }
+  .rb-collapsible-body {
+    display: block;
+  }
+  .rb-collapsible-body.collapsed {
+    display: none;
+  }
+
+  /* Footer */
+  .rb-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: rgba(242, 245, 247, 0.5);
+  }
+  .rb-estimate {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .rb-estimate-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-1);
+  }
+  .rb-footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ======== Detail Dialog (居中弹窗) ======== */
+  .dialog-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+  }
+  .dialog-overlay.show { display: flex; }
+  .detail-dialog {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    width: 480px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-modal);
+    animation: dialogIn 200ms ease-out;
+  }
+  @keyframes dialogIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .detail-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .detail-dialog-header h3 { font-size: 16px; font-weight: 600; }
+  .detail-dialog-close {
+    background: none; border: none; font-size: 18px; color: var(--color-text-3); cursor: pointer;
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-btn);
+  }
+  .detail-dialog-close:hover { background: var(--color-fill-hover); }
+  .detail-dialog-body { padding: 16px; overflow-y: auto; flex: 1; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-3);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .detail-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .detail-info-label { color: var(--color-text-3); }
+  .detail-info-value { color: var(--color-text-1); font-weight: 500; }
+
+  /* Distribution Bar */
+  .distribution-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .distribution-label {
+    font-size: 12px;
+    color: var(--color-text-2);
+    min-width: 80px;
+    text-align: right;
+  }
+  .distribution-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: var(--color-fill-3);
+    border-radius: var(--radius-xs);
+    overflow: hidden;
+  }
+  .distribution-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-xs);
+    background: var(--color-primary-6);
+    transition: width 300ms ease;
+  }
+  .distribution-pct {
+    font-size: 12px;
+    color: var(--color-text-3);
+    min-width: 36px;
+  }
+  .detail-rule-list {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-rule-item {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--color-text-2);
+    border-bottom: 1px solid var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-rule-item:last-child { border-bottom: none; }
+  .detail-rule-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    flex-shrink: 0;
+  }
+
+  /* ======== Toast ======== */
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #242528;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 6px;
+    z-index: 9999;
+    pointer-events: none;
+    animation: toastAnim 1.2s ease forwards;
+  }
+  @keyframes toastAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+  body.prd-on .modal { right: 380px; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  .prd-panel[data-prd-view="overview"] .prd-section[data-prd-context="rules"] { display: none; }
+  .prd-panel[data-prd-view="overview"] .prd-section[data-prd-context="editor"] { display: none; }
+  .prd-panel[data-prd-view="rules"] .prd-section[data-prd-context="overview"] { display: none; }
+  .prd-panel[data-prd-view="rules"] .prd-section[data-prd-context="editor"] { display: none; }
+  .prd-panel[data-prd-view="editor"] .prd-section[data-prd-context="overview"] { display: none; }
+  .prd-panel[data-prd-view="editor"] .prd-section[data-prd-context="rules"] { display: none; }
+  .prd-context-hint { font-size: 12px; color: var(--color-text-3); margin-bottom: 12px; padding: 6px 10px; background: #FFF5E6; border-radius: 6px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle Button -->
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="layout">
+  <!-- ======== Sidebar ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item"><span>首页</span></div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>客户</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
+        </div>
+      </div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>营销</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
+          <div class="menu-item active" onclick="event.stopPropagation();">自动化标签</div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ======== Main ======== -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">运</div>
+        <span style="font-size:13px;">运营小李</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="page-card">
+        <!-- View Tabs -->
+        <div class="view-tabs">
+          <div class="view-tab active" onclick="switchView('overview')">标签总览</div>
+          <div class="view-tab" onclick="switchView('rules')">规则管理</div>
+          <div class="view-tab" onclick="switchView('changelog')">变更日志</div>
+        </div>
+
+        <!-- ============ View: Overview ============ -->
+        <div class="view-overview active" id="viewOverview">
+          <!-- Stats Bar -->
+          <div class="stats-bar">
+            <div class="stat-card">
+              <div class="stat-label">总标签数</div>
+              <div class="stat-value">100<span class="stat-unit">个</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">已启用规则</div>
+              <div class="stat-value">35<span class="stat-unit">条</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日更新标签数</div>
+              <div class="stat-value">2,831<span class="stat-unit">人次</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">标签覆盖率</div>
+              <div class="stat-value">91.5<span class="stat-unit">%</span></div>
+            </div>
+          </div>
+
+          <!-- Category Tabs -->
+          <div class="category-tabs" id="categoryTabs">
+            <div class="category-tab active" onclick="switchCategory('global')">全局通用<span class="count">41</span></div>
+            <div class="category-tab" onclick="switchCategory('community')">官网社区<span class="count">17</span></div>
+            <div class="category-tab" onclick="switchCategory('navigator')">航海家<span class="count">21</span></div>
+            <div class="category-tab" onclick="switchCategory('deepsea')">深海圈<span class="count">21</span></div>
+          </div>
+
+          <!-- Tag Cards -->
+          <div class="tag-cards-area">
+            <div class="tag-cards-grid" id="tagCardsGrid">
+              <!-- JS rendered -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ View: Rules ============ -->
+        <div class="view-rules" id="viewRules">
+          <!-- Page Title -->
+          <div class="page-title-bar">
+            <span class="page-title">规则管理</span>
+            <button class="btn btn-primary" onclick="openRuleEditor('create')">+ 新建规则</button>
+          </div>
+          <!-- Filter -->
+          <div class="filter-area">
+            <div class="filter-row">
+              <input class="filter-input wide" type="text" placeholder="搜索规则名称...">
+              <select class="filter-select" style="min-width:130px;">
+                <option value="">全部分类</option>
+                <option>全局通用</option>
+                <option>官网社区</option>
+                <option>航海家</option>
+                <option>深海圈</option>
+              </select>
+              <select class="filter-select" style="min-width:100px;">
+                <option value="">全部状态</option>
+                <option>已启用</option>
+                <option>已禁用</option>
+              </select>
+              <div class="filter-actions">
+                <button class="btn btn-primary">查询</button>
+                <button class="btn btn-secondary">清空</button>
+              </div>
+            </div>
+          </div>
+          <!-- Table -->
+          <div class="table-wrapper">
+            <table class="data-table" id="rulesTable">
+              <thead>
+                <tr>
+                  <th style="width:150px;">规则名</th>
+                  <th style="width:80px;">标签分类</th>
+                  <th style="width:150px;">打标结果</th>
+                  <th style="width:70px;">触发类型</th>
+                  <th style="width:180px;">触发条件摘要</th>
+                  <th style="width:70px;">命中人数</th>
+                  <th style="width:90px;">最近执行</th>
+                  <th style="width:50px;">优先级</th>
+                  <th style="width:60px;">状态</th>
+                  <th style="width:140px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="rulesTableBody">
+                <!-- JS rendered -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Pagination -->
+          <div class="pagination-bar">
+            <span class="total">共 35 条</span>
+            <button class="page-btn disabled">&lsaquo;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">&rsaquo;</button>
+          </div>
+        </div>
+
+        <!-- ============ View: Changelog ============ -->
+        <div class="view-changelog" id="viewChangelog">
+          <div class="page-title-bar">
+            <span class="page-title">标签变更日志</span>
+            <button class="btn btn-secondary" onclick="showToast('已导出 CSV')">&#8595; 导出</button>
+          </div>
+          <div class="filter-area">
+            <div class="filter-row">
+              <input class="filter-input" type="text" placeholder="用户ID / 昵称...">
+              <select class="filter-select" style="min-width:140px;">
+                <option value="">全部标签</option>
+                <option>lc_churn_risk</option>
+                <option>lc_stage</option>
+                <option>lc_silent_days</option>
+                <option>comm_creator_tier</option>
+                <option>nav_stuck_point</option>
+                <option>txn_renewal_status</option>
+              </select>
+              <select class="filter-select" style="min-width:110px;">
+                <option value="">全部类型</option>
+                <option>新增</option>
+                <option>更新</option>
+                <option>移除</option>
+                <option>过期</option>
+              </select>
+              <select class="filter-select" style="min-width:110px;">
+                <option value="">全部来源</option>
+                <option>规则</option>
+                <option>模型</option>
+                <option>批量</option>
+                <option>手动</option>
+              </select>
+              <div class="filter-actions">
+                <button class="btn btn-primary">查询</button>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="changelogTable">
+              <thead>
+                <tr>
+                  <th style="width:90px;">用户</th>
+                  <th style="width:140px;">标签代码</th>
+                  <th style="width:70px;">变更类型</th>
+                  <th style="width:100px;">旧值</th>
+                  <th style="width:20px;"></th>
+                  <th style="width:100px;">新值</th>
+                  <th style="width:70px;">触发来源</th>
+                  <th style="width:130px;">触发规则</th>
+                  <th style="width:140px;">时间</th>
+                </tr>
+              </thead>
+              <tbody id="changelogTableBody">
+                <!-- JS rendered -->
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination-bar">
+            <span class="total">共 1,247 条</span>
+            <button class="page-btn disabled">&lsaquo;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">...</button>
+            <button class="page-btn">63</button>
+            <button class="page-btn">&rsaquo;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Rule Editor Drawer ======== -->
+<div class="modal-overlay" id="ruleEditorOverlay" onclick="closeRuleEditor()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <button class="modal-back" onclick="closeRuleEditor()">&#8592;</button>
+      <span class="modal-title" id="ruleEditorTitle">新建规则</span>
+      <button class="modal-close" onclick="closeRuleEditor()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Basic Info -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">基本信息</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">规则名称</span>
+          <input class="rb-form-input" id="ruleName" placeholder="输入规则名称">
+        </div>
+        <div class="rb-form-row align-top">
+          <span class="rb-form-label">规则描述</span>
+          <textarea class="rb-form-textarea" id="ruleDesc" placeholder="输入规则描述（可选）"></textarea>
+        </div>
+      </div>
+
+      <!-- Tag Config -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">标签配置</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签分类</span>
+          <select class="rb-form-select" id="tagCategory" onchange="onTagCategoryChange()" style="min-width:140px;">
+            <option value="">请选择分类</option>
+            <option value="global">全局通用</option>
+            <option value="community">官网社区</option>
+            <option value="navigator">航海家</option>
+            <option value="deepsea">深海圈</option>
+          </select>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签代码</span>
+          <select class="rb-form-select" id="tagCode" onchange="onTagCodeChange()" style="min-width:180px;">
+            <option value="">请先选择分类</option>
+          </select>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签值</span>
+          <input class="rb-form-input" id="tagValue" placeholder="输入或选择标签值" style="max-width:240px;">
+        </div>
+      </div>
+
+      <!-- Trigger Type -->
+      <div class="rb-trigger-type-area">
+        <div class="rb-section-title">触发方式</div>
+        <div class="rb-trigger-options" id="triggerTypeOptions">
+          <div class="rb-trigger-option active" onclick="switchTriggerType('event')">
+            <span class="trigger-icon">&#9889;</span>
+            <span class="trigger-label">事件触发</span>
+          </div>
+          <div class="rb-trigger-option" onclick="switchTriggerType('schedule')">
+            <span class="trigger-icon">&#128339;</span>
+            <span class="trigger-label">定时任务</span>
+          </div>
+          <div class="rb-trigger-option" onclick="switchTriggerType('tag_change')">
+            <span class="trigger-icon">&#128196;</span>
+            <span class="trigger-label">标签变更</span>
+          </div>
+        </div>
+        <!-- Event trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubEvent">
+          <div class="rb-form-row">
+            <span class="rb-form-label">触发事件</span>
+            <div class="rb-chip-group" id="eventChipGroup">
+              <span class="rb-chip selected" onclick="toggleChip(this)">&#128100; 登录</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128196; 发帖</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128172; 评论</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128077; 点赞</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128269; 搜索</span>
+              <span class="rb-chip selected" onclick="toggleChip(this)">&#128176; 支付订单</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#9875; 参加航海</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#127909; 观看直播</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128172; 直播评论</span>
+            </div>
+          </div>
+          <div class="rb-trigger-hint">当选中的事件发生时，实时评估规则条件</div>
+        </div>
+        <!-- Schedule trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubSchedule" style="display:none;">
+          <div class="rb-form-row">
+            <span class="rb-form-label">执行频率</span>
+            <select class="rb-form-select" style="min-width:120px;">
+              <option value="daily">每日</option>
+              <option value="weekly">每周</option>
+              <option value="monthly">每月</option>
+            </select>
+          </div>
+          <div class="rb-form-row">
+            <span class="rb-form-label">执行时间</span>
+            <select class="rb-form-select" style="min-width:100px;">
+              <option value="02:00">凌晨 2:00</option>
+              <option value="03:00">凌晨 3:00</option>
+              <option value="04:00">凌晨 4:00</option>
+              <option value="06:00">早上 6:00</option>
+            </select>
+          </div>
+          <div class="rb-trigger-hint">按设定频率批量扫描所有用户，评估规则条件</div>
+        </div>
+        <!-- Tag change trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubTagChange" style="display:none;">
+          <div class="rb-form-row">
+            <span class="rb-form-label">监听标签</span>
+            <select class="rb-form-select" style="min-width:200px;" multiple size="3">
+              <option value="lc_stage">lc_stage — 生命周期阶段</option>
+              <option value="lc_health">lc_health — 健康度等级</option>
+              <option value="lc_engagement_tier">lc_engagement_tier — 参与度层级</option>
+              <option value="txn_renewal_status">txn_renewal_status — 续费状态</option>
+              <option value="comm_creator_tier">comm_creator_tier — 创作者等级</option>
+              <option value="nav_stuck_point">nav_stuck_point — 学习卡点</option>
+            </select>
+          </div>
+          <div class="rb-trigger-hint">当选中的标签值发生变化时，级联评估本规则</div>
+        </div>
+      </div>
+
+      <!-- Trigger Conditions -->
+      <div class="rb-rules-area" id="triggerConditions">
+        <div class="rb-section-title">
+          <span class="icon icon-include">&#10003;</span>
+          触发条件
+        </div>
+        <div id="triggerGroupsContainer">
+          <!-- JS rendered -->
+        </div>
+        <button class="rb-add-group" onclick="addGroup('trigger')">+ 添加条件组</button>
+      </div>
+
+      <!-- Auto Remove Conditions (Collapsible) -->
+      <div class="rb-rules-area">
+        <div class="rb-collapsible-header collapsed" onclick="toggleRemoveSection()">
+          <span class="rb-section-title" style="margin-bottom:0;">
+            <span class="icon icon-remove">&#8722;</span>
+            自动移除条件
+          </span>
+          <span class="arrow" id="removeArrow">&#9660;</span>
+          <span style="font-size:12px; color:var(--color-text-4); margin-left:4px;">（可选）</span>
+        </div>
+        <div class="rb-collapsible-body collapsed" id="removeConditionsBody">
+          <div id="removeGroupsContainer">
+            <!-- JS rendered -->
+          </div>
+          <button class="rb-add-group" onclick="addGroup('remove')">+ 添加移除条件组</button>
+        </div>
+      </div>
+
+      <!-- Execution Config -->
+      <div class="rb-form-area">
+        <div class="rb-section-title">执行配置</div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">计算频率</span>
+          <div class="rb-radio-group">
+            <label class="rb-radio"><input type="radio" name="freq" value="realtime"> 实时</label>
+            <label class="rb-radio"><input type="radio" name="freq" value="daily" checked> 每日</label>
+            <label class="rb-radio"><input type="radio" name="freq" value="weekly"> 每周</label>
+          </div>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">优先级</span>
+          <input class="rb-form-input" id="rulePriority" type="number" value="10" min="1" max="100" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">数字越小优先级越高</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">冷却期</span>
+          <input class="rb-form-input" id="ruleCooldown" type="number" value="" placeholder="可选" min="0" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">天（防止频繁打标）</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签有效期</span>
+          <input class="rb-form-input" id="ruleTTL" type="number" value="" placeholder="不限" min="0" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">天（到期自动移除标签，留空=永久）</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">互斥规则</span>
+          <select class="rb-form-select" id="ruleMutualExclusive" multiple size="3" style="min-width:260px; height: auto;">
+            <option value="1">沉默用户</option>
+            <option value="4">活跃回归</option>
+            <option value="7">续费风险</option>
+            <option value="8">续费紧迫</option>
+            <option value="34">流失预警-高价值</option>
+          </select>
+          <span style="font-size:12px; color:var(--color-text-4); align-self:flex-start; margin-top:4px;">Ctrl+点击多选<br>互斥规则不会同时对同一用户生效</span>
+        </div>
+      </div>
+    </div>
+    <div class="rb-footer">
+      <div class="rb-estimate">
+        <span>预估匹配</span>
+        <span class="rb-estimate-count" id="estimateCount">--</span>
+        <span>人</span>
+      </div>
+      <div class="rb-footer-actions">
+        <button class="btn btn-secondary" onclick="closeRuleEditor()">取消</button>
+        <button class="btn btn-primary" onclick="saveRule()">保存规则</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== Tag Detail Dialog ======== -->
+<div class="dialog-overlay" id="tagDetailOverlay" onclick="closeTagDetail()">
+  <div class="detail-dialog" onclick="event.stopPropagation()">
+    <div class="detail-dialog-header">
+      <h3 id="tagDetailTitle">标签详情</h3>
+      <button class="detail-dialog-close" onclick="closeTagDetail()">&#10005;</button>
+    </div>
+    <div class="detail-dialog-body" id="tagDetailBody">
+      <!-- JS rendered -->
+    </div>
+  </div>
+</div>
+
+<!-- ======== PRD Panel ======== -->
+<div class="prd-panel" data-prd-key="tag-mgmt" data-prd-version="1" data-prd-view="overview">
+  <div class="prd-title" contenteditable="true">自动化标签管理 PRD</div>
+
+  <div class="prd-context-hint" id="prdContextHint">当前视图：标签总览</div>
+
+  <!-- 通用 Section -->
+  <div class="prd-section" id="prd-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-item">让运营人员能<strong>查看标签体系 + 管理自动打标规则 + 编辑规则条件</strong></div>
+    <div class="prd-item">标签来源：CDP 标签体系框架，4 大类 96 个标签（全局41+社区17+航海17+深海21）</div>
+    <div class="prd-item">规则来源：自动打标规则库，35 条规则</div>
+    <div class="prd-item">三个视图：标签总览（默认）/ 规则管理 / 规则编辑器（Drawer）</div>
+  </div>
+
+  <!-- Overview 视图 -->
+  <div class="prd-section" data-prd-context="overview" id="prd-s2">
+    <div class="prd-section-title green">2. 标签总览</div>
+    <div class="prd-label">统计栏</div>
+    <div class="prd-item">4 个指标：总标签数 / 已启用规则数 / 今日更新标签数 / 覆盖率</div>
+    <div class="prd-label">分类 Tab</div>
+    <div class="prd-item">4 个分类（按产品线）：全局通用(41) / 官网社区(17) / 航海家(17) / 深海圈(21)</div>
+    <div class="prd-item">Tab 切换刷新卡片列表</div>
+    <div class="prd-label">标签卡片</div>
+    <div class="prd-item">Grid 布局每行 3 张</div>
+    <div class="prd-item">卡片信息：标签名 / 代码 / 取值范围 / 更新频率 / 关联规则数</div>
+    <div class="prd-item">点击卡片 → 弹出标签详情弹窗</div>
+  </div>
+
+  <!-- Rules 视图 -->
+  <div class="prd-section" data-prd-context="rules" id="prd-s3">
+    <div class="prd-section-title blue">3. 规则管理</div>
+    <div class="prd-label">表格列</div>
+    <div class="prd-item">规则名 / 标签分类 / 打标结果 / 条件摘要 / 频率 / 优先级 / 状态 / 操作</div>
+    <div class="prd-label">筛选</div>
+    <div class="prd-item">搜索框 + 分类下拉 + 状态下拉（启用/禁用/全部）</div>
+    <div class="prd-label">操作</div>
+    <div class="prd-item">编辑 → 打开规则编辑器 Drawer</div>
+    <div class="prd-item">复制 → 以副本方式打开</div>
+    <div class="prd-item">删除 → 确认后删除</div>
+    <div class="prd-item">状态 Toggle 开关 → 启用/禁用</div>
+  </div>
+
+  <!-- Editor 视图 -->
+  <div class="prd-section" data-prd-context="editor" id="prd-s4">
+    <div class="prd-section-title green">4. 规则编辑器</div>
+    <div class="prd-label">基本信息</div>
+    <div class="prd-item">规则名称（必填）+ 规则描述（可选）</div>
+    <div class="prd-label">标签配置</div>
+    <div class="prd-item">分类 → 标签代码 → 标签值 三级联动</div>
+    <div class="prd-label">触发条件</div>
+    <div class="prd-item">属性条件 + 事件条件，组内 AND/OR，组间 且/或/且非</div>
+    <div class="prd-label">自动移除条件（可选折叠）</div>
+    <div class="prd-item">同样的条件构建器，当条件满足时自动移除标签</div>
+    <div class="prd-label">执行配置</div>
+    <div class="prd-item">计算频率：实时 / 每日 / 每周</div>
+    <div class="prd-item">优先级：数字越小越优先（默认 10）</div>
+    <div class="prd-item">冷却期：天数，防止频繁打标</div>
+  </div>
+
+  <div class="prd-section" id="prd-s5">
+    <div class="prd-section-title red">5. 校验规则</div>
+    <div class="prd-item">规则名称不能为空</div>
+    <div class="prd-item">必须选择标签分类和标签代码</div>
+    <div class="prd-item">触发条件至少有一个条件组</div>
+    <div class="prd-item">条件组内至少有一个条件</div>
+    <div class="prd-item">同一标签+标签值不能有重复的启用规则</div>
+  </div>
+
+  <div class="prd-section" id="prd-s6">
+    <div class="prd-section-title blue">6. 交互规则</div>
+    <div class="prd-item">编辑规则 → 预填已有数据</div>
+    <div class="prd-item">删除规则 → 二次确认弹窗</div>
+    <div class="prd-item">Toggle 状态 → Toast 提示</div>
+    <div class="prd-item">保存规则 → 校验 → Toast 成功/失败</div>
+    <div class="prd-item">预估匹配人数：基于条件模拟计算</div>
+    <div class="prd-item">标签详情弹窗：展示取值分布 + 关联规则列表</div>
+  </div>
+</div>
+
+<script src="prd-editor.js"></script>
+<script>
+// ================================================================
+//  Mock Data
+// ================================================================
+
+var tagData = {
+  global: [
+    // 身份标签 id_*
+    { name: '会员等级', code: 'id_member_level', values: '体验会员 / 正式会员 / 老会员(续费>=2次)', source: '鱼丸系统', freq: '实时', rules: 2 },
+    { name: '入圈期数', code: 'id_member_period', values: '第 8 期、第 9 期', source: '鱼丸系统', freq: '订单触发', rules: 0 },
+    { name: '客户等级', code: 'id_customer_level', values: 'S / A / B / C / D', source: 'CRM 系统', freq: '手动/规则', rules: 1 },
+    { name: '社群角色', code: 'id_role', values: '普通圈友 / 传术师 / 航海家 / 管理员', source: '鱼丸系统', freq: '系统同步', rules: 1 },
+    { name: '来源渠道', code: 'id_source_channel', values: '视频号 / 公众号 / 合作导流 / 小红书', source: 'CRM 系统', freq: '首次添加', rules: 0 },
+    { name: '来源类型', code: 'id_source_type', values: '自然流量 / 付费投放 / KOC推荐 / 老带新', source: 'CRM 系统', freq: '首次添加', rules: 0 },
+    { name: '推荐人', code: 'id_referrer', values: '用户ID/昵称', source: 'CRM 系统', freq: '首次添加', rules: 1 },
+    { name: '专属销售', code: 'id_sales_owner', values: '员工名', source: 'CRM 系统', freq: '分配时', rules: 0 },
+    { name: '专属服务', code: 'id_service_owner', values: '员工名', source: 'CRM 系统', freq: '分配时', rules: 0 },
+    { name: '好友状态', code: 'id_wechat_status', values: '好友 / 客户删除 / 随身删除 / 未添加', source: '企微同步', freq: '实时', rules: 1 },
+    { name: '体验营期数', code: 'id_trial_batch', values: '9体139 / 9体137', source: 'CRM 系统', freq: '报名时', rules: 0 },
+    { name: '所在城市', code: 'id_region', values: '北京、上海、深圳', source: '体验营调研', freq: '填写时', rules: 0 },
+    { name: '职业类型', code: 'id_occupation', values: '互联网 / 金融 / 自由职业 / 实体经营', source: '体验营调研', freq: '填写时', rules: 0 },
+    { name: '收入层级', code: 'id_income_tier', values: '<10w / 10-30w / 30-50w / 50-100w / >100w', source: '体验营调研', freq: '填写时', rules: 0 },
+    // 交易标签 txn_*
+    { name: '累计消费金额', code: 'txn_total_spent', values: '高消费(>=10000) / 中(3000-9999) / 低(<3000)', source: '订单系统', freq: '支付触发', rules: 1 },
+    { name: '购买次数', code: 'txn_purchase_count', values: '多次(>=5) / 几次(2-4) / 首次(1)', source: '订单系统', freq: '支付触发', rules: 0 },
+    { name: '最近购买产品', code: 'txn_latest_product', values: '年费会员 / 航海门票 / 深海圈项目 / 周边', source: '订单系统', freq: '支付触发', rules: 0 },
+    { name: '续费次数', code: 'txn_renewal_count', values: '0 / 1 / 2 / 3+', source: '订单系统', freq: '续费触发', rules: 2 },
+    { name: '续费状态', code: 'txn_renewal_status', values: '首年 / 已续费 / 待续费 / 已过期', source: '订单系统', freq: '每日', rules: 3 },
+    { name: 'CLV 层级', code: 'txn_clv_tier', values: '钻石(Top5%) / 金(Top20%) / 银(Top50%) / 铜(Bottom50%)', source: '评分引擎', freq: '月度', rules: 0 },
+    { name: '到期倒计时', code: 'txn_expire_countdown', values: '具体天数（负数=已过期天数）', source: '订单系统', freq: '每日', rules: 2 },
+    // 生命周期标签 lc_*
+    { name: '生命周期阶段', code: 'lc_stage', values: 'visitor / prospect / trial / paid / active / core / silent / churn_risk', source: '模型计算', freq: '每日', rules: 3 },
+    { name: '健康度等级', code: 'lc_health', values: '健康(>=80) / 良好(60-79) / 一般(40-59) / 风险(20-39) / 危险(<20)', source: '评分引擎', freq: '每日', rules: 2 },
+    { name: '流失风险', code: 'lc_churn_risk', values: '高风险 / 中风险 / 低风险 / 无风险', source: '评分引擎', freq: '每日', rules: 3, distribution: [{label:'高风险',pct:8},{label:'中风险',pct:15},{label:'低风险',pct:32},{label:'无风险',pct:45}] },
+    { name: '参与度层级', code: 'lc_engagement_tier', values: 'L1核心 / L2活跃 / L3参与 / L4浏览 / L5沉默', source: '评分引擎', freq: '每日', rules: 1 },
+    { name: '成长趋势', code: 'lc_growth_trend', values: '上升 / 平稳 / 下降 / 急降', source: '模型计算', freq: '每周', rules: 2 },
+    { name: '新手引导状态', code: 'lc_onboarding', values: '已完成 / 进行中 / 未开始 / 不适用', source: '任务系统', freq: '实时', rules: 1 },
+    { name: 'RFM 分群', code: 'lc_rfm_segment', values: 'champion / loyal / potential / new / attention / about_to_sleep / hibernating / lost', source: '评分引擎', freq: '每日', rules: 0 },
+    { name: '续费窗口', code: 'lc_renewal_window', values: '黄金期 / 紧迫期 / 最后期 / 已过期 / 不适用', source: '模型计算', freq: '每日', rules: 3 },
+    { name: '登录频率', code: 'lc_login_freq', values: '高频(>=20天) / 中频(10-19) / 低频(3-9) / 极低(<3)', source: '行为事件', freq: '每日', rules: 2 },
+    { name: '沉默天数', code: 'lc_silent_days', values: '具体天数', source: '行为事件', freq: '每日', rules: 3 },
+    { name: '活跃平台', code: 'lc_active_platform', values: '官网社区 / 航海家 / 深海圈 / 均衡', source: '行为聚合', freq: '每周', rules: 2 },
+    { name: '赚钱方向兴趣', code: 'lc_earning_interest', values: '短视频带货 / 知识付费 / 跨境电商 / 本地生活 / AI应用', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '活跃时段', code: 'lc_time_preference', values: '早鸟(6-9) / 午间(12-14) / 晚间(20-23) / 深夜(23-2)', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '推荐人数', code: 'lc_referral_count', values: '超级推荐人(>=10) / 活跃推荐(3-9) / 有推荐(1-2) / 无推荐', source: 'CRM 系统', freq: '推荐触发', rules: 1 },
+    { name: '分销身份', code: 'lc_is_distributor', values: '是 / 否', source: 'CRM 系统', freq: '—', rules: 0 }
+  ],
+  community: [
+    // 内容消费
+    { name: '阅读量级', code: 'comm_read_volume', values: '重度(>=50篇) / 中度(20-49) / 轻度(5-19) / 极少(<5)', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '阅读深度', code: 'comm_read_depth', values: '深度(>=5min) / 中度(2-5min) / 浅层(<2min)', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '阅读完成率', code: 'comm_read_completion', values: '高(>70%) / 中(30-70%) / 低(<30%)', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '偏好话题 TOP3', code: 'comm_topic_pref', values: '短视频 / 电商 / 自媒体 / AI应用 / 本地生活', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '话题多样性', code: 'comm_topic_diversity', values: '广泛(>=10) / 聚焦(3-9) / 单一(1-2)', source: '行为聚合', freq: '每周', rules: 0 },
+    { name: '搜索行为', code: 'comm_search_active', values: '高频搜索(>=10次) / 有搜索(1-9) / 无搜索', source: '行为事件', freq: '每日', rules: 0 },
+    // 内容创作
+    { name: '发帖频率', code: 'comm_post_freq', values: '高产(>=10篇) / 活跃(3-9) / 偶尔(1-2) / 未发帖', source: '行为事件', freq: '每日', rules: 2 },
+    { name: '发帖质量', code: 'comm_post_quality', values: '高质量(精华率>30%) / 中等(10-30%) / 普通(<10%)', source: '行为聚合', freq: '每周', rules: 1 },
+    { name: '精华帖数量', code: 'comm_essential_count', values: '具体数量', source: '鱼丸系统', freq: '系统同步', rules: 1 },
+    { name: '创作者等级', code: 'comm_creator_tier', values: 'PGC专业 / UGC核心 / UGC活跃 / UGC潜力 / 非创作者', source: '模型计算', freq: '每周', rules: 2 },
+    { name: '创作内容类型', code: 'comm_content_type', values: '经验分享 / 方法论 / 资源汇总 / 问答求助 / 复盘总结', source: '行为分析', freq: '每月', rules: 0 },
+    // 社区互动与影响力
+    { name: '互动活跃度', code: 'comm_interaction', values: '高互动(>=30次) / 中互动(10-29) / 低互动(1-9) / 零互动', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '社区影响力', code: 'comm_influence', values: '高(Top10%) / 中(Top30%) / 低(Bottom70%)', source: '行为聚合', freq: '每周', rules: 1 },
+    { name: '社交圈规模', code: 'comm_network_size', values: '广泛(>50人) / 适中(10-50) / 窄(1-9) / 孤立', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '社区角色', code: 'comm_role', values: '内容创作者 / 互动活跃者 / 深度读者 / 潜水者 / 求助者', source: '行为分析', freq: '每月', rules: 1 },
+    { name: '直播观看', code: 'comm_live_viewer', values: '重度(>=5次且>60min) / 普通(1-4次) / 未观看', source: '直播系统', freq: '每日', rules: 1 },
+    { name: '直播互动', code: 'comm_live_engagement', values: '高互动(>=20次) / 一般(5-19) / 低(<5) / 无', source: '直播系统', freq: '每日', rules: 0 }
+  ],
+  navigator: [
+    // 学习进度
+    { name: '报名课程数', code: 'nav_enrollment_count', values: '多次(>=5) / 几次(2-4) / 首次(1) / 从未(0)', source: '航海系统', freq: '报名触发', rules: 1 },
+    { name: '近期报名', code: 'nav_enrollment_recent', values: '活跃(>=2) / 有参与(1) / 未参与(0)', source: '航海系统', freq: '每日', rules: 1 },
+    { name: '完课率', code: 'nav_completion_rate', values: '优秀(>=90%) / 良好(70-89%) / 一般(40-69%) / 低(<40%)', source: '航海系统', freq: '每日', rules: 2 },
+    { name: '作业提交率', code: 'nav_homework_rate', values: '全勤(100%) / 高(>=80%) / 中(50-79%) / 低(<50%)', source: '航海系统', freq: '每日', rules: 1 },
+    { name: '连续打卡天数', code: 'nav_checkin_streak', values: '具体天数', source: '航海系统', freq: '每日', rules: 0 },
+    { name: '累计打卡次数', code: 'nav_checkin_total', values: '具体次数', source: '航海系统', freq: '每日', rules: 0 },
+    { name: '学习连续性', code: 'nav_learning_consistency', values: '高(>=20天) / 中(10-19天) / 低(<10天)', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '进度达标', code: 'nav_on_schedule', values: '超前 / 正常 / 落后 / 严重落后', source: '航海系统', freq: '每日', rules: 0 },
+    { name: '学习卡点', code: 'nav_stuck_point', values: '有卡点(标注课时) / 正常推进', source: '航海系统', freq: '每日', rules: 1 },
+    // 学习效果
+    { name: '实操产出', code: 'nav_practice_output', values: '高产(>=5) / 一般(1-4) / 无产出(0)', source: '航海系统', freq: '每日', rules: 0 },
+    { name: '产出质量', code: 'nav_output_quality', values: '优质(>=50%) / 良好(20-49%) / 普通(<20%)', source: '航海系统', freq: '每周', rules: 0 },
+    { name: '成长趋势', code: 'nav_improvement_trend', values: '上升 / 平稳 / 下降', source: '模型计算', freq: '每周', rules: 0 },
+    { name: '案例标杆', code: 'nav_case_study', values: '是 / 否', source: '手动标记', freq: '手动', rules: 1 },
+    // 课程偏好
+    { name: '课程品类偏好', code: 'nav_category_pref', values: '短视频 / 电商 / 写作 / AI / 私域', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '难度偏好', code: 'nav_difficulty_pref', values: '入门 / 进阶 / 高级', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '学习形式偏好', code: 'nav_format_pref', values: '视频课 / 直播课 / 训练营 / 21天挑战', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '学习时段偏好', code: 'nav_learning_time', values: '早鸟(6-9) / 通勤(9-10) / 午间(12-14) / 晚间(20-23)', source: '行为聚合', freq: '每月', rules: 0 },
+    // 俱乐部与权益
+    { name: '俱乐部状态', code: 'nav_club_status', values: '活跃会员 / 沉默会员 / 已过期 / 未加入', source: '航海系统', freq: '实时', rules: 0 },
+    { name: '俱乐部活跃度', code: 'nav_club_activity', values: '高活跃(>=10次) / 一般(3-9次) / 低(<3次) / 无', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '权益使用率', code: 'nav_benefits_usage', values: '充分(>=80%) / 一般(30-79%) / 低(<30%) / 未使用', source: '航海系统', freq: '每周', rules: 0 },
+    { name: '偏好权益类型', code: 'nav_benefits_type', values: '课程折扣 / 专属直播 / 1v1咨询 / 线下活动 / 资料包', source: '行为聚合', freq: '每月', rules: 0 }
+  ],
+  deepsea: [
+    // 内容消费
+    { name: '阅读量级', code: 'deep_read_volume', values: '重度(>=30篇) / 中度(10-29) / 轻度(3-9) / 极少(<3)', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '阅读深度', code: 'deep_read_depth', values: '深度(>=5min) / 中度(2-5min) / 浅层(<2min)', source: '行为事件', freq: '每日', rules: 1 },
+    { name: '讨论活跃度', code: 'deep_discussion_active', values: '高互动(>=20次) / 中互动(5-19) / 低互动(1-4) / 零互动', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '关注话题 TOP3', code: 'deep_topic_pref', values: '短视频 / 电商 / AI / 写作 / 本地生活', source: '行为聚合', freq: '每周', rules: 0 },
+    // 项目参与
+    { name: '累计参与项目数', code: 'deep_project_count', values: '资深(>=5) / 经验(3-4) / 体验(1-2) / 从未(0)', source: '项目系统', freq: '报名触发', rules: 1 },
+    { name: '近期项目参与', code: 'deep_project_recent', values: '活跃(>=2) / 有参与(1) / 未参与(0)', source: '项目系统', freq: '每日', rules: 0 },
+    { name: '项目完成度', code: 'deep_project_completion', values: '优秀完成 / 基本完成 / 中途放弃 / 未开始', source: '项目系统', freq: '每日', rules: 0 },
+    { name: '参与深度', code: 'deep_project_depth', values: '深度参与 / 一般参与 / 浅层参与', source: '模型计算', freq: '每周', rules: 0 },
+    { name: '项目品类偏好', code: 'deep_category_pref', values: '短视频 / 电商 / 写作 / 技术 / 本地生活', source: '行为聚合', freq: '每月', rules: 0 },
+    // 成果产出
+    { name: '产出成果数', code: 'deep_output_count', values: '高产(>=10) / 一般(3-9) / 少量(1-2) / 无(0)', source: '项目系统', freq: '每周', rules: 1 },
+    { name: '产出质量', code: 'deep_output_quality', values: '优质(>=3精华) / 良好(1-2) / 普通(0)', source: '项目系统', freq: '每周', rules: 0 },
+    { name: '项目收益', code: 'deep_revenue_flag', values: '有收益(标注金额区间) / 未产生收益', source: '项目系统', freq: '手动', rules: 0 },
+    { name: '案例标杆', code: 'deep_case_study', values: '是 / 否', source: '手动标记', freq: '手动', rules: 0 },
+    // 角色与成长
+    { name: '项目角色', code: 'deep_role', values: '领航人(导师) / 船长(组长) / 水手(学员) / 观察员', source: '项目系统', freq: '项目变更', rules: 1 },
+    { name: '带教人数', code: 'deep_mentoring_count', values: '具体人数', source: '项目系统', freq: '项目变更', rules: 0 },
+    { name: '角色成长路径', code: 'deep_role_growth', values: '水手→船长→领航人 / 水手→船长 / 水手 / 新人', source: '模型计算', freq: '每月', rules: 0 },
+    { name: '导师标识', code: 'deep_mentor_flag', values: '是 / 否', source: '行为分析', freq: '每月', rules: 0 },
+    // 协作与网络
+    { name: '协作活跃度', code: 'deep_collab_active', values: '活跃协作(>=5次) / 有协作(1-4) / 独立参与(0)', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '校友网络', code: 'deep_alumni_network', values: '强连接(持续互动) / 弱连接(偶尔) / 断联', source: '行为聚合', freq: '每月', rules: 0 },
+    { name: '圈子活跃度', code: 'deep_group_active', values: '活跃(>=20次/月) / 一般(5-19) / 低(<5)', source: '行为事件', freq: '每日', rules: 0 },
+    { name: '重复组队', code: 'deep_repeat_collab', values: '有(标注次数) / 无', source: '行为聚合', freq: '每月', rules: 0 }
+  ]
+};
+
+var rulesData = [
+  // 全局通用 - 生命周期
+  { id: 1, name: '沉默用户', category: '全局通用', result: 'lc_silent_days: 30天沉默', condition: '付费会员 AND 近30天无有效行为', freq: '每日', priority: 5, enabled: true, triggerType: '定时', hitCount: 342, lastExec: '今日 03:00' },
+  { id: 2, name: '深度沉默', category: '全局通用', result: 'lc_silent_days: 60天沉默', condition: '付费会员 AND 近60天无有效行为', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 89, lastExec: '今日 03:00' },
+  { id: 3, name: '疑似放弃', category: '全局通用', result: 'lc_silent_days: 90天沉默', condition: '付费会员 AND 近90天无有效行为', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 23, lastExec: '今日 03:00' },
+  { id: 4, name: '活跃回归', category: '全局通用', result: 'lc_growth_trend: 回归活跃', condition: '曾沉默 AND 近7天有效行为>=3天', freq: '每日', priority: 10, enabled: true, triggerType: '定时', hitCount: 15, lastExec: '今日 03:00' },
+  { id: 5, name: '新人黄金期', category: '全局通用', result: 'lc_onboarding: 新手引导中', condition: '注册<=7天 AND 新手任务<80%', freq: '实时', priority: 8, enabled: true, triggerType: '事件', hitCount: 67, lastExec: '2小时前' },
+  { id: 6, name: '续费窗口-黄金期', category: '全局通用', result: 'lc_renewal_window: 黄金期', condition: '到期前60-30天 AND 续费倾向>=60', freq: '每日', priority: 6, enabled: true, triggerType: '定时', hitCount: 156, lastExec: '今日 03:00' },
+  { id: 7, name: '续费风险', category: '全局通用', result: 'lc_churn_risk: 续费风险', condition: '到期前30天 AND 未续费 AND 倾向<50', freq: '每日', priority: 5, enabled: true, triggerType: '定时', hitCount: 89, lastExec: '今日 03:00' },
+  { id: 8, name: '续费紧迫', category: '全局通用', result: 'lc_churn_risk: 续费紧迫', condition: '到期前7天 AND 未续费', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 31, lastExec: '今日 03:00' },
+  { id: 9, name: '到期未续', category: '全局通用', result: 'txn_renewal_status: 已过期待挽回', condition: '已过期 AND 过期<=30天', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 45, lastExec: '今日 03:00' },
+  { id: 10, name: '续费老客', category: '全局通用', result: 'txn_renewal_count: 忠实老客', condition: '续费次数>=2', freq: '支付触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 823, lastExec: '1小时前' },
+  { id: 11, name: '参与度急降', category: '全局通用', result: 'lc_growth_trend: 急降', condition: '近30天参与度比前30天下降>=40%', freq: '每周', priority: 5, enabled: true, triggerType: '定时', hitCount: 28, lastExec: '03-24 03:00' },
+  { id: 12, name: '超级推荐人', category: '全局通用', result: 'lc_referral_count: 超级推荐人', condition: '累计推荐付费用户>=5人', freq: '推荐触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 12, lastExec: '03-22 14:30' },
+  // 官网社区
+  { id: 13, name: '内容创作者', category: '官网社区', result: 'comm_post_freq: 高产', condition: '近30天发帖>=10篇', freq: '每日', priority: 10, enabled: true, triggerType: '定时', hitCount: 48, lastExec: '今日 03:00' },
+  { id: 14, name: '精华作者', category: '官网社区', result: 'comm_post_quality: 高质量', condition: '近90天精华帖>=3篇 AND 精华率>30%', freq: '每周', priority: 10, enabled: true, triggerType: '定时', hitCount: 19, lastExec: '03-24 03:00' },
+  { id: 15, name: '深度读者', category: '官网社区', result: 'comm_read_volume: 重度', condition: '近30天阅读>=50篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 156, lastExec: '今日 03:00' },
+  { id: 16, name: '社区影响力Top', category: '官网社区', result: 'comm_influence: 高', condition: '互动Top10% AND 社交圈>50人', freq: '每周', priority: 8, enabled: true, triggerType: '定时', hitCount: 35, lastExec: '03-24 03:00' },
+  { id: 17, name: 'UGC核心创作者', category: '官网社区', result: 'comm_creator_tier: UGC核心', condition: '近90天发帖>=15 AND 精华>=2 AND 互动>=50', freq: '每周', priority: 9, enabled: true, triggerType: '标签变更', hitCount: 8, lastExec: '03-24 03:00' },
+  { id: 18, name: '直播重度观众', category: '官网社区', result: 'comm_live_viewer: 重度', condition: '近30天直播>=5次 AND 总时长>60min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 72, lastExec: '今日 03:00' },
+  { id: 19, name: '社区角色识别', category: '官网社区', result: 'comm_role: 自动识别', condition: '综合行为分析（创作/互动/阅读/潜水）', freq: '每月', priority: 6, enabled: true, triggerType: '定时', hitCount: 1205, lastExec: '03-01 03:00' },
+  // 航海家
+  { id: 20, name: '航海达人', category: '航海家', result: 'nav_enrollment_count: 多次', condition: '累计报名航海>=5次', freq: '报名触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 89, lastExec: '03-20 15:20' },
+  { id: 21, name: '完课优秀', category: '航海家', result: 'nav_completion_rate: 优秀', condition: '当前航海完课率>=90%', freq: '每日', priority: 9, enabled: true, triggerType: '定时', hitCount: 134, lastExec: '今日 03:00' },
+  { id: 22, name: '作业全勤', category: '航海家', result: 'nav_homework_rate: 全勤', condition: '当前航海作业提交率100%', freq: '每日', priority: 9, enabled: true, triggerType: '定时', hitCount: 67, lastExec: '今日 03:00' },
+  { id: 23, name: '学习卡点预警', category: '航海家', result: 'nav_stuck_point: 有卡点', condition: '连续3天无学习行为 AND 进度落后', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 18, lastExec: '今日 03:00' },
+  { id: 24, name: '案例标杆学员', category: '航海家', result: 'nav_case_study: 是', condition: '实操产出优质 AND 导师推荐', freq: '手动', priority: 10, enabled: false, triggerType: '事件', hitCount: 5, lastExec: '03-15 10:00' },
+  { id: 25, name: '完课率低预警', category: '航海家', result: 'nav_completion_rate: 低', condition: '航海中 AND 完课率<40% AND 剩余<30%', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 42, lastExec: '今日 03:00' },
+  // 深海圈
+  { id: 26, name: '深度阅读者', category: '深海圈', result: 'deep_read_volume: 重度', condition: '近30天阅读>=30篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 34, lastExec: '今日 03:00' },
+  { id: 27, name: '项目参与活跃', category: '深海圈', result: 'deep_project_count: 资深', condition: '累计参与项目>=5个', freq: '报名触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 26, lastExec: '03-18 09:30' },
+  { id: 28, name: '高产出成员', category: '深海圈', result: 'deep_output_count: 高产', condition: '近90天产出>=10个 AND 精华>=3', freq: '每周', priority: 9, enabled: true, triggerType: '定时', hitCount: 11, lastExec: '03-24 03:00' },
+  { id: 29, name: '角色晋升-船长', category: '深海圈', result: 'deep_role: 船长', condition: '完成2个项目 AND 产出优质 AND 协作活跃', freq: '项目变更', priority: 8, enabled: true, triggerType: '标签变更', hitCount: 14, lastExec: '03-20 16:00' },
+  { id: 30, name: '角色晋升-领航人', category: '深海圈', result: 'deep_role: 领航人', condition: '担任船长>=2次 AND 带教人数>=5', freq: '项目变更', priority: 7, enabled: false, triggerType: '标签变更', hitCount: 3, lastExec: '03-10 11:00' },
+  { id: 31, name: '协作活跃成员', category: '深海圈', result: 'deep_collab_active: 活跃协作', condition: '近90天协作>=5次 AND 圈子活跃>=20次/月', freq: '每月', priority: 8, enabled: true, triggerType: '定时', hitCount: 19, lastExec: '03-01 03:00' },
+  // 跨产品线
+  { id: 32, name: '全栈活跃用户', category: '全局通用', result: 'lc_engagement_tier: 核心用户', condition: '社区+航海+深海圈均有活跃行为', freq: '每周', priority: 9, enabled: true, triggerType: '定时', hitCount: 56, lastExec: '03-24 03:00' },
+  { id: 33, name: '高价值客户', category: '全局通用', result: 'txn_total_spent: 高消费', condition: '累计消费>=5000 AND 活跃度高', freq: '支付触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 198, lastExec: '3小时前' },
+  { id: 34, name: '流失预警-高价值', category: '全局通用', result: 'lc_churn_risk: 高价值流失', condition: '高价值客户 AND 近30天活跃度下降>=50%', freq: '每日', priority: 2, enabled: true, triggerType: '标签变更', hitCount: 7, lastExec: '今日 03:00' },
+  { id: 35, name: '新人激活追踪', category: '全局通用', result: 'lc_onboarding: 未激活', condition: '注册>=3天 AND 新手任务<30% AND 无社区行为', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 34, lastExec: '今日 03:00' }
+];
+
+var tagDetailData = {
+  'lc_silent_days': { distribution: [{label:'30天沉默',pct:12,color:'#FA9A1D'},{label:'60天沉默',pct:6,color:'#F54A45'},{label:'90天沉默',pct:3,color:'#D83931'},{label:'活跃',pct:79,color:'#36A590'}], rules: ['沉默用户','深度沉默','疑似放弃'], lastUpdate: '2026-03-17 08:00' },
+  'lc_churn_risk': { distribution: [{label:'高风险',pct:8,color:'#F54A45'},{label:'中风险',pct:15,color:'#FA9A1D'},{label:'低风险',pct:32,color:'#51B7A1'},{label:'无风险',pct:45,color:'#36A590'}], rules: ['续费风险','续费紧迫','续费窗口-黄金期','流失预警-高价值'], lastUpdate: '2026-03-17 08:00' },
+  'comm_read_volume': { distribution: [{label:'重度(>=50篇)',pct:10,color:'#36A590'},{label:'中度(20-49)',pct:25,color:'#51B7A1'},{label:'轻度(5-19)',pct:40,color:'#FA9A1D'},{label:'极少(<5)',pct:25,color:'#F54A45'}], rules: ['深度读者'], lastUpdate: '2026-03-17 08:00' },
+  'comm_post_freq': { distribution: [{label:'高产(>=10篇)',pct:5,color:'#36A590'},{label:'活跃(3-9)',pct:12,color:'#51B7A1'},{label:'偶尔(1-2)',pct:18,color:'#FA9A1D'},{label:'未发帖',pct:65,color:'#757980'}], rules: ['内容创作者','UGC核心创作者'], lastUpdate: '2026-03-17 08:00' },
+  'nav_completion_rate': { distribution: [{label:'优秀(>=90%)',pct:22,color:'#36A590'},{label:'良好(70-89%)',pct:30,color:'#51B7A1'},{label:'一般(40-69%)',pct:28,color:'#FA9A1D'},{label:'低(<40%)',pct:20,color:'#F54A45'}], rules: ['完课优秀','完课率低预警'], lastUpdate: '2026-03-17 08:00' },
+  'deep_project_count': { distribution: [{label:'资深(>=5)',pct:8,color:'#36A590'},{label:'经验(3-4)',pct:15,color:'#51B7A1'},{label:'体验(1-2)',pct:30,color:'#FA9A1D'},{label:'从未(0)',pct:47,color:'#757980'}], rules: ['项目参与活跃'], lastUpdate: '2026-03-17 08:00' }
+};
+
+// ================================================================
+// ================================================================
+//  Sidebar Menu Toggle
+// ================================================================
+
+function toggleMenu(group) {
+  group.classList.toggle('open');
+}
+
+// ================================================================
+//  View Switching
+// ================================================================
+
+function switchView(view) {
+  document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.view-overview, .view-rules, .view-changelog').forEach(function(v) { v.classList.remove('active'); });
+  var tabIndex = { overview: 0, rules: 1, changelog: 2 };
+  document.querySelectorAll('.view-tab')[tabIndex[view] || 0].classList.add('active');
+  var viewEl = { overview: 'viewOverview', rules: 'viewRules', changelog: 'viewChangelog' };
+  document.getElementById(viewEl[view] || 'viewOverview').classList.add('active');
+  if (view === 'changelog') renderChangelog();
+  // PRD context
+  var prdPanel = document.querySelector('.prd-panel');
+  if (prdPanel) {
+    prdPanel.setAttribute('data-prd-view', view);
+    var hint = document.getElementById('prdContextHint');
+    if (hint) hint.textContent = '当前视图：' + (view === 'overview' ? '标签总览' : '规则管理');
+  }
+}
+
+// ================================================================
+//  Category Tabs
+// ================================================================
+
+function switchCategory(cat) {
+  document.querySelectorAll('.category-tab').forEach(function(t) { t.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  renderTagCards(cat);
+}
+
+function renderTagCards(cat) {
+  var grid = document.getElementById('tagCardsGrid');
+  var tags = tagData[cat] || [];
+  grid.innerHTML = '';
+  tags.forEach(function(tag) {
+    var card = document.createElement('div');
+    card.className = 'tag-card';
+    card.onclick = function() { openTagDetail(cat, tag); };
+    card.innerHTML =
+      '<div class="tag-card-header">' +
+        '<span class="tag-card-name">' + tag.name + '</span>' +
+        '<span class="tag-card-code">' + tag.code + '</span>' +
+      '</div>' +
+      '<div class="tag-card-values">' + tag.values + '</div>' +
+      '<div class="tag-card-meta">' +
+        '<span class="tag-card-meta-item">&#128337; ' + tag.freq + '</span>' +
+        '<span class="tag-card-meta-item">&#128196; ' + tag.source + '</span>' +
+        (tag.rules > 0 ? '<span class="tag-card-meta-item tag-card-rules">&#9881; ' + tag.rules + ' 条规则</span>' : '') +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ================================================================
+//  Tag Detail Dialog
+// ================================================================
+
+function openTagDetail(cat, tag) {
+  var overlay = document.getElementById('tagDetailOverlay');
+  var title = document.getElementById('tagDetailTitle');
+  var body = document.getElementById('tagDetailBody');
+
+  title.textContent = tag.name;
+
+  var catNames = { global: '全局通用', community: '官网社区', navigator: '航海家', deepsea: '深海圈' };
+
+  var html = '<div class="detail-section">' +
+    '<div class="detail-section-title">基本信息</div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">标签代码</span><span class="detail-info-value" style="font-family:monospace;">' + tag.code + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">标签分类</span><span class="detail-info-value">' + (catNames[cat] || cat) + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">数据来源</span><span class="detail-info-value">' + tag.source + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">更新频率</span><span class="detail-info-value">' + tag.freq + '</span></div>' +
+    '<div class="detail-info-row"><span class="detail-info-label">取值范围</span><span class="detail-info-value" style="font-size:12px;max-width:240px;word-break:break-all;">' + tag.values + '</span></div>' +
+  '</div>';
+
+  // Distribution
+  var detail = tagDetailData[tag.code];
+  if (detail && detail.distribution) {
+    html += '<div class="detail-section"><div class="detail-section-title">取值分布</div>';
+    detail.distribution.forEach(function(d) {
+      html += '<div class="distribution-item">' +
+        '<span class="distribution-label">' + d.label + '</span>' +
+        '<div class="distribution-bar-bg"><div class="distribution-bar-fill" style="width:' + d.pct + '%;background:' + d.color + ';"></div></div>' +
+        '<span class="distribution-pct">' + d.pct + '%</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  } else {
+    // Generate mock distribution
+    var vals = tag.values.split(' / ');
+    if (vals.length >= 2 && vals.length <= 6) {
+      var colors = ['#36A590','#51B7A1','#FA9A1D','#F54A45','#327CFB','#757980'];
+      var pcts = [];
+      var remain = 100;
+      for (var i = 0; i < vals.length - 1; i++) {
+        var p = Math.floor(Math.random() * (remain / (vals.length - i) * 1.5)) + 5;
+        pcts.push(p);
+        remain -= p;
+      }
+      pcts.push(remain);
+      html += '<div class="detail-section"><div class="detail-section-title">取值分布</div>';
+      vals.forEach(function(v, idx) {
+        html += '<div class="distribution-item">' +
+          '<span class="distribution-label">' + v.trim() + '</span>' +
+          '<div class="distribution-bar-bg"><div class="distribution-bar-fill" style="width:' + pcts[idx] + '%;background:' + colors[idx % colors.length] + ';"></div></div>' +
+          '<span class="distribution-pct">' + pcts[idx] + '%</span>' +
+        '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  // Related rules
+  if (tag.rules > 0) {
+    html += '<div class="detail-section"><div class="detail-section-title">关联规则</div><ul class="detail-rule-list">';
+    if (detail && detail.rules) {
+      detail.rules.forEach(function(r) {
+        html += '<li class="detail-rule-item"><span class="detail-rule-dot"></span>' + r + '</li>';
+      });
+    } else {
+      for (var j = 0; j < tag.rules; j++) {
+        html += '<li class="detail-rule-item"><span class="detail-rule-dot"></span>规则 ' + (j+1) + '</li>';
+      }
+    }
+    html += '</ul></div>';
+  }
+
+  // Last update
+  html += '<div class="detail-section">' +
+    '<div class="detail-info-row"><span class="detail-info-label">最近更新</span><span class="detail-info-value" style="color:var(--color-text-3);">' + (detail ? detail.lastUpdate : '2026-03-12 08:00') + '</span></div>' +
+  '</div>';
+
+  body.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+function closeTagDetail() {
+  document.getElementById('tagDetailOverlay').classList.remove('show');
+}
+
+// ================================================================
+//  Rules Table
+// ================================================================
+
+function renderRulesTable() {
+  var tbody = document.getElementById('rulesTableBody');
+  tbody.innerHTML = '';
+  rulesData.forEach(function(rule) {
+    var tr = document.createElement('tr');
+    var triggerColors = { '事件': 'tag-primary', '定时': 'tag-info', '标签变更': 'tag-warning' };
+    tr.innerHTML =
+      '<td><a class="name-link" onclick="openRuleEditor(\'edit\', ' + rule.id + ')">' + rule.name + '</a></td>' +
+      '<td><span class="tag tag-default">' + rule.category + '</span></td>' +
+      '<td><span style="font-family:monospace;font-size:12px;color:var(--color-text-2);">' + rule.result + '</span></td>' +
+      '<td><span class="tag ' + (triggerColors[rule.triggerType] || 'tag-default') + '">' + (rule.triggerType || '—') + '</span></td>' +
+      '<td><span class="cell-desc">' + rule.condition + '</span></td>' +
+      '<td style="text-align:right;font-weight:500;">' + (rule.hitCount || 0).toLocaleString() + '</td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + (rule.lastExec || '—') + '</span></td>' +
+      '<td style="text-align:center;">' + rule.priority + '</td>' +
+      '<td><label class="toggle-switch"><input type="checkbox" ' + (rule.enabled ? 'checked' : '') + ' onchange="toggleRuleStatus(' + rule.id + ', this.checked)"><span class="toggle-slider"></span></label></td>' +
+      '<td style="text-align:center;">' +
+        '<button class="btn btn-text" onclick="openRuleEditor(\'edit\', ' + rule.id + ')">编辑</button>' +
+        '<button class="btn btn-text" onclick="copyRule(' + rule.id + ')">复制</button>' +
+        '<button class="btn btn-danger-text" onclick="deleteRule(' + rule.id + ')">删除</button>' +
+      '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleRuleStatus(id, enabled) {
+  rulesData.forEach(function(r) { if (r.id === id) r.enabled = enabled; });
+  showToast(enabled ? '规则已启用' : '规则已禁用');
+}
+
+function copyRule(id) {
+  showToast('规则已复制');
+}
+
+function deleteRule(id) {
+  if (!confirm('确定要删除此规则？')) return;
+  rulesData = rulesData.filter(function(r) { return r.id !== id; });
+  renderRulesTable();
+  showToast('规则已删除');
+}
+
+// ================================================================
+//  Rule Editor
+// ================================================================
+
+var triggerGroups = [];
+var removeGroups = [];
+var currentEditRuleId = null;
+
+var tagCodeOptions = {
+  global: [
+    'id_member_level','id_member_period','id_customer_level','id_role','id_source_channel','id_wechat_status','id_gender','id_age_range','id_region','id_industry','id_company_size','id_career_stage','id_interest_tags','id_persona',
+    'txn_total_spent','txn_purchase_count','txn_renewal_count','txn_renewal_status','txn_last_purchase','txn_arpu','txn_payment_method','txn_refund_flag','txn_expire_countdown','txn_coupon_usage',
+    'lc_stage','lc_health','lc_churn_risk','lc_engagement_tier','lc_growth_trend','lc_onboarding','lc_renewal_window','lc_first_value_time','lc_silent_days','lc_reactivation','lc_nps_score','lc_satisfaction','lc_login_freq','lc_login_recency','lc_active_days_30d','lc_time_preference','lc_referral_count'
+  ],
+  community: ['comm_read_volume','comm_read_depth','comm_read_completion','comm_topic_pref','comm_topic_diversity','comm_search_active','comm_post_freq','comm_post_quality','comm_essential_count','comm_creator_tier','comm_content_type','comm_interaction','comm_influence','comm_network_size','comm_role','comm_live_viewer','comm_live_engagement'],
+  navigator: ['nav_enrollment_count','nav_enrollment_recent','nav_completion_rate','nav_homework_rate','nav_checkin_streak','nav_checkin_total','nav_learning_consistency','nav_on_schedule','nav_stuck_point','nav_practice_output','nav_output_quality','nav_improvement_trend','nav_case_study','nav_category_pref','nav_difficulty_pref','nav_format_pref','nav_learning_time','nav_club_status','nav_club_activity','nav_benefits_usage','nav_benefits_type'],
+  deepsea: ['deep_read_volume','deep_read_depth','deep_discussion_active','deep_topic_pref','deep_project_count','deep_project_recent','deep_project_completion','deep_project_depth','deep_category_pref','deep_output_count','deep_output_quality','deep_revenue_flag','deep_case_study','deep_role','deep_mentoring_count','deep_role_growth','deep_mentor_flag','deep_collab_active','deep_alumni_network','deep_group_active','deep_repeat_collab']
+};
+
+var editPresets = {
+  1: { name: '沉默用户', desc: '识别30天无有效行为的付费会员，自动打标为沉默用户', category: 'global', code: 'lc_silent_days', value: '30天沉默', freq: 'daily', priority: 5, cooldown: 7, groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '会员状态', op: '等于', val: '付费会员' },{ type: 'event', action: '没做过', event: '任意有效行为', count: '1', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '任意有效行为', count: '1', window: '近 7 天' }] }] },
+  7: { name: '续费风险', desc: '到期前30天且续费倾向分低于50的会员，排除VIP人群包', category: 'global', code: 'lc_churn_risk', value: '续费风险', freq: 'daily', priority: 5, cooldown: '', triggerType: 'schedule', groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '到期倒计时', op: '小于等于', val: '30' },{ type: 'score', scoreType: '续费倾向分', op: '小于', val: '50' },{ type: 'tag', tagCode: 'txn_renewal_status', op: '等于', val: '未续费' },{ type: 'audience', op: '不属于', audience: 'VIP专属服务' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '续费成功', count: '1', window: '全部时间' }] }] },
+  13: { name: '内容创作者', desc: '近30天发帖10篇以上的高产创作者', category: 'community', code: 'comm_post_freq', value: '高产', freq: 'daily', priority: 10, cooldown: '', groups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '10', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '3', window: '近 30 天' }] }] }
+};
+
+function openRuleEditor(mode, ruleId) {
+  currentEditRuleId = ruleId || null;
+  var overlay = document.getElementById('ruleEditorOverlay');
+  var title = document.getElementById('ruleEditorTitle');
+  title.textContent = mode === 'edit' ? '编辑规则' : '新建规则';
+
+  // Reset
+  document.getElementById('ruleName').value = '';
+  document.getElementById('ruleDesc').value = '';
+  document.getElementById('tagCategory').value = '';
+  document.getElementById('tagCode').innerHTML = '<option value="">请先选择分类</option>';
+  document.getElementById('tagValue').value = '';
+  document.getElementById('rulePriority').value = '10';
+  document.getElementById('ruleCooldown').value = '';
+  document.querySelectorAll('input[name="freq"]').forEach(function(r) { r.checked = r.value === 'daily'; });
+  document.getElementById('estimateCount').textContent = '--';
+
+  // Reset groups
+  triggerGroups = [];
+  removeGroups = [];
+
+  if (mode === 'edit' && editPresets[ruleId]) {
+    var preset = editPresets[ruleId];
+    document.getElementById('ruleName').value = preset.name;
+    document.getElementById('ruleDesc').value = preset.desc;
+    document.getElementById('tagCategory').value = preset.category;
+    onTagCategoryChange();
+    document.getElementById('tagCode').value = preset.code;
+    document.getElementById('tagValue').value = preset.value;
+    document.getElementById('rulePriority').value = preset.priority;
+    document.getElementById('ruleCooldown').value = preset.cooldown;
+    document.querySelectorAll('input[name="freq"]').forEach(function(r) { r.checked = r.value === preset.freq; });
+    triggerGroups = JSON.parse(JSON.stringify(preset.groups || []));
+    removeGroups = JSON.parse(JSON.stringify(preset.removeGroups || []));
+
+    // Show remove section if has data
+    if (removeGroups.length > 0) {
+      document.querySelector('.rb-collapsible-header').classList.remove('collapsed');
+      document.getElementById('removeConditionsBody').classList.remove('collapsed');
+    } else {
+      document.querySelector('.rb-collapsible-header').classList.add('collapsed');
+      document.getElementById('removeConditionsBody').classList.add('collapsed');
+    }
+
+    estimateMatch();
+  } else {
+    // Default: 1 empty group
+    triggerGroups = [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '', op: '等于', val: '' }] }];
+    document.querySelector('.rb-collapsible-header').classList.add('collapsed');
+    document.getElementById('removeConditionsBody').classList.add('collapsed');
+  }
+
+  renderGroups('trigger');
+  renderGroups('remove');
+  overlay.classList.add('show');
+
+  // PRD context
+  var prdPanel = document.querySelector('.prd-panel');
+  if (prdPanel) {
+    prdPanel.setAttribute('data-prd-view', 'editor');
+    var hint = document.getElementById('prdContextHint');
+    if (hint) hint.textContent = '当前视图：规则编辑器';
+  }
+}
+
+function closeRuleEditor() {
+  var overlay = document.getElementById('ruleEditorOverlay');
+  overlay.classList.add('hiding');
+  setTimeout(function() {
+    overlay.classList.remove('show', 'hiding');
+    // Restore PRD context
+    var activeTab = document.querySelector('.view-tab.active');
+    var view = activeTab && activeTab.textContent.includes('规则') ? 'rules' : 'overview';
+    var prdPanel = document.querySelector('.prd-panel');
+    if (prdPanel) {
+      prdPanel.setAttribute('data-prd-view', view);
+      var hint = document.getElementById('prdContextHint');
+      if (hint) hint.textContent = '当前视图：' + (view === 'rules' ? '规则管理' : '标签总览');
+    }
+  }, 200);
+}
+
+// ================================================================
+//  Condition Groups
+// ================================================================
+
+function renderGroups(section) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  var container = document.getElementById(section + 'GroupsContainer');
+  container.innerHTML = '';
+
+  groups.forEach(function(group, gi) {
+    if (gi > 0) {
+      var connector = document.createElement('div');
+      connector.className = 'rb-group-connector';
+      connector.innerHTML = '<select class="rb-group-connector-select" onchange="updateGroupConnector(\'' + section + '\', ' + gi + ', this.value)">' +
+        '<option value="AND">且 (AND)</option><option value="OR">或 (OR)</option><option value="AND_NOT">且非 (NOT)</option></select>';
+      container.appendChild(connector);
+    }
+
+    var groupEl = document.createElement('div');
+    groupEl.className = 'rb-group';
+
+    var header = '<div class="rb-group-header"><div class="rb-group-header-left">条件组 ' + (gi + 1) +
+      ' <select class="rb-group-logic-select" onchange="updateGroupLogic(\'' + section + '\', ' + gi + ', this.value)">' +
+      '<option value="AND"' + (group.logic === 'AND' ? ' selected' : '') + '>且 (AND)</option>' +
+      '<option value="OR"' + (group.logic === 'OR' ? ' selected' : '') + '>或 (OR)</option></select></div>' +
+      '<button class="rb-group-delete" onclick="removeGroup(\'' + section + '\', ' + gi + ')" title="删除条件组">&#10005;</button></div>';
+
+    var body = '<div class="rb-group-body">';
+    group.conditions.forEach(function(cond, ci) {
+      if (ci > 0) {
+        body += '<div class="rb-logic-connector">' + (group.logic === 'AND' ? '且' : '或') + '</div>';
+      }
+      body += renderConditionRow(section, gi, ci, cond);
+    });
+    body += '<button class="rb-add-condition" onclick="addCondition(\'' + section + '\', ' + gi + ')">+ 添加条件</button>';
+    body += '</div>';
+
+    groupEl.innerHTML = header + body;
+    container.appendChild(groupEl);
+  });
+}
+
+function renderConditionRow(section, gi, ci, cond) {
+  var html = '<div class="rb-condition-row">';
+  html += '<select class="rb-condition-select type-select" onchange="switchConditionType(\'' + section + '\', ' + gi + ', ' + ci + ', this.value)">' +
+    '<option value="attribute"' + (cond.type === 'attribute' ? ' selected' : '') + '>属性</option>' +
+    '<option value="event"' + (cond.type === 'event' ? ' selected' : '') + '>事件</option>' +
+    '<option value="tag"' + (cond.type === 'tag' ? ' selected' : '') + '>标签</option>' +
+    '<option value="score"' + (cond.type === 'score' ? ' selected' : '') + '>评分</option>' +
+    '<option value="audience"' + (cond.type === 'audience' ? ' selected' : '') + '>人群包</option></select>';
+
+  if (cond.type === 'attribute') {
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.dim || '选择属性') + '</option><option>会员状态</option><option>客户等级</option><option>续费状态</option><option>续费倾向分</option><option>到期倒计时</option><option>沉默天数</option><option>登录天数</option><option>入圈期数</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>大于</option><option>小于</option><option>大于等于</option><option>小于等于</option><option>包含</option></select>';
+    html += '<input class="rb-condition-input" style="width:100px;" value="' + (cond.val || '') + '" placeholder="值">';
+  } else if (cond.type === 'event') {
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.action || '做过') + '</option><option>做过</option><option>没做过</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.event || '选择事件') + '</option><option>登录</option><option>阅读</option><option>发帖</option><option>评论</option><option>点赞</option><option>参加航海</option><option>观看直播</option><option>续费成功</option><option>任意有效行为</option></select>';
+    html += '<span class="rb-condition-text">≥</span>';
+    html += '<input class="rb-condition-input" style="width:50px;" value="' + (cond.count || '1') + '">';
+    html += '<span class="rb-condition-text">次</span>';
+    html += '<select class="rb-condition-select" style="min-width:90px;">' +
+      '<option>' + (cond.window || '近 30 天') + '</option><option>近 7 天</option><option>近 30 天</option><option>近 90 天</option><option>近 180 天</option><option>全部时间</option></select>';
+  } else if (cond.type === 'tag') {
+    html += '<select class="rb-condition-select" style="min-width:150px;">' +
+      '<option>' + (cond.tagCode || '选择标签') + '</option><option>lc_stage</option><option>lc_health</option><option>lc_churn_risk</option><option>lc_engagement_tier</option><option>comm_creator_tier</option><option>nav_completion_rate</option><option>txn_renewal_status</option><option>id_wechat_status</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>包含任一</option><option>存在</option><option>不存在</option></select>';
+    html += '<input class="rb-condition-input" style="width:120px;" value="' + (cond.val || '') + '" placeholder="标签值">';
+  } else if (cond.type === 'score') {
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.scoreType || '选择评分') + '</option><option>健康分</option><option>续费倾向分</option><option>参与度分</option><option>CLV 分</option><option>RFM-R分</option><option>RFM-F分</option><option>RFM-M分</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '大于等于') + '</option><option>大于</option><option>大于等于</option><option>等于</option><option>小于等于</option><option>小于</option><option>区间</option></select>';
+    html += '<input class="rb-condition-input" style="width:60px;" value="' + (cond.val || '') + '" placeholder="分值">';
+  } else if (cond.type === 'audience') {
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '属于') + '</option><option>属于</option><option>不属于</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:160px;">' +
+      '<option>' + (cond.audience || '选择人群包') + '</option><option>活跃用户包</option><option>VIP专属服务</option><option>续费召回目标</option><option>高价值用户池</option><option>体验营高意向</option><option>航海学员池</option></select>';
+  }
+
+  html += '<button class="rb-condition-remove" onclick="removeCondition(\'' + section + '\', ' + gi + ', ' + ci + ')">&#10005;</button>';
+  html += '</div>';
+  return html;
+}
+
+function addGroup(section) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups.push({ logic: 'AND', conditions: [{ type: 'attribute', dim: '', op: '等于', val: '' }] });
+  renderGroups(section);
+}
+
+function removeGroup(section, gi) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  if (groups.length <= 1 && section === 'trigger') { showToast('至少保留一个条件组'); return; }
+  groups.splice(gi, 1);
+  renderGroups(section);
+}
+
+function addCondition(section, gi) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].conditions.push({ type: 'attribute', dim: '', op: '等于', val: '' });
+  renderGroups(section);
+}
+
+function removeCondition(section, gi, ci) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  if (groups[gi].conditions.length <= 1) { showToast('至少保留一个条件'); return; }
+  groups[gi].conditions.splice(ci, 1);
+  renderGroups(section);
+}
+
+function switchConditionType(section, gi, ci, type) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].conditions[ci] = { type: type };
+  renderGroups(section);
+}
+
+function updateGroupLogic(section, gi, logic) {
+  var groups = section === 'trigger' ? triggerGroups : removeGroups;
+  groups[gi].logic = logic;
+  renderGroups(section);
+}
+
+function updateGroupConnector(section, gi, val) {}
+
+// ================================================================
+//  Tag Config Cascading
+// ================================================================
+
+// ================================================================
+//  Trigger Type Switching
+// ================================================================
+
+function switchTriggerType(type) {
+  document.querySelectorAll('.rb-trigger-option').forEach(function(o) { o.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  document.getElementById('triggerSubEvent').style.display = type === 'event' ? '' : 'none';
+  document.getElementById('triggerSubSchedule').style.display = type === 'schedule' ? '' : 'none';
+  document.getElementById('triggerSubTagChange').style.display = type === 'tag_change' ? '' : 'none';
+}
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+// ================================================================
+//  Tag Config Cascading
+// ================================================================
+
+function onTagCategoryChange() {
+  var cat = document.getElementById('tagCategory').value;
+  var codeSelect = document.getElementById('tagCode');
+  codeSelect.innerHTML = '<option value="">请选择标签代码</option>';
+  if (cat && tagCodeOptions[cat]) {
+    tagCodeOptions[cat].forEach(function(code) {
+      codeSelect.innerHTML += '<option value="' + code + '">' + code + '</option>';
+    });
+  }
+}
+
+function onTagCodeChange() {}
+
+// ================================================================
+//  Collapsible
+// ================================================================
+
+function toggleRemoveSection() {
+  var header = document.querySelector('.rb-collapsible-header');
+  var body = document.getElementById('removeConditionsBody');
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+  if (!body.classList.contains('collapsed') && removeGroups.length === 0) {
+    removeGroups = [{ logic: 'AND', conditions: [{ type: 'event', dim: '', op: '', val: '' }] }];
+    renderGroups('remove');
+  }
+}
+
+// ================================================================
+//  Estimate & Save
+// ================================================================
+
+function estimateMatch() {
+  var count = Math.floor(Math.random() * 3000) + 200;
+  document.getElementById('estimateCount').textContent = count.toLocaleString();
+}
+
+function saveRule() {
+  var name = document.getElementById('ruleName').value.trim();
+  if (!name) { showToast('请输入规则名称'); return; }
+  var cat = document.getElementById('tagCategory').value;
+  if (!cat) { showToast('请选择标签分类'); return; }
+  showToast('规则已保存');
+  closeRuleEditor();
+}
+
+// ================================================================
+//  PRD & Toast
+// ================================================================
+
+function togglePRD() {
+  document.body.classList.toggle('prd-on');
+}
+
+function showToast(msg) {
+  var existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 1300);
+}
+
+// ================================================================
+//  Changelog
+// ================================================================
+
+var changelogData = [
+  { user: 'cust_08234', tag: 'lc_churn_risk', changeType: '新增', oldVal: '—', newVal: '高风险', source: '规则', rule: '续费风险', time: '2026-03-25 08:02' },
+  { user: 'cust_12456', tag: 'lc_stage', changeType: '更新', oldVal: 'active_member', newVal: 'silent_member', source: '模型', rule: '生命周期引擎', time: '2026-03-25 08:01' },
+  { user: 'cust_00891', tag: 'comm_creator_tier', changeType: '更新', oldVal: 'UGC活跃', newVal: 'UGC核心', source: '规则', rule: 'UGC核心创作者', time: '2026-03-25 08:01' },
+  { user: 'cust_05672', tag: 'lc_silent_days', changeType: '移除', oldVal: '30天沉默', newVal: '—', source: '规则', rule: '活跃回归', time: '2026-03-25 08:00' },
+  { user: 'cust_14523', tag: 'nav_stuck_point', changeType: '新增', oldVal: '—', newVal: '有卡点(L3)', source: '规则', rule: '学习卡点预警', time: '2026-03-25 03:15' },
+  { user: 'cust_03891', tag: 'txn_renewal_status', changeType: '更新', oldVal: '待续费', newVal: '已过期', source: '批量', rule: '到期状态计算', time: '2026-03-25 03:00' },
+  { user: 'cust_22145', tag: 'lc_health', changeType: '更新', oldVal: '良好', newVal: '一般', source: '模型', rule: '健康分引擎', time: '2026-03-25 03:00' },
+  { user: 'cust_09876', tag: 'id_wechat_status', changeType: '更新', oldVal: '好友', newVal: '客户删除', source: '规则', rule: '好友已删除', time: '2026-03-24 22:15' },
+  { user: 'cust_11234', tag: 'lc_engagement_tier', changeType: '更新', oldVal: 'L3参与', newVal: 'L2活跃', source: '模型', rule: '参与度引擎', time: '2026-03-24 08:00' },
+  { user: 'cust_07823', tag: 'comm_read_volume', changeType: '过期', oldVal: '重度', newVal: '—', source: '批量', rule: 'TTL过期清理', time: '2026-03-24 04:00' },
+  { user: 'cust_18901', tag: 'lc_churn_risk', changeType: '移除', oldVal: '续费风险', newVal: '—', source: '规则', rule: '续费风险(移除)', time: '2026-03-24 03:30' },
+  { user: 'cust_04567', tag: 'deep_role', changeType: '更新', oldVal: '水手', newVal: '船长', source: '手动', rule: '运营小李', time: '2026-03-23 16:40' }
+];
+
+function renderChangelog() {
+  var tbody = document.getElementById('changelogTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  var typeColors = { '新增': 'tag-success', '更新': 'tag-info', '移除': 'tag-warning', '过期': 'tag-default' };
+  var sourceColors = { '规则': 'tag-primary', '模型': 'tag-info', '批量': 'tag-default', '手动': 'tag-warning' };
+  changelogData.forEach(function(log) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span style="font-family:monospace;font-size:12px;">' + log.user + '</span></td>' +
+      '<td><span style="font-family:monospace;font-size:12px;">' + log.tag + '</span></td>' +
+      '<td><span class="tag ' + (typeColors[log.changeType] || 'tag-default') + '">' + log.changeType + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + log.oldVal + '</span></td>' +
+      '<td style="text-align:center;color:var(--color-text-4);">&#8594;</td>' +
+      '<td><span style="font-size:12px;font-weight:500;">' + log.newVal + '</span></td>' +
+      '<td><span class="tag ' + (sourceColors[log.source] || 'tag-default') + '">' + log.source + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-2);">' + log.rule + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + log.time + '</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ================================================================
+//  Init
+// ================================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderTagCards('global');
+  renderRulesTable();
+});
+</script>
+</body>
+</html>
