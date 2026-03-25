@@ -431,47 +431,90 @@
 </div>
 
 <!-- PRD Panel -->
-<div class="prd-panel" data-prd-key="tag-mgmt-merged" data-prd-version="1">
-  <div class="prd-title" contenteditable="true">标签管理 PRD</div>
+<div class="prd-panel" data-prd-key="tag-mgmt-merged" data-prd-version="2">
+  <div class="prd-title" contenteditable="true">标签管理 PRD v1.0</div>
+
   <div class="prd-section">
-    <div class="prd-section-title orange">1. 页面概述</div>
-    <div class="prd-item">标签管理页面包含<strong>企微标签</strong>、<strong>CRM标签</strong>和<strong>自动化标签</strong>三大板块</div>
-    <div class="prd-item">顶部 Tab 切换：企微标签 / CRM标签 / 自动化标签</div>
-    <div class="prd-item">均采用左右分栏布局：左侧分类/分组树 + 右侧标签列表表格</div>
+    <div class="prd-section-title orange">1. 产品背景</div>
+    <div class="prd-item">SCRM 中存在三种来源的客户标签，需要<strong>统一管理入口</strong></div>
+    <div class="prd-item">企微标签：企微侧边栏手动打标，同步企微后台</div>
+    <div class="prd-item">CRM 标签：系统内部业务标签，不同步企微</div>
+    <div class="prd-item">自动化标签：CDP 标签引擎自动计算（规则+模型）</div>
+    <div class="prd-label">核心指标</div>
+    <div class="prd-item">标签定位时间 &lt; 15 秒；标签创建 ≤ 3 步</div>
   </div>
+
   <div class="prd-section">
     <div class="prd-section-title green">2. 企微标签</div>
-    <div class="prd-label">左侧</div>
-    <div class="prd-item">标签组树形管理，支持新建/编辑/删除（hover 显示操作）</div>
-    <div class="prd-item">一级分组支持编辑/删除，不支持新建子组</div>
-    <div class="prd-item">删除前检查分组下是否存在标签</div>
-    <div class="prd-label">右侧</div>
-    <div class="prd-item">表格列：ID / 标签名称 / 人数 / 操作（修改、删除）</div>
-    <div class="prd-item">支持搜索、分页（默认 5 条/页）</div>
+    <div class="prd-label">左侧 — 标签组树（两级）</div>
+    <div class="prd-item">初始分组：转化组 / 交付组 / 运营组 / 来源组 / 默认分组（不可删除）</div>
+    <div class="prd-item">Hover 一级组：显示 新建子组 / 编辑 / 删除</div>
+    <div class="prd-item">Hover 二级组：显示 编辑 / 删除</div>
+    <div class="prd-item">点击「全部」→ 显示所有标签；点击一级组 → 该组全部；点击二级组 → 仅该子组</div>
+    <div class="prd-item"><strong>删除约束</strong>：分组下有标签时禁止删除；默认分组不可删除</div>
+    <div class="prd-label">右侧 — 标签列表</div>
+    <div class="prd-item">表格列：ID / 标签名称 / 人数（可点击）/ 操作（修改、删除）</div>
+    <div class="prd-item">新建标签 → 弹窗输入名称，归入当前选中子组（未选中则默认分组）</div>
+    <div class="prd-item">搜索：按标签名模糊过滤 | 分页：默认 5 条/页，支持 5/10/20/50</div>
+    <div class="prd-label">企微同步</div>
+    <div class="prd-item">SCRM ↔ 企微双向同步，CRUD 后 &lt; 5 秒同步到企微</div>
+    <div class="prd-item">受企微 API 限制：最多 20 个标签组，每组最多 200 个标签</div>
   </div>
+
   <div class="prd-section">
-    <div class="prd-section-title green">3. CRM标签</div>
-    <div class="prd-label">左侧</div>
-    <div class="prd-item">标签组：销售阶段 / 客户价值 / 服务管理 / 运营分类 / 默认分组</div>
-    <div class="prd-item">结构和交互与企微标签一致</div>
-    <div class="prd-label">右侧</div>
-    <div class="prd-item">表格列：ID / 标签名称 / 人数 / 操作</div>
-    <div class="prd-item">CRM 标签为系统内部管理标签，不同步企微</div>
+    <div class="prd-section-title green">3. CRM 标签</div>
+    <div class="prd-item">结构和交互与企微标签<strong>完全一致</strong></div>
+    <div class="prd-item">初始分组：销售阶段 / 客户价值 / 服务管理 / 运营分类 / 默认分组</div>
+    <div class="prd-label">与企微标签的区别</div>
+    <div class="prd-item">CRM 标签为系统内部管理标签，<strong>不同步企微</strong></div>
+    <div class="prd-item">无标签组/标签数量限制</div>
+    <div class="prd-item">用途：销售/服务内部分类，不在企微侧边栏展示</div>
   </div>
+
   <div class="prd-section">
     <div class="prd-section-title blue">4. 自动化标签</div>
-    <div class="prd-label">统计栏</div>
+    <div class="prd-label">统计栏（4 个指标卡片）</div>
     <div class="prd-item">总标签数 / 已启用规则 / 今日更新标签数 / 标签覆盖率</div>
-    <div class="prd-label">左侧 — 2 层分组树</div>
-    <div class="prd-item">一级分类：<strong>属性标签</strong>(44) / <strong>行为标签</strong>(46)</div>
-    <div class="prd-item">属性标签子类：基础身份(14) / 交易属性(10) / 计算属性(12) / 偏好属性(8)</div>
-    <div class="prd-item">行为标签子类：内容消费(6) / 内容创作(4) / 学习行为(12) / 社交互动(7) / 项目参与(8) / 平台使用(9)</div>
-    <div class="prd-item">点击一级分类：显示该大类所有标签；点击子类：仅显示该子类标签</div>
-    <div class="prd-label">右侧</div>
-    <div class="prd-item">表格列：标签名称 / 标签代码 / 取值范围 / 更新频率 / 关联规则 / 状态 / 操作</div>
-    <div class="prd-item">渠道来源标签同步企微 2 层分组：id_channel_l1 / id_channel_l2</div>
-    <div class="prd-item">状态 Toggle 开关启用/禁用</div>
-    <div class="prd-item">支持搜索、分页（默认 10 条/页）</div>
+    <div class="prd-label">左侧 — 分类树（两级，只读）</div>
+    <div class="prd-item">一级：<strong>属性标签</strong>(44) / <strong>行为标签</strong>(46)</div>
+    <div class="prd-item">属性子类：基础身份(14) / 交易属性(10) / 计算属性(12) / 偏好属性(8)</div>
+    <div class="prd-item">行为子类：内容消费(6) / 内容创作(4) / 学习行为(12) / 社交互动(7) / 项目参与(8) / 平台使用(9)</div>
+    <div class="prd-item">点击一级 → 该大类所有标签；点击子类 → 仅该子类</div>
+    <div class="prd-label">右侧 — 标签列表</div>
+    <div class="prd-item">表格列：标签名称（可点击→详情）/ 标签代码 / 取值范围 / 更新频率 / 关联规则 / 状态 / 操作</div>
+    <div class="prd-item">状态 Toggle：启用/禁用自动化标签</div>
+    <div class="prd-item">搜索：按名称或代码模糊过滤 | 分页：默认 10 条/页</div>
+    <div class="prd-label">标签详情 Drawer</div>
+    <div class="prd-item">点击标签名 → 右侧 Drawer 滑入（480px）</div>
+    <div class="prd-item">基本信息：名称 / 代码 / 分类 / 来源 / 频率 / 时间窗口 / 说明</div>
+    <div class="prd-item">取值逻辑：表格（取值 → 判定条件），如「高风险 → 续费倾向分 &lt; 30」</div>
+    <div class="prd-item">关联规则：引用该标签的规则数 + 跳转链接</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title red">5. 校验规则</div>
+    <div class="prd-item">标签名称 / 分组名称：必填，不可为空</div>
+    <div class="prd-item">同一来源同一分组内标签名不可重名</div>
+    <div class="prd-item">同一级别内分组名不可重名</div>
+    <div class="prd-item">删除分组：下有标签时禁止；默认分组永远不可删除</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title blue">6. 模块关系</div>
+    <div class="prd-item"><strong>人群包</strong>：标签条件的来源/分组/值下拉数据源来自此页面</div>
+    <div class="prd-item"><strong>自动化标签管理</strong>：本页是浏览入口，自动化标签管理是规则配置入口</div>
+    <div class="prd-item"><strong>客户管理</strong>：客户列表标签列 + 打标签操作调用此处数据</div>
+    <div class="prd-item"><strong>企微侧边栏</strong>：企微标签在侧边栏展示和操作</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title orange">7. 交互规范</div>
+    <div class="prd-item">Tab 切换保留各 Tab 的筛选/选中/分页状态</div>
+    <div class="prd-item">分组树：选中高亮 + Hover 显示操作 + 搜索实时过滤</div>
+    <div class="prd-item">新建/编辑：居中弹窗输入名称</div>
+    <div class="prd-item">删除：confirm 二次确认</div>
+    <div class="prd-item">Drawer：右侧滑入 250ms，遮罩点击或关闭按钮关闭，滑出 200ms</div>
+    <div class="prd-item">Toast：所有操作结果居中提示，1.2 秒消失</div>
   </div>
 </div>
 
