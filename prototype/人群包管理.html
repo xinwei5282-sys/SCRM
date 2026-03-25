@@ -682,6 +682,31 @@
     background: var(--color-border-default);
     max-width: 40px;
   }
+  .rb-logic-connector-select {
+    height: 22px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-3);
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    min-width: 48px;
+    text-align: center;
+  }
+  .rb-logic-connector-select:hover { border-color: var(--color-primary-6); }
+  .rb-logic-connector-select.connector-not {
+    color: var(--color-danger-6);
+    border-color: rgba(245, 74, 69, 0.3);
+    background-color: var(--color-danger-1);
+  }
 
   /* Group Connector (between groups: 且/或/且非) */
   .rb-group-connector {
@@ -1154,11 +1179,6 @@
             <div class="rb-group-header">
               <div class="rb-group-header-left">
                 <span>条件组 1</span>
-                <span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>
-                <select class="rb-group-logic-select" onchange="updateLogicLabels(this)">
-                  <option value="and">且（AND）</option>
-                  <option value="or">或（OR）</option>
-                </select>
               </div>
               <button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>
             </div>
@@ -1688,7 +1708,7 @@ var editPresets = {
       },
       {
         logic: 'or',
-        connector: 'and_not',
+        connector: 'not',
         conditions: [
           { type: 'attribute', dimension: '客户等级', operator: '等于', value: 'S' },
           { type: 'audience', operator: 'in', audienceName: 'VIP专属服务' }
@@ -1781,34 +1801,28 @@ function loadPreset(preset) {
 // Group creation
 // ============================================================
 function createGroupConnectorHTML(value) {
-  var labels = { and: '且（AND）', or: '或（OR）', and_not: '且非（AND NOT）' };
-  var isNot = value === 'and_not';
+  var isNot = value === 'not';
   return '<div class="rb-group-connector">' +
-    '<select class="rb-group-connector-select' + (isNot ? ' connector-not' : '') + '" onchange="onConnectorChange(this)">' +
+    '<select class="rb-group-connector-select' + (isNot ? ' connector-not' : '') + '" onchange="onGroupConnectorChange(this)">' +
     '<option value="and"' + (value === 'and' ? ' selected' : '') + '>且（AND）</option>' +
     '<option value="or"' + (value === 'or' ? ' selected' : '') + '>或（OR）</option>' +
-    '<option value="and_not"' + (value === 'and_not' ? ' selected' : '') + '>且非（AND NOT）</option>' +
+    '<option value="not"' + (value === 'not' ? ' selected' : '') + '>非（NOT）</option>' +
     '</select></div>';
 }
 
-function onConnectorChange(select) {
-  if (select.value === 'and_not') {
+function onGroupConnectorChange(select) {
+  if (select.value === 'not') {
     select.classList.add('connector-not');
   } else {
     select.classList.remove('connector-not');
   }
 }
 
-function createGroupHTML(index, logic) {
+function createGroupHTML(index) {
   return '<div class="rb-group" data-group-index="' + index + '">' +
     '<div class="rb-group-header">' +
     '<div class="rb-group-header-left">' +
     '<span>条件组 ' + index + '</span>' +
-    '<span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>' +
-    '<select class="rb-group-logic-select" onchange="updateLogicLabels(this)">' +
-    '<option value="and"' + (logic === 'and' ? ' selected' : '') + '>且（AND）</option>' +
-    '<option value="or"' + (logic === 'or' ? ' selected' : '') + '>或（OR）</option>' +
-    '</select>' +
     '</div>' +
     '<button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>' +
     '</div>' +
@@ -1819,11 +1833,11 @@ function createGroupHTML(index, logic) {
 }
 
 function createGroupHTMLWithConditions(index, logic, conditions) {
-  var logicText = logic === 'and' ? '且' : '或';
   var rows = '';
   conditions.forEach(function(c, i) {
     if (i > 0) {
-      rows += '<div class="rb-logic-connector">' + logicText + '</div>';
+      var connectorVal = c._connector || logic || 'and';
+      rows += createConditionConnectorHTML(connectorVal);
     }
     rows += '<div class="rb-condition-row">' + buildConditionRow(c) + '</div>';
   });
@@ -1832,11 +1846,6 @@ function createGroupHTMLWithConditions(index, logic, conditions) {
     '<div class="rb-group-header">' +
     '<div class="rb-group-header-left">' +
     '<span>条件组 ' + index + '</span>' +
-    '<span style="font-weight:400;font-size:12px;color:var(--color-text-3)">组内逻辑:</span>' +
-    '<select class="rb-group-logic-select" onchange="updateLogicLabels(this)">' +
-    '<option value="and"' + (logic === 'and' ? ' selected' : '') + '>且（AND）</option>' +
-    '<option value="or"' + (logic === 'or' ? ' selected' : '') + '>或（OR）</option>' +
-    '</select>' +
     '</div>' +
     '<button class="rb-group-delete" onclick="removeGroup(this)" title="删除条件组">×</button>' +
     '</div>' +
@@ -1844,6 +1853,24 @@ function createGroupHTMLWithConditions(index, logic, conditions) {
     rows +
     '<button class="rb-add-condition" onclick="addCondition(this)">+ 添加条件</button>' +
     '</div></div>';
+}
+
+function createConditionConnectorHTML(value) {
+  var isNot = value === 'not';
+  return '<div class="rb-logic-connector">' +
+    '<select class="rb-logic-connector-select' + (isNot ? ' connector-not' : '') + '" onchange="onConditionConnectorChange(this)">' +
+    '<option value="and"' + (value === 'and' ? ' selected' : '') + '>且</option>' +
+    '<option value="or"' + (value === 'or' ? ' selected' : '') + '>或</option>' +
+    '<option value="not"' + (value === 'not' ? ' selected' : '') + '>非</option>' +
+    '</select></div>';
+}
+
+function onConditionConnectorChange(select) {
+  if (select.value === 'not') {
+    select.classList.add('connector-not');
+  } else {
+    select.classList.remove('connector-not');
+  }
 }
 
 function buildConditionRow(c) {
@@ -1959,7 +1986,7 @@ function addGroup() {
   groupCount++;
   // Add connector selector before new group
   container.insertAdjacentHTML('beforeend', createGroupConnectorHTML('and'));
-  container.insertAdjacentHTML('beforeend', createGroupHTML(groupCount, 'and'));
+  container.insertAdjacentHTML('beforeend', createGroupHTML(groupCount));
 }
 
 function removeGroup(btn) {
@@ -1990,12 +2017,10 @@ function removeGroup(btn) {
 // ============================================================
 function addCondition(btn) {
   var body = btn.closest('.rb-group-body');
-  var logicSelect = body.closest('.rb-group').querySelector('.rb-group-logic-select');
-  var logicText = logicSelect.value === 'and' ? '且' : '或';
 
-  var connector = document.createElement('div');
-  connector.className = 'rb-logic-connector';
-  connector.textContent = logicText;
+  var connectorDiv = document.createElement('div');
+  connectorDiv.innerHTML = createConditionConnectorHTML('and');
+  var connector = connectorDiv.firstElementChild;
 
   var row = document.createElement('div');
   row.className = 'rb-condition-row';
@@ -2036,16 +2061,7 @@ function switchConditionType(select) {
   row.innerHTML = conditionTemplates[type]();
 }
 
-// ============================================================
-// AND/OR Logic Labels
-// ============================================================
-function updateLogicLabels(select) {
-  var body = select.closest('.rb-group').querySelector('.rb-group-body');
-  var text = select.value === 'and' ? '且' : '或';
-  body.querySelectorAll('.rb-logic-connector').forEach(function(c) {
-    c.textContent = text;
-  });
-}
+// updateLogicLabels removed — condition connectors are now individually selectable
 
 // ============================================================
 // Estimate Audience
