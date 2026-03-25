@@ -431,91 +431,167 @@
 </div>
 
 <!-- PRD Panel -->
-<div class="prd-panel" data-prd-key="tag-mgmt-merged" data-prd-version="2">
-  <div class="prd-title" contenteditable="true">标签管理 PRD v1.0</div>
+<div class="prd-panel" data-prd-key="tag-mgmt-merged" data-prd-version="3">
+  <div class="prd-title" contenteditable="true">标签管理 PRD 标注</div>
 
-  <div class="prd-section">
-    <div class="prd-section-title orange">1. 产品背景</div>
-    <div class="prd-item">SCRM 中存在三种来源的客户标签，需要<strong>统一管理入口</strong></div>
-    <div class="prd-item">企微标签：企微侧边栏手动打标，同步企微后台</div>
-    <div class="prd-item">CRM 标签：系统内部业务标签，不同步企微</div>
-    <div class="prd-item">自动化标签：CDP 标签引擎自动计算（规则+模型）</div>
-    <div class="prd-label">核心指标</div>
-    <div class="prd-item">标签定位时间 &lt; 15 秒；标签创建 ≤ 3 步</div>
+  <!-- Section 1: 顶部 Tab -->
+  <div class="prd-section" id="prd-s1">
+    <div class="prd-section-title orange">1. 顶部 Tab 切换</div>
+    <div class="prd-item"><strong>企微标签</strong> — 企业微信手动打标，SCRM ↔ 企微双向同步</div>
+    <div class="prd-item"><strong>CRM 标签</strong> — 系统内部业务标签，不同步企微，销售/服务内部分类</div>
+    <div class="prd-item"><strong>自动化标签</strong> — CDP 标签引擎自动计算（规则 + 模型），只读浏览</div>
+    <div class="prd-item">切换 Tab 时保留各 Tab 的搜索词、选中分组、分页位置</div>
   </div>
 
-  <div class="prd-section">
-    <div class="prd-section-title green">2. 企微标签</div>
-    <div class="prd-label">左侧 — 标签组树（两级）</div>
-    <div class="prd-item">初始分组：转化组 / 交付组 / 运营组 / 来源组 / 默认分组（不可删除）</div>
-    <div class="prd-item">Hover 一级组：显示 新建子组 / 编辑 / 删除</div>
-    <div class="prd-item">Hover 二级组：显示 编辑 / 删除</div>
-    <div class="prd-item">点击「全部」→ 显示所有标签；点击一级组 → 该组全部；点击二级组 → 仅该子组</div>
-    <div class="prd-item"><strong>删除约束</strong>：分组下有标签时禁止删除；默认分组不可删除</div>
-    <div class="prd-label">右侧 — 标签列表</div>
-    <div class="prd-item">表格列：ID / 标签名称 / 人数（可点击）/ 操作（修改、删除）</div>
-    <div class="prd-item">新建标签 → 弹窗输入名称，归入当前选中子组（未选中则默认分组）</div>
-    <div class="prd-item">搜索：按标签名模糊过滤 | 分页：默认 5 条/页，支持 5/10/20/50</div>
-    <div class="prd-label">企微同步</div>
-    <div class="prd-item">SCRM ↔ 企微双向同步，CRUD 后 &lt; 5 秒同步到企微</div>
-    <div class="prd-item">受企微 API 限制：最多 20 个标签组，每组最多 200 个标签</div>
+  <!-- Section 2: 企微标签 — 左侧分组树 -->
+  <div class="prd-section" id="prd-s2">
+    <div class="prd-section-title green">2. 企微标签 — 左侧分组树</div>
+    <div class="prd-label">树形结构（两级）</div>
+    <div class="prd-item"><strong>一级组</strong>：转化组 / 交付组 / 运营组 / 来源组 / 默认分组（不可删除）</div>
+    <div class="prd-item"><strong>二级组</strong>：每个一级组下的子标签组，如「转化组 > 意向客户 / 企微分组 / 用户分层」</div>
+    <div class="prd-label">分组点击筛选</div>
+    <div class="prd-item">点击「全部」→ 右侧显示所有标签</div>
+    <div class="prd-item">点击一级组 → 右侧显示该组下<strong>所有子组</strong>的标签</div>
+    <div class="prd-item">点击二级组 → 右侧<strong>仅显示</strong>该子组的标签</div>
+    <div class="prd-item">选中项高亮（主色背景），其余默认色</div>
+    <div class="prd-label">Hover 操作</div>
+    <div class="prd-item">Hover 一级组 → 显示：<strong>新建</strong>（子组）/ <strong>编辑</strong>（改名）/ <strong>删除</strong></div>
+    <div class="prd-item">Hover 二级组 → 显示：<strong>编辑</strong> / <strong>删除</strong></div>
+    <div class="prd-item">默认分组不显示任何操作按钮</div>
+    <div class="prd-label">删除约束</div>
+    <div class="prd-item">分组下存在标签 → Toast「该分组下存在标签，不可删除」</div>
+    <div class="prd-item">默认分组 → 永远不可删除</div>
+    <div class="prd-item">删除一级组 → confirm「确定要删除标签组 XXX 及其所有子分组吗？」</div>
+    <div class="prd-label">搜索框</div>
+    <div class="prd-item">按分组名模糊过滤，无匹配的分组隐藏，实时过滤（前端）</div>
+    <div class="prd-label">「+新建标签组」按钮</div>
+    <div class="prd-item">弹窗输入标签组名称 → 插入到默认分组之前</div>
   </div>
 
-  <div class="prd-section">
-    <div class="prd-section-title green">3. CRM 标签</div>
-    <div class="prd-item">结构和交互与企微标签<strong>完全一致</strong></div>
-    <div class="prd-item">初始分组：销售阶段 / 客户价值 / 服务管理 / 运营分类 / 默认分组</div>
+  <!-- Section 3: 企微标签 — 右侧列表 -->
+  <div class="prd-section" id="prd-s3">
+    <div class="prd-section-title green">3. 企微标签 — 右侧列表</div>
+    <div class="prd-label">搜索框</div>
+    <div class="prd-item">按标签名模糊搜索，实时过滤，搜索后重置到第 1 页</div>
+    <div class="prd-label">「新建」按钮</div>
+    <div class="prd-item">弹窗输入标签名称 → 归入当前选中的二级组；未选中 → 归入默认分组</div>
+    <div class="prd-label">表格列定义</div>
+    <div class="prd-item"><strong>ID</strong>（60px）— 标签 ID</div>
+    <div class="prd-item"><strong>标签名称</strong>（自适应）— 显示名</div>
+    <div class="prd-item"><strong>人数</strong>（100px）— 打上该标签的客户数，蓝色可点击（预留跳转客户列表筛选）</div>
+    <div class="prd-item"><strong>操作</strong>（120px）— <strong>修改</strong>（弹窗改名，预填当前值）/ <strong>删除</strong>（confirm 二次确认）</div>
+    <div class="prd-label">分页</div>
+    <div class="prd-item">默认 5 条/页，支持切换 5 / 10 / 20 / 50 条/页，支持跳页</div>
+    <div class="prd-label">企微限制</div>
+    <div class="prd-item">最多 20 个标签组，每组最多 200 个标签（企微 API 限制）</div>
+    <div class="prd-item">CRUD 后 &lt; 5 秒同步到企微后台</div>
+  </div>
+
+  <!-- Section 4: CRM 标签 -->
+  <div class="prd-section" id="prd-s4">
+    <div class="prd-section-title green">4. CRM 标签</div>
+    <div class="prd-item">左侧分组树 + 右侧列表，结构和交互与企微标签<strong>完全一致</strong></div>
+    <div class="prd-label">初始分组</div>
+    <div class="prd-item">销售阶段（线索阶段/商机阶段/成交阶段）</div>
+    <div class="prd-item">客户价值（价值分层/贡献度）</div>
+    <div class="prd-item">服务管理（服务状态/满意度）</div>
+    <div class="prd-item">运营分类（活动参与/内容偏好/社群活跃）</div>
+    <div class="prd-item">默认分组（不可删除）（未分组）</div>
     <div class="prd-label">与企微标签的区别</div>
-    <div class="prd-item">CRM 标签为系统内部管理标签，<strong>不同步企微</strong></div>
-    <div class="prd-item">无标签组/标签数量限制</div>
-    <div class="prd-item">用途：销售/服务内部分类，不在企微侧边栏展示</div>
+    <div class="prd-item"><strong>不同步企微</strong>，仅系统内部使用</div>
+    <div class="prd-item">无标签组 / 标签数量限制</div>
+    <div class="prd-item">用途：销售跟进阶段、客户价值分层、服务状态管理</div>
   </div>
 
-  <div class="prd-section">
-    <div class="prd-section-title blue">4. 自动化标签</div>
-    <div class="prd-label">统计栏（4 个指标卡片）</div>
-    <div class="prd-item">总标签数 / 已启用规则 / 今日更新标签数 / 标签覆盖率</div>
-    <div class="prd-label">左侧 — 分类树（两级，只读）</div>
-    <div class="prd-item">一级：<strong>属性标签</strong>(44) / <strong>行为标签</strong>(46)</div>
-    <div class="prd-item">属性子类：基础身份(14) / 交易属性(10) / 计算属性(12) / 偏好属性(8)</div>
-    <div class="prd-item">行为子类：内容消费(6) / 内容创作(4) / 学习行为(12) / 社交互动(7) / 项目参与(8) / 平台使用(9)</div>
-    <div class="prd-item">点击一级 → 该大类所有标签；点击子类 → 仅该子类</div>
-    <div class="prd-label">右侧 — 标签列表</div>
-    <div class="prd-item">表格列：标签名称（可点击→详情）/ 标签代码 / 取值范围 / 更新频率 / 关联规则 / 状态 / 操作</div>
-    <div class="prd-item">状态 Toggle：启用/禁用自动化标签</div>
-    <div class="prd-item">搜索：按名称或代码模糊过滤 | 分页：默认 10 条/页</div>
-    <div class="prd-label">标签详情 Drawer</div>
-    <div class="prd-item">点击标签名 → 右侧 Drawer 滑入（480px）</div>
-    <div class="prd-item">基本信息：名称 / 代码 / 分类 / 来源 / 频率 / 时间窗口 / 说明</div>
-    <div class="prd-item">取值逻辑：表格（取值 → 判定条件），如「高风险 → 续费倾向分 &lt; 30」</div>
-    <div class="prd-item">关联规则：引用该标签的规则数 + 跳转链接</div>
+  <!-- Section 5: 自动化标签 — 统计栏 -->
+  <div class="prd-section" id="prd-s5">
+    <div class="prd-section-title blue">5. 自动化标签 — 统计栏</div>
+    <div class="prd-item"><strong>总标签数</strong> — 自动化标签总数（当前 90 个）</div>
+    <div class="prd-item"><strong>已启用规则</strong> — 关联的已启用自动打标规则数</div>
+    <div class="prd-item"><strong>今日更新标签数</strong> — 今日因规则执行而变更的标签人次</div>
+    <div class="prd-item"><strong>标签覆盖率</strong> — 至少有 1 个自动化标签的客户占比</div>
   </div>
 
-  <div class="prd-section">
-    <div class="prd-section-title red">5. 校验规则</div>
-    <div class="prd-item">标签名称 / 分组名称：必填，不可为空</div>
+  <!-- Section 6: 自动化标签 — 左侧分类树 -->
+  <div class="prd-section" id="prd-s6">
+    <div class="prd-section-title blue">6. 自动化标签 — 左侧分类树</div>
+    <div class="prd-item">两级分类，<strong>只读不可编辑</strong>（无新建/编辑/删除操作）</div>
+    <div class="prd-label">一级分类</div>
+    <div class="prd-item"><strong>属性标签</strong>（44 个）— 基于用户属性和模型计算</div>
+    <div class="prd-item"><strong>行为标签</strong>（46 个）— 基于用户行为事件</div>
+    <div class="prd-label">属性标签子类</div>
+    <div class="prd-item">基础身份(14) / 交易属性(10) / 计算属性(12) / 偏好属性(8)</div>
+    <div class="prd-label">行为标签子类</div>
+    <div class="prd-item">内容消费(6) / 内容创作(4) / 学习行为(12) / 社交互动(7) / 项目参与(8) / 平台使用(9)</div>
+    <div class="prd-label">点击筛选</div>
+    <div class="prd-item">「全部」→ 显示 90 个标签；一级分类 → 该大类所有；二级子类 → 仅该子类</div>
+    <div class="prd-item">每个分类后显示标签数量</div>
+  </div>
+
+  <!-- Section 7: 自动化标签 — 右侧列表 -->
+  <div class="prd-section" id="prd-s7">
+    <div class="prd-section-title blue">7. 自动化标签 — 右侧列表</div>
+    <div class="prd-label">搜索框</div>
+    <div class="prd-item">按标签<strong>名称或代码</strong>模糊搜索</div>
+    <div class="prd-label">「+ 新建标签」按钮</div>
+    <div class="prd-item">弹窗填写：标签名称 / 标签代码 / 所属分类 / 取值类型</div>
+    <div class="prd-label">表格列定义</div>
+    <div class="prd-item"><strong>标签名称</strong>（自适应）— <strong>可点击</strong>，打开详情 Drawer</div>
+    <div class="prd-item"><strong>标签代码</strong>（140px）— 等宽字体，如 <code>lc_churn_risk</code></div>
+    <div class="prd-item"><strong>取值范围</strong>（200px）— 可选值列表，超长截断 2 行</div>
+    <div class="prd-item"><strong>更新频率</strong>（80px）— 实时 / 每日 / 每周 / 每月 / 订单触发 / 系统同步</div>
+    <div class="prd-item"><strong>关联规则</strong>（80px）— 关联的自动打标规则数。有规则时蓝色显示，可点击跳转</div>
+    <div class="prd-item"><strong>状态</strong>（70px）— Toggle 开关，启用/禁用自动化标签。切换后 Toast 提示</div>
+    <div class="prd-item"><strong>操作</strong>（110px）— <strong>编辑</strong>（打开详情 Drawer）/ <strong>删除</strong>（confirm 确认）</div>
+    <div class="prd-label">分页</div>
+    <div class="prd-item">默认 10 条/页，支持 5 / 10 / 20 / 50 条/页</div>
+  </div>
+
+  <!-- Section 8: 标签详情 Drawer -->
+  <div class="prd-section" id="prd-s8">
+    <div class="prd-section-title blue">8. 标签详情 Drawer</div>
+    <div class="prd-label">触发方式</div>
+    <div class="prd-item">点击标签名称 或 操作列「编辑」→ 右侧 Drawer 滑入</div>
+    <div class="prd-item">宽度 480px，遮罩点击或关闭按钮关闭</div>
+    <div class="prd-item">动画：打开从右滑入 250ms ease-out；关闭向右滑出 200ms ease-in</div>
+    <div class="prd-label">区域 1：基本信息（2 列网格）</div>
+    <div class="prd-item"><strong>标签名称</strong> — 如「流失风险」</div>
+    <div class="prd-item"><strong>标签代码</strong> — 等宽字体，如 <code>lc_churn_risk</code></div>
+    <div class="prd-item"><strong>所属分类</strong> — 如「属性标签 > 计算属性」</div>
+    <div class="prd-item"><strong>数据来源</strong> — 如「评分引擎」「行为事件」「鱼丸系统」</div>
+    <div class="prd-item"><strong>更新频率</strong> — 如「每日」</div>
+    <div class="prd-item"><strong>时间窗口</strong> — 如「近 30 天」「全历史」</div>
+    <div class="prd-item"><strong>说明</strong>（全宽）— 标签的业务含义描述</div>
+    <div class="prd-label">区域 2：取值逻辑（表格）</div>
+    <div class="prd-item">两列表格：<strong>取值</strong>（如「高风险」）→ <strong>判定条件</strong>（如「续费倾向分 &lt; 30」）</div>
+    <div class="prd-item">取值用彩色标签样式展示</div>
+    <div class="prd-item">仅 enum 类型标签显示此区域</div>
+    <div class="prd-label">区域 3：关联规则</div>
+    <div class="prd-item">显示引用该标签的自动打标规则条数</div>
+    <div class="prd-item">「查看详情 →」链接 → 跳转自动化标签管理页面</div>
+    <div class="prd-label">底部操作</div>
+    <div class="prd-item">「关闭」按钮 + 「保存」按钮</div>
+  </div>
+
+  <!-- Section 9: 弹窗交互 -->
+  <div class="prd-section" id="prd-s9">
+    <div class="prd-section-title orange">9. 弹窗 & 交互</div>
+    <div class="prd-label">新建/编辑弹窗（企微 & CRM 通用）</div>
+    <div class="prd-item">居中弹窗，标题 + 输入框 + 取消/确定按钮</div>
+    <div class="prd-item">新建标签组 / 新建子标签组 / 编辑标签组 / 新建标签 / 修改标签 共用同一弹窗</div>
+    <div class="prd-item">编辑时预填当前值</div>
+    <div class="prd-label">删除确认</div>
+    <div class="prd-item">使用浏览器原生 confirm 弹窗</div>
+    <div class="prd-item">删除一级组：「确定要删除标签组 XXX 及其所有子分组吗？」</div>
+    <div class="prd-item">删除二级组 / 标签：「确定要删除 XXX 吗？」</div>
+    <div class="prd-label">Toast 提示</div>
+    <div class="prd-item">所有操作结果（创建成功/修改成功/删除成功/禁止删除）→ 居中 Toast，1.2 秒消失</div>
+    <div class="prd-label">校验</div>
+    <div class="prd-item">名称必填，不可为空</div>
     <div class="prd-item">同一来源同一分组内标签名不可重名</div>
-    <div class="prd-item">同一级别内分组名不可重名</div>
-    <div class="prd-item">删除分组：下有标签时禁止；默认分组永远不可删除</div>
+    <div class="prd-item">同级分组名不可重名</div>
   </div>
 
-  <div class="prd-section">
-    <div class="prd-section-title blue">6. 模块关系</div>
-    <div class="prd-item"><strong>人群包</strong>：标签条件的来源/分组/值下拉数据源来自此页面</div>
-    <div class="prd-item"><strong>自动化标签管理</strong>：本页是浏览入口，自动化标签管理是规则配置入口</div>
-    <div class="prd-item"><strong>客户管理</strong>：客户列表标签列 + 打标签操作调用此处数据</div>
-    <div class="prd-item"><strong>企微侧边栏</strong>：企微标签在侧边栏展示和操作</div>
-  </div>
-
-  <div class="prd-section">
-    <div class="prd-section-title orange">7. 交互规范</div>
-    <div class="prd-item">Tab 切换保留各 Tab 的筛选/选中/分页状态</div>
-    <div class="prd-item">分组树：选中高亮 + Hover 显示操作 + 搜索实时过滤</div>
-    <div class="prd-item">新建/编辑：居中弹窗输入名称</div>
-    <div class="prd-item">删除：confirm 二次确认</div>
-    <div class="prd-item">Drawer：右侧滑入 250ms，遮罩点击或关闭按钮关闭，滑出 200ms</div>
-    <div class="prd-item">Toast：所有操作结果居中提示，1.2 秒消失</div>
-  </div>
 </div>
 
 <script src="prd-editor.js"></script>
