@@ -592,6 +592,159 @@
     <div class="prd-item">同级分组名不可重名</div>
   </div>
 
+  <!-- Section 10: 数据字典 — 全局身份 -->
+  <div class="prd-section" id="prd-s10">
+    <div class="prd-section-title blue">10. 数据字典 — 全局身份标签 (id_*) 14个</div>
+    <div class="prd-item"><strong>id_member_level</strong> 会员等级 — 基于续费次数：体验会员（体验营在期）/ 正式会员（首年）/ 老会员（续费≥2）| 鱼丸系统 | 实时</div>
+    <div class="prd-item"><strong>id_member_period</strong> 入圈期数 — 首次付费订单对应期数：第N期 | 鱼丸系统 | 订单触发</div>
+    <div class="prd-item"><strong>id_customer_level</strong> 客户等级 — 手动评定或CLV映射：S(Top5%) / A / B / C / D | CRM | 手动/规则</div>
+    <div class="prd-item"><strong>id_role</strong> 社群角色 — 直接同步：普通圈友 / 传术师 / 航海家 / 管理员 | 鱼丸系统 | 同步</div>
+    <div class="prd-item"><strong>id_source_channel</strong> 来源渠道 — 首次添加好友时记录：视频号 / 公众号 / 小红书 / 知乎 / 朋友推荐 / 线下活动 / 搜索引擎 / 合作导流 | CRM | 首次添加</div>
+    <div class="prd-item"><strong>id_source_type</strong> 来源类型 — 基于渠道分类映射：自然流量 / 付费投放 / KOC推荐 / 老带新 | CRM | 首次添加</div>
+    <div class="prd-item"><strong>id_referrer</strong> 推荐人 — 推荐关系绑定：用户ID/昵称 | CRM | 首次添加</div>
+    <div class="prd-item"><strong>id_sales_owner</strong> 专属销售 — 分配关系：员工名 | CRM | 分配时</div>
+    <div class="prd-item"><strong>id_service_owner</strong> 专属服务 — 分配关系：员工名 | CRM | 分配时</div>
+    <div class="prd-item"><strong>id_wechat_status</strong> 好友状态 — 企微回调实时同步：好友 / 客户删除 / 随身删除 / 未添加 | 企微 | 实时</div>
+    <div class="prd-item"><strong>id_trial_batch</strong> 体验营期数 — 报名时记录：期数编号 | CRM | 报名时</div>
+    <div class="prd-item"><strong>id_region</strong> 所在城市 — 调研问卷：城市名 | 调研 | 填写时</div>
+    <div class="prd-item"><strong>id_occupation</strong> 职业类型 — 调研问卷：互联网 / 金融 / 自由职业 / 实体经营 | 调研 | 填写时</div>
+    <div class="prd-item"><strong>id_income_tier</strong> 收入层级 — 调研问卷：&lt;10w / 10-30w / 30-50w / 50-100w / &gt;100w | 调研 | 填写时</div>
+  </div>
+
+  <!-- Section 11: 数据字典 — 全局交易 -->
+  <div class="prd-section" id="prd-s11">
+    <div class="prd-section-title blue">11. 数据字典 — 全局交易标签 (txn_*) 10个</div>
+    <div class="prd-item"><strong>txn_total_spent</strong> 累计消费 — <code>SUM(已支付订单金额)</code>：高消费(≥10000) / 中(3000-9999) / 低(&lt;3000) | 订单 | 支付成功</div>
+    <div class="prd-item"><strong>txn_purchase_count</strong> 购买次数 — <code>COUNT(已支付订单)</code>：多次(≥5) / 几次(2-4) / 首次(1) | 订单 | 支付成功</div>
+    <div class="prd-item"><strong>txn_latest_product</strong> 最近购买 — 最近一笔订单商品名：年费会员 / 航海门票 / 深海圈 / 周边 | 订单 | 支付成功</div>
+    <div class="prd-item"><strong>txn_renewal_count</strong> 续费次数 — <code>COUNT(续费订单)</code>不含首次：0 / 1 / 2 / 3+ | 订单 | 续费成功</div>
+    <div class="prd-item"><strong>txn_renewal_status</strong> 续费状态 — 基于到期时间+续费记录：首年 / 已续费 / 待续费(到期前90天) / 已过期 | 订单 | 每日</div>
+    <div class="prd-item"><strong>txn_clv_tier</strong> CLV层级 — <code>已实现价值×0.4 + 预测未来×0.35 + 社交传播×0.25</code>，按百分位：钻石(Top5%) / 金 / 银 / 铜 | 评分引擎 | 每月</div>
+    <div class="prd-item"><strong>txn_avg_order_value</strong> 平均客单价 — <code>SUM(金额)/COUNT(订单)</code>：具体金额 | 订单 | 支付成功</div>
+    <div class="prd-item"><strong>txn_refund_flag</strong> 退款标记 — <code>EXISTS(近90天退款)</code>：有退款 / 无退款 | 订单 | 退款事件</div>
+    <div class="prd-item"><strong>txn_member_duration</strong> 会员时长 — <code>SUM(会员周期天数)</code>：新(≤180天) / 中(181-730) / 老(&gt;730) | 订单 | 每日</div>
+    <div class="prd-item"><strong>txn_expire_countdown</strong> 到期倒计时 — <code>到期日-今天</code>，负数=已过期天数：具体天数 | 订单 | 每日</div>
+  </div>
+
+  <!-- Section 12: 数据字典 — 全局生命周期 -->
+  <div class="prd-section" id="prd-s12">
+    <div class="prd-section-title blue">12. 数据字典 — 生命周期标签 (lc_*) 17个</div>
+    <div class="prd-item"><strong>lc_stage</strong> 生命周期阶段 — 阶段转换规则引擎，基于会员状态+行为+时间：visitor / prospect / trial / paid / active / core / silent / churn_risk / expired / churned | 每日</div>
+    <div class="prd-item"><strong>lc_health</strong> 健康度 — <code>活跃度×0.30 + 内容消费×0.20 + 社群参与×0.15 + 交易健康×0.20 + 服务体验×0.15</code>(0-100)：健康(≥80) / 良好(60-79) / 一般(40-59) / 风险(20-39) / 危险(&lt;20) | 每日</div>
+    <div class="prd-item"><strong>lc_churn_risk</strong> 流失风险 — <code>使用活跃×0.25 + 内容深度×0.20 + 历史续费×0.20 + 社群融入×0.15 + 到期紧迫×0.10 + 消费投入×0.10</code>：高风险(0-29) / 中(30-59) / 低(60-79) / 无(80-100) | 每日</div>
+    <div class="prd-item"><strong>lc_engagement_tier</strong> 参与度 — <code>内容消费×0.25 + 创作×0.25 + 互动×0.20 + 项目×0.15 + 直播×0.15</code>：L1核心(80-100) / L2活跃 / L3参与 / L4浏览 / L5沉默(0-19) | 每日</div>
+    <div class="prd-item"><strong>lc_growth_trend</strong> 成长趋势 — <code>(本月参与度-上月)/上月×100%</code>：上升(&gt;10%) / 平稳(-10%~10%) / 下降 / 急降(&lt;-40%) | 每周</div>
+    <div class="prd-item"><strong>lc_onboarding</strong> 新手引导 — 新手任务完成进度：已完成(≥80%) / 进行中(1-79%) / 未开始 / 不适用 | 实时</div>
+    <div class="prd-item"><strong>lc_rfm_segment</strong> RFM分群 — R=最近互动(1-5), F=90天活跃天(1-5), M=综合价值(1-5) 矩阵分群：champion / loyal / potential / new / attention / about_to_sleep / hibernating / lost | 每日</div>
+    <div class="prd-item"><strong>lc_renewal_window</strong> 续费窗口 — <code>到期日-今天</code>：黄金期(60-30天) / 紧迫期(30-7) / 最后期(7-0) / 已过期 / 不适用 | 每日</div>
+    <div class="prd-item"><strong>lc_login_freq</strong> 登录频率 — <code>COUNT(DISTINCT 近30天登录日期)</code>：高频(≥20天) / 中频(10-19) / 低频(3-9) / 极低(&lt;3) | 每日</div>
+    <div class="prd-item"><strong>lc_silent_days</strong> 沉默天数 — <code>今天-MAX(最后有效行为日期)</code>：具体天数 | 每日</div>
+    <div class="prd-item"><strong>lc_first_week</strong> 新手期行为 — 注册后7天内不同行为种类数：高度参与(≥5种) / 一般(2-4) / 低参与(0-1) | 注册后7天</div>
+    <div class="prd-item"><strong>lc_active_platform</strong> 活跃平台 — 近90天行为按产品线聚合取最高：官网社区 / 航海家 / 深海圈 / 均衡 | 每周</div>
+    <div class="prd-item"><strong>lc_earning_interest</strong> 赚钱方向 — 跨平台内容消费话题+航海品类TOP1：短视频 / 知识付费 / 跨境电商 / 本地生活 / AI应用 | 每周</div>
+    <div class="prd-item"><strong>lc_time_preference</strong> 活跃时段 — 近90天行为按小时聚合取峰值：早鸟(6-9) / 午间(12-14) / 晚间(20-23) / 深夜(23-2) | 每周</div>
+    <div class="prd-item"><strong>lc_event_sensitivity</strong> 活动敏感度 — <code>响应活动数/推送活动数×100%</code>：高(&gt;70%) / 中(30-70%) / 低(&lt;30%) | 每月</div>
+    <div class="prd-item"><strong>lc_referral_count</strong> 推荐人数 — <code>COUNT(推荐且已付费用户)</code>：超级推荐人(≥10) / 活跃(3-9) / 有推荐(1-2) / 无(0) | 推荐触发</div>
+    <div class="prd-item"><strong>lc_is_distributor</strong> 分销身份 — 分销系统直接同步：是 / 否 | —</div>
+  </div>
+
+  <!-- Section 13: 数据字典 — 官网社区 -->
+  <div class="prd-section" id="prd-s13">
+    <div class="prd-section-title green">13. 数据字典 — 官网社区标签 (comm_*) 17个</div>
+    <div class="prd-label">内容消费 (6)</div>
+    <div class="prd-item"><strong>comm_read_volume</strong> 阅读量级 — <code>COUNT(近30天阅读)</code>：重度(≥50) / 中度(20-49) / 轻度(5-19) / 极少(&lt;5)</div>
+    <div class="prd-item"><strong>comm_read_depth</strong> 阅读深度 — <code>AVG(停留秒数)/60</code>：深度(≥5min) / 中度(2-5) / 浅层(&lt;2)</div>
+    <div class="prd-item"><strong>comm_read_completion</strong> 完成率 — <code>滚到底部数/总阅读×100%</code>：高(&gt;70%) / 中(30-70%) / 低(&lt;30%)</div>
+    <div class="prd-item"><strong>comm_topic_pref</strong> 偏好话题TOP3 — <code>阅读×1+评论×3+收藏×2</code> 权重排序取前3</div>
+    <div class="prd-item"><strong>comm_topic_diversity</strong> 话题多样性 — <code>COUNT(DISTINCT 90天话题)</code>：广泛(≥10) / 聚焦(3-9) / 单一(1-2)</div>
+    <div class="prd-item"><strong>comm_search_active</strong> 搜索行为 — <code>COUNT(30天搜索)</code>：高频(≥10) / 有搜索(1-9) / 无(0)</div>
+    <div class="prd-label">内容创作 (5)</div>
+    <div class="prd-item"><strong>comm_post_freq</strong> 发帖频率 — <code>COUNT(30天发帖)</code>：高产(≥10) / 活跃(3-9) / 偶尔(1-2) / 未发帖(0)</div>
+    <div class="prd-item"><strong>comm_post_quality</strong> 发帖质量 — <code>精华帖/总帖×100%</code>：高质量(&gt;30%) / 中等(10-30%) / 普通(&lt;10%)</div>
+    <div class="prd-item"><strong>comm_essential_count</strong> 精华帖数 — <code>COUNT(精华帖)</code>：具体数量 | 全历史</div>
+    <div class="prd-item"><strong>comm_creator_tier</strong> 创作者等级 — <code>发帖量×0.3+精华率×0.3+互动×0.2+影响力×0.2</code>：PGC专业(Top5%) / UGC核心 / UGC活跃 / UGC潜力 / 非创作者</div>
+    <div class="prd-item"><strong>comm_content_type</strong> 创作类型 — NLP分类取占比最高：经验分享 / 方法论 / 资源汇总 / 问答求助 / 复盘总结</div>
+    <div class="prd-label">互动与影响力 (6)</div>
+    <div class="prd-item"><strong>comm_interaction</strong> 互动活跃度 — <code>评论+点赞+投锚+收藏</code>(30天)：高(≥30) / 中(10-29) / 低(1-9) / 零(0)</div>
+    <div class="prd-item"><strong>comm_influence</strong> 社区影响力 — <code>被阅读×1+被收藏×3+被评论×5</code> 按百分位：高(Top10%) / 中(Top30%) / 低</div>
+    <div class="prd-item"><strong>comm_network_size</strong> 社交圈 — <code>COUNT(DISTINCT 90天互动用户)</code>：广泛(&gt;50) / 适中(10-50) / 窄(1-9) / 孤立(0)</div>
+    <div class="prd-item"><strong>comm_role</strong> 社区角色 — 行为比例分类：创作占比&gt;50%=创作者；互动&gt;50%=互动者；阅读&gt;80%=读者；总行为&lt;5=潜水者</div>
+    <div class="prd-item"><strong>comm_live_viewer</strong> 直播观看 — <code>COUNT(次数)+SUM(时长)</code>：重度(≥5次且&gt;60min) / 普通(1-4) / 未观看(0)</div>
+    <div class="prd-item"><strong>comm_live_engagement</strong> 直播互动 — <code>COUNT(30天直播评论)</code>：高(≥20) / 一般(5-19) / 低(&lt;5) / 无(0)</div>
+  </div>
+
+  <!-- Section 14: 数据字典 — 航海家 -->
+  <div class="prd-section" id="prd-s14">
+    <div class="prd-section-title green">14. 数据字典 — 航海家标签 (nav_*) 21个</div>
+    <div class="prd-label">学习进度 (9)</div>
+    <div class="prd-item"><strong>nav_enrollment_count</strong> 报名数 — <code>COUNT(全部报名)</code>：多次(≥5) / 几次(2-4) / 首次(1) / 从未(0)</div>
+    <div class="prd-item"><strong>nav_enrollment_recent</strong> 近期报名 — <code>COUNT(180天报名)</code>：活跃(≥2) / 有(1) / 未参与(0)</div>
+    <div class="prd-item"><strong>nav_completion_rate</strong> 完课率 — <code>已完成课时/总课时×100%</code>：优秀(≥90%) / 良好(70-89%) / 一般(40-69%) / 低(&lt;40%)</div>
+    <div class="prd-item"><strong>nav_homework_rate</strong> 作业提交率 — <code>已提交/应提交×100%</code>：全勤(100%) / 高(≥80%) / 中(50-79%) / 低(&lt;50%)</div>
+    <div class="prd-item"><strong>nav_checkin_streak</strong> 连续打卡 — 当前连续天数（中断归零）：具体天数</div>
+    <div class="prd-item"><strong>nav_checkin_total</strong> 累计打卡 — <code>COUNT(全部打卡)</code>：具体次数</div>
+    <div class="prd-item"><strong>nav_learning_consistency</strong> 学习连续性 — <code>COUNT(DISTINCT 30天学习日)</code>：高(≥20天) / 中(10-19) / 低(&lt;10)</div>
+    <div class="prd-item"><strong>nav_on_schedule</strong> 进度达标 — <code>实际进度/计划进度×100%</code>：超前(&gt;110%) / 正常(90-110%) / 落后(70-89%) / 严重落后(&lt;70%)</div>
+    <div class="prd-item"><strong>nav_stuck_point</strong> 学习卡点 — 连续3天同一课时未推进：有卡点(标注课时) / 正常推进</div>
+    <div class="prd-label">学习效果与偏好 (8)</div>
+    <div class="prd-item"><strong>nav_practice_output</strong> 实操产出 — <code>COUNT(当期作品)</code>：高产(≥5) / 一般(1-4) / 无(0)</div>
+    <div class="prd-item"><strong>nav_output_quality</strong> 产出质量 — <code>优秀作品/总作品×100%</code>：优质(≥50%) / 良好(20-49%) / 普通(&lt;20%)</div>
+    <div class="prd-item"><strong>nav_improvement_trend</strong> 成长趋势 — 近期评分 vs 早期评分变化：上升 / 平稳 / 下降</div>
+    <div class="prd-item"><strong>nav_case_study</strong> 案例标杆 — 导师选为优秀案例：是 / 否</div>
+    <div class="prd-item"><strong>nav_category_pref</strong> 品类偏好 — 报名/完成最多品类TOP1：短视频 / 电商 / 写作 / AI / 私域</div>
+    <div class="prd-item"><strong>nav_difficulty_pref</strong> 难度偏好 — <code>AVG(完成课程难度)</code>：入门 / 进阶 / 高级</div>
+    <div class="prd-item"><strong>nav_format_pref</strong> 形式偏好 — 参与最多形式TOP1：视频课 / 直播课 / 训练营 / 21天挑战</div>
+    <div class="prd-item"><strong>nav_learning_time</strong> 时段偏好 — 90天行为按小时聚合取峰值：早鸟(6-9) / 通勤(9-10) / 午间(12-14) / 晚间(20-23)</div>
+    <div class="prd-label">俱乐部与权益 (4)</div>
+    <div class="prd-item"><strong>nav_club_status</strong> 俱乐部状态 — 会员资格状态：活跃会员 / 沉默会员(30天无行为) / 已过期 / 未加入</div>
+    <div class="prd-item"><strong>nav_club_activity</strong> 俱乐部活跃 — <code>COUNT(30天俱乐部行为)</code>：高活跃(≥10) / 一般(3-9) / 低(&lt;3) / 无</div>
+    <div class="prd-item"><strong>nav_benefits_usage</strong> 权益使用率 — <code>已使用/可用总数×100%</code>：充分(≥80%) / 一般(30-79%) / 低(&lt;30%) / 未使用</div>
+    <div class="prd-item"><strong>nav_benefits_type</strong> 偏好权益 — 使用最多类别TOP1：课程折扣 / 专属直播 / 1v1咨询 / 线下活动 / 资料包</div>
+  </div>
+
+  <!-- Section 15: 数据字典 — 深海圈 -->
+  <div class="prd-section" id="prd-s15">
+    <div class="prd-section-title green">15. 数据字典 — 深海圈标签 (deep_*) 21个</div>
+    <div class="prd-label">内容消费 (4)</div>
+    <div class="prd-item"><strong>deep_read_volume</strong> 阅读量级 — <code>COUNT(30天阅读)</code>：重度(≥30) / 中度(10-29) / 轻度(3-9) / 极少(&lt;3)</div>
+    <div class="prd-item"><strong>deep_read_depth</strong> 阅读深度 — <code>AVG(停留秒数)/60</code>：深度(≥5min) / 中度(2-5) / 浅层(&lt;2)</div>
+    <div class="prd-item"><strong>deep_discussion_active</strong> 讨论活跃 — <code>COUNT(30天评论+回复)</code>：高(≥20) / 中(5-19) / 低(1-4) / 零(0)</div>
+    <div class="prd-item"><strong>deep_topic_pref</strong> 关注话题TOP3 — 阅读+讨论权重排序取前3</div>
+    <div class="prd-label">项目参与 (5)</div>
+    <div class="prd-item"><strong>deep_project_count</strong> 参与项目数 — <code>COUNT(全部项目)</code>：资深(≥5) / 经验(3-4) / 体验(1-2) / 从未(0)</div>
+    <div class="prd-item"><strong>deep_project_recent</strong> 近期参与 — <code>COUNT(180天项目)</code>：活跃(≥2) / 有(1) / 未参与(0)</div>
+    <div class="prd-item"><strong>deep_project_completion</strong> 完成度 — 最近项目完成评估：优秀完成 / 基本完成 / 中途放弃 / 未开始</div>
+    <div class="prd-item"><strong>deep_project_depth</strong> 参与深度 — <code>出勤率×0.4+讨论×0.3+产出×0.3</code>：深度 / 一般 / 浅层</div>
+    <div class="prd-item"><strong>deep_category_pref</strong> 品类偏好 — 参与最多类型TOP1：短视频 / 电商 / 写作 / 技术 / 本地生活</div>
+    <div class="prd-label">成果产出 (4)</div>
+    <div class="prd-item"><strong>deep_output_count</strong> 成果数 — <code>COUNT(作品/报告)</code>：高产(≥10) / 一般(3-9) / 少量(1-2) / 无(0)</div>
+    <div class="prd-item"><strong>deep_output_quality</strong> 产出质量 — <code>COUNT(精华成果)</code>：优质(≥3) / 良好(1-2) / 普通(0)</div>
+    <div class="prd-item"><strong>deep_revenue_flag</strong> 项目收益 — 实操是否产生实际收入：有收益(金额区间) / 未产生</div>
+    <div class="prd-item"><strong>deep_case_study</strong> 案例标杆 — 选为项目标杆案例：是 / 否</div>
+    <div class="prd-label">角色与成长 (4)</div>
+    <div class="prd-item"><strong>deep_role</strong> 项目角色 — 系统角色分配：领航人(导师) / 船长(组长) / 水手(学员) / 观察员</div>
+    <div class="prd-item"><strong>deep_mentoring_count</strong> 带教人数 — <code>COUNT(带领学员)</code>：具体人数</div>
+    <div class="prd-item"><strong>deep_role_growth</strong> 成长路径 — 历史最高角色级别：水手→船长→领航人 / 水手→船长 / 水手 / 新人</div>
+    <div class="prd-item"><strong>deep_mentor_flag</strong> 导师标识 — 90天被≥3人关注或引用：是 / 否</div>
+    <div class="prd-label">协作与网络 (4)</div>
+    <div class="prd-item"><strong>deep_collab_active</strong> 协作活跃 — <code>COUNT(180天跨项目协作)</code>：活跃(≥5) / 有(1-4) / 独立(0)</div>
+    <div class="prd-item"><strong>deep_alumni_network</strong> 校友网络 — 项目后与队友持续互动频率：强连接 / 弱连接 / 断联</div>
+    <div class="prd-item"><strong>deep_group_active</strong> 圈子活跃 — <code>COUNT(30天社群发言)</code>：活跃(≥20) / 一般(5-19) / 低(&lt;5)</div>
+    <div class="prd-item"><strong>deep_repeat_collab</strong> 重复组队 — 与同一批人多次参加项目：有(次数) / 无</div>
+  </div>
+
+  <!-- Section 16: 标签统计汇总 -->
+  <div class="prd-section" id="prd-s16">
+    <div class="prd-section-title orange">16. 标签统计汇总</div>
+    <div class="prd-item"><strong>全局身份 id_*</strong> — 14 个</div>
+    <div class="prd-item"><strong>全局交易 txn_*</strong> — 10 个</div>
+    <div class="prd-item"><strong>全局生命周期 lc_*</strong> — 17 个</div>
+    <div class="prd-item"><strong>官网社区 comm_*</strong> — 17 个（消费6 + 创作5 + 互动6）</div>
+    <div class="prd-item"><strong>航海家 nav_*</strong> — 21 个（进度9 + 效果偏好8 + 权益4）</div>
+    <div class="prd-item"><strong>深海圈 deep_*</strong> — 21 个（消费4 + 项目5 + 成果4 + 角色4 + 协作4）</div>
+    <div class="prd-item"><strong>合计：100 个自动化标签</strong></div>
+  </div>
+
 </div>
 
 <script src="prd-editor.js"></script>
