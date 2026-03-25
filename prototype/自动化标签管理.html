@@ -171,9 +171,11 @@
 
   /* View Containers */
   .view-overview,
-  .view-rules { display: none; }
+  .view-rules,
+  .view-changelog { display: none; }
   .view-overview.active,
-  .view-rules.active { display: block; }
+  .view-rules.active,
+  .view-changelog.active { display: block; }
 
   /* ======== Stats Bar ======== */
   .stats-bar {
@@ -735,6 +737,80 @@
   }
   .rb-radio input[type="radio"] { accent-color: var(--color-primary-6); }
 
+  /* ======== Trigger Type Section ======== */
+  .rb-trigger-type-area { margin-bottom: 24px; }
+  .rb-trigger-options {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .rb-trigger-option {
+    flex: 1;
+    padding: 10px 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    transition: all 150ms;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .rb-trigger-option:last-child { border-right: none; }
+  .rb-trigger-option:hover { background: var(--color-fill-hover); color: var(--color-text-1); }
+  .rb-trigger-option.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .rb-trigger-option .trigger-icon { font-size: 18px; line-height: 1; }
+  .rb-trigger-option .trigger-label { font-size: 12px; }
+  .rb-trigger-sub-form {
+    background: var(--color-fill-3);
+    border-radius: var(--radius-btn);
+    padding: 12px 14px;
+  }
+  .rb-trigger-sub-form .rb-form-row { margin-bottom: 8px; }
+  .rb-trigger-sub-form .rb-form-row:last-child { margin-bottom: 0; }
+  .rb-trigger-hint {
+    font-size: 12px;
+    color: var(--color-text-4);
+    margin-top: 4px;
+  }
+  .rb-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .rb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 13px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    transition: all 100ms;
+  }
+  .rb-chip:hover { border-color: var(--color-primary-6); }
+  .rb-chip.selected {
+    background: var(--color-primary-1);
+    border-color: var(--color-primary-6);
+    color: var(--color-primary-6);
+    font-weight: 500;
+  }
+
   /* ======== Rule Builder Rules Area ======== */
   .rb-rules-area { margin-bottom: 20px; }
   .rb-section-title {
@@ -1263,6 +1339,7 @@
         <div class="view-tabs">
           <div class="view-tab active" onclick="switchView('overview')">标签总览</div>
           <div class="view-tab" onclick="switchView('rules')">规则管理</div>
+          <div class="view-tab" onclick="switchView('changelog')">变更日志</div>
         </div>
 
         <!-- ============ View: Overview ============ -->
@@ -1337,14 +1414,16 @@
             <table class="data-table" id="rulesTable">
               <thead>
                 <tr>
-                  <th style="width:170px;">规则名</th>
-                  <th style="width:90px;">标签分类</th>
-                  <th style="width:160px;">打标结果</th>
-                  <th style="width:200px;">触发条件摘要</th>
-                  <th style="width:70px;">频率</th>
-                  <th style="width:60px;">优先级</th>
-                  <th style="width:70px;">状态</th>
-                  <th style="width:160px;">操作</th>
+                  <th style="width:150px;">规则名</th>
+                  <th style="width:80px;">标签分类</th>
+                  <th style="width:150px;">打标结果</th>
+                  <th style="width:70px;">触发类型</th>
+                  <th style="width:180px;">触发条件摘要</th>
+                  <th style="width:70px;">命中人数</th>
+                  <th style="width:90px;">最近执行</th>
+                  <th style="width:50px;">优先级</th>
+                  <th style="width:60px;">状态</th>
+                  <th style="width:140px;">操作</th>
                 </tr>
               </thead>
               <tbody id="rulesTableBody">
@@ -1358,6 +1437,75 @@
             <button class="page-btn disabled">&lsaquo;</button>
             <button class="page-btn active">1</button>
             <button class="page-btn">2</button>
+            <button class="page-btn">&rsaquo;</button>
+          </div>
+        </div>
+
+        <!-- ============ View: Changelog ============ -->
+        <div class="view-changelog" id="viewChangelog">
+          <div class="page-title-bar">
+            <span class="page-title">标签变更日志</span>
+            <button class="btn btn-secondary" onclick="showToast('已导出 CSV')">&#8595; 导出</button>
+          </div>
+          <div class="filter-area">
+            <div class="filter-row">
+              <input class="filter-input" type="text" placeholder="用户ID / 昵称...">
+              <select class="filter-select" style="min-width:140px;">
+                <option value="">全部标签</option>
+                <option>lc_churn_risk</option>
+                <option>lc_stage</option>
+                <option>lc_silent_days</option>
+                <option>comm_creator_tier</option>
+                <option>nav_stuck_point</option>
+                <option>txn_renewal_status</option>
+              </select>
+              <select class="filter-select" style="min-width:110px;">
+                <option value="">全部类型</option>
+                <option>新增</option>
+                <option>更新</option>
+                <option>移除</option>
+                <option>过期</option>
+              </select>
+              <select class="filter-select" style="min-width:110px;">
+                <option value="">全部来源</option>
+                <option>规则</option>
+                <option>模型</option>
+                <option>批量</option>
+                <option>手动</option>
+              </select>
+              <div class="filter-actions">
+                <button class="btn btn-primary">查询</button>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="changelogTable">
+              <thead>
+                <tr>
+                  <th style="width:90px;">用户</th>
+                  <th style="width:140px;">标签代码</th>
+                  <th style="width:70px;">变更类型</th>
+                  <th style="width:100px;">旧值</th>
+                  <th style="width:20px;"></th>
+                  <th style="width:100px;">新值</th>
+                  <th style="width:70px;">触发来源</th>
+                  <th style="width:130px;">触发规则</th>
+                  <th style="width:140px;">时间</th>
+                </tr>
+              </thead>
+              <tbody id="changelogTableBody">
+                <!-- JS rendered -->
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination-bar">
+            <span class="total">共 1,247 条</span>
+            <button class="page-btn disabled">&lsaquo;</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">...</button>
+            <button class="page-btn">63</button>
             <button class="page-btn">&rsaquo;</button>
           </div>
         </div>
@@ -1413,6 +1561,79 @@
         </div>
       </div>
 
+      <!-- Trigger Type -->
+      <div class="rb-trigger-type-area">
+        <div class="rb-section-title">触发方式</div>
+        <div class="rb-trigger-options" id="triggerTypeOptions">
+          <div class="rb-trigger-option active" onclick="switchTriggerType('event')">
+            <span class="trigger-icon">&#9889;</span>
+            <span class="trigger-label">事件触发</span>
+          </div>
+          <div class="rb-trigger-option" onclick="switchTriggerType('schedule')">
+            <span class="trigger-icon">&#128339;</span>
+            <span class="trigger-label">定时任务</span>
+          </div>
+          <div class="rb-trigger-option" onclick="switchTriggerType('tag_change')">
+            <span class="trigger-icon">&#128196;</span>
+            <span class="trigger-label">标签变更</span>
+          </div>
+        </div>
+        <!-- Event trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubEvent">
+          <div class="rb-form-row">
+            <span class="rb-form-label">触发事件</span>
+            <div class="rb-chip-group" id="eventChipGroup">
+              <span class="rb-chip selected" onclick="toggleChip(this)">&#128100; 登录</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128196; 发帖</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128172; 评论</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128077; 点赞</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128269; 搜索</span>
+              <span class="rb-chip selected" onclick="toggleChip(this)">&#128176; 支付订单</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#9875; 参加航海</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#127909; 观看直播</span>
+              <span class="rb-chip" onclick="toggleChip(this)">&#128172; 直播评论</span>
+            </div>
+          </div>
+          <div class="rb-trigger-hint">当选中的事件发生时，实时评估规则条件</div>
+        </div>
+        <!-- Schedule trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubSchedule" style="display:none;">
+          <div class="rb-form-row">
+            <span class="rb-form-label">执行频率</span>
+            <select class="rb-form-select" style="min-width:120px;">
+              <option value="daily">每日</option>
+              <option value="weekly">每周</option>
+              <option value="monthly">每月</option>
+            </select>
+          </div>
+          <div class="rb-form-row">
+            <span class="rb-form-label">执行时间</span>
+            <select class="rb-form-select" style="min-width:100px;">
+              <option value="02:00">凌晨 2:00</option>
+              <option value="03:00">凌晨 3:00</option>
+              <option value="04:00">凌晨 4:00</option>
+              <option value="06:00">早上 6:00</option>
+            </select>
+          </div>
+          <div class="rb-trigger-hint">按设定频率批量扫描所有用户，评估规则条件</div>
+        </div>
+        <!-- Tag change trigger sub-form -->
+        <div class="rb-trigger-sub-form" id="triggerSubTagChange" style="display:none;">
+          <div class="rb-form-row">
+            <span class="rb-form-label">监听标签</span>
+            <select class="rb-form-select" style="min-width:200px;" multiple size="3">
+              <option value="lc_stage">lc_stage — 生命周期阶段</option>
+              <option value="lc_health">lc_health — 健康度等级</option>
+              <option value="lc_engagement_tier">lc_engagement_tier — 参与度层级</option>
+              <option value="txn_renewal_status">txn_renewal_status — 续费状态</option>
+              <option value="comm_creator_tier">comm_creator_tier — 创作者等级</option>
+              <option value="nav_stuck_point">nav_stuck_point — 学习卡点</option>
+            </select>
+          </div>
+          <div class="rb-trigger-hint">当选中的标签值发生变化时，级联评估本规则</div>
+        </div>
+      </div>
+
       <!-- Trigger Conditions -->
       <div class="rb-rules-area" id="triggerConditions">
         <div class="rb-section-title">
@@ -1463,6 +1684,22 @@
           <span class="rb-form-label">冷却期</span>
           <input class="rb-form-input" id="ruleCooldown" type="number" value="" placeholder="可选" min="0" style="max-width:80px;">
           <span style="font-size:12px; color:var(--color-text-4);">天（防止频繁打标）</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">标签有效期</span>
+          <input class="rb-form-input" id="ruleTTL" type="number" value="" placeholder="不限" min="0" style="max-width:80px;">
+          <span style="font-size:12px; color:var(--color-text-4);">天（到期自动移除标签，留空=永久）</span>
+        </div>
+        <div class="rb-form-row">
+          <span class="rb-form-label">互斥规则</span>
+          <select class="rb-form-select" id="ruleMutualExclusive" multiple size="3" style="min-width:260px; height: auto;">
+            <option value="1">沉默用户</option>
+            <option value="4">活跃回归</option>
+            <option value="7">续费风险</option>
+            <option value="8">续费紧迫</option>
+            <option value="34">流失预警-高价值</option>
+          </select>
+          <span style="font-size:12px; color:var(--color-text-4); align-self:flex-start; margin-top:4px;">Ctrl+点击多选<br>互斥规则不会同时对同一用户生效</span>
         </div>
       </div>
     </div>
@@ -1702,45 +1939,45 @@ var tagData = {
 
 var rulesData = [
   // 全局通用 - 生命周期
-  { id: 1, name: '沉默用户', category: '全局通用', result: 'lc_silent_days: 30天沉默', condition: '付费会员 AND 近30天无有效行为', freq: '每日', priority: 5, enabled: true },
-  { id: 2, name: '深度沉默', category: '全局通用', result: 'lc_silent_days: 60天沉默', condition: '付费会员 AND 近60天无有效行为', freq: '每日', priority: 4, enabled: true },
-  { id: 3, name: '疑似放弃', category: '全局通用', result: 'lc_silent_days: 90天沉默', condition: '付费会员 AND 近90天无有效行为', freq: '每日', priority: 3, enabled: true },
-  { id: 4, name: '活跃回归', category: '全局通用', result: 'lc_growth_trend: 回归活跃', condition: '曾沉默 AND 近7天有效行为>=3天', freq: '每日', priority: 10, enabled: true },
-  { id: 5, name: '新人黄金期', category: '全局通用', result: 'lc_onboarding: 新手引导中', condition: '注册<=7天 AND 新手任务<80%', freq: '实时', priority: 8, enabled: true },
-  { id: 6, name: '续费窗口-黄金期', category: '全局通用', result: 'lc_renewal_window: 黄金期', condition: '到期前60-30天 AND 续费倾向>=60', freq: '每日', priority: 6, enabled: true },
-  { id: 7, name: '续费风险', category: '全局通用', result: 'lc_churn_risk: 续费风险', condition: '到期前30天 AND 未续费 AND 倾向<50', freq: '每日', priority: 5, enabled: true },
-  { id: 8, name: '续费紧迫', category: '全局通用', result: 'lc_churn_risk: 续费紧迫', condition: '到期前7天 AND 未续费', freq: '每日', priority: 3, enabled: true },
-  { id: 9, name: '到期未续', category: '全局通用', result: 'txn_renewal_status: 已过期待挽回', condition: '已过期 AND 过期<=30天', freq: '每日', priority: 4, enabled: true },
-  { id: 10, name: '续费老客', category: '全局通用', result: 'txn_renewal_count: 忠实老客', condition: '续费次数>=2', freq: '支付触发', priority: 10, enabled: true },
-  { id: 11, name: '参与度急降', category: '全局通用', result: 'lc_growth_trend: 急降', condition: '近30天参与度比前30天下降>=40%', freq: '每周', priority: 5, enabled: true },
-  { id: 12, name: '超级推荐人', category: '全局通用', result: 'lc_referral_count: 超级推荐人', condition: '累计推荐付费用户>=5人', freq: '推荐触发', priority: 10, enabled: true },
+  { id: 1, name: '沉默用户', category: '全局通用', result: 'lc_silent_days: 30天沉默', condition: '付费会员 AND 近30天无有效行为', freq: '每日', priority: 5, enabled: true, triggerType: '定时', hitCount: 342, lastExec: '今日 03:00' },
+  { id: 2, name: '深度沉默', category: '全局通用', result: 'lc_silent_days: 60天沉默', condition: '付费会员 AND 近60天无有效行为', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 89, lastExec: '今日 03:00' },
+  { id: 3, name: '疑似放弃', category: '全局通用', result: 'lc_silent_days: 90天沉默', condition: '付费会员 AND 近90天无有效行为', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 23, lastExec: '今日 03:00' },
+  { id: 4, name: '活跃回归', category: '全局通用', result: 'lc_growth_trend: 回归活跃', condition: '曾沉默 AND 近7天有效行为>=3天', freq: '每日', priority: 10, enabled: true, triggerType: '定时', hitCount: 15, lastExec: '今日 03:00' },
+  { id: 5, name: '新人黄金期', category: '全局通用', result: 'lc_onboarding: 新手引导中', condition: '注册<=7天 AND 新手任务<80%', freq: '实时', priority: 8, enabled: true, triggerType: '事件', hitCount: 67, lastExec: '2小时前' },
+  { id: 6, name: '续费窗口-黄金期', category: '全局通用', result: 'lc_renewal_window: 黄金期', condition: '到期前60-30天 AND 续费倾向>=60', freq: '每日', priority: 6, enabled: true, triggerType: '定时', hitCount: 156, lastExec: '今日 03:00' },
+  { id: 7, name: '续费风险', category: '全局通用', result: 'lc_churn_risk: 续费风险', condition: '到期前30天 AND 未续费 AND 倾向<50', freq: '每日', priority: 5, enabled: true, triggerType: '定时', hitCount: 89, lastExec: '今日 03:00' },
+  { id: 8, name: '续费紧迫', category: '全局通用', result: 'lc_churn_risk: 续费紧迫', condition: '到期前7天 AND 未续费', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 31, lastExec: '今日 03:00' },
+  { id: 9, name: '到期未续', category: '全局通用', result: 'txn_renewal_status: 已过期待挽回', condition: '已过期 AND 过期<=30天', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 45, lastExec: '今日 03:00' },
+  { id: 10, name: '续费老客', category: '全局通用', result: 'txn_renewal_count: 忠实老客', condition: '续费次数>=2', freq: '支付触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 823, lastExec: '1小时前' },
+  { id: 11, name: '参与度急降', category: '全局通用', result: 'lc_growth_trend: 急降', condition: '近30天参与度比前30天下降>=40%', freq: '每周', priority: 5, enabled: true, triggerType: '定时', hitCount: 28, lastExec: '03-24 03:00' },
+  { id: 12, name: '超级推荐人', category: '全局通用', result: 'lc_referral_count: 超级推荐人', condition: '累计推荐付费用户>=5人', freq: '推荐触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 12, lastExec: '03-22 14:30' },
   // 官网社区
-  { id: 13, name: '内容创作者', category: '官网社区', result: 'comm_post_freq: 高产', condition: '近30天发帖>=10篇', freq: '每日', priority: 10, enabled: true },
-  { id: 14, name: '精华作者', category: '官网社区', result: 'comm_post_quality: 高质量', condition: '近90天精华帖>=3篇 AND 精华率>30%', freq: '每周', priority: 10, enabled: true },
-  { id: 15, name: '深度读者', category: '官网社区', result: 'comm_read_volume: 重度', condition: '近30天阅读>=50篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true },
-  { id: 16, name: '社区影响力Top', category: '官网社区', result: 'comm_influence: 高', condition: '互动Top10% AND 社交圈>50人', freq: '每周', priority: 8, enabled: true },
-  { id: 17, name: 'UGC核心创作者', category: '官网社区', result: 'comm_creator_tier: UGC核心', condition: '近90天发帖>=15 AND 精华>=2 AND 互动>=50', freq: '每周', priority: 9, enabled: true },
-  { id: 18, name: '直播重度观众', category: '官网社区', result: 'comm_live_viewer: 重度', condition: '近30天直播>=5次 AND 总时长>60min', freq: '每日', priority: 8, enabled: true },
-  { id: 19, name: '社区角色识别', category: '官网社区', result: 'comm_role: 自动识别', condition: '综合行为分析（创作/互动/阅读/潜水）', freq: '每月', priority: 6, enabled: true },
+  { id: 13, name: '内容创作者', category: '官网社区', result: 'comm_post_freq: 高产', condition: '近30天发帖>=10篇', freq: '每日', priority: 10, enabled: true, triggerType: '定时', hitCount: 48, lastExec: '今日 03:00' },
+  { id: 14, name: '精华作者', category: '官网社区', result: 'comm_post_quality: 高质量', condition: '近90天精华帖>=3篇 AND 精华率>30%', freq: '每周', priority: 10, enabled: true, triggerType: '定时', hitCount: 19, lastExec: '03-24 03:00' },
+  { id: 15, name: '深度读者', category: '官网社区', result: 'comm_read_volume: 重度', condition: '近30天阅读>=50篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 156, lastExec: '今日 03:00' },
+  { id: 16, name: '社区影响力Top', category: '官网社区', result: 'comm_influence: 高', condition: '互动Top10% AND 社交圈>50人', freq: '每周', priority: 8, enabled: true, triggerType: '定时', hitCount: 35, lastExec: '03-24 03:00' },
+  { id: 17, name: 'UGC核心创作者', category: '官网社区', result: 'comm_creator_tier: UGC核心', condition: '近90天发帖>=15 AND 精华>=2 AND 互动>=50', freq: '每周', priority: 9, enabled: true, triggerType: '标签变更', hitCount: 8, lastExec: '03-24 03:00' },
+  { id: 18, name: '直播重度观众', category: '官网社区', result: 'comm_live_viewer: 重度', condition: '近30天直播>=5次 AND 总时长>60min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 72, lastExec: '今日 03:00' },
+  { id: 19, name: '社区角色识别', category: '官网社区', result: 'comm_role: 自动识别', condition: '综合行为分析（创作/互动/阅读/潜水）', freq: '每月', priority: 6, enabled: true, triggerType: '定时', hitCount: 1205, lastExec: '03-01 03:00' },
   // 航海家
-  { id: 20, name: '航海达人', category: '航海家', result: 'nav_enrollment_count: 多次', condition: '累计报名航海>=5次', freq: '报名触发', priority: 10, enabled: true },
-  { id: 21, name: '完课优秀', category: '航海家', result: 'nav_completion_rate: 优秀', condition: '当前航海完课率>=90%', freq: '每日', priority: 9, enabled: true },
-  { id: 22, name: '作业全勤', category: '航海家', result: 'nav_homework_rate: 全勤', condition: '当前航海作业提交率100%', freq: '每日', priority: 9, enabled: true },
-  { id: 23, name: '学习卡点预警', category: '航海家', result: 'nav_stuck_point: 有卡点', condition: '连续3天无学习行为 AND 进度落后', freq: '每日', priority: 4, enabled: true },
-  { id: 24, name: '案例标杆学员', category: '航海家', result: 'nav_case_study: 是', condition: '实操产出优质 AND 导师推荐', freq: '手动', priority: 10, enabled: false },
-  { id: 25, name: '完课率低预警', category: '航海家', result: 'nav_completion_rate: 低', condition: '航海中 AND 完课率<40% AND 剩余<30%', freq: '每日', priority: 3, enabled: true },
+  { id: 20, name: '航海达人', category: '航海家', result: 'nav_enrollment_count: 多次', condition: '累计报名航海>=5次', freq: '报名触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 89, lastExec: '03-20 15:20' },
+  { id: 21, name: '完课优秀', category: '航海家', result: 'nav_completion_rate: 优秀', condition: '当前航海完课率>=90%', freq: '每日', priority: 9, enabled: true, triggerType: '定时', hitCount: 134, lastExec: '今日 03:00' },
+  { id: 22, name: '作业全勤', category: '航海家', result: 'nav_homework_rate: 全勤', condition: '当前航海作业提交率100%', freq: '每日', priority: 9, enabled: true, triggerType: '定时', hitCount: 67, lastExec: '今日 03:00' },
+  { id: 23, name: '学习卡点预警', category: '航海家', result: 'nav_stuck_point: 有卡点', condition: '连续3天无学习行为 AND 进度落后', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 18, lastExec: '今日 03:00' },
+  { id: 24, name: '案例标杆学员', category: '航海家', result: 'nav_case_study: 是', condition: '实操产出优质 AND 导师推荐', freq: '手动', priority: 10, enabled: false, triggerType: '事件', hitCount: 5, lastExec: '03-15 10:00' },
+  { id: 25, name: '完课率低预警', category: '航海家', result: 'nav_completion_rate: 低', condition: '航海中 AND 完课率<40% AND 剩余<30%', freq: '每日', priority: 3, enabled: true, triggerType: '定时', hitCount: 42, lastExec: '今日 03:00' },
   // 深海圈
-  { id: 26, name: '深度阅读者', category: '深海圈', result: 'deep_read_volume: 重度', condition: '近30天阅读>=30篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true },
-  { id: 27, name: '项目参与活跃', category: '深海圈', result: 'deep_project_count: 资深', condition: '累计参与项目>=5个', freq: '报名触发', priority: 10, enabled: true },
-  { id: 28, name: '高产出成员', category: '深海圈', result: 'deep_output_count: 高产', condition: '近90天产出>=10个 AND 精华>=3', freq: '每周', priority: 9, enabled: true },
-  { id: 29, name: '角色晋升-船长', category: '深海圈', result: 'deep_role: 船长', condition: '完成2个项目 AND 产出优质 AND 协作活跃', freq: '项目变更', priority: 8, enabled: true },
-  { id: 30, name: '角色晋升-领航人', category: '深海圈', result: 'deep_role: 领航人', condition: '担任船长>=2次 AND 带教人数>=5', freq: '项目变更', priority: 7, enabled: false },
-  { id: 31, name: '协作活跃成员', category: '深海圈', result: 'deep_collab_active: 活跃协作', condition: '近90天协作>=5次 AND 圈子活跃>=20次/月', freq: '每月', priority: 8, enabled: true },
+  { id: 26, name: '深度阅读者', category: '深海圈', result: 'deep_read_volume: 重度', condition: '近30天阅读>=30篇 AND 阅读深度>=5min', freq: '每日', priority: 8, enabled: true, triggerType: '定时', hitCount: 34, lastExec: '今日 03:00' },
+  { id: 27, name: '项目参与活跃', category: '深海圈', result: 'deep_project_count: 资深', condition: '累计参与项目>=5个', freq: '报名触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 26, lastExec: '03-18 09:30' },
+  { id: 28, name: '高产出成员', category: '深海圈', result: 'deep_output_count: 高产', condition: '近90天产出>=10个 AND 精华>=3', freq: '每周', priority: 9, enabled: true, triggerType: '定时', hitCount: 11, lastExec: '03-24 03:00' },
+  { id: 29, name: '角色晋升-船长', category: '深海圈', result: 'deep_role: 船长', condition: '完成2个项目 AND 产出优质 AND 协作活跃', freq: '项目变更', priority: 8, enabled: true, triggerType: '标签变更', hitCount: 14, lastExec: '03-20 16:00' },
+  { id: 30, name: '角色晋升-领航人', category: '深海圈', result: 'deep_role: 领航人', condition: '担任船长>=2次 AND 带教人数>=5', freq: '项目变更', priority: 7, enabled: false, triggerType: '标签变更', hitCount: 3, lastExec: '03-10 11:00' },
+  { id: 31, name: '协作活跃成员', category: '深海圈', result: 'deep_collab_active: 活跃协作', condition: '近90天协作>=5次 AND 圈子活跃>=20次/月', freq: '每月', priority: 8, enabled: true, triggerType: '定时', hitCount: 19, lastExec: '03-01 03:00' },
   // 跨产品线
-  { id: 32, name: '全栈活跃用户', category: '全局通用', result: 'lc_engagement_tier: 核心用户', condition: '社区+航海+深海圈均有活跃行为', freq: '每周', priority: 9, enabled: true },
-  { id: 33, name: '高价值客户', category: '全局通用', result: 'txn_total_spent: 高消费', condition: '累计消费>=5000 AND 活跃度高', freq: '支付触发', priority: 10, enabled: true },
-  { id: 34, name: '流失预警-高价值', category: '全局通用', result: 'lc_churn_risk: 高价值流失', condition: '高价值客户 AND 近30天活跃度下降>=50%', freq: '每日', priority: 2, enabled: true },
-  { id: 35, name: '新人激活追踪', category: '全局通用', result: 'lc_onboarding: 未激活', condition: '注册>=3天 AND 新手任务<30% AND 无社区行为', freq: '每日', priority: 4, enabled: true }
+  { id: 32, name: '全栈活跃用户', category: '全局通用', result: 'lc_engagement_tier: 核心用户', condition: '社区+航海+深海圈均有活跃行为', freq: '每周', priority: 9, enabled: true, triggerType: '定时', hitCount: 56, lastExec: '03-24 03:00' },
+  { id: 33, name: '高价值客户', category: '全局通用', result: 'txn_total_spent: 高消费', condition: '累计消费>=5000 AND 活跃度高', freq: '支付触发', priority: 10, enabled: true, triggerType: '事件', hitCount: 198, lastExec: '3小时前' },
+  { id: 34, name: '流失预警-高价值', category: '全局通用', result: 'lc_churn_risk: 高价值流失', condition: '高价值客户 AND 近30天活跃度下降>=50%', freq: '每日', priority: 2, enabled: true, triggerType: '标签变更', hitCount: 7, lastExec: '今日 03:00' },
+  { id: 35, name: '新人激活追踪', category: '全局通用', result: 'lc_onboarding: 未激活', condition: '注册>=3天 AND 新手任务<30% AND 无社区行为', freq: '每日', priority: 4, enabled: true, triggerType: '定时', hitCount: 34, lastExec: '今日 03:00' }
 ];
 
 var tagDetailData = {
@@ -1767,14 +2004,12 @@ function toggleMenu(group) {
 
 function switchView(view) {
   document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('active'); });
-  document.querySelectorAll('.view-overview, .view-rules').forEach(function(v) { v.classList.remove('active'); });
-  if (view === 'overview') {
-    document.querySelectorAll('.view-tab')[0].classList.add('active');
-    document.getElementById('viewOverview').classList.add('active');
-  } else {
-    document.querySelectorAll('.view-tab')[1].classList.add('active');
-    document.getElementById('viewRules').classList.add('active');
-  }
+  document.querySelectorAll('.view-overview, .view-rules, .view-changelog').forEach(function(v) { v.classList.remove('active'); });
+  var tabIndex = { overview: 0, rules: 1, changelog: 2 };
+  document.querySelectorAll('.view-tab')[tabIndex[view] || 0].classList.add('active');
+  var viewEl = { overview: 'viewOverview', rules: 'viewRules', changelog: 'viewChangelog' };
+  document.getElementById(viewEl[view] || 'viewOverview').classList.add('active');
+  if (view === 'changelog') renderChangelog();
   // PRD context
   var prdPanel = document.querySelector('.prd-panel');
   if (prdPanel) {
@@ -1913,12 +2148,15 @@ function renderRulesTable() {
   tbody.innerHTML = '';
   rulesData.forEach(function(rule) {
     var tr = document.createElement('tr');
+    var triggerColors = { '事件': 'tag-primary', '定时': 'tag-info', '标签变更': 'tag-warning' };
     tr.innerHTML =
       '<td><a class="name-link" onclick="openRuleEditor(\'edit\', ' + rule.id + ')">' + rule.name + '</a></td>' +
       '<td><span class="tag tag-default">' + rule.category + '</span></td>' +
       '<td><span style="font-family:monospace;font-size:12px;color:var(--color-text-2);">' + rule.result + '</span></td>' +
+      '<td><span class="tag ' + (triggerColors[rule.triggerType] || 'tag-default') + '">' + (rule.triggerType || '—') + '</span></td>' +
       '<td><span class="cell-desc">' + rule.condition + '</span></td>' +
-      '<td>' + rule.freq + '</td>' +
+      '<td style="text-align:right;font-weight:500;">' + (rule.hitCount || 0).toLocaleString() + '</td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + (rule.lastExec || '—') + '</span></td>' +
       '<td style="text-align:center;">' + rule.priority + '</td>' +
       '<td><label class="toggle-switch"><input type="checkbox" ' + (rule.enabled ? 'checked' : '') + ' onchange="toggleRuleStatus(' + rule.id + ', this.checked)"><span class="toggle-slider"></span></label></td>' +
       '<td style="text-align:center;">' +
@@ -1967,7 +2205,7 @@ var tagCodeOptions = {
 
 var editPresets = {
   1: { name: '沉默用户', desc: '识别30天无有效行为的付费会员，自动打标为沉默用户', category: 'global', code: 'lc_silent_days', value: '30天沉默', freq: 'daily', priority: 5, cooldown: 7, groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '会员状态', op: '等于', val: '付费会员' },{ type: 'event', action: '没做过', event: '任意有效行为', count: '1', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '任意有效行为', count: '1', window: '近 7 天' }] }] },
-  7: { name: '续费风险', desc: '到期前30天且续费倾向分低于50的会员', category: 'global', code: 'lc_churn_risk', value: '续费风险', freq: 'daily', priority: 5, cooldown: '', groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '到期倒计时', op: '小于等于', val: '30' },{ type: 'attribute', dim: '续费状态', op: '等于', val: '未续费' },{ type: 'attribute', dim: '续费倾向分', op: '小于', val: '50' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '续费成功', count: '1', window: '全部时间' }] }] },
+  7: { name: '续费风险', desc: '到期前30天且续费倾向分低于50的会员，排除VIP人群包', category: 'global', code: 'lc_churn_risk', value: '续费风险', freq: 'daily', priority: 5, cooldown: '', triggerType: 'schedule', groups: [{ logic: 'AND', conditions: [{ type: 'attribute', dim: '到期倒计时', op: '小于等于', val: '30' },{ type: 'score', scoreType: '续费倾向分', op: '小于', val: '50' },{ type: 'tag', tagCode: 'txn_renewal_status', op: '等于', val: '未续费' },{ type: 'audience', op: '不属于', audience: 'VIP专属服务' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '续费成功', count: '1', window: '全部时间' }] }] },
   13: { name: '内容创作者', desc: '近30天发帖10篇以上的高产创作者', category: 'community', code: 'comm_post_freq', value: '高产', freq: 'daily', priority: 10, cooldown: '', groups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '10', window: '近 30 天' }] }], removeGroups: [{ logic: 'AND', conditions: [{ type: 'event', action: '做过', event: '发帖', count: '3', window: '近 30 天' }] }] }
 };
 
@@ -2099,7 +2337,10 @@ function renderConditionRow(section, gi, ci, cond) {
   var html = '<div class="rb-condition-row">';
   html += '<select class="rb-condition-select type-select" onchange="switchConditionType(\'' + section + '\', ' + gi + ', ' + ci + ', this.value)">' +
     '<option value="attribute"' + (cond.type === 'attribute' ? ' selected' : '') + '>属性</option>' +
-    '<option value="event"' + (cond.type === 'event' ? ' selected' : '') + '>事件</option></select>';
+    '<option value="event"' + (cond.type === 'event' ? ' selected' : '') + '>事件</option>' +
+    '<option value="tag"' + (cond.type === 'tag' ? ' selected' : '') + '>标签</option>' +
+    '<option value="score"' + (cond.type === 'score' ? ' selected' : '') + '>评分</option>' +
+    '<option value="audience"' + (cond.type === 'audience' ? ' selected' : '') + '>人群包</option></select>';
 
   if (cond.type === 'attribute') {
     html += '<select class="rb-condition-select" style="min-width:120px;">' +
@@ -2107,7 +2348,7 @@ function renderConditionRow(section, gi, ci, cond) {
     html += '<select class="rb-condition-select" style="min-width:80px;">' +
       '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>大于</option><option>小于</option><option>大于等于</option><option>小于等于</option><option>包含</option></select>';
     html += '<input class="rb-condition-input" style="width:100px;" value="' + (cond.val || '') + '" placeholder="值">';
-  } else {
+  } else if (cond.type === 'event') {
     html += '<select class="rb-condition-select" style="min-width:80px;">' +
       '<option>' + (cond.action || '做过') + '</option><option>做过</option><option>没做过</option></select>';
     html += '<select class="rb-condition-select" style="min-width:120px;">' +
@@ -2117,6 +2358,23 @@ function renderConditionRow(section, gi, ci, cond) {
     html += '<span class="rb-condition-text">次</span>';
     html += '<select class="rb-condition-select" style="min-width:90px;">' +
       '<option>' + (cond.window || '近 30 天') + '</option><option>近 7 天</option><option>近 30 天</option><option>近 90 天</option><option>近 180 天</option><option>全部时间</option></select>';
+  } else if (cond.type === 'tag') {
+    html += '<select class="rb-condition-select" style="min-width:150px;">' +
+      '<option>' + (cond.tagCode || '选择标签') + '</option><option>lc_stage</option><option>lc_health</option><option>lc_churn_risk</option><option>lc_engagement_tier</option><option>comm_creator_tier</option><option>nav_completion_rate</option><option>txn_renewal_status</option><option>id_wechat_status</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>包含任一</option><option>存在</option><option>不存在</option></select>';
+    html += '<input class="rb-condition-input" style="width:120px;" value="' + (cond.val || '') + '" placeholder="标签值">';
+  } else if (cond.type === 'score') {
+    html += '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option>' + (cond.scoreType || '选择评分') + '</option><option>健康分</option><option>续费倾向分</option><option>参与度分</option><option>CLV 分</option><option>RFM-R分</option><option>RFM-F分</option><option>RFM-M分</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '大于等于') + '</option><option>大于</option><option>大于等于</option><option>等于</option><option>小于等于</option><option>小于</option><option>区间</option></select>';
+    html += '<input class="rb-condition-input" style="width:60px;" value="' + (cond.val || '') + '" placeholder="分值">';
+  } else if (cond.type === 'audience') {
+    html += '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option>' + (cond.op || '属于') + '</option><option>属于</option><option>不属于</option></select>';
+    html += '<select class="rb-condition-select" style="min-width:160px;">' +
+      '<option>' + (cond.audience || '选择人群包') + '</option><option>活跃用户包</option><option>VIP专属服务</option><option>续费召回目标</option><option>高价值用户池</option><option>体验营高意向</option><option>航海学员池</option></select>';
   }
 
   html += '<button class="rb-condition-remove" onclick="removeCondition(\'' + section + '\', ' + gi + ', ' + ci + ')">&#10005;</button>';
@@ -2163,6 +2421,26 @@ function updateGroupLogic(section, gi, logic) {
 }
 
 function updateGroupConnector(section, gi, val) {}
+
+// ================================================================
+//  Tag Config Cascading
+// ================================================================
+
+// ================================================================
+//  Trigger Type Switching
+// ================================================================
+
+function switchTriggerType(type) {
+  document.querySelectorAll('.rb-trigger-option').forEach(function(o) { o.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  document.getElementById('triggerSubEvent').style.display = type === 'event' ? '' : 'none';
+  document.getElementById('triggerSubSchedule').style.display = type === 'schedule' ? '' : 'none';
+  document.getElementById('triggerSubTagChange').style.display = type === 'tag_change' ? '' : 'none';
+}
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
 
 // ================================================================
 //  Tag Config Cascading
@@ -2230,6 +2508,47 @@ function showToast(msg) {
   toast.textContent = msg;
   document.body.appendChild(toast);
   setTimeout(function() { toast.remove(); }, 1300);
+}
+
+// ================================================================
+//  Changelog
+// ================================================================
+
+var changelogData = [
+  { user: 'cust_08234', tag: 'lc_churn_risk', changeType: '新增', oldVal: '—', newVal: '高风险', source: '规则', rule: '续费风险', time: '2026-03-25 08:02' },
+  { user: 'cust_12456', tag: 'lc_stage', changeType: '更新', oldVal: 'active_member', newVal: 'silent_member', source: '模型', rule: '生命周期引擎', time: '2026-03-25 08:01' },
+  { user: 'cust_00891', tag: 'comm_creator_tier', changeType: '更新', oldVal: 'UGC活跃', newVal: 'UGC核心', source: '规则', rule: 'UGC核心创作者', time: '2026-03-25 08:01' },
+  { user: 'cust_05672', tag: 'lc_silent_days', changeType: '移除', oldVal: '30天沉默', newVal: '—', source: '规则', rule: '活跃回归', time: '2026-03-25 08:00' },
+  { user: 'cust_14523', tag: 'nav_stuck_point', changeType: '新增', oldVal: '—', newVal: '有卡点(L3)', source: '规则', rule: '学习卡点预警', time: '2026-03-25 03:15' },
+  { user: 'cust_03891', tag: 'txn_renewal_status', changeType: '更新', oldVal: '待续费', newVal: '已过期', source: '批量', rule: '到期状态计算', time: '2026-03-25 03:00' },
+  { user: 'cust_22145', tag: 'lc_health', changeType: '更新', oldVal: '良好', newVal: '一般', source: '模型', rule: '健康分引擎', time: '2026-03-25 03:00' },
+  { user: 'cust_09876', tag: 'id_wechat_status', changeType: '更新', oldVal: '好友', newVal: '客户删除', source: '规则', rule: '好友已删除', time: '2026-03-24 22:15' },
+  { user: 'cust_11234', tag: 'lc_engagement_tier', changeType: '更新', oldVal: 'L3参与', newVal: 'L2活跃', source: '模型', rule: '参与度引擎', time: '2026-03-24 08:00' },
+  { user: 'cust_07823', tag: 'comm_read_volume', changeType: '过期', oldVal: '重度', newVal: '—', source: '批量', rule: 'TTL过期清理', time: '2026-03-24 04:00' },
+  { user: 'cust_18901', tag: 'lc_churn_risk', changeType: '移除', oldVal: '续费风险', newVal: '—', source: '规则', rule: '续费风险(移除)', time: '2026-03-24 03:30' },
+  { user: 'cust_04567', tag: 'deep_role', changeType: '更新', oldVal: '水手', newVal: '船长', source: '手动', rule: '运营小李', time: '2026-03-23 16:40' }
+];
+
+function renderChangelog() {
+  var tbody = document.getElementById('changelogTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  var typeColors = { '新增': 'tag-success', '更新': 'tag-info', '移除': 'tag-warning', '过期': 'tag-default' };
+  var sourceColors = { '规则': 'tag-primary', '模型': 'tag-info', '批量': 'tag-default', '手动': 'tag-warning' };
+  changelogData.forEach(function(log) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span style="font-family:monospace;font-size:12px;">' + log.user + '</span></td>' +
+      '<td><span style="font-family:monospace;font-size:12px;">' + log.tag + '</span></td>' +
+      '<td><span class="tag ' + (typeColors[log.changeType] || 'tag-default') + '">' + log.changeType + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + log.oldVal + '</span></td>' +
+      '<td style="text-align:center;color:var(--color-text-4);">&#8594;</td>' +
+      '<td><span style="font-size:12px;font-weight:500;">' + log.newVal + '</span></td>' +
+      '<td><span class="tag ' + (sourceColors[log.source] || 'tag-default') + '">' + log.source + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-2);">' + log.rule + '</span></td>' +
+      '<td><span style="font-size:12px;color:var(--color-text-3);">' + log.time + '</span></td>';
+    tbody.appendChild(tr);
+  });
 }
 
 // ================================================================
