@@ -1169,6 +1169,7 @@
                   <option value="attribute" selected>用户属性</option>
                   <option value="event">用户行为</option>
                   <option value="tag">标签</option>
+                  <option value="score">评分</option>
                   <option value="audience">人群包</option>
                 </select>
                 <select class="rb-condition-select" style="min-width:110px;">
@@ -1415,6 +1416,7 @@ var conditionTemplates = {
       '<option value="attribute" selected>用户属性</option>' +
       '<option value="event">用户行为</option>' +
       '<option value="tag">标签</option>' +
+      '<option value="score">评分</option>' +
       '<option value="audience">人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:110px;">' +
@@ -1438,6 +1440,7 @@ var conditionTemplates = {
       '<option value="attribute">用户属性</option>' +
       '<option value="event" selected>用户行为</option>' +
       '<option value="tag">标签</option>' +
+      '<option value="score">评分</option>' +
       '<option value="audience">人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
@@ -1461,6 +1464,7 @@ var conditionTemplates = {
       '<option value="attribute">用户属性</option>' +
       '<option value="event">用户行为</option>' +
       '<option value="tag" selected>标签</option>' +
+      '<option value="score">评分</option>' +
       '<option value="audience">人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select tag-source-select" style="min-width:100px;" onchange="onTagSourceChange(this)">' +
@@ -1477,11 +1481,30 @@ var conditionTemplates = {
       '</select>' +
       '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
   },
+  score: function() {
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option>' +
+      '<option value="event">用户行为</option>' +
+      '<option value="tag">标签</option>' +
+      '<option value="score" selected>评分</option>' +
+      '<option value="audience">人群包</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option value="">选择评分</option><option>健康分</option><option>续费倾向分</option><option>参与度分</option><option>CLV分</option><option>RFM-R分</option><option>RFM-F分</option><option>RFM-M分</option>' +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option><option>大于</option><option>大于等于</option><option>等于</option><option>小于等于</option><option>小于</option><option>区间</option>' +
+      '</select>' +
+      '<input class="rb-condition-input" type="number" placeholder="分值" min="0" max="100" style="width:60px;">' +
+      '<span class="rb-condition-text" style="color:var(--color-text-4);">/ 100</span>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  },
   audience: function() {
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
       '<option value="attribute">用户属性</option>' +
       '<option value="event">用户行为</option>' +
       '<option value="tag">标签</option>' +
+      '<option value="score">评分</option>' +
       '<option value="audience" selected>人群包</option>' +
       '</select>' +
       '<select class="rb-condition-select" style="min-width:100px;">' +
@@ -1574,29 +1597,31 @@ function onTagGroupChange(select) {
 var editPresets = {
   '续费召回目标': {
     name: '续费召回目标',
-    desc: '会员即将到期或已过期，近期未登录的用户（排除VIP）',
+    desc: '会员即将到期或已过期，续费倾向分低，近期未登录的用户（排除VIP）',
     refresh: 'daily',
     groups: [
       {
         logic: 'and',
-        connector: null, // first group has no connector
+        connector: null,
         conditions: [
           { type: 'attribute', dimension: '会员状态', operator: '等于', value: '在期' },
           { type: 'attribute', dimension: '到期时间', operator: 'N天内', value: '30' },
+          { type: 'score', scoreType: '续费倾向分', operator: '小于', value: '50' },
           { type: 'event', occurrence: 'did_not', event: '登录', count: '', window: '过去7天' }
         ]
       },
       {
         logic: 'and',
-        connector: 'or', // 或
+        connector: 'or',
         conditions: [
           { type: 'attribute', dimension: '会员状态', operator: '等于', value: '已过期' },
-          { type: 'attribute', dimension: '到期时间', operator: 'N天内', value: '90' }
+          { type: 'attribute', dimension: '到期时间', operator: 'N天内', value: '90' },
+          { type: 'tag', tagSource: 'auto', tagGroup: '全局-生命周期', operator: '包含', tagValue: '流失期' }
         ]
       },
       {
         logic: 'or',
-        connector: 'and_not', // 且非 — 排除VIP
+        connector: 'and_not',
         conditions: [
           { type: 'attribute', dimension: '客户等级', operator: '等于', value: 'S' },
           { type: 'audience', operator: 'in', audienceName: 'VIP专属服务' }
@@ -1761,7 +1786,7 @@ function buildConditionRow(c) {
     var valOptions = ['在期','已过期','未开通','S','A','B','C','传术师','航海家','普通圈友','管理员','高','中','低','新手期','成长期','成熟期','沉默期','流失期','优秀','良好','一般','活跃会员','沉默会员','资深','经验','体验','领航人','船长','水手'];
 
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute" selected>用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="audience">人群包</option></select>' +
+      '<option value="attribute" selected>用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="score">评分</option><option value="audience">人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:110px;">' +
       '<option value="">选择维度</option>' + dimOptions.map(function(d) { return '<option' + (d === c.dimension ? ' selected' : '') + '>' + d + '</option>'; }).join('') +
       '</select>' +
@@ -1779,7 +1804,7 @@ function buildConditionRow(c) {
     var windows = ['过去7天','过去30天','过去90天','今天','本周','本月'];
     var isDid = c.occurrence !== 'did_not';
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute">用户属性</option><option value="event" selected>用户行为</option><option value="tag">标签</option><option value="audience">人群包</option></select>' +
+      '<option value="attribute">用户属性</option><option value="event" selected>用户行为</option><option value="tag">标签</option><option value="score">评分</option><option value="audience">人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
       '<option value="did"' + (isDid ? ' selected' : '') + '>做过</option><option value="did_not"' + (!isDid ? ' selected' : '') + '>没做过</option></select>' +
       '<select class="rb-condition-select" style="min-width:90px;">' +
@@ -1812,7 +1837,7 @@ function buildConditionRow(c) {
       }
     }
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag" selected>标签</option><option value="audience">人群包</option></select>' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag" selected>标签</option><option value="score">评分</option><option value="audience">人群包</option></select>' +
       '<select class="rb-condition-select tag-source-select" style="min-width:100px;" onchange="onTagSourceChange(this)">' +
       '<option value="">标签来源</option><option value="wecom"' + (src==='wecom'?' selected':'') + '>企微标签</option><option value="crm"' + (src==='crm'?' selected':'') + '>CRM标签</option><option value="auto"' + (src==='auto'?' selected':'') + '>自动化标签</option></select>' +
       '<select class="rb-condition-select tag-group-select" style="min-width:110px;" onchange="onTagGroupChange(this)">' +
@@ -1823,10 +1848,25 @@ function buildConditionRow(c) {
       '<option value="">选择标签</option>' + tagOptions + '</select>' +
       '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
   }
+  if (c.type === 'score') {
+    var scores = ['健康分','续费倾向分','参与度分','CLV分','RFM-R分','RFM-F分','RFM-M分'];
+    var scoreOps = ['大于','大于等于','等于','小于等于','小于','区间'];
+    return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="score" selected>评分</option><option value="audience">人群包</option></select>' +
+      '<select class="rb-condition-select" style="min-width:120px;">' +
+      '<option value="">选择评分</option>' + scores.map(function(s) { return '<option' + (s === c.scoreType ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+      '</select>' +
+      '<select class="rb-condition-select" style="min-width:80px;">' +
+      '<option value="">操作符</option>' + scoreOps.map(function(o) { return '<option' + (o === c.operator ? ' selected' : '') + '>' + o + '</option>'; }).join('') +
+      '</select>' +
+      '<input class="rb-condition-input" type="number" value="' + (c.value || '') + '" placeholder="分值" min="0" max="100" style="width:60px;">' +
+      '<span class="rb-condition-text" style="color:var(--color-text-4);">/ 100</span>' +
+      '<button class="rb-condition-remove" onclick="removeCondition(this)" title="删除条件">×</button>';
+  }
   if (c.type === 'audience') {
     var packs = ['高价值活跃用户','续费召回目标','VIP专属服务','航海活跃参与者','沉默用户召回','新手任务完成用户'];
     return '<select class="rb-condition-select type-select" onchange="switchConditionType(this)">' +
-      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="audience" selected>人群包</option></select>' +
+      '<option value="attribute">用户属性</option><option value="event">用户行为</option><option value="tag">标签</option><option value="score">评分</option><option value="audience" selected>人群包</option></select>' +
       '<select class="rb-condition-select" style="min-width:100px;">' +
       '<option value="in"' + (c.operator === 'in' ? ' selected' : '') + '>属于</option><option value="not_in"' + (c.operator === 'not_in' ? ' selected' : '') + '>不属于</option></select>' +
       '<select class="rb-condition-select" style="min-width:150px;">' +
