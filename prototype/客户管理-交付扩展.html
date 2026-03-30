@@ -4849,7 +4849,7 @@ function enterShenhaiView() {
       '<td style="text-align:center">' + u.posts + '</td>' +
       '<td style="text-align:center">' + u.groupMsg + '次</td>' +
       '<td>' + (u.tags ? u.tags.split(' ').map(function(t){ return '<span class="tag tag-default">' + t + '</span>'; }).join(' ') : '—') + '</td>' +
-      '<td class="sticky-right" style="text-align:center"><button class="btn btn-text" onclick="openShenhaiDetail(' + i + ')">详情</button></td>' +
+      '<td class="sticky-right" style="text-align:center"><button class="btn btn-text" onclick="openShenhaiDetail(' + i + ')">详情</button><button class="btn btn-text">打标签</button></td>' +
       '</tr>';
   }
   tbody.innerHTML = rows;
@@ -5019,17 +5019,29 @@ function openShenhaiDetail(idx) {
       '</div>' +
     '</div>' +
 
-    // AI 客户分析 — 同官网 AI 画像总结位置
-    '<div class="ai-summary-card">' +
+    // AI 客户分析 — 初始空状态，点击生成
+    '<div class="ai-summary-card" id="shAiCard">' +
       '<div class="ai-summary-header">' +
         '<svg class="ai-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>' +
         '<span class="ai-summary-title">AI 客户分析</span>' +
       '</div>' +
-      '<div class="ai-summary-body">' + (u.aiSummary || '') + '</div>' +
-      '<div class="ai-summary-tags">' + aiTagsHtml + '</div>' +
-      '<div class="ai-summary-footer">' +
-        '<span class="ai-summary-time">生成于 2026-03-30 14:00</span>' +
-        '<button class="ai-summary-refresh"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> 重新生成</button>' +
+      '<div class="ai-summary-empty" id="shAiEmpty">' +
+        '<div class="ai-summary-empty-text">基于客户学习行为、社区活跃等全维度数据，AI 自动生成客户分析</div>' +
+        '<button class="ai-summary-generate-btn" onclick="generateShenhaiAi(' + idx + ')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>' +
+          '生成客户分析' +
+        '</button>' +
+      '</div>' +
+      '<div class="ai-summary-result" id="shAiResult" style="display:none;">' +
+        '<div class="ai-summary-body" id="shAiBody"></div>' +
+        '<div class="ai-summary-tags" id="shAiTags" style="display:none;">' + aiTagsHtml + '</div>' +
+        '<div class="ai-summary-footer" id="shAiFooter" style="display:none;">' +
+          '<span class="ai-summary-time"></span>' +
+          '<button class="ai-summary-refresh" onclick="generateShenhaiAi(' + idx + ')">' +
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>' +
+            ' 重新生成' +
+          '</button>' +
+        '</div>' +
       '</div>' +
     '</div>' +
 
@@ -5168,6 +5180,63 @@ function openShenhaiDetail(idx) {
   modal.classList.remove('hiding');
   modal.classList.add('show');
   if (typeof setPrdView === 'function') setPrdView('detail');
+}
+
+/* ======== 深海圈 AI 客户分析 — 流式生成 ======== */
+var shAiGenerating = false;
+function generateShenhaiAi(idx) {
+  if (shAiGenerating) return;
+  shAiGenerating = true;
+  var u = shenhaiDetailData[idx];
+  var card = document.getElementById('shAiCard');
+  var empty = document.getElementById('shAiEmpty');
+  var result = document.getElementById('shAiResult');
+  var body = document.getElementById('shAiBody');
+  var tags = document.getElementById('shAiTags');
+  var footer = document.getElementById('shAiFooter');
+
+  empty.style.display = 'none';
+  result.style.display = '';
+  tags.style.display = 'none';
+  footer.style.display = 'none';
+  body.innerHTML = '<span class="ai-summary-cursor"></span>';
+  card.classList.add('ai-summary-generating');
+
+  // Build segments from aiSummary text
+  var text = u.aiSummary || '';
+  var chars = [];
+  for (var i = 0; i < text.length; i++) {
+    chars.push(text[i]);
+  }
+
+  var ci = 0;
+  var cursor = body.querySelector('.ai-summary-cursor');
+  function typeNext() {
+    if (ci >= chars.length) {
+      if (cursor) cursor.remove();
+      card.classList.remove('ai-summary-generating');
+      tags.style.display = '';
+      tags.style.opacity = '0';
+      tags.style.transition = 'opacity 0.3s';
+      setTimeout(function() { tags.style.opacity = '1'; }, 50);
+      footer.style.display = '';
+      footer.style.opacity = '0';
+      footer.style.transition = 'opacity 0.3s';
+      setTimeout(function() { footer.style.opacity = '1'; }, 100);
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      footer.querySelector('.ai-summary-time').textContent = '生成于 ' + now.toISOString().split('T')[0] + ' ' + h + ':' + m;
+      shAiGenerating = false;
+      return;
+    }
+    body.insertBefore(document.createTextNode(chars[ci]), cursor);
+    ci++;
+    var delay = 18 + Math.random() * 14;
+    if ('，。、！？；：（）'.indexOf(chars[ci - 1]) !== -1) delay = 60 + Math.random() * 40;
+    setTimeout(typeNext, delay);
+  }
+  setTimeout(typeNext, 600);
 }
 
 // 点击沟通时间轴条目，滚动到对应日期的聊天记录
