@@ -4382,7 +4382,7 @@
     <div class="prd-section-title green">2. 搜索筛选区</div>
     <div class="prd-item"><strong>昵称/手机号/用户ID</strong> — 文本模糊搜索</div>
     <div class="prd-item"><strong>所属圈子</strong> — <strong>多选 checkbox 下拉</strong>（AI产品出海 / YouTube AI 视频 / B站好物）</div>
-    <div class="prd-item"><strong>状态</strong> — 下拉：正常 / 已退出 / 已移除</div>
+    <div class="prd-item"><strong>状态</strong> — 下拉：正常 / 已退出</div>
     <div class="prd-item"><strong>用户活跃情况</strong> — 下拉：连续一周不活跃 / 连续两周不活跃 / 超过一个月未活跃</div>
     <div class="prd-item"><strong>鱼丸</strong> — 下拉</div>
     <div class="prd-item"><strong>专属销售</strong> — 下拉（员工列表）</div>
@@ -4901,7 +4901,7 @@ function enterShenhaiView() {
         '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;cursor:pointer;"><input type="checkbox" value="B站好物" style="accent-color:#36A590;"> B站好物</label>' +
       '</div>' +
     '</div>' +
-    '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
+    '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">鱼丸</option><option>鱼丸120</option><option>鱼丸580</option></select>' +
     '<select class="filter-select sm"><option value="">专属销售</option><option>潇墨</option><option>李李</option><option>麻球</option><option>乔溪</option></select>' +
@@ -4941,8 +4941,7 @@ function enterShenhaiView() {
     { id:100891, name:'张小鱼', phone:'139****8901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'乔溪', service:'麻球', courses:'25/25', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
     { id:101023, name:'陈梦琪', phone:'136****4567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', join:'2026-01-10', expire:'2027-01-09', yuwan:'鱼丸 120', sales:'潇墨', service:'乔溪', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
     { id:101156, name:'刘大伟', phone:'137****7890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 320', sales:'李李', service:'李李', courses:'18/22', noStudy:5, posts:78, groupMsg:345, tags:'千刀户' },
-    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' },
-    { id:101432, name:'周明', phone:'159****5678', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 120', sales:'乔溪', service:'麻球', courses:'2/25', noStudy:92, posts:0, groupMsg:3, tags:'' }
+    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' }
   ];
   var rows = '';
   for (var i = 0; i < shUsers.length; i++) {
@@ -5059,16 +5058,6 @@ var shenhaiDetailData = [
     customTags:[], remark:'因个人原因退出，表示未来可能回归',
     aiSummary:'二期学员，已退出。退出前连续一个月未活跃，课程完成度低。建议定期保持轻度联系。',
     aiTags:['已退出','回归可能','低完成度','需跟踪']
-  },
-  { id:101432, name:'周明', phone:'159****5678', wechat:'zhouming_biz', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'超过一个月未活跃', achievement:'',
-    circles:[
-      {name:'B站好物', join:'2024-12-01', expire:'2025-11-30', courseLearned:2, courseCompleted:0, liveWatched:0, lastStudy:'2024-12-28 15:00', noStudy:92, homework:0, courses:[{name:'电商选品方法论',p:15}]}
-    ],
-    posts:0, comments:0, likes:0, anchors:0, lastLogin:'2025-01-05 09:00', noLoginDays:449,
-    groupMsg:3, lastGroupMsg:'2024-12-20 11:00',
-    customTags:[], remark:'多次违反社区规范，经警告无效后移除',
-    aiSummary:'一期学员，因多次违规被移除。加入后几乎未学习，社区零互动。不建议重新邀请。',
-    aiTags:['已移除','违规用户','零互动']
   }
 ];
 
