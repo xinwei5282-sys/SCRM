@@ -50,8 +50,8 @@
       "status": "in_progress",
       "depends_on": [2],
       "started_at": "2026-03-30T18:41:00+08:00",
-      "completed_at": null,
-      "notes": ""
+      "completed_at": "2026-03-30T18:50:00+08:00",
+      "notes": "8个核心运营场景(新人引导/学习中断/流失预警/续费触达/活跃促进/成果激励/多圈推荐/沉默唤醒)，每个场景含触发标签+执行动作+预期效果，映射已有规则编号。"
     },
     {
       "id": 4,
@@ -63,9 +63,9 @@
         "CDP_标签与评分框架.md 同步更新"
       ],
       "priority": 4,
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": [3],
-      "started_at": null,
+      "started_at": "2026-03-30T18:51:00+08:00",
       "completed_at": null,
       "notes": ""
     }
