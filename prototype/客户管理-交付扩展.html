@@ -4785,7 +4785,14 @@ function enterShenhaiView() {
   // Replace filters
   filterRow.innerHTML =
     '<input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID">' +
-    '<select class="filter-select sm"><option value="">所属圈子</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
+    '<div style="position:relative;display:inline-block;">' +
+      '<div class="filter-select sm" style="cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';">所属圈子 <span style="font-size:11px;color:var(--color-text-4);">▾</span></div>' +
+      '<div style="display:none;position:absolute;top:34px;left:0;background:#fff;border:1px solid var(--color-border-default);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:6px 0;z-index:50;min-width:160px;">' +
+        '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;cursor:pointer;"><input type="checkbox" value="AI产品出海" style="accent-color:#36A590;"> AI产品出海</label>' +
+        '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;cursor:pointer;"><input type="checkbox" value="YouTube AI 视频" style="accent-color:#36A590;"> YouTube AI 视频</label>' +
+        '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;cursor:pointer;"><input type="checkbox" value="B站好物" style="accent-color:#36A590;"> B站好物</label>' +
+      '</div>' +
+    '</div>' +
     '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
@@ -4805,7 +4812,7 @@ function enterShenhaiView() {
     '<tr>' +
     '<th style="width:70px;">用户ID</th>' +
     '<th style="width:180px;">用户信息</th>' +
-    '<th style="width:120px;">深海圈</th>' +
+    '<th style="width:120px;">所属圈子</th>' +
     '<th style="width:70px; text-align:center;">状态</th>' +
     '<th>鱼丸</th>' +
     '<th>专属销售</th>' +
