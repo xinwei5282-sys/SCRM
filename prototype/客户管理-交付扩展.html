@@ -5055,8 +5055,10 @@ function openShenhaiDetail(idx) {
       '<div class="detail-tab active" data-tab="profile">客户档案</div>' +
       '<div class="detail-tab" data-tab="followup">跟进记录</div>' +
       '<div class="detail-tab" data-tab="activity">客户动态</div>' +
+      '<div class="detail-tab" data-tab="points">积分记录</div>' +
       '<div class="detail-tab" data-tab="orders">订单列表</div>' +
       '<div class="detail-tab" data-tab="changes">变更记录</div>' +
+      '<div class="detail-tab" data-tab="chat">聊天记录</div>' +
     '</div>' +
     '<div class="tab-panel active" data-panel="profile">' +
     '<div class="profile-table"><table>' +
@@ -5085,11 +5087,57 @@ function openShenhaiDetail(idx) {
       '<tr><th>群发言次数</th><td>' + u.groupMsg + ' 次（近30天）</td><th>最近群发言</th><td>' + u.lastGroupMsg + '</td></tr>' +
     '</table></div>' +
     '</div>' +
-    // 其他 tab placeholder
+    // 跟进记录
     '<div class="tab-panel" data-panel="followup" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无跟进记录</div>' +
+    // 客户动态
     '<div class="tab-panel" data-panel="activity" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无客户动态</div>' +
+    // 积分记录
+    '<div class="tab-panel" data-panel="points">' +
+      '<div class="points-container">' +
+        '<div class="points-summary">' +
+          '<div class="points-card">' +
+            '<div class="points-card-header"><div class="points-card-icon icon-longzhu">珠</div><span class="points-card-name">龙珠</span></div>' +
+            '<div class="points-card-value">' + (u.achievement === '万刀户' ? '5' : u.achievement === '千刀户' ? '2' : '0') + '</div>' +
+            '<div class="points-card-sub"><span class="pts-in">+' + (u.achievement === '万刀户' ? '8' : u.achievement === '千刀户' ? '3' : '0') + ' 获取</span><span class="pts-out">-' + (u.achievement === '万刀户' ? '3' : u.achievement === '千刀户' ? '1' : '0') + ' 消耗</span></div>' +
+          '</div>' +
+          '<div class="points-card">' +
+            '<div class="points-card-header"><div class="points-card-icon icon-suipian">碎</div><span class="points-card-name">碎片</span></div>' +
+            '<div class="points-card-value">' + Math.floor(u.posts / 5) + '</div>' +
+            '<div class="points-card-sub"><span class="pts-in">+' + Math.floor(u.posts / 3) + ' 获取</span><span class="pts-out">-' + Math.floor(u.posts / 10) + ' 消耗</span></div>' +
+          '</div>' +
+          '<div class="points-card">' +
+            '<div class="points-card-header"><div class="points-card-icon icon-shuzhi">值</div><span class="points-card-name">术值</span></div>' +
+            '<div class="points-card-value">' + (u.posts * 2 + u.comments + u.likes) + '</div>' +
+            '<div class="points-card-sub"><span class="pts-in">+' + (u.posts * 3 + u.comments * 2 + u.likes) + ' 获取</span><span class="pts-out">-' + (u.posts + u.comments) + ' 消耗</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="points-filter">' +
+          '<span class="points-filter-label">积分类型</span>' +
+          '<select><option>全部</option><option>龙珠</option><option>术值</option><option>碎片</option></select>' +
+          '<span class="points-filter-label" style="margin-left:8px;">变动方向</span>' +
+          '<select><option>全部</option><option>获取（发放）</option><option>消耗（兑换）</option></select>' +
+        '</div>' +
+        '<div class="points-table-wrap"><table class="points-table">' +
+          '<thead><tr><th>时间</th><th>积分类型</th><th>变动</th><th>余额</th><th>来源/用途</th><th>备注</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>2026-03-28 14:30</td><td><span class="pts-type-tag type-suipian">碎片</span></td><td><span class="pts-amount-in">+1</span></td><td>' + Math.floor(u.posts / 5) + '</td><td>发布优质文章</td><td>原创文章被评为精华帖</td></tr>' +
+            '<tr><td>2026-03-25 16:00</td><td><span class="pts-type-tag type-shuzhi">术值</span></td><td><span class="pts-amount-in">+2</span></td><td>' + (u.posts * 2 + u.comments + u.likes) + '</td><td>完成课程学习</td><td>完成《' + (u.courses[0] ? u.courses[0].name : '课程') + '》全部内容</td></tr>' +
+            '<tr><td>2026-03-20 10:20</td><td><span class="pts-type-tag type-suipian">碎片</span></td><td><span class="pts-amount-in">+1</span></td><td>' + (Math.floor(u.posts / 5) - 1) + '</td><td>社区互动</td><td>帖子获得10+点赞</td></tr>' +
+            '<tr><td>2026-03-18 09:00</td><td><span class="pts-type-tag type-shuzhi">术值</span></td><td><span class="pts-amount-in">+1</span></td><td>' + (u.posts * 2 + u.comments + u.likes - 2) + '</td><td>提交作业</td><td>提交学习作业并获得教练点评</td></tr>' +
+            '<tr><td>2026-03-15 11:30</td><td><span class="pts-type-tag type-longzhu">龙珠</span></td><td><span class="pts-amount-in">+1</span></td><td>' + (u.achievement === '万刀户' ? '5' : u.achievement === '千刀户' ? '2' : '0') + '</td><td>深海圈贡献</td><td>帮助新成员解决问题，获得教练推荐</td></tr>' +
+            '<tr><td>2026-03-10 14:00</td><td><span class="pts-type-tag type-shuzhi">术值</span></td><td><span class="pts-amount-out">-50</span></td><td>' + (u.posts * 2 + u.comments + u.likes - 3) + '</td><td>抵扣深海圈费用</td><td>抵扣部分深海圈会员费</td></tr>' +
+            '<tr><td>2026-03-05 16:30</td><td><span class="pts-type-tag type-suipian">碎片</span></td><td><span class="pts-amount-out">-1</span></td><td>' + (Math.floor(u.posts / 5) - 2) + '</td><td>兑换直播回放</td><td>兑换往期直播回放权限</td></tr>' +
+            '<tr><td>2026-03-01 09:00</td><td><span class="pts-type-tag type-shuzhi">术值</span></td><td><span class="pts-amount-in">+3</span></td><td>' + (u.posts * 2 + u.comments + u.likes + 47) + '</td><td>参与群讨论</td><td>在群内分享实战经验被多人点赞</td></tr>' +
+          '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+    '</div>' +
+    // 订单列表
     '<div class="tab-panel" data-panel="orders" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无订单记录</div>' +
-    '<div class="tab-panel" data-panel="changes" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无变更记录</div>';
+    // 变更记录
+    '<div class="tab-panel" data-panel="changes" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无变更记录</div>' +
+    // 聊天记录
+    '<div class="tab-panel" data-panel="chat" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无聊天记录</div>';
 
   // Bind tab switching
   mainEl.querySelectorAll('.detail-tab').forEach(function(tab) {
