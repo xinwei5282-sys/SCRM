@@ -268,6 +268,12 @@
         </div>
       </div>
       <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>深海圈</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='深海圈客户管理.html'">客户管理</div>
+        </div>
+      </div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
         <div class="menu-item"><span>营销</span><span class="arrow">&#8250;</span></div>
         <div class="menu-sub">
           <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
@@ -595,16 +601,16 @@
   <!-- Section 10: 数据字典 — 全局身份 -->
   <div class="prd-section" id="prd-s10">
     <div class="prd-section-title blue">10. 数据字典 — 全局身份标签 (id_*) 14个</div>
-    <div class="prd-item"><strong>id_member_level</strong> 会员等级 — 基于续费次数：体验会员（体验营在期）/ 正式会员（首年）/ 老会员（续费≥2）| 鱼丸系统 | 实时</div>
+    <div class="prd-item"><strong>id_member_level</strong> 会员等级 — 基于会员状态：体验会员（体验营在期）/ 在期会员（年费在期）/ 往期会员（年费已过期）| 鱼丸系统 | 实时</div>
     <div class="prd-item"><strong>id_member_period</strong> 入圈期数 — 首次付费订单对应期数：第N期 | 鱼丸系统 | 订单触发</div>
     <div class="prd-item"><strong>id_customer_level</strong> 客户等级 — 手动评定或CLV映射：S(Top5%) / A / B / C / D | CRM | 手动/规则</div>
-    <div class="prd-item"><strong>id_role</strong> 社群角色 — 直接同步：普通圈友 / 传术师 / 航海家 / 管理员 | 鱼丸系统 | 同步</div>
+    <div class="prd-item"><strong>id_role</strong> 社群角色 — 直接同步：普通圈友 / 传术师 / 航海家 / 组局官 / 嘉宾 / KOC / 管理员 | 鱼丸系统 | 同步</div>
     <div class="prd-item"><strong>id_source_channel</strong> 来源渠道 — 首次添加好友时记录：视频号 / 公众号 / 小红书 / 知乎 / 朋友推荐 / 线下活动 / 搜索引擎 / 合作导流 | CRM | 首次添加</div>
     <div class="prd-item"><strong>id_source_type</strong> 来源类型 — 基于渠道分类映射：自然流量 / 付费投放 / KOC推荐 / 老带新 | CRM | 首次添加</div>
-    <div class="prd-item"><strong>id_referrer</strong> 推荐人 — 推荐关系绑定：用户ID/昵称 | CRM | 首次添加</div>
+    <div class="prd-item"><strong>id_referrer</strong> 推荐人 — 推荐关系绑定：用户ID/昵称/星球编号 | CRM | 首次添加</div>
     <div class="prd-item"><strong>id_sales_owner</strong> 专属销售 — 分配关系：员工名 | CRM | 分配时</div>
     <div class="prd-item"><strong>id_service_owner</strong> 专属服务 — 分配关系：员工名 | CRM | 分配时</div>
-    <div class="prd-item"><strong>id_wechat_status</strong> 好友状态 — 企微回调实时同步：好友 / 客户删除 / 随身删除 / 未添加 | 企微 | 实时</div>
+    <div class="prd-item"><strong>id_wechat_status</strong> 好友状态 — 企微回调实时同步：双向好友 / 客户删除后 / 双向删除 | 企微 | 实时</div>
     <div class="prd-item"><strong>id_trial_batch</strong> 体验营期数 — 报名时记录：期数编号 | CRM | 报名时</div>
     <div class="prd-item"><strong>id_region</strong> 所在城市 — 调研问卷：城市名 | 调研 | 填写时</div>
     <div class="prd-item"><strong>id_occupation</strong> 职业类型 — 调研问卷：互联网 / 金融 / 自由职业 / 实体经营 | 调研 | 填写时</div>
@@ -615,7 +621,7 @@
   <div class="prd-section" id="prd-s11">
     <div class="prd-section-title blue">11. 数据字典 — 全局交易标签 (txn_*) 10个</div>
     <div class="prd-item"><strong>txn_total_spent</strong> 累计消费 — <code>SUM(已支付订单金额)</code>：高消费(≥10000) / 中(3000-9999) / 低(&lt;3000) | 订单 | 支付成功</div>
-    <div class="prd-item"><strong>txn_purchase_count</strong> 购买次数 — <code>COUNT(已支付订单)</code>：多次(≥5) / 几次(2-4) / 首次(1) | 订单 | 支付成功</div>
+    <div class="prd-item"><strong>txn_purchase_count</strong> 下单次数 — <code>COUNT(已支付订单)</code>：具体次数（1、2、3…） | 订单 | 支付成功</div>
     <div class="prd-item"><strong>txn_latest_product</strong> 最近购买 — 最近一笔订单商品名：年费会员 / 航海门票 / 深海圈 / 周边 | 订单 | 支付成功</div>
     <div class="prd-item"><strong>txn_renewal_count</strong> 续费次数 — <code>COUNT(续费订单)</code>不含首次：0 / 1 / 2 / 3+ | 订单 | 续费成功</div>
     <div class="prd-item"><strong>txn_renewal_status</strong> 续费状态 — 基于到期时间+续费记录：首年 / 已续费 / 待续费(到期前90天) / 已过期 | 订单 | 每日</div>
@@ -1217,16 +1223,16 @@ var auto = {
   ],
   tags: {
     id: [
-      {name:'会员等级',code:'id_member_level',values:'体验会员 / 正式会员 / 老会员(续费≥2)',freq:'实时',rules:2,enabled:true,source:'鱼丸系统',window:'—',description:'基于用户的会员订单和续费记录自动判定',logic:[{value:'体验会员',condition:'已领取体验卡但未购买正式会员'},{value:'正式会员',condition:'已购买正式会员且在有效期内'},{value:'老会员',condition:'续费次数 ≥ 2 次'}]},
+      {name:'会员等级',code:'id_member_level',values:'体验会员 / 在期会员 / 往期会员',freq:'实时',rules:2,enabled:true,source:'鱼丸系统',window:'—',description:'基于用户的会员状态自动判定',logic:[{value:'体验会员',condition:'已领取体验卡但未购买正式会员'},{value:'在期会员',condition:'年费会员且在有效期内'},{value:'往期会员',condition:'年费会员已过期'}]},
       {name:'入圈期数',code:'id_member_period',values:'第8期、第9期',freq:'订单触发',rules:0,enabled:true,source:'鱼丸系统',window:'—',description:'根据首次购买会员订单的期数自动标记',logic:[{value:'第N期',condition:'首次购买会员时对应的招募期数'}]},
-      {name:'客户等级',code:'id_customer_level',values:'S / A / B / C / D',freq:'手动/规则',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'综合消费金额、活跃度、续费情况评定',logic:[{value:'S',condition:'CLV Top5% 且续费≥2次'},{value:'A',condition:'CLV Top20% 且近期活跃'},{value:'B',condition:'CLV Top50%'},{value:'C',condition:'CLV Bottom50%'},{value:'D',condition:'未付费或已流失'}]},
-      {name:'社群角色',code:'id_role',values:'普通圈友 / 传术师 / 航海家 / 管理员',freq:'系统同步',rules:1,enabled:true,source:'鱼丸系统',window:'—',description:'系统同步用户在社群中的角色',logic:[{value:'普通圈友',condition:'默认角色'},{value:'传术师',condition:'被官方授予传术师身份'},{value:'航海家',condition:'购买航海家权益'},{value:'管理员',condition:'具有管理权限'}]},
+      {name:'客户等级',code:'id_customer_level',values:'S+ / S / A / B',freq:'手动/规则',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'综合消费金额、活跃度、续费情况评定',logic:[{value:'S+',condition:'CLV Top5%'},{value:'S',condition:'CLV Top15%'},{value:'A',condition:'CLV Top40%'},{value:'B',condition:'CLV Bottom60%'}]},
+      {name:'社群角色',code:'id_role',values:'普通圈友 / 传术师 / 航海家 / 组局官 / 嘉宾 / KOC / 管理员',freq:'系统同步',rules:1,enabled:true,source:'鱼丸系统',window:'—',description:'系统同步用户在社群中的角色',logic:[{value:'普通圈友',condition:'默认角色'},{value:'传术师',condition:'被官方授予传术师身份'},{value:'航海家',condition:'购买航海家权益'},{value:'组局官',condition:'组织线下/线上组局活动'},{value:'嘉宾',condition:'受邀嘉宾身份'},{value:'KOC',condition:'关键意见消费者'},{value:'管理员',condition:'具有管理权限'}]},
       {name:'一级渠道',code:'id_channel_l1',values:'视频号 / 公众号 / 合作导流 / 老带新',freq:'首次添加',rules:0,enabled:true,source:'企微活码',window:'—',description:'同步企微标签组名称（一级渠道）',logic:[{value:'视频号',condition:'企微标签组名 = 视频号'},{value:'公众号',condition:'企微标签组名 = 公众号'},{value:'合作导流',condition:'企微标签组名 = 合作导流'},{value:'老带新',condition:'企微标签组名 = 老带新'}]},
       {name:'二级渠道',code:'id_channel_l2',values:'坤哥直播 / 文末引流 / 小红书',freq:'首次添加',rules:0,enabled:true,source:'企微活码',window:'—',description:'同步企微标签值（二级渠道）',logic:[{value:'具体渠道名',condition:'企微活码标签值，如"坤哥直播""文末引流"等'}]},
-      {name:'推荐人',code:'id_referrer',values:'用户ID/昵称',freq:'首次添加',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'记录推荐人信息',logic:[{value:'用户ID/昵称',condition:'通过推荐链接注册或由销售标记'}]},
+      {name:'推荐人',code:'id_referrer',values:'用户ID/昵称/星球编号',freq:'首次添加',rules:1,enabled:true,source:'CRM 系统',window:'—',description:'记录推荐人信息',logic:[{value:'用户ID/昵称/星球编号',condition:'通过推荐链接注册或由销售标记'}]},
       {name:'专属销售',code:'id_sales_owner',values:'员工名',freq:'分配时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'客户分配的专属销售',logic:[{value:'员工名',condition:'系统自动分配或手动指派'}]},
       {name:'专属服务',code:'id_service_owner',values:'员工名',freq:'分配时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'客户分配的专属服务人员',logic:[{value:'员工名',condition:'系统自动分配或手动指派'}]},
-      {name:'好友状态',code:'id_wechat_status',values:'好友 / 客户删除 / 员工删除 / 未添加',freq:'实时',rules:1,enabled:true,source:'企微同步',window:'—',description:'实时同步企微好友关系状态',logic:[{value:'好友',condition:'双方互为好友'},{value:'客户删除',condition:'客户删除了员工'},{value:'员工删除',condition:'员工删除了客户'},{value:'未添加',condition:'尚未建立好友关系'}]},
+      {name:'好友状态',code:'id_wechat_status',values:'双向好友 / 客户删除后 / 双向删除',freq:'实时',rules:1,enabled:true,source:'企微同步',window:'—',description:'实时同步企微好友关系状态',logic:[{value:'双向好友',condition:'双方互为好友'},{value:'客户删除后',condition:'客户删除了员工好友'},{value:'双向删除',condition:'双方均已删除好友关系'}]},
       {name:'体验营期数',code:'id_trial_batch',values:'9体139 / 9体137',freq:'报名时',rules:0,enabled:true,source:'CRM 系统',window:'—',description:'报名体验营时自动标记期数',logic:[{value:'期数编号',condition:'报名体验营时系统自动分配的批次号'}]},
       {name:'所在城市',code:'id_region',values:'北京、上海、深圳',freq:'填写时',rules:0,enabled:true,source:'体验营调研',window:'—',description:'用户在体验营调研中填写的城市',logic:[{value:'城市名',condition:'用户自行填写'}]},
       {name:'职业类型',code:'id_occupation',values:'互联网 / 金融 / 自由职业 / 实体经营',freq:'填写时',rules:0,enabled:true,source:'体验营调研',window:'—',description:'用户在体验营调研中填写的职业',logic:[{value:'职业类型',condition:'用户自行填写'}]},
@@ -1234,7 +1240,7 @@ var auto = {
     ],
     txn: [
       {name:'累计消费',code:'txn_total_spent',values:'高(≥10000) / 中(3000-9999) / 低(<3000)',freq:'支付触发',rules:1,enabled:true,source:'订单系统',window:'全历史',description:'累计所有已支付订单的金额总和',logic:[{value:'高消费',condition:'累计消费 ≥ ¥10,000'},{value:'中消费',condition:'累计消费 ¥3,000-9,999'},{value:'低消费',condition:'累计消费 < ¥3,000'}]},
-      {name:'购买次数',code:'txn_purchase_count',values:'多次(≥5) / 几次(2-4) / 首次(1)',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'历史支付成功的订单总数',logic:[{value:'多次',condition:'订单数 ≥ 5'},{value:'几次',condition:'订单数 2-4'},{value:'首次',condition:'订单数 = 1'}]},
+      {name:'下单次数',code:'txn_purchase_count',values:'具体次数（1、2、3…）',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'全历史',description:'历史支付成功的订单总数',logic:[{value:'具体次数',condition:'COUNT(已支付订单)，显示实际数字'}]},
       {name:'最近购买',code:'txn_latest_product',values:'年费会员 / 航海门票 / 深海圈项目',freq:'支付触发',rules:0,enabled:true,source:'订单系统',window:'—',description:'最近一笔支付成功订单的产品名称',logic:[{value:'产品名',condition:'取最近一笔订单的产品字段'}]},
       {name:'续费次数',code:'txn_renewal_count',values:'0 / 1 / 2 / 3+',freq:'续费触发',rules:2,enabled:true,source:'订单系统',window:'全历史',description:'会员续费次数（不含首次购买）',logic:[{value:'0',condition:'从未续费'},{value:'1',condition:'续费 1 次'},{value:'2',condition:'续费 2 次'},{value:'3+',condition:'续费 ≥ 3 次'}]},
       {name:'续费状态',code:'txn_renewal_status',values:'首年 / 已续费 / 待续费 / 已过期',freq:'每日',rules:3,enabled:true,source:'订单系统',window:'—',description:'当前会员续费状态',logic:[{value:'首年',condition:'首次购买会员，尚未到续费周期'},{value:'已续费',condition:'已完成本期续费'},{value:'待续费',condition:'到期前 90 天且未续费'},{value:'已过期',condition:'会员已到期且未续费'}]},
