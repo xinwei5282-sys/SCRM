@@ -4085,7 +4085,7 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310c" data-prd-view="list">
+<div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310c" data-prd-view="list" id="prdPanelGuanwang">
   <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
 
   <!-- Section 1: 概述 -->
@@ -4369,7 +4369,100 @@
     <div class="prd-item"><strong>权限</strong>：交付侧字段的查看权限需与销售侧独立控制（待定）</div>
   </div>
 
-</div><!-- /prd-panel -->
+</div><!-- /prd-panel guanwang -->
+
+<div class="prd-panel" data-prd-key="shenhai-crm" data-prd-version="20260330" data-prd-view="list" id="prdPanelShenhai" style="display:none;">
+  <div class="prd-context-hint">深海圈会员 · PRD v2.0</div>
+
+  <div class="prd-section" data-prd-context="list" id="sh-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-label">背景</div>
+    <div class="prd-item">CRM 区分三条业务线：<strong>官网、深海圈、航海家</strong>，深海圈核心关注学习行为、社区活跃、社群活跃</div>
+    <div class="prd-label">切换方式</div>
+    <div class="prd-item">标题栏下方<strong>面包屑 Tab 页签</strong>：官网会员 | <strong>深海圈会员</strong> | 航海会员</div>
+    <div class="prd-item">点击 Tab 后筛选区、表格列、详情内容全部切换为对应业务线数据</div>
+    <div class="prd-label">核心原则</div>
+    <div class="prd-item"><strong>一人多圈子</strong>：一个用户可同时属于多个深海圈，学习数据按圈子区分</div>
+    <div class="prd-item"><strong>详情对齐官网</strong>：左右双栏、7 Tab、profile-table 样式保持一致</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list" id="sh-s2">
+    <div class="prd-section-title green">2. 搜索筛选区</div>
+    <div class="prd-item"><strong>昵称/手机号/用户ID</strong> — 文本模糊搜索</div>
+    <div class="prd-item"><strong>所属圈子</strong> — <strong>多选 checkbox 下拉</strong>（AI产品出海 / YouTube AI 视频 / B站好物）</div>
+    <div class="prd-item"><strong>状态</strong> — 下拉：正常 / 已退出 / 已移除</div>
+    <div class="prd-item"><strong>用户活跃情况</strong> — 下拉：连续一周不活跃 / 连续两周不活跃 / 超过一个月未活跃</div>
+    <div class="prd-item"><strong>鱼丸</strong> — 下拉</div>
+    <div class="prd-item"><strong>专属销售</strong> — 下拉（员工列表）</div>
+    <div class="prd-item"><strong>专属服务</strong> — 下拉（员工列表）</div>
+    <div class="prd-item"><strong>标签</strong> — 下拉（自定义标签列表）</div>
+    <div class="prd-item"><strong>加入时间</strong> — 日期范围</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list" id="sh-s3">
+    <div class="prd-section-title green">3. 表格列定义</div>
+    <div class="prd-item">用户ID / 用户信息（头像+昵称+脱敏手机号）/ <strong>所属圈子</strong> / 状态</div>
+    <div class="prd-item">鱼丸 / 专属销售 / 专属服务</div>
+    <div class="prd-item">已学课程（已学/总数）/ 未学习天数（≥14天红色警告）/ 发帖数 / 群发言</div>
+    <div class="prd-item">加入时间 / 到期时间 / 标签</div>
+    <div class="prd-item">操作列：<strong>详情</strong> + <strong>打标签</strong></div>
+  </div>
+
+  <div class="prd-section" data-prd-context="detail" id="sh-s4">
+    <div class="prd-section-title orange">4. 详情 — 左侧边栏</div>
+    <div class="prd-label">用户概要</div>
+    <div class="prd-item">头像 + 昵称 + 状态标签 + 备注</div>
+    <div class="prd-item">仅展示<strong>千刀户/万刀户</strong>成果标签（无则不显示标签区）</div>
+    <div class="prd-label">AI 客户分析</div>
+    <div class="prd-item">初始为空状态 + "生成客户分析"按钮</div>
+    <div class="prd-item">点击后<strong>流式打字输出</strong>（逐字显示 + 光标闪烁），完成后渐显 AI 标签 + footer</div>
+    <div class="prd-item">样式复用官网 ai-summary-card（sparkle 图标、青色背景）</div>
+    <div class="prd-label">客户标签</div>
+    <div class="prd-item">运营标签：用户期数 + 活跃情况（不活跃红色）+ 成果标签（金色）</div>
+    <div class="prd-item">自定义标签：可添加（+按钮）/ 可删除</div>
+    <div class="prd-label">所在群聊</div>
+    <div class="prd-item">直接展示群列表（<strong>无</strong>企微/个微切换），群名格式：{圈子名}-01群</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="detail" id="sh-s5">
+    <div class="prd-section-title green">5. 详情 — 客户档案 Tab</div>
+    <div class="prd-label">基础信息</div>
+    <div class="prd-item">用户ID / 昵称 / 手机号 / 微信号（4个字段，不含所属圈子/状态/加入到期时间）</div>
+    <div class="prd-label">学习行为（按圈子分 section）</div>
+    <div class="prd-item">一人多圈子：每个圈子独立一个 section，标题为「学习行为 — {圈子名}」</div>
+    <div class="prd-item">每 section 含：已学课程数（可展开列表）/ 已完成课程 / 直播观看数 / 最近学习时间 / 连续未学习 / 作业提交 / <strong>加入时间</strong> / <strong>到期时间</strong></div>
+    <div class="prd-label">社区活跃</div>
+    <div class="prd-item">累计发帖数 / 评论数 / 获赞数 / 锚点数 / 最近登录 / 未登录天数</div>
+    <div class="prd-label">社群活跃</div>
+    <div class="prd-item">群发言次数（近30天）/ 最近群发言</div>
+    <div class="prd-label">其他信息</div>
+    <div class="prd-item">首次添加时间 / 入群时间 / 是否进入企微群聊 / unionID / externalid</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="detail" id="sh-s6">
+    <div class="prd-section-title orange">6. 详情 — 其他 Tab</div>
+    <div class="prd-label">跟进记录</div>
+    <div class="prd-item"><strong>写跟进按钮</strong> + 展开表单（跟进方式/内容/下次跟进/提交取消）+ 时间线</div>
+    <div class="prd-label">客户动态</div>
+    <div class="prd-item">时间线：完成课程 / 发帖 / 观看直播 / 提交作业 / 社区互动</div>
+    <div class="prd-label">积分记录</div>
+    <div class="prd-item">概览卡片（龙珠/碎片/术值）+ 筛选（积分类型+变动方向）+ 明细表</div>
+    <div class="prd-label">订单列表</div>
+    <div class="prd-item">子Tab（全部/已付款/已完成）+ 订单表（按圈子显示，多圈多条）</div>
+    <div class="prd-label">变更记录</div>
+    <div class="prd-item">会员类型筛选 + 变更表（会员类型/加入方式/会员状态/金额/时间）</div>
+    <div class="prd-label">聊天记录</div>
+    <div class="prd-item">AI 总结（生成按钮 + <strong>时间范围选择</strong>：近3个月/半年/1年/全部）+ 沟通时间轴 + 聊天气泡</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list" id="sh-s7">
+    <div class="prd-section-title red">7. 官网同步变更</div>
+    <div class="prd-item">客户类型下拉 → <strong>Tab 页签</strong>切换</div>
+    <div class="prd-item">其他信息增加 <strong>unionID</strong> / <strong>externalid</strong></div>
+    <div class="prd-item">聊天记录总结增加<strong>时间范围选择</strong>（近3个月/半年/1年/全部，默认近3个月）</div>
+  </div>
+
+</div><!-- /prd-panel shenhai -->
 
 <script>
 function toggleMenu(group) {
@@ -4771,6 +4864,17 @@ function switchTypeTab(tabEl, type) {
   // Update active tab
   document.querySelectorAll('#typeTabs .type-tab').forEach(function(t) { t.classList.remove('active'); });
   tabEl.classList.add('active');
+
+  // Switch PRD panels
+  var prdGw = document.getElementById('prdPanelGuanwang');
+  var prdSh = document.getElementById('prdPanelShenhai');
+  if (type === '深海圈会员') {
+    if (prdGw) prdGw.style.display = 'none';
+    if (prdSh) prdSh.style.display = '';
+  } else {
+    if (prdGw) prdGw.style.display = '';
+    if (prdSh) prdSh.style.display = 'none';
+  }
 
   if (type === '深海圈会员' && !shenhaiViewActive) {
     enterShenhaiView();
