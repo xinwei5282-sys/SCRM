@@ -5242,17 +5242,42 @@ function openShenhaiDetail(idx) {
         '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">客户添加企业成员</div><div class="timeline-desc">添加***员工企业微信</div></div><div class="timeline-time">09:15:00</div></div>' +
       '</div>' +
     '</div>' +
-    // 客户动态
+    // 客户动态 — 参考官网结构
     '<div class="tab-panel" data-panel="activity">' +
-      '<div class="timeline-container" style="padding:16px 20px;">' +
+      // 一级筛选
+      '<div class="activity-source-grid">' +
+        '<div class="activity-source-item active"><span class="activity-source-value">' + (u.posts + u.comments + u.likes + u.anchors + u.posts * 3) + '</span><span class="activity-source-label">深海圈社区</span></div>' +
+        '<div class="activity-source-item"><span class="activity-source-value">' + u.circles[0].courseLearned + '</span><span class="activity-source-label">课程学习</span></div>' +
+      '</div>' +
+      // 二级子筛选
+      '<div style="display:flex; gap:8px; padding:8px 20px; flex-wrap:wrap;">' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-primary-1);color:var(--color-primary-6);cursor:pointer;">全部</span>' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-fill-3);color:var(--color-text-2);cursor:pointer;">阅读 ' + (u.posts * 3) + '</span>' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-fill-3);color:var(--color-text-2);cursor:pointer;">发帖 ' + u.posts + '</span>' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-fill-3);color:var(--color-text-2);cursor:pointer;">评论 ' + u.comments + '</span>' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-fill-3);color:var(--color-text-2);cursor:pointer;">点赞 ' + u.likes + '</span>' +
+        '<span style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;background:var(--color-fill-3);color:var(--color-text-2);cursor:pointer;">投锚 ' + u.anchors + '</span>' +
+      '</div>' +
+      // 行为时间线
+      '<div class="timeline-container" style="padding:8px 20px 16px;">' +
+        '<div class="timeline-date">今天 · 2026-03-30</div>' +
+        '<div class="timeline-item timeline-item-new"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:32</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '」相关讨论帖</div><span class="timeline-duration">5min</span></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">11:20</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了「学习心得：' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '实操总结」</div></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-green"></div><div class="timeline-time">10:05</div><div class="timeline-card"><div class="timeline-title">评论</div><div class="timeline-desc">评论了「' + u.circles[0].name + '第3期学员优秀作业展示」：写得很好，学到了！</div></div></div>' +
+
+        '<div class="timeline-date">昨天 · 2026-03-29</div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:15</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了「' + u.circles[0].name + '教练答疑精选 · 第12期」</div><span class="timeline-duration">12min</span></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-orange"></div><div class="timeline-time">16:30</div><div class="timeline-card"><div class="timeline-title">点赞</div><div class="timeline-desc">点赞了3篇' + u.circles[0].name + '社区帖子</div></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot" style="background:#7C3AED;"></div><div class="timeline-time">15:00</div><div class="timeline-card"><div class="timeline-title">投锚</div><div class="timeline-desc">给「' + u.circles[0].name + '实战案例分享」投了1个锚点</div></div></div>' +
+
         '<div class="timeline-date">2026-03-27</div>' +
-        '<div class="timeline-item timeline-item-new"><div class="timeline-dot dot-blue"></div><div class="timeline-card"><div class="timeline-title">完成课程</div><div class="timeline-desc">用户完成了《' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '》学习，进度' + (u.circles[0].courses[0] ? u.circles[0].courses[0].p + '%' : '100%') + '</div></div><div class="timeline-time">14:30:00</div></div>' +
-        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">发表帖子</div><div class="timeline-desc">用户在' + u.circles[0].name + '社区发布了一篇学习心得</div></div><div class="timeline-time">11:20:00</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:30</div><div class="timeline-card"><div class="timeline-title">完成课程</div><div class="timeline-desc">完成了《' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '》学习，进度' + (u.circles[0].courses[0] ? u.circles[0].courses[0].p + '%' : '100%') + '</div></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">10:00</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「本周新课程预告」</div><span class="timeline-duration">3min</span></div></div>' +
+
         '<div class="timeline-date">2026-03-25</div>' +
-        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">观看直播</div><div class="timeline-desc">用户观看了' + u.circles[0].name + '直播回放《实战分享会》</div></div><div class="timeline-time">20:00:00</div></div>' +
-        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">提交作业</div><div class="timeline-desc">用户提交了第' + u.circles[0].homework + '份作业，等待教练点评</div></div><div class="timeline-time">16:45:00</div></div>' +
-        '<div class="timeline-date">2026-03-22</div>' +
-        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">社区互动</div><div class="timeline-desc">用户在社区评论了3条内容，获得5个点赞</div></div><div class="timeline-time">09:10:00</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:00</div><div class="timeline-card"><div class="timeline-title">观看直播</div><div class="timeline-desc">观看了' + u.circles[0].name + '直播回放《实战分享会》</div><span class="timeline-duration">45min</span></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-green"></div><div class="timeline-time">16:45</div><div class="timeline-card"><div class="timeline-title">提交作业</div><div class="timeline-desc">提交了第' + u.circles[0].homework + '份作业，等待教练点评</div></div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot dot-blue"></div><div class="timeline-time">09:10</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了学习笔记</div></div></div>' +
       '</div>' +
     '</div>' +
     // 积分记录
