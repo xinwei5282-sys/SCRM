@@ -4786,6 +4786,9 @@ function enterShenhaiView() {
     '<select class="filter-select sm"><option value="">会员期数</option><option>一期</option><option>二期</option><option>三期</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
+    '<select class="filter-select sm"><option value="">鱼丸</option><option>鱼丸120</option><option>鱼丸580</option></select>' +
+    '<select class="filter-select sm"><option value="">专属销售</option><option>潇墨</option><option>李李</option><option>麻球</option><option>乔溪</option></select>' +
+    '<select class="filter-select sm"><option value="">专属服务</option><option>潇墨</option><option>李李</option><option>麻球</option><option>乔溪</option></select>' +
     '<select class="filter-select sm"><option value="">标签</option><option>企微渠道</option><option>高互动</option><option>核心成员</option><option>金牌教练</option><option>管理核心</option><option>新人</option><option>志愿者骨干</option></select>' +
     '<input class="filter-input date-range" type="text" placeholder="加入时间（开始）~ 加入时间（结束）">' +
     '<div class="filter-actions">' +
@@ -4803,6 +4806,9 @@ function enterShenhaiView() {
     '<th style="width:80px; text-align:center;">身份</th>' +
     '<th style="width:70px; text-align:center;">状态</th>' +
     '<th style="width:70px;">会员期数</th>' +
+    '<th>鱼丸</th>' +
+    '<th>专属销售</th>' +
+    '<th>专属服务</th>' +
     '<th style="width:100px;">加入时间</th>' +
     '<th style="width:100px;">到期时间</th>' +
     '<th style="width:80px; text-align:center;">已学课程</th>' +
@@ -4815,13 +4821,13 @@ function enterShenhaiView() {
 
   // Replace tbody with 深海圈 data
   var shUsers = [
-    { id:100234, name:'李明远', phone:'138****5678', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'12/28', noStudy:3, posts:45, groupMsg:128, tags:'千刀户' },
-    { id:100567, name:'王思涵', phone:'135****2345', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'20/32', noStudy:1, posts:89, groupMsg:256, tags:'万刀户' },
-    { id:100891, name:'张小鱼', phone:'139****8901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'25/25', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
-    { id:101023, name:'陈梦琪', phone:'136****4567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', join:'2026-01-10', expire:'2027-01-09', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
-    { id:101156, name:'刘大伟', phone:'137****7890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'18/22', noStudy:5, posts:78, groupMsg:345, tags:'千刀户' },
-    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' },
-    { id:101432, name:'周明', phone:'159****5678', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'2/25', noStudy:92, posts:0, groupMsg:3, tags:'' }
+    { id:100234, name:'李明远', phone:'138****5678', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 320', sales:'潇墨', service:'李李', courses:'12/28', noStudy:3, posts:45, groupMsg:128, tags:'千刀户' },
+    { id:100567, name:'王思涵', phone:'135****2345', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'麻球', service:'潇墨', courses:'20/32', noStudy:1, posts:89, groupMsg:256, tags:'万刀户' },
+    { id:100891, name:'张小鱼', phone:'139****8901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'乔溪', service:'麻球', courses:'25/25', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
+    { id:101023, name:'陈梦琪', phone:'136****4567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', join:'2026-01-10', expire:'2027-01-09', yuwan:'鱼丸 120', sales:'潇墨', service:'乔溪', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
+    { id:101156, name:'刘大伟', phone:'137****7890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 320', sales:'李李', service:'李李', courses:'18/22', noStudy:5, posts:78, groupMsg:345, tags:'千刀户' },
+    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' },
+    { id:101432, name:'周明', phone:'159****5678', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 120', sales:'乔溪', service:'麻球', courses:'2/25', noStudy:92, posts:0, groupMsg:3, tags:'' }
   ];
   var rows = '';
   for (var i = 0; i < shUsers.length; i++) {
@@ -4834,6 +4840,9 @@ function enterShenhaiView() {
       '<td style="text-align:center"><span class="tag ' + u.roleCls + '">' + u.role + '</span></td>' +
       '<td style="text-align:center"><span class="tag ' + u.statusCls + '">' + u.status + '</span></td>' +
       '<td>' + u.period + '</td>' +
+      '<td>' + u.yuwan + '</td>' +
+      '<td><strong>' + u.sales + '</strong></td>' +
+      '<td><strong>' + u.service + '</strong></td>' +
       '<td>' + u.join + '</td>' +
       '<td>' + u.expire + '</td>' +
       '<td style="text-align:center">' + u.courses + '</td>' +
