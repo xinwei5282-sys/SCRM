@@ -2970,6 +2970,10 @@
               <th>是否进入个微群聊</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">是</span></td>
               <th>是否进入企微群聊</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">是</span></td>
             </tr>
+            <tr>
+              <th>unionID</th><td style="font-family:monospace;font-size:12px;">oX5kZ87191AbcDeFgH</td>
+              <th>externalid</th><td style="font-family:monospace;font-size:12px;">wmE87191XyZ_ext</td>
+            </tr>
           </table>
         </div>
         </div><!-- /tab-panel profile -->
@@ -5111,6 +5115,12 @@ function openShenhaiDetail(idx) {
       // 社群活跃
       '<tr><td class="section-header" colspan="4">社群活跃</td></tr>' +
       '<tr><th>群发言次数</th><td>' + u.groupMsg + ' 次（近30天）</td><th>最近群发言</th><td>' + u.lastGroupMsg + '</td></tr>' +
+
+      // 其他信息
+      '<tr><td class="section-header" colspan="4">其他信息</td></tr>' +
+      '<tr><th>首次添加时间</th><td>' + u.join + '</td><th>入群时间</th><td>' + u.join + '</td></tr>' +
+      '<tr><th>是否进入企微群聊</th><td>是</td><th>unionID</th><td style="font-family:monospace;font-size:12px;">oX5kZ' + u.id + 'Abc</td></tr>' +
+      '<tr><th>externalid</th><td colspan="3" style="font-family:monospace;font-size:12px;">wmE' + u.id + 'XyZ_ext</td></tr>' +
     '</table></div>' +
     '</div>' +
     // 跟进记录
