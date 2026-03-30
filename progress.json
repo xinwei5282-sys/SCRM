@@ -66,8 +66,8 @@
       "status": "in_progress",
       "depends_on": [3],
       "started_at": "2026-03-30T18:51:00+08:00",
-      "completed_at": null,
-      "notes": ""
+      "completed_at": "2026-03-30T19:00:00+08:00",
+      "notes": "输出深海圈标签数据字典.csv，33个标签全覆盖，含编码/名称/分类/子分类/数据来源/计算逻辑/更新频率/枚举值/备注。"
     }
   ]
 }
