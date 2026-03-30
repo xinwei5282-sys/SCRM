@@ -2,7 +2,7 @@
 
 > **适用产品**：生财有术 SCRM
 > **行业**：知识付费 / 在线社群 / 付费会员制
-> **版本**：v1.0 | **日期**：2026-03-12
+> **版本**：v2.0 | **日期**：2026-03-30
 > **定位**：产品经理 PRD 编写参考文档
 > **参考标准**：神策数据、Segment、Adobe AEP、火山引擎 CDP、GrowingIO、ConvertLab
 
@@ -500,8 +500,12 @@ M = 累计消费金额 × 0.6 + 内容贡献积分 × 0.4
 | 购课但不参与社区 | `nav_completion_rate>=70%` AND `comm_post_freq=未发帖` | 引导在社区分享学习心得 |
 | 多产品线高价值 | `txn_clv_tier=钻石` AND `comm_creator_tier=PGC专业` AND `nav_enrollment_count>=5` | 邀请成为传术师/导师 |
 | 单产品线依赖 | 仅在一条产品线活跃，其他为零 | 交叉推荐其他产品线内容 |
-| 深海圈升单潜力 | `nav_completion_rate=优秀` AND `deep_project_count=从未` AND `txn_total_spent=中` | 推荐深海圈高阶项目 |
+| 深海圈升单潜力 | `nav_completion_rate=优秀` AND `deep_circle_count=未参与` AND `txn_total_spent=中` | 推荐深海圈圈子 |
 | 航海流失预警 | `nav_enrollment_recent=未参与` AND `lc_churn_risk=中风险` | 推送新航海课程，1v1 关怀 |
+| 深海圈学习中断召回 | `deep_study_consistency=中断/长期中断` AND `deep_status=正常` | 运营1v1关怀，了解学习障碍 |
+| 深海圈多圈子交叉推荐 | `deep_circle_count=单圈` AND `deep_active_level=高活跃` | 推荐第二个相关圈子 |
+| 深海圈续费触达 | `deep_expire_countdown=即将到期` AND `deep_active_level!=不活跃` | 推送续费优惠，1v1跟进 |
+| 深海圈千刀户升级 | `deep_achievement=千刀户` AND `deep_course_progress=优秀` | 引导分享案例，推荐进阶圈子 |
 | 社区转创作者 | `comm_read_volume=重度` AND `comm_post_freq=未发帖` AND `lc_engagement_tier=L3参与` | 引导首次发帖，推送创作激励 |
 
 ---
