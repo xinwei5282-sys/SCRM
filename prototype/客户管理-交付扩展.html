@@ -3897,9 +3897,17 @@
         <div class="tab-panel" data-panel="chat">
           <!-- AI 聊天总结 -->
           <div class="chat-ai-area">
-            <button class="ai-chat-generate-btn" id="aiChatBtn" onclick="generateChatSummary()">
-              <span class="ai-chat-icon">AI</span> 生成聊天记录总结
-            </button>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+              <button class="ai-chat-generate-btn" id="aiChatBtn" onclick="generateChatSummary()">
+                <span class="ai-chat-icon">AI</span> 生成聊天记录总结
+              </button>
+              <select style="height:28px;border:1px solid var(--color-border-default);border-radius:6px;padding:0 24px 0 8px;font-size:12px;color:var(--color-text-2);background:#fff url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23757980%27 stroke-width=%271.2%27 fill=%27none%27/%3E%3C/svg%3E') no-repeat right 6px center;appearance:none;cursor:pointer;">
+                <option selected>近3个月</option>
+                <option>近半年</option>
+                <option>近1年</option>
+                <option>全部</option>
+              </select>
+            </div>
             <div class="ai-chat-summary-card" id="aiChatSummary">
               <div class="ai-chat-summary-header">
                 <div class="ai-chat-summary-icon">AI</div>
@@ -5221,24 +5229,54 @@ function openShenhaiDetail(idx) {
         '</table>' +
       '</div>' +
     '</div>' +
-    // 聊天记录
+    // 聊天记录 — 同官网结构
     '<div class="tab-panel" data-panel="chat">' +
-      '<div style="padding:16px 20px;">' +
-        '<div style="font-size:13px; color:var(--color-text-3); margin-bottom:12px;">最近7天聊天记录</div>' +
-        '<div style="display:flex; flex-direction:column; gap:12px;">' +
-          '<div style="display:flex; gap:8px; align-items:flex-start;">' +
-            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-primary-2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-primary-6);font-weight:600;flex-shrink:0;">运</div>' +
-            '<div><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">深海圈运营 · 2026-03-28 10:30</div><div style="background:var(--color-fill-3);padding:8px 12px;border-radius:0 8px 8px 8px;font-size:13px;max-width:400px;">Hi ' + u.name + '，最近' + u.circles[0].name + '的课程学了多少了？有遇到什么问题可以随时找我哦~</div></div>' +
+      // AI 聊天总结
+      '<div class="chat-ai-area">' +
+        '<div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">' +
+          '<button class="ai-chat-generate-btn" onclick="var card=this.closest(\'.chat-ai-area\').querySelector(\'.ai-chat-summary-card\');card.classList.add(\'visible\');this.style.display=\'none\';">' +
+            '<span class="ai-chat-icon">AI</span> 生成聊天记录总结' +
+          '</button>' +
+          '<select style="height:28px;border:1px solid var(--color-border-default);border-radius:6px;padding:0 24px 0 8px;font-size:12px;color:var(--color-text-2);background:#fff url(\'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23757980%27 stroke-width=%271.2%27 fill=%27none%27/%3E%3C/svg%3E\') no-repeat right 6px center;appearance:none;cursor:pointer;"><option selected>近3个月</option><option>近半年</option><option>近1年</option><option>全部</option></select>' +
+        '</div>' +
+        '<div class="ai-chat-summary-card">' +
+          '<div class="ai-chat-summary-header">' +
+            '<div class="ai-chat-summary-icon">AI</div>' +
+            '<span class="ai-chat-summary-label">聊天记录总结</span>' +
+            '<div class="ai-chat-summary-actions"><button class="ai-chat-action-btn">重新生成</button><button class="ai-chat-action-btn">复制</button></div>' +
           '</div>' +
-          '<div style="display:flex; gap:8px; align-items:flex-start; flex-direction:row-reverse;">' +
-            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-fill-3);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-3);font-weight:600;flex-shrink:0;">' + u.name.charAt(0) + '</div>' +
-            '<div style="text-align:right;"><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">2026-03-28 10:35</div><div style="background:var(--color-primary-1);padding:8px 12px;border-radius:8px 0 8px 8px;font-size:13px;max-width:400px;display:inline-block;text-align:left;">在学了在学了，已经完成了' + u.circles[0].courseLearned + '门课程，感觉收获很大！</div></div>' +
-          '</div>' +
-          '<div style="display:flex; gap:8px; align-items:flex-start;">' +
-            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-primary-2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-primary-6);font-weight:600;flex-shrink:0;">运</div>' +
-            '<div><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">深海圈运营 · 2026-03-28 10:38</div><div style="background:var(--color-fill-3);padding:8px 12px;border-radius:0 8px 8px 8px;font-size:13px;max-width:400px;">太棒了！记得把作业也提交一下，教练会给你点评反馈的 👍</div></div>' +
+          '<div class="ai-chat-summary-text">' +
+            '<p><strong>近3个月沟通摘要：</strong></p>' +
+            '<p>1. 客户在' + u.circles[0].name + '学习进度良好，已完成' + u.circles[0].courseLearned + '门课程，主动反馈学习收获</p>' +
+            '<p>2. 近期作业提交积极，教练点评后有明显进步，社区互动频次增加</p>' +
+            '<p>3. 客户对直播回放内容有较高需求，建议定期推送新课程和直播预告</p>' +
+            '<p><strong>建议跟进：</strong>引导参与更多实战项目，关注作业完成情况，适时推荐进阶课程</p>' +
           '</div>' +
         '</div>' +
+      '</div>' +
+      // 沟通时间轴
+      '<div class="chat-timeline">' +
+        '<div class="chat-timeline-header">' +
+          '<span class="chat-timeline-title">沟通时间轴</span>' +
+          '<span class="chat-timeline-count">近30天 · 共5次沟通</span>' +
+        '</div>' +
+        '<div class="chat-timeline-list">' +
+          '<div class="chat-tl-item"><div class="chat-tl-dot dot-inquiry"></div><div class="chat-tl-date">03-28</div><span class="chat-tl-tag tag-inquiry">学习跟进</span><div class="chat-tl-desc">了解课程学习进度和作业完成情况</div><span class="chat-tl-rounds">3轮</span></div>' +
+          '<div class="chat-tl-item"><div class="chat-tl-dot dot-push"></div><div class="chat-tl-date">03-22</div><span class="chat-tl-tag tag-push">内容推送</span><div class="chat-tl-desc">推送' + u.circles[0].name + '本周新课程和直播预告</div><span class="chat-tl-rounds">1轮</span></div>' +
+          '<div class="chat-tl-item"><div class="chat-tl-dot dot-care"></div><div class="chat-tl-date">03-15</div><span class="chat-tl-tag tag-care">主动关怀</span><div class="chat-tl-desc">回访学习体验，收集课程反馈</div><span class="chat-tl-rounds">2轮</span></div>' +
+          '<div class="chat-tl-item"><div class="chat-tl-dot dot-confirm"></div><div class="chat-tl-date">03-08</div><span class="chat-tl-tag tag-confirm">作业反馈</span><div class="chat-tl-desc">教练点评第' + u.circles[0].homework + '份作业，给出改进建议</div><span class="chat-tl-rounds">2轮</span></div>' +
+          '<div class="chat-tl-item"><div class="chat-tl-dot dot-invite"></div><div class="chat-tl-date">03-01</div><span class="chat-tl-tag tag-invite">活动邀约</span><div class="chat-tl-desc">邀请参加' + u.circles[0].name + '线上分享会</div><span class="chat-tl-rounds">1轮</span></div>' +
+        '</div>' +
+      '</div>' +
+      // 聊天记录列表
+      '<div class="chat-record-list">' +
+        '<div class="chat-date-divider">2026-03-28</div>' +
+        '<div class="chat-msg chat-msg-me"><div class="chat-bubble chat-bubble-me">Hi ' + u.name + '，最近' + u.circles[0].name + '的课程学了多少了？有遇到什么问题可以随时找我哦~</div><div class="chat-time">10:30</div></div>' +
+        '<div class="chat-msg chat-msg-them"><div class="chat-avatar">' + u.name.charAt(0) + '</div><div class="chat-bubble">在学了在学了，已经完成了' + u.circles[0].courseLearned + '门课程，感觉收获很大！</div><div class="chat-time">10:35</div></div>' +
+        '<div class="chat-msg chat-msg-me"><div class="chat-bubble chat-bubble-me">太棒了！记得把作业也提交一下，教练会给你点评反馈的</div><div class="chat-time">10:38</div></div>' +
+        '<div class="chat-date-divider">2026-03-22</div>' +
+        '<div class="chat-msg chat-msg-me"><div class="chat-bubble chat-bubble-me">' + u.name + '，本周' + u.circles[0].name + '有新课程更新啦，记得去看看</div><div class="chat-time">09:00</div></div>' +
+        '<div class="chat-msg chat-msg-them"><div class="chat-avatar">' + u.name.charAt(0) + '</div><div class="chat-bubble">好的收到，我今晚就去学习</div><div class="chat-time">12:15</div></div>' +
       '</div>' +
     '</div>';
 
