@@ -5125,7 +5125,13 @@ function openShenhaiDetail(idx) {
     '</div>' +
     // 跟进记录
     '<div class="tab-panel" data-panel="followup">' +
-      '<div class="followup-header"><span style="font-size:13px; color:var(--color-text-3);">共 4 条跟进记录</span></div>' +
+      '<div class="followup-header"><span style="font-size:13px; color:var(--color-text-3);">共 4 条跟进记录</span><button class="btn-add-followup" onclick="var f=this.closest(\'.tab-panel\').querySelector(\'.followup-form\');f.classList.toggle(\'active\');">✚ 写跟进</button></div>' +
+      '<div class="followup-form">' +
+        '<div class="form-title"><span>写跟进</span><div class="form-close" onclick="this.closest(\'.followup-form\').classList.remove(\'active\');">✕</div></div>' +
+        '<div class="form-group"><div class="form-label"><span class="required">*</span> 跟进方式</div><div class="form-methods"><button class="method-chip selected">企微消息</button><button class="method-chip">电话</button><button class="method-chip">面谈</button><button class="method-chip">微信沟通</button><button class="method-chip">其他</button></div></div>' +
+        '<div class="form-group"><div class="form-label"><span class="required">*</span> 跟进内容</div><textarea class="form-textarea" placeholder="请输入跟进内容（1-500字）" maxlength="500"></textarea><div class="char-count">0/500</div></div>' +
+        '<div class="form-inline-row"><div class="form-group"><div class="form-label">下次跟进</div><input type="date" class="form-input" min="2026-03-31"></div><div class="form-group" style="flex:0 0 auto;"><div class="form-label">&nbsp;</div><div class="form-actions"><button class="form-btn btn-cancel" onclick="this.closest(\'.followup-form\').classList.remove(\'active\');">取消</button><button class="form-btn btn-submit" onclick="this.closest(\'.followup-form\').classList.remove(\'active\');">提交</button></div></div></div>' +
+      '</div>' +
       '<div class="timeline-container">' +
         '<div class="timeline-date">2026-03-28</div>' +
         '<div class="timeline-item timeline-item-new"><div class="timeline-dot dot-blue"></div><div class="timeline-card"><div class="timeline-title">打标签</div><div class="timeline-desc">' + u.circles[0].name + '运营给用户打了「' + (u.customTags[0] || '活跃学员') + '」标签</div></div><div class="timeline-time">16:22:15</div></div>' +
