@@ -5115,9 +5115,30 @@ function openShenhaiDetail(idx) {
     '</table></div>' +
     '</div>' +
     // 跟进记录
-    '<div class="tab-panel" data-panel="followup" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无跟进记录</div>' +
+    '<div class="tab-panel" data-panel="followup">' +
+      '<div class="followup-header"><span style="font-size:13px; color:var(--color-text-3);">共 4 条跟进记录</span></div>' +
+      '<div class="timeline-container">' +
+        '<div class="timeline-date">2026-03-28</div>' +
+        '<div class="timeline-item timeline-item-new"><div class="timeline-dot dot-blue"></div><div class="timeline-card"><div class="timeline-title">打标签</div><div class="timeline-desc">' + u.circles[0].name + '运营给用户打了「' + (u.customTags[0] || '活跃学员') + '」标签</div></div><div class="timeline-time">16:22:15</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">1V1跟进</div><div class="timeline-desc">深海圈运营在企微上主动跟进，了解' + u.circles[0].name + '课程学习进度</div></div><div class="timeline-time">10:30:00</div></div>' +
+        '<div class="timeline-date">2026-03-20</div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">学习提醒</div><div class="timeline-desc">系统自动发送课程学习提醒，当前已学' + u.circles[0].courseLearned + '门课程</div></div><div class="timeline-time">09:00:00</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">入群通知</div><div class="timeline-desc">用户加入' + u.circles[0].name + '-01群，群聊人数80人</div></div><div class="timeline-time">08:15:33</div></div>' +
+      '</div>' +
+    '</div>' +
     // 客户动态
-    '<div class="tab-panel" data-panel="activity" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无客户动态</div>' +
+    '<div class="tab-panel" data-panel="activity">' +
+      '<div class="timeline-container" style="padding:16px 20px;">' +
+        '<div class="timeline-date">2026-03-27</div>' +
+        '<div class="timeline-item timeline-item-new"><div class="timeline-dot dot-blue"></div><div class="timeline-card"><div class="timeline-title">完成课程</div><div class="timeline-desc">用户完成了《' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '》学习，进度' + (u.circles[0].courses[0] ? u.circles[0].courses[0].p + '%' : '100%') + '</div></div><div class="timeline-time">14:30:00</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">发表帖子</div><div class="timeline-desc">用户在' + u.circles[0].name + '社区发布了一篇学习心得</div></div><div class="timeline-time">11:20:00</div></div>' +
+        '<div class="timeline-date">2026-03-25</div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">观看直播</div><div class="timeline-desc">用户观看了' + u.circles[0].name + '直播回放《实战分享会》</div></div><div class="timeline-time">20:00:00</div></div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">提交作业</div><div class="timeline-desc">用户提交了第' + u.circles[0].homework + '份作业，等待教练点评</div></div><div class="timeline-time">16:45:00</div></div>' +
+        '<div class="timeline-date">2026-03-22</div>' +
+        '<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">社区互动</div><div class="timeline-desc">用户在社区评论了3条内容，获得5个点赞</div></div><div class="timeline-time">09:10:00</div></div>' +
+      '</div>' +
+    '</div>' +
     // 积分记录
     '<div class="tab-panel" data-panel="points">' +
       '<div class="points-container">' +
@@ -5160,11 +5181,55 @@ function openShenhaiDetail(idx) {
       '</div>' +
     '</div>' +
     // 订单列表
-    '<div class="tab-panel" data-panel="orders" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无订单记录</div>' +
+    '<div class="tab-panel" data-panel="orders">' +
+      '<div style="padding:16px 20px;">' +
+        '<div style="display:flex; gap:12px; margin-bottom:12px; font-size:13px;">' +
+          '<span style="color:var(--color-primary-6); font-weight:500; border-bottom:2px solid var(--color-primary-6); padding-bottom:4px;">全部 (2)</span>' +
+          '<span style="color:var(--color-text-3); cursor:pointer;">已付款 (2)</span>' +
+          '<span style="color:var(--color-text-3); cursor:pointer;">已完成 (0)</span>' +
+        '</div>' +
+        '<table class="points-table">' +
+          '<thead><tr><th>订单编号</th><th>商品信息</th><th>订单状态</th><th>金额</th><th>实付金额</th><th>下单时间</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>SHQ20260115001</td><td>' + u.circles[0].name + ' 会员</td><td><span class="tag tag-success" style="height:20px;font-size:11px;">已付款</span></td><td>¥1,999.00</td><td>¥1,999.00</td><td>' + u.join + '</td></tr>' +
+            (u.circles.length > 1 ? '<tr><td>SHQ20260301002</td><td>' + u.circles[1].name + ' 会员</td><td><span class="tag tag-success" style="height:20px;font-size:11px;">已付款</span></td><td>¥1,999.00</td><td>¥1,799.00</td><td>2026-03-01</td></tr>' : '') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+    '</div>' +
     // 变更记录
-    '<div class="tab-panel" data-panel="changes" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无变更记录</div>' +
+    '<div class="tab-panel" data-panel="changes">' +
+      '<div style="padding:16px 20px;">' +
+        '<div style="margin-bottom:12px;"><select style="height:28px;border:1px solid var(--color-border-default);border-radius:6px;padding:0 24px 0 8px;font-size:13px;appearance:none;background:#fff url(\'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M3 4.5L6 7.5L9 4.5%27 stroke=%27%23757980%27 stroke-width=%271.2%27 fill=%27none%27/%3E%3C/svg%3E\') no-repeat right 6px center;cursor:pointer;"><option>全部</option><option>深海圈</option></select></div>' +
+        '<table class="points-table">' +
+          '<thead><tr><th>会员类型</th><th>加入方式</th><th>会员状态</th><th>加入金额</th><th>开始时间</th><th>结束时间</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td><span class="tag type-shenhai" style="height:20px;font-size:11px;">深海圈</span></td><td>新增</td><td><span class="tag ' + u.statusCls + '" style="height:20px;font-size:11px;">' + (u.status === '正常' ? '在期' : '已过期') + '</span></td><td>¥1,999.00</td><td>' + u.join + '</td><td>' + u.expire + '</td></tr>' +
+            (u.circles.length > 1 ? '<tr><td><span class="tag type-shenhai" style="height:20px;font-size:11px;">深海圈</span></td><td>新增</td><td><span class="tag tag-success" style="height:20px;font-size:11px;">在期</span></td><td>¥1,799.00</td><td>2026-03-01</td><td>2027-02-28</td></tr>' : '') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+    '</div>' +
     // 聊天记录
-    '<div class="tab-panel" data-panel="chat" style="padding:40px; text-align:center; color:var(--color-text-4);">暂无聊天记录</div>';
+    '<div class="tab-panel" data-panel="chat">' +
+      '<div style="padding:16px 20px;">' +
+        '<div style="font-size:13px; color:var(--color-text-3); margin-bottom:12px;">最近7天聊天记录</div>' +
+        '<div style="display:flex; flex-direction:column; gap:12px;">' +
+          '<div style="display:flex; gap:8px; align-items:flex-start;">' +
+            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-primary-2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-primary-6);font-weight:600;flex-shrink:0;">运</div>' +
+            '<div><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">深海圈运营 · 2026-03-28 10:30</div><div style="background:var(--color-fill-3);padding:8px 12px;border-radius:0 8px 8px 8px;font-size:13px;max-width:400px;">Hi ' + u.name + '，最近' + u.circles[0].name + '的课程学了多少了？有遇到什么问题可以随时找我哦~</div></div>' +
+          '</div>' +
+          '<div style="display:flex; gap:8px; align-items:flex-start; flex-direction:row-reverse;">' +
+            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-fill-3);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-3);font-weight:600;flex-shrink:0;">' + u.name.charAt(0) + '</div>' +
+            '<div style="text-align:right;"><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">2026-03-28 10:35</div><div style="background:var(--color-primary-1);padding:8px 12px;border-radius:8px 0 8px 8px;font-size:13px;max-width:400px;display:inline-block;text-align:left;">在学了在学了，已经完成了' + u.circles[0].courseLearned + '门课程，感觉收获很大！</div></div>' +
+          '</div>' +
+          '<div style="display:flex; gap:8px; align-items:flex-start;">' +
+            '<div style="width:28px;height:28px;border-radius:50%;background:var(--color-primary-2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-primary-6);font-weight:600;flex-shrink:0;">运</div>' +
+            '<div><div style="font-size:12px;color:var(--color-text-3);margin-bottom:2px;">深海圈运营 · 2026-03-28 10:38</div><div style="background:var(--color-fill-3);padding:8px 12px;border-radius:0 8px 8px 8px;font-size:13px;max-width:400px;">太棒了！记得把作业也提交一下，教练会给你点评反馈的 👍</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
 
   // Bind tab switching
   mainEl.querySelectorAll('.detail-tab').forEach(function(tab) {
