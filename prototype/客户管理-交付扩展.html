@@ -4785,7 +4785,7 @@ function enterShenhaiView() {
   // Replace filters
   filterRow.innerHTML =
     '<input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID">' +
-    '<select class="filter-select sm"><option value="">深海圈</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
+    '<select class="filter-select sm"><option value="">所属圈子</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
     '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
@@ -4885,66 +4885,75 @@ function exitShenhaiView() {
 /* ======== 深海圈详情抽屉 ======== */
 var shenhaiDetailData = [
   { id:100234, name:'李明远', phone:'138****5678', wechat:'limingyuan_2024', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'', achievement:'千刀户',
-    courseLearned:12, courseCompleted:8, liveWatched:5, lastStudy:'2026-03-27 14:30', noStudy:3, homework:6,
+    circles:[
+      {name:'AI产品出海', courseLearned:8, courseCompleted:6, liveWatched:3, lastStudy:'2026-03-27 14:30', noStudy:3, homework:4, courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:85},{name:'自媒体AI辅助创作',p:60},{name:'AI绘画商业应用',p:40}]},
+      {name:'B站好物', courseLearned:4, courseCompleted:2, liveWatched:2, lastStudy:'2026-03-25 10:00', noStudy:5, homework:2, courses:[{name:'B站选品攻略',p:100},{name:'好物视频拍摄',p:70},{name:'B站运营进阶',p:30}]}
+    ],
     posts:45, comments:23, likes:156, anchors:12, lastLogin:'2026-03-28 09:15', noLoginDays:2,
     groupMsg:128, lastGroupMsg:'2026-03-29 16:40',
     customTags:['企微渠道','高互动'], remark:'积极参与社区活动，已完成AI变现课程大部分内容',
-    courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:85},{name:'自媒体AI辅助创作',p:60},{name:'AI绘画商业应用',p:40},{name:'AI视频脚本生成',p:20}],
-    aiSummary:'学习积极性高，已完成8门课程，AI写作和提示词方向完成度最佳。社区互动活跃（发帖45、获赞156），具备内容创作潜力。建议引导其向AI绘画和视频方向深入，有望成为社区KOL。',
-    aiTags:['高学习力','内容创作者','AI写作方向','潜力KOL']
+    aiSummary:'学习积极性高，同时参与AI产品出海和B站好物两个圈子。AI方向完成度最佳（6/8），B站方向正在学习中。社区互动活跃（发帖45、获赞156），具备内容创作潜力。',
+    aiTags:['高学习力','内容创作者','双圈学员','潜力KOL']
   },
   { id:100567, name:'王思涵', phone:'135****2345', wechat:'wangsh_video', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
-    courseLearned:20, courseCompleted:18, liveWatched:12, lastStudy:'2026-03-29 20:10', noStudy:1, homework:15,
+    circles:[
+      {name:'YouTube AI 视频', courseLearned:14, courseCompleted:12, liveWatched:8, lastStudy:'2026-03-29 20:10', noStudy:1, homework:10, courses:[{name:'短视频剪辑基础',p:100},{name:'YouTube运营实战',p:100},{name:'短视频变现路径',p:92},{name:'直播带货入门',p:70}]},
+      {name:'AI产品出海', courseLearned:6, courseCompleted:6, liveWatched:4, lastStudy:'2026-03-28 16:00', noStudy:2, homework:5, courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:100},{name:'AI绘画商业应用',p:88}]}
+    ],
     posts:89, comments:67, likes:423, anchors:38, lastLogin:'2026-03-29 20:10', noLoginDays:1,
     groupMsg:256, lastGroupMsg:'2026-03-30 08:20',
     customTags:['核心成员','短视频达人','公众号导流'], remark:'社区活跃度极高，多次帮助新成员',
-    courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:100},{name:'短视频变现路径',p:92},{name:'直播带货入门',p:70}],
-    aiSummary:'社区标杆用户，万刀户。课程完成度极高（18/20），社区活跃度TOP级（发帖89、获赞423、锚点38）。多次主动帮助新成员，已具备志愿者核心骨干能力。建议提升为教练候选人。',
-    aiTags:['超级活跃','万刀户','社区标杆','教练候选']
+    aiSummary:'社区标杆用户，万刀户。同时参与YouTube AI视频和AI产品出海两个圈子，课程完成度极高。社区活跃度TOP级（发帖89、获赞423）。建议提升为教练候选人。',
+    aiTags:['超级活跃','万刀户','双圈标杆','教练候选']
   },
   { id:100891, name:'张小鱼', phone:'139****8901', wechat:'zhangxy_coach', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
-    courseLearned:25, courseCompleted:25, liveWatched:20, lastStudy:'2026-03-30 10:00', noStudy:0, homework:25,
+    circles:[
+      {name:'B站好物', courseLearned:25, courseCompleted:25, liveWatched:20, lastStudy:'2026-03-30 10:00', noStudy:0, homework:25, courses:[{name:'电商选品方法论',p:100},{name:'店铺运营全流程',p:100},{name:'供应链管理基础',p:100}]}
+    ],
     posts:156, comments:134, likes:890, anchors:75, lastLogin:'2026-03-30 10:00', noLoginDays:0,
     groupMsg:512, lastGroupMsg:'2026-03-30 11:30',
     customTags:['金牌教练','电商专家'], remark:'一期教练，课程完成度100%，负责电商模块答疑',
-    courses:[{name:'电商选品方法论',p:100},{name:'店铺运营全流程',p:100},{name:'供应链管理基础',p:100}],
-    aiSummary:'金牌教练，全部课程100%完成。社区影响力极大（发帖156、获赞890、锚点75），群发言最活跃（512次/月）。是电商模块的核心支柱，答疑质量高，学员满意度优秀。',
+    aiSummary:'金牌教练，全部课程100%完成。社区影响力极大（发帖156、获赞890、锚点75），群发言最活跃（512次/月）。是电商模块的核心支柱。',
     aiTags:['金牌教练','电商专家','核心支柱','满分完成']
   },
   { id:101023, name:'陈梦琪', phone:'136****4567', wechat:'chenmq_ai', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', userPeriod:'第三期', join:'2026-01-10', expire:'2027-01-09', active:'连续两周不活跃', achievement:'',
-    courseLearned:5, courseCompleted:2, liveWatched:1, lastStudy:'2026-03-12 16:45', noStudy:18, homework:1,
+    circles:[
+      {name:'AI产品出海', courseLearned:5, courseCompleted:2, liveWatched:1, lastStudy:'2026-03-12 16:45', noStudy:18, homework:1, courses:[{name:'AI写作变现入门',p:45},{name:'ChatGPT提示词进阶',p:30}]}
+    ],
     posts:3, comments:5, likes:8, anchors:0, lastLogin:'2026-03-15 08:30', noLoginDays:15,
     groupMsg:12, lastGroupMsg:'2026-03-10 20:15',
     customTags:['新人'], remark:'',
-    courses:[{name:'AI写作变现入门',p:45},{name:'ChatGPT提示词进阶',p:30}],
-    aiSummary:'三期新学员，加入后学习动力不足，连续两周不活跃。课程完成度低（2/5），社区几乎无互动（发帖3、锚点0）。属于流失高风险用户，建议尽快安排1V1关怀触达，了解学习障碍。',
+    aiSummary:'三期新学员，加入后学习动力不足，连续两周不活跃。课程完成度低（2/5），属于流失高风险用户，建议尽快安排1V1关怀触达。',
     aiTags:['流失风险','低活跃','需关怀','新人']
   },
   { id:101156, name:'刘大伟', phone:'137****7890', wechat:'liudw_admin', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'千刀户',
-    courseLearned:18, courseCompleted:15, liveWatched:9, lastStudy:'2026-03-25 11:20', noStudy:5, homework:10,
+    circles:[
+      {name:'AI产品出海', courseLearned:18, courseCompleted:15, liveWatched:9, lastStudy:'2026-03-25 11:20', noStudy:5, homework:10, courses:[{name:'公众号涨粉策略',p:100},{name:'小红书运营',p:100},{name:'知乎高赞写作',p:88}]}
+    ],
     posts:78, comments:45, likes:234, anchors:19, lastLogin:'2026-03-29 14:00', noLoginDays:1,
     groupMsg:345, lastGroupMsg:'2026-03-29 18:45',
     customTags:['管理核心','自媒体老手'], remark:'负责自媒体圈日常管理，处理违规内容',
-    courses:[{name:'公众号涨粉策略',p:100},{name:'小红书运营',p:100},{name:'知乎高赞写作',p:88}],
-    aiSummary:'管理核心，一期老成员。课程完成度高（15/18），社区内容产出稳定（发帖78、获赞234）。负责日常管理和违规处理，责任心强。建议给予更多管理工具权限，提升管理效率。',
+    aiSummary:'管理核心，一期老成员。课程完成度高（15/18），社区内容产出稳定。负责日常管理和违规处理，责任心强。',
     aiTags:['千刀户','管理核心','内容稳定','高责任心']
   },
   { id:101298, name:'赵颖', phone:'152****1234', wechat:'zhaoying_2025', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'超过一个月未活跃', achievement:'',
-    courseLearned:8, courseCompleted:3, liveWatched:2, lastStudy:'2026-02-13 09:30', noStudy:45, homework:2,
+    circles:[
+      {name:'YouTube AI 视频', courseLearned:8, courseCompleted:3, liveWatched:2, lastStudy:'2026-02-13 09:30', noStudy:45, homework:2, courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:55}]}
+    ],
     posts:6, comments:8, likes:12, anchors:1, lastLogin:'2026-02-15 10:00', noLoginDays:43,
     groupMsg:18, lastGroupMsg:'2026-02-10 14:20',
     customTags:[], remark:'因个人原因退出，表示未来可能回归',
-    courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:55}],
-    aiSummary:'二期学员，已退出。退出前连续一个月未活跃，课程完成度低（3/8）。曾表示因个人原因暂停，未来可能回归。建议定期保持轻度联系，在有新课程或活动时推送通知。',
+    aiSummary:'二期学员，已退出。退出前连续一个月未活跃，课程完成度低。建议定期保持轻度联系。',
     aiTags:['已退出','回归可能','低完成度','需跟踪']
   },
   { id:101432, name:'周明', phone:'159****5678', wechat:'zhouming_biz', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'超过一个月未活跃', achievement:'',
-    courseLearned:2, courseCompleted:0, liveWatched:0, lastStudy:'2024-12-28 15:00', noStudy:92, homework:0,
+    circles:[
+      {name:'B站好物', courseLearned:2, courseCompleted:0, liveWatched:0, lastStudy:'2024-12-28 15:00', noStudy:92, homework:0, courses:[{name:'电商选品方法论',p:15}]}
+    ],
     posts:0, comments:0, likes:0, anchors:0, lastLogin:'2025-01-05 09:00', noLoginDays:449,
     groupMsg:3, lastGroupMsg:'2024-12-20 11:00',
     customTags:[], remark:'多次违反社区规范，经警告无效后移除',
-    courses:[{name:'电商选品方法论',p:15}],
-    aiSummary:'一期学员，因多次违规被移除。加入后几乎未学习（课程完成0%），社区零互动，群发言仅3次。不建议重新邀请，如有申请需严格审核。',
+    aiSummary:'一期学员，因多次违规被移除。加入后几乎未学习，社区零互动。不建议重新邀请。',
     aiTags:['已移除','违规用户','零互动']
   }
 ];
@@ -4969,14 +4978,25 @@ function openShenhaiDetail(idx) {
     }
   }
 
-  // Build courses HTML
-  var coursesHtml = '';
-  for (var ci = 0; ci < u.courses.length; ci++) {
-    var c = u.courses[ci];
-    coursesHtml += '<tr><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + (ci+1) + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.name + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.p + '%</td></tr>';
+  // Build per-circle learning HTML
+  var circleNames = [];
+  var learningHtml = '';
+  for (var gi = 0; gi < u.circles.length; gi++) {
+    var g = u.circles[gi];
+    circleNames.push(g.name);
+    var gCoursesHtml = '';
+    for (var ci = 0; ci < g.courses.length; ci++) {
+      var c = g.courses[ci];
+      gCoursesHtml += '<tr><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + (ci+1) + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.name + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.p + '%</td></tr>';
+    }
+    var gWarn = g.noStudy >= 14 ? '<span class="warn-number">' + g.noStudy + ' 天</span>' : g.noStudy + ' 天';
+    learningHtml +=
+      '<tr><td class="section-header" colspan="4">学习行为 — ' + g.name + '</td></tr>' +
+      '<tr><th>已学课程数</th><td><span style="color:var(--color-primary-6); cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';">' + g.courseLearned + ' 门课程 ▾</span><div style="display:none; margin-top:8px; border:1px solid var(--color-border-default); border-radius:6px; overflow:hidden;"><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">#</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">进度</th></tr></thead><tbody>' + gCoursesHtml + '</tbody></table></div></td><th>已完成课程</th><td>' + g.courseCompleted + ' 门课程</td></tr>' +
+      '<tr><th>直播观看数</th><td>' + g.liveWatched + ' 场直播</td><th>最近学习时间</th><td>' + g.lastStudy + '</td></tr>' +
+      '<tr><th>连续未学习</th><td>' + gWarn + '</td><th>作业提交</th><td>' + g.homework + ' 份作业</td></tr>';
   }
 
-  var warnStudy = u.noStudy >= 14 ? '<span class="warn-number">' + u.noStudy + ' 天</span>' : u.noStudy + ' 天';
   var warnLogin = u.noLoginDays >= 14 ? '<span class="warn-number">' + u.noLoginDays + ' 天</span>' : u.noLoginDays + ' 天';
   var achievementTag = u.achievement ? '<span class="tag" style="font-size:11px; height:18px; background:#FFFBE6; color:#D48806; border:1px solid #FFE58F;">' + u.achievement + '</span>' : '';
   var activeTag = u.active ? '<span class="tag tag-danger" style="font-size:11px; height:18px;">' + u.active + '</span>' : '';
@@ -5061,16 +5081,13 @@ function openShenhaiDetail(idx) {
     '<div class="profile-table"><table>' +
       // 基础信息
       '<tr><td class="section-header" colspan="4">基础信息</td></tr>' +
-      '<tr><th>用户ID</th><td>' + u.id + '</td><th>深海圈</th><td>' + u.circle + '</td></tr>' +
+      '<tr><th>用户ID</th><td>' + u.id + '</td><th>所属圈子</th><td>' + circleNames.join('、') + '</td></tr>' +
       '<tr><th>昵称</th><td>' + u.name + '</td><th>状态</th><td><span class="tag ' + u.statusCls + '" style="height:20px; font-size:11px;">' + u.status + '</span></td></tr>' +
       '<tr><th>手机号</th><td>' + u.phone + '</td><th>微信号</th><td>' + u.wechat + '</td></tr>' +
       '<tr><th>加入时间</th><td>' + u.join + '</td><th>到期时间</th><td>' + u.expire + '</td></tr>' +
 
-      // 学习行为
-      '<tr><td class="section-header" colspan="4">学习行为</td></tr>' +
-      '<tr><th>已学课程数</th><td><span style="color:var(--color-primary-6); cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';">' + u.courseLearned + ' 门课程 ▾</span><div style="display:none; margin-top:8px; border:1px solid var(--color-border-default); border-radius:6px; overflow:hidden;"><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">#</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">进度</th></tr></thead><tbody>' + coursesHtml + '</tbody></table></div></td><th>已完成课程</th><td>' + u.courseCompleted + ' 门课程</td></tr>' +
-      '<tr><th>直播观看数</th><td>' + u.liveWatched + ' 场直播</td><th>最近学习时间</th><td>' + u.lastStudy + '</td></tr>' +
-      '<tr><th>连续未学习</th><td>' + warnStudy + '</td><th>作业提交</th><td>' + u.homework + ' 份作业</td></tr>' +
+      // 学习行为 — 按圈子分 section
+      learningHtml +
 
       // 社区活跃
       '<tr><td class="section-header" colspan="4">社区活跃</td></tr>' +
