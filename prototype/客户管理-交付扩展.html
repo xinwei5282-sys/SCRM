@@ -5244,35 +5244,44 @@ function openShenhaiDetail(idx) {
     '</div>' +
     // 客户动态 — 参考官网结构
     '<div class="tab-panel" data-panel="activity">' +
+      // 一级筛选 — 深海圈社区 / 课程学习
+      '<div class="activity-source-grid">' +
+        '<div class="activity-source-item active" data-source="all" onclick="filterShSource(this)"><span class="activity-source-value">' + (u.posts + u.comments + u.likes + u.anchors + u.posts * 3 + u.circles[0].courseLearned + u.circles[0].liveWatched + u.circles[0].homework) + '</span><span class="activity-source-label">全部</span></div>' +
+        '<div class="activity-source-item" data-source="community" onclick="filterShSource(this)"><span class="activity-source-value">' + (u.posts + u.comments + u.likes + u.anchors + u.posts * 3) + '</span><span class="activity-source-label">深海圈社区</span></div>' +
+        '<div class="activity-source-item" data-source="course" onclick="filterShSource(this)"><span class="activity-source-value">' + (u.circles[0].courseLearned + u.circles[0].liveWatched + u.circles[0].homework) + '</span><span class="activity-source-label">课程学习</span></div>' +
+      '</div>' +
       // 二级子筛选 — 可切换
       '<div class="sh-activity-chips" style="display:flex; gap:8px; padding:8px 20px; flex-wrap:wrap;">' +
         '<span class="sh-chip active" data-filter="all" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;background:var(--color-primary-1);color:var(--color-primary-6);">全部</span>' +
-        '<span class="sh-chip" data-filter="read" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">阅读 ' + (u.posts * 3) + '</span>' +
-        '<span class="sh-chip" data-filter="post" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">发帖 ' + u.posts + '</span>' +
-        '<span class="sh-chip" data-filter="comment" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">评论 ' + u.comments + '</span>' +
-        '<span class="sh-chip" data-filter="like" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">点赞 ' + u.likes + '</span>' +
-        '<span class="sh-chip" data-filter="anchor" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">投锚 ' + u.anchors + '</span>' +
+        '<span class="sh-chip sh-src-community" data-filter="read" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">阅读 ' + (u.posts * 3) + '</span>' +
+        '<span class="sh-chip sh-src-community" data-filter="post" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">发帖 ' + u.posts + '</span>' +
+        '<span class="sh-chip sh-src-community" data-filter="comment" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">评论 ' + u.comments + '</span>' +
+        '<span class="sh-chip sh-src-community" data-filter="like" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">点赞 ' + u.likes + '</span>' +
+        '<span class="sh-chip sh-src-community" data-filter="anchor" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">投锚 ' + u.anchors + '</span>' +
+        '<span class="sh-chip sh-src-course" data-filter="course-done" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">完成课程 ' + u.circles[0].courseLearned + '</span>' +
+        '<span class="sh-chip sh-src-course" data-filter="live" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">观看直播 ' + u.circles[0].liveWatched + '</span>' +
+        '<span class="sh-chip sh-src-course" data-filter="homework" onclick="filterShActivity(this)" style="display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;cursor:pointer;">提交作业 ' + u.circles[0].homework + '</span>' +
       '</div>' +
       // 行为时间线
       '<div class="sh-activity-timeline timeline-container" style="padding:8px 20px 16px;">' +
         '<div class="timeline-date">今天 · 2026-03-30</div>' +
-        '<div class="timeline-item timeline-item-new" data-type="read"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:32</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '」相关讨论帖</div><span class="timeline-duration">5min</span></div></div>' +
-        '<div class="timeline-item" data-type="post"><div class="timeline-dot dot-blue"></div><div class="timeline-time">11:20</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了「学习心得：' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '实操总结」</div></div></div>' +
-        '<div class="timeline-item" data-type="comment"><div class="timeline-dot dot-green"></div><div class="timeline-time">10:05</div><div class="timeline-card"><div class="timeline-title">评论</div><div class="timeline-desc">评论了「' + u.circles[0].name + '第3期学员优秀作业展示」：写得很好，学到了！</div></div></div>' +
+        '<div class="timeline-item timeline-item-new" data-type="read" data-src="community"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:32</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '」相关讨论帖</div><span class="timeline-duration">5min</span></div></div>' +
+        '<div class="timeline-item" data-type="post" data-src="community"><div class="timeline-dot dot-blue"></div><div class="timeline-time">11:20</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了「学习心得：' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '实操总结」</div></div></div>' +
+        '<div class="timeline-item" data-type="comment" data-src="community"><div class="timeline-dot dot-green"></div><div class="timeline-time">10:05</div><div class="timeline-card"><div class="timeline-title">评论</div><div class="timeline-desc">评论了「' + u.circles[0].name + '第3期学员优秀作业展示」：写得很好，学到了！</div></div></div>' +
 
         '<div class="timeline-date">昨天 · 2026-03-29</div>' +
-        '<div class="timeline-item" data-type="read"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:15</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了「' + u.circles[0].name + '教练答疑精选 · 第12期」</div><span class="timeline-duration">12min</span></div></div>' +
-        '<div class="timeline-item" data-type="like"><div class="timeline-dot dot-orange"></div><div class="timeline-time">16:30</div><div class="timeline-card"><div class="timeline-title">点赞</div><div class="timeline-desc">点赞了3篇' + u.circles[0].name + '社区帖子</div></div></div>' +
-        '<div class="timeline-item" data-type="anchor"><div class="timeline-dot" style="background:#7C3AED;"></div><div class="timeline-time">15:00</div><div class="timeline-card"><div class="timeline-title">投锚</div><div class="timeline-desc">给「' + u.circles[0].name + '实战案例分享」投了1个锚点</div></div></div>' +
+        '<div class="timeline-item" data-type="read" data-src="community"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:15</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了「' + u.circles[0].name + '教练答疑精选 · 第12期」</div><span class="timeline-duration">12min</span></div></div>' +
+        '<div class="timeline-item" data-type="like" data-src="community"><div class="timeline-dot dot-orange"></div><div class="timeline-time">16:30</div><div class="timeline-card"><div class="timeline-title">点赞</div><div class="timeline-desc">点赞了3篇' + u.circles[0].name + '社区帖子</div></div></div>' +
+        '<div class="timeline-item" data-type="anchor" data-src="community"><div class="timeline-dot" style="background:#7C3AED;"></div><div class="timeline-time">15:00</div><div class="timeline-card"><div class="timeline-title">投锚</div><div class="timeline-desc">给「' + u.circles[0].name + '实战案例分享」投了1个锚点</div></div></div>' +
 
         '<div class="timeline-date">2026-03-27</div>' +
-        '<div class="timeline-item" data-type="read"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:30</div><div class="timeline-card"><div class="timeline-title">完成课程</div><div class="timeline-desc">完成了《' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '》学习，进度' + (u.circles[0].courses[0] ? u.circles[0].courses[0].p + '%' : '100%') + '</div></div></div>' +
-        '<div class="timeline-item" data-type="read"><div class="timeline-dot dot-blue"></div><div class="timeline-time">10:00</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「本周新课程预告」</div><span class="timeline-duration">3min</span></div></div>' +
+        '<div class="timeline-item" data-type="course-done" data-src="course"><div class="timeline-dot dot-blue"></div><div class="timeline-time">14:30</div><div class="timeline-card"><div class="timeline-title">完成课程</div><div class="timeline-desc">完成了《' + (u.circles[0].courses[0] ? u.circles[0].courses[0].name : '课程') + '》学习，进度' + (u.circles[0].courses[0] ? u.circles[0].courses[0].p + '%' : '100%') + '</div></div></div>' +
+        '<div class="timeline-item" data-type="read" data-src="community"><div class="timeline-dot dot-blue"></div><div class="timeline-time">10:00</div><div class="timeline-card"><div class="timeline-title">阅读内容</div><div class="timeline-desc">阅读了' + u.circles[0].name + '「本周新课程预告」</div><span class="timeline-duration">3min</span></div></div>' +
 
         '<div class="timeline-date">2026-03-25</div>' +
-        '<div class="timeline-item" data-type="read"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:00</div><div class="timeline-card"><div class="timeline-title">观看直播</div><div class="timeline-desc">观看了' + u.circles[0].name + '直播回放《实战分享会》</div><span class="timeline-duration">45min</span></div></div>' +
-        '<div class="timeline-item" data-type="post"><div class="timeline-dot dot-green"></div><div class="timeline-time">16:45</div><div class="timeline-card"><div class="timeline-title">提交作业</div><div class="timeline-desc">提交了第' + u.circles[0].homework + '份作业，等待教练点评</div></div></div>' +
-        '<div class="timeline-item" data-type="post"><div class="timeline-dot dot-blue"></div><div class="timeline-time">09:10</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了学习笔记</div></div></div>' +
+        '<div class="timeline-item" data-type="live" data-src="course"><div class="timeline-dot dot-blue"></div><div class="timeline-time">20:00</div><div class="timeline-card"><div class="timeline-title">观看直播</div><div class="timeline-desc">观看了' + u.circles[0].name + '直播回放《实战分享会》</div><span class="timeline-duration">45min</span></div></div>' +
+        '<div class="timeline-item" data-type="homework" data-src="course"><div class="timeline-dot dot-green"></div><div class="timeline-time">16:45</div><div class="timeline-card"><div class="timeline-title">提交作业</div><div class="timeline-desc">提交了第' + u.circles[0].homework + '份作业，等待教练点评</div></div></div>' +
+        '<div class="timeline-item" data-type="post" data-src="community"><div class="timeline-dot dot-blue"></div><div class="timeline-time">09:10</div><div class="timeline-card"><div class="timeline-title">发表内容</div><div class="timeline-desc">在' + u.circles[0].name + '发表了学习笔记</div></div></div>' +
       '</div>' +
     '</div>' +
     // 积分记录
@@ -5418,6 +5427,64 @@ function openShenhaiDetail(idx) {
 /* ======== 深海圈 AI 客户分析 — 流式生成 ======== */
 var shAiGenerating = false;
 /* ======== 深海圈客户动态筛选 ======== */
+function filterShSource(srcEl) {
+  var source = srcEl.getAttribute('data-source');
+  var panel = srcEl.closest('.tab-panel');
+  // Update active source
+  panel.querySelectorAll('.activity-source-item').forEach(function(s) { s.classList.remove('active'); });
+  srcEl.classList.add('active');
+
+  // Show/hide chips based on source
+  var chips = panel.querySelectorAll('.sh-chip');
+  chips.forEach(function(c) {
+    if (source === 'all') {
+      c.style.display = '';
+    } else if (c.getAttribute('data-filter') === 'all') {
+      c.style.display = '';
+    } else if (source === 'community' && c.classList.contains('sh-src-community')) {
+      c.style.display = '';
+    } else if (source === 'course' && c.classList.contains('sh-src-course')) {
+      c.style.display = '';
+    } else {
+      c.style.display = 'none';
+    }
+  });
+
+  // Reset chips to "全部" active
+  chips.forEach(function(c) {
+    c.classList.remove('active');
+    c.style.background = 'var(--color-fill-3)';
+    c.style.color = 'var(--color-text-2)';
+  });
+  var allChip = panel.querySelector('.sh-chip[data-filter="all"]');
+  if (allChip) {
+    allChip.classList.add('active');
+    allChip.style.background = 'var(--color-primary-1)';
+    allChip.style.color = 'var(--color-primary-6)';
+  }
+
+  // Filter timeline by source
+  var timeline = panel.querySelector('.sh-activity-timeline');
+  var items = timeline.querySelectorAll('.timeline-item');
+  var dates = timeline.querySelectorAll('.timeline-date');
+  items.forEach(function(item) {
+    if (source === 'all' || item.getAttribute('data-src') === source) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+  dates.forEach(function(dateEl) {
+    var next = dateEl.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('timeline-date')) {
+      if (next.classList.contains('timeline-item') && next.style.display !== 'none') hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    dateEl.style.display = hasVisible ? '' : 'none';
+  });
+}
+
 function filterShActivity(chipEl) {
   var filter = chipEl.getAttribute('data-filter');
   // Update active chip
@@ -5430,17 +5497,20 @@ function filterShActivity(chipEl) {
   chipEl.style.background = 'var(--color-primary-1)';
   chipEl.style.color = 'var(--color-primary-6)';
 
-  // Filter timeline items
-  var timeline = chipEl.closest('.tab-panel').querySelector('.sh-activity-timeline');
+  // Get current source filter
+  var panel = chipEl.closest('.tab-panel');
+  var activeSource = panel.querySelector('.activity-source-item.active');
+  var source = activeSource ? activeSource.getAttribute('data-source') : 'all';
+
+  // Filter timeline items (respect both source and type)
+  var timeline = panel.querySelector('.sh-activity-timeline');
   var items = timeline.querySelectorAll('.timeline-item');
   var dates = timeline.querySelectorAll('.timeline-date');
 
   items.forEach(function(item) {
-    if (filter === 'all' || item.getAttribute('data-type') === filter) {
-      item.style.display = '';
-    } else {
-      item.style.display = 'none';
-    }
+    var matchSource = (source === 'all' || item.getAttribute('data-src') === source);
+    var matchType = (filter === 'all' || item.getAttribute('data-type') === filter);
+    item.style.display = (matchSource && matchType) ? '' : 'none';
   });
 
   // Hide date headers if all items under them are hidden
