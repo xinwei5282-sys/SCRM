@@ -1990,68 +1990,157 @@
 
         <!-- ===== Tab: 客户动态 ===== -->
         <div class="tab-content" data-tab="behavior">
-        <!-- 子筛选条 -->
-        <div style="display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; border-bottom: 1px solid var(--color-border-default);">
-          <button class="sub-filter-chip active" onclick="filterActivity(this, 'all')">全部</button>
-          <button class="sub-filter-chip" onclick="filterActivity(this, 'read')">阅读 <span class="chip-count">135</span></button>
-          <button class="sub-filter-chip" onclick="filterActivity(this, 'post')">发帖 <span class="chip-count">45</span></button>
-          <button class="sub-filter-chip" onclick="filterActivity(this, 'comment')">评论 <span class="chip-count">23</span></button>
-          <button class="sub-filter-chip" onclick="filterActivity(this, 'like')">点赞 <span class="chip-count">156</span></button>
-          <button class="sub-filter-chip" onclick="filterActivity(this, 'anchor')">投锚 <span class="chip-count">12</span></button>
+        <!-- 一级统计概览（点击=筛选） -->
+        <div class="metrics-grid metrics-4col">
+          <div class="metric-item metric-center metric-filterable" data-filter="community" data-subs='[{"label":"发帖","value":"45","filter":"community-post"},{"label":"阅读","value":"135","filter":"community-read"},{"label":"评论","value":"23","filter":"community-comment"},{"label":"点赞","value":"156","filter":"community-like"},{"label":"投锚","value":"12","filter":"community-anchor"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">371</span>
+            <span class="metric-label">深海圈社区</span>
+          </div>
+          <div class="metric-item metric-center metric-filterable" data-filter="course" data-subs='[{"label":"完成课程","value":"8","filter":"course-done"},{"label":"观看直播","value":"5","filter":"course-live"},{"label":"提交作业","value":"6","filter":"course-homework"}]' onclick="toggleSourceFilter(this)">
+            <span class="metric-value">19</span>
+            <span class="metric-label">课程学习</span>
+          </div>
         </div>
+
+        <!-- 二级子筛选条 -->
+        <div class="sub-filter-bar" id="subFilterBar"></div>
 
         <!-- 行为时间线 -->
         <div class="timeline-section">
-          <div class="timeline-date-header">2026-03-30</div>
+          <div class="timeline-date-header">今天 · 2026-03-30</div>
           <div class="timeline-list">
-            <div class="timeline-item" data-activity="read">
+            <div class="timeline-item" data-activity="community-read community">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
                 <span class="timeline-type">阅读内容</span>
-                <span class="timeline-time">14:20</span>
+                <span class="timeline-time">14:32</span>
               </div>
-              <div class="timeline-desc">阅读了AI产品出海相关讨论帖</div>
+              <div class="timeline-desc">阅读了 <span class="hl">#AI产品出海</span>「AI写作变现入门实操笔记」</div>
               <div class="timeline-duration">5min</div>
             </div>
-            <div class="timeline-item" data-activity="post">
+            <div class="timeline-item" data-activity="community-post community">
               <div class="timeline-dot dot-blue"></div>
               <div class="timeline-head">
                 <span class="timeline-type">发表内容</span>
-                <span class="timeline-time">10:30</span>
+                <span class="timeline-time">11:20</span>
               </div>
-              <div class="timeline-desc">在AI产品出海发表学习心得</div>
+              <div class="timeline-desc">发表了 <span class="hl">#学习心得</span>「ChatGPT提示词进阶实操总结」</div>
+            </div>
+            <div class="timeline-item" data-activity="community-comment community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表评论</span>
+                <span class="timeline-time">10:05</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#AI产品出海</span> 评论了「第3期学员优秀作业展示」：写得很好，学到了！</div>
             </div>
           </div>
 
-          <div class="timeline-date-header">2026-03-29</div>
+          <div class="timeline-date-header">昨天 · 2026-03-29</div>
           <div class="timeline-list">
-            <div class="timeline-item" data-activity="like">
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">20:15</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#AI产品出海</span>「教练答疑精选 · 第12期」</div>
+              <div class="timeline-duration">12min</div>
+            </div>
+            <div class="timeline-item" data-activity="community-like community">
               <div class="timeline-dot"></div>
               <div class="timeline-head">
                 <span class="timeline-type">点赞</span>
-                <span class="timeline-time">16:45</span>
+                <span class="timeline-time">16:30</span>
               </div>
-              <div class="timeline-desc">点赞了3篇社区帖子</div>
+              <div class="timeline-desc">点赞了 <span class="hl">#AI产品出海</span> 3篇社区帖子</div>
             </div>
-            <div class="timeline-item" data-activity="anchor">
+            <div class="timeline-item" data-activity="community-anchor community">
               <div class="timeline-dot dot-teal"></div>
               <div class="timeline-head">
                 <span class="timeline-type">投锚</span>
-                <span class="timeline-time">15:20</span>
+                <span class="timeline-time">15:00</span>
               </div>
-              <div class="timeline-desc">给实战案例分享投了1个锚点</div>
+              <div class="timeline-desc">给 <span class="hl">#AI产品出海</span>「实战案例分享」投了1个锚点</div>
+            </div>
+            <div class="timeline-item" data-activity="course-live course">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">观看直播</span>
+                <span class="timeline-time">14:00</span>
+              </div>
+              <div class="timeline-desc">观看了 <span class="hl">AI产品出海</span> 直播回放「出海工具链全解析」</div>
+              <div class="timeline-duration">38min</div>
             </div>
           </div>
 
           <div class="timeline-date-header">2026-03-27</div>
           <div class="timeline-list">
-            <div class="timeline-item" data-activity="read">
+            <div class="timeline-item" data-activity="course-done course">
               <div class="timeline-dot dot-green"></div>
               <div class="timeline-head">
                 <span class="timeline-type">完成课程</span>
                 <span class="timeline-time">21:00</span>
               </div>
-              <div class="timeline-desc">完成了《AI写作变现入门》</div>
+              <div class="timeline-desc">完成了 <span class="hl">AI产品出海</span>「AI写作变现入门」课程，进度100%</div>
+            </div>
+            <div class="timeline-item" data-activity="community-read community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">阅读内容</span>
+                <span class="timeline-time">10:00</span>
+              </div>
+              <div class="timeline-desc">阅读了 <span class="hl">#B站好物</span>「本周新课程预告」</div>
+              <div class="timeline-duration">3min</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2026-03-25</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="course-homework course">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">提交作业</span>
+                <span class="timeline-time">16:45</span>
+              </div>
+              <div class="timeline-desc">提交了 <span class="hl">AI产品出海</span> 第4份作业，等待教练点评</div>
+            </div>
+            <div class="timeline-item" data-activity="community-post community">
+              <div class="timeline-dot dot-blue"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表内容</span>
+                <span class="timeline-time">09:10</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#B站好物</span> 发表了「B站选品攻略学习笔记」</div>
+            </div>
+          </div>
+
+          <div class="timeline-date-header">2026-03-22</div>
+          <div class="timeline-list">
+            <div class="timeline-item" data-activity="course-live course">
+              <div class="timeline-dot dot-green"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">观看直播</span>
+                <span class="timeline-time">20:00</span>
+              </div>
+              <div class="timeline-desc">观看了 <span class="hl">B站好物</span> 直播回放「选品实战分享会」</div>
+              <div class="timeline-duration">45min</div>
+            </div>
+            <div class="timeline-item" data-activity="community-comment community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">发表评论</span>
+                <span class="timeline-time">15:30</span>
+              </div>
+              <div class="timeline-desc">在 <span class="hl">#B站好物</span> 评论了「好物视频拍摄技巧」：拍摄角度建议很实用</div>
+            </div>
+            <div class="timeline-item" data-activity="community-like community">
+              <div class="timeline-dot"></div>
+              <div class="timeline-head">
+                <span class="timeline-type">点赞</span>
+                <span class="timeline-time">15:25</span>
+              </div>
+              <div class="timeline-desc">点赞了 <span class="hl">#B站好物</span> 2篇帖子</div>
             </div>
           </div>
         </div>
