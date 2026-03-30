@@ -4787,7 +4787,6 @@ function enterShenhaiView() {
     '<input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID">' +
     '<select class="filter-select sm"><option value="">深海圈</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
     '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
-    '<select class="filter-select sm"><option value="">会员期数</option><option>一期</option><option>二期</option><option>三期</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
     '<select class="filter-select sm"><option value="">鱼丸</option><option>鱼丸120</option><option>鱼丸580</option></select>' +
@@ -4808,7 +4807,6 @@ function enterShenhaiView() {
     '<th style="width:180px;">用户信息</th>' +
     '<th style="width:120px;">深海圈</th>' +
     '<th style="width:70px; text-align:center;">状态</th>' +
-    '<th style="width:70px;">会员期数</th>' +
     '<th>鱼丸</th>' +
     '<th>专属销售</th>' +
     '<th>专属服务</th>' +
@@ -4841,7 +4839,6 @@ function enterShenhaiView() {
       '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name.charAt(0) + '</div><div><div class="customer-name">' + u.name + '</div><div class="customer-phone">' + u.phone + '</div></div></div></td>' +
       '<td>' + u.circle + '</td>' +
       '<td style="text-align:center"><span class="tag ' + u.statusCls + '">' + u.status + '</span></td>' +
-      '<td>' + u.period + '</td>' +
       '<td>' + u.yuwan + '</td>' +
       '<td><strong>' + u.sales + '</strong></td>' +
       '<td><strong>' + u.service + '</strong></td>' +
@@ -5067,7 +5064,6 @@ function openShenhaiDetail(idx) {
       '<tr><th>用户ID</th><td>' + u.id + '</td><th>深海圈</th><td>' + u.circle + '</td></tr>' +
       '<tr><th>昵称</th><td>' + u.name + '</td><th>状态</th><td><span class="tag ' + u.statusCls + '" style="height:20px; font-size:11px;">' + u.status + '</span></td></tr>' +
       '<tr><th>手机号</th><td>' + u.phone + '</td><th>微信号</th><td>' + u.wechat + '</td></tr>' +
-      '<tr><th>会员期数</th><td>' + u.period + '</td><th>用户期数</th><td><span class="tag tag-primary" style="height:20px; font-size:11px;">' + u.userPeriod + '</span></td></tr>' +
       '<tr><th>加入时间</th><td>' + u.join + '</td><th>到期时间</th><td>' + u.expire + '</td></tr>' +
 
       // 学习行为
