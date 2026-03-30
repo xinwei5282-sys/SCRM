@@ -1740,7 +1740,7 @@
   <div class="prd-section" id="prd-s1">
     <div class="prd-section-title orange">1. 需求概述</div>
     <div class="prd-item">让运营人员能<strong>查看标签体系 + 管理自动打标规则 + 编辑规则条件</strong></div>
-    <div class="prd-item">标签来源：CDP 标签体系框架，4 大类 100 个标签（全局41+社区17+航海21+深海21）</div>
+    <div class="prd-item">标签来源：CDP 标签体系框架，4 大类 96 个标签（全局41+社区17+航海17+深海21）</div>
     <div class="prd-item">规则来源：自动打标规则库，35 条规则</div>
     <div class="prd-item">三个视图：标签总览（默认）/ 规则管理 / 规则编辑器（Drawer）</div>
   </div>
@@ -1781,8 +1781,7 @@
     <div class="prd-label">标签配置</div>
     <div class="prd-item">分类 → 标签代码 → 标签值 三级联动</div>
     <div class="prd-label">触发条件</div>
-    <div class="prd-item">5 种条件类型：属性 / 事件 / 标签 / 评分 / 人群包，组内 AND/OR，组间 且/或/且非</div>
-    <div class="prd-item">属性维度：会员等级 / 会员状态 / 客户等级 / 好友状态 / 续费状态 / 续费倾向分 / 到期倒计时 / 沉默天数 / 登录天数 / 入圈期数 / 下单次数 / 社群角色</div>
+    <div class="prd-item">属性条件 + 事件条件，组内 AND/OR，组间 且/或/且非</div>
     <div class="prd-label">自动移除条件（可选折叠）</div>
     <div class="prd-item">同样的条件构建器，当条件满足时自动移除标签</div>
     <div class="prd-label">执行配置</div>
@@ -1823,7 +1822,7 @@ var tagData = {
     { name: '会员等级', code: 'id_member_level', values: '体验会员 / 在期会员 / 往期会员', source: '鱼丸系统', freq: '实时', rules: 2 },
     { name: '入圈期数', code: 'id_member_period', values: '第 8 期、第 9 期', source: '鱼丸系统', freq: '订单触发', rules: 0 },
     { name: '客户等级', code: 'id_customer_level', values: 'S+ / S / A / B', source: 'CRM 系统', freq: '手动/规则', rules: 1 },
-    { name: '社群角色', code: 'id_role', values: '普通圈友 / 传术师 / 航海家 / 组局官 / 嘉宾 / KOC / 管理员', source: '鱼丸系统', freq: '系统同步', rules: 1 },
+    { name: '社群角色', code: 'id_role', values: '普通圈友 / 传术师 / 航海家 / 组局官 / 嘉宾 / 管理员', source: '鱼丸系统', freq: '系统同步', rules: 1 },
     { name: '来源渠道', code: 'id_source_channel', values: '视频号 / 公众号 / 合作导流 / 小红书', source: 'CRM 系统', freq: '首次添加', rules: 0 },
     { name: '来源类型', code: 'id_source_type', values: '自然流量 / 付费投放 / KOC推荐 / 老带新', source: 'CRM 系统', freq: '首次添加', rules: 0 },
     { name: '推荐人', code: 'id_referrer', values: '用户ID/昵称/星球编号', source: 'CRM 系统', freq: '首次添加', rules: 1 },
@@ -1838,7 +1837,7 @@ var tagData = {
     { name: '累计消费金额', code: 'txn_total_spent', values: '高消费(>=10000) / 中(3000-9999) / 低(<3000)', source: '订单系统', freq: '支付触发', rules: 1 },
     { name: '下单次数', code: 'txn_purchase_count', values: '具体次数（1、2、3…）', source: '订单系统', freq: '支付触发', rules: 0 },
     { name: '最近购买产品', code: 'txn_latest_product', values: '年费会员 / 航海门票 / 深海圈项目 / 周边', source: '订单系统', freq: '支付触发', rules: 0 },
-    { name: '续费次数', code: 'txn_renewal_count', values: '0 / 1 / 2 / 3+', source: '订单系统', freq: '续费触发', rules: 2 },
+    { name: '会员续费次数', code: 'txn_renewal_count', values: '0 / 1 / 2 / 3+', source: '订单系统', freq: '续费触发', rules: 2 },
     { name: '续费状态', code: 'txn_renewal_status', values: '首年 / 已续费 / 待续费 / 已过期', source: '订单系统', freq: '每日', rules: 3 },
     { name: 'CLV 层级', code: 'txn_clv_tier', values: '钻石(Top5%) / 金(Top20%) / 银(Top50%) / 铜(Bottom50%)', source: '评分引擎', freq: '月度', rules: 0 },
     { name: '到期倒计时', code: 'txn_expire_countdown', values: '具体天数（负数=已过期天数）', source: '订单系统', freq: '每日', rules: 2 },
@@ -2345,7 +2344,7 @@ function renderConditionRow(section, gi, ci, cond) {
 
   if (cond.type === 'attribute') {
     html += '<select class="rb-condition-select" style="min-width:120px;">' +
-      '<option>' + (cond.dim || '选择属性') + '</option><option>会员等级</option><option>会员状态</option><option>客户等级</option><option>好友状态</option><option>续费状态</option><option>续费倾向分</option><option>到期倒计时</option><option>沉默天数</option><option>登录天数</option><option>入圈期数</option><option>下单次数</option><option>社群角色</option></select>';
+      '<option>' + (cond.dim || '选择属性') + '</option><option>会员状态</option><option>客户等级</option><option>续费状态</option><option>续费倾向分</option><option>到期倒计时</option><option>沉默天数</option><option>登录天数</option><option>入圈期数</option></select>';
     html += '<select class="rb-condition-select" style="min-width:80px;">' +
       '<option>' + (cond.op || '等于') + '</option><option>等于</option><option>不等于</option><option>大于</option><option>小于</option><option>大于等于</option><option>小于等于</option><option>包含</option></select>';
     html += '<input class="rb-condition-input" style="width:100px;" value="' + (cond.val || '') + '" placeholder="值">';
@@ -2523,7 +2522,7 @@ var changelogData = [
   { user: 'cust_14523', tag: 'nav_stuck_point', changeType: '新增', oldVal: '—', newVal: '有卡点(L3)', source: '规则', rule: '学习卡点预警', time: '2026-03-25 03:15' },
   { user: 'cust_03891', tag: 'txn_renewal_status', changeType: '更新', oldVal: '待续费', newVal: '已过期', source: '批量', rule: '到期状态计算', time: '2026-03-25 03:00' },
   { user: 'cust_22145', tag: 'lc_health', changeType: '更新', oldVal: '良好', newVal: '一般', source: '模型', rule: '健康分引擎', time: '2026-03-25 03:00' },
-  { user: 'cust_09876', tag: 'id_wechat_status', changeType: '更新', oldVal: '双向好友', newVal: '客户删除后', source: '规则', rule: '好友已删除', time: '2026-03-24 22:15' },
+  { user: 'cust_09876', tag: 'id_wechat_status', changeType: '更新', oldVal: '好友', newVal: '客户删除', source: '规则', rule: '好友已删除', time: '2026-03-24 22:15' },
   { user: 'cust_11234', tag: 'lc_engagement_tier', changeType: '更新', oldVal: 'L3参与', newVal: 'L2活跃', source: '模型', rule: '参与度引擎', time: '2026-03-24 08:00' },
   { user: 'cust_07823', tag: 'comm_read_volume', changeType: '过期', oldVal: '重度', newVal: '—', source: '批量', rule: 'TTL过期清理', time: '2026-03-24 04:00' },
   { user: 'cust_18901', tag: 'lc_churn_risk', changeType: '移除', oldVal: '续费风险', newVal: '—', source: '规则', rule: '续费风险(移除)', time: '2026-03-24 03:30' },
