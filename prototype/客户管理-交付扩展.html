@@ -4782,7 +4782,6 @@ function enterShenhaiView() {
     '<input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID">' +
     '<select class="filter-select sm"><option value="">深海圈</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
     '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
-    '<select class="filter-select sm"><option value="">身份</option><option>教练</option><option>志愿者</option><option>管理员</option><option>学员</option></select>' +
     '<select class="filter-select sm"><option value="">会员期数</option><option>一期</option><option>二期</option><option>三期</option></select>' +
     '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
     '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
@@ -4803,7 +4802,6 @@ function enterShenhaiView() {
     '<th style="width:70px;">用户ID</th>' +
     '<th style="width:180px;">用户信息</th>' +
     '<th style="width:120px;">深海圈</th>' +
-    '<th style="width:80px; text-align:center;">身份</th>' +
     '<th style="width:70px; text-align:center;">状态</th>' +
     '<th style="width:70px;">会员期数</th>' +
     '<th>鱼丸</th>' +
@@ -4837,7 +4835,6 @@ function enterShenhaiView() {
       '<td>' + u.id + '</td>' +
       '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name.charAt(0) + '</div><div><div class="customer-name">' + u.name + '</div><div class="customer-phone">' + u.phone + '</div></div></div></td>' +
       '<td>' + u.circle + '</td>' +
-      '<td style="text-align:center"><span class="tag ' + u.roleCls + '">' + u.role + '</span></td>' +
       '<td style="text-align:center"><span class="tag ' + u.statusCls + '">' + u.status + '</span></td>' +
       '<td>' + u.period + '</td>' +
       '<td>' + u.yuwan + '</td>' +
