@@ -563,39 +563,30 @@
     text-overflow: ellipsis;
   }
 
-  /* ======== Deep Sea View Mode ======== */
-  .shenhai-filters { display: none; }
-  .shenhai-table { display: none; }
-  .shenhai-stats { display: none; }
-  body.view-shenhai .default-filters { display: none; }
-  body.view-shenhai .shenhai-filters { display: flex; }
-  body.view-shenhai .default-table { display: none; }
-  body.view-shenhai .shenhai-table { display: block; }
-  body.view-shenhai .default-stats { display: none; }
-  body.view-shenhai .shenhai-stats { display: flex; }
-
-  .shenhai-stats {
-    gap: 24px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--color-border-default);
-    background: var(--color-fill-2);
-  }
-  .stat-item {
+  /* ======== Customer Type Tabs ======== */
+  .type-tabs {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
+    gap: 0;
+    border-bottom: 1px solid var(--color-border-default);
+    padding: 0 20px;
+    background: var(--color-fill-1);
+  }
+  .type-tab {
+    padding: 10px 20px;
+    font-size: 14px;
     color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 100ms;
+    white-space: nowrap;
   }
-  .stat-value {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--color-text-1);
-    font-family: DIN, 'DIN Alternate', sans-serif;
+  .type-tab:hover { color: var(--color-text-1); }
+  .type-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
   }
-  .stat-value.s-success { color: #52C41A; }
-  .stat-value.s-warning { color: #FA9A1D; }
-  .stat-value.s-danger { color: #F54A45; }
   .warn-number { color: #F54A45; font-weight: 600; }
 
   /* ======== Pagination ======== */
@@ -2003,6 +1994,14 @@
           <h1 class="page-title">客户管理</h1>
         </div>
 
+        <!-- ======== Customer Type Tabs ======== -->
+        <div class="type-tabs" id="typeTabs">
+          <div class="type-tab active" onclick="switchTypeTab(this, '')">全部</div>
+          <div class="type-tab" onclick="switchTypeTab(this, '官网会员')">官网会员</div>
+          <div class="type-tab" onclick="switchTypeTab(this, '航海会员')">航海会员</div>
+          <div class="type-tab" onclick="switchTypeTab(this, '深海圈会员')">深海圈会员</div>
+        </div>
+
         <!-- ======== Search Filters ======== -->
         <div class="filter-area" id="filterArea">
           <div class="filter-row" id="filterRow">
@@ -2028,11 +2027,11 @@
               <option>视频号</option>
             </select>
             <div class="filter-item new-badge">
-              <select class="filter-select sm" id="customerTypeFilter" onchange="switchCustomerTypeView(this.value)">
+              <select class="filter-select sm">
                 <option value="">客户类型</option>
-                <option value="官网会员">官网会员</option>
-                <option value="航海会员">航海会员</option>
-                <option value="深海圈会员">深海圈会员</option>
+                <option>官网会员</option>
+                <option>航海会员</option>
+                <option>深海圈会员</option>
               </select>
             </div>
             <div class="filter-item new-badge">
@@ -4748,17 +4747,21 @@ function editDetailNote() {
 }
 
 /* ================================================================
- * 深海圈视图切换 — 客户类型下拉选择「深海圈会员」时切换
+ * 客户类型 Tab 切换 — 面包屑页签
  * ================================================================ */
 var shenhaiViewActive = false;
 var savedDefaultFilterHTML = '';
 var savedDefaultTheadHTML = '';
 var savedDefaultTbodyHTML = '';
 
-function switchCustomerTypeView(value) {
-  if (value === '深海圈会员' && !shenhaiViewActive) {
+function switchTypeTab(tabEl, type) {
+  // Update active tab
+  document.querySelectorAll('#typeTabs .type-tab').forEach(function(t) { t.classList.remove('active'); });
+  tabEl.classList.add('active');
+
+  if (type === '深海圈会员' && !shenhaiViewActive) {
     enterShenhaiView();
-  } else if (value !== '深海圈会员' && shenhaiViewActive) {
+  } else if (type !== '深海圈会员' && shenhaiViewActive) {
     exitShenhaiView();
   }
 }
@@ -4775,63 +4778,58 @@ function enterShenhaiView() {
   savedDefaultTheadHTML = thead.innerHTML;
   savedDefaultTbodyHTML = tbody.innerHTML;
 
-  // Replace filters — keep search input + 客户类型 dropdown + add 深海圈 filters
-  filterRow.innerHTML = `
-    <input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID" id="searchInput">
-    <div class="filter-item new-badge">
-      <select class="filter-select sm" id="customerTypeFilter" onchange="switchCustomerTypeView(this.value)">
-        <option value="">客户类型</option>
-        <option value="官网会员">官网会员</option>
-        <option value="航海会员">航海会员</option>
-        <option value="深海圈会员" selected>深海圈会员</option>
-      </select>
-    </div>
-    <select class="filter-select sm"><option value="">深海圈</option><option>深海圈-AI变现</option><option>深海圈-短视频</option><option>深海圈-电商实战</option><option>深海圈-自媒体</option></select>
-    <select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>
-    <select class="filter-select sm"><option value="">身份</option><option>教练</option><option>志愿者</option><option>管理员</option><option>学员</option></select>
-    <select class="filter-select sm"><option value="">会员期数</option><option>一期</option><option>二期</option><option>三期</option></select>
-    <select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>
-    <select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>
-    <input class="filter-input date-range" type="text" placeholder="加入时间（开始）~ 加入时间（结束）">
-    <div class="filter-actions">
-      <button class="btn btn-primary">查询</button>
-      <button class="btn btn-secondary">清空</button>
-      <button class="btn btn-outline">导出</button>
-    </div>
-  `;
+  // Replace filters
+  filterRow.innerHTML =
+    '<input class="filter-input wide" type="text" placeholder="昵称 / 手机号 / 用户ID">' +
+    '<select class="filter-select sm"><option value="">深海圈</option><option>AI产品出海</option><option>YouTube AI 视频</option><option>B站好物</option></select>' +
+    '<select class="filter-select sm"><option value="">状态</option><option>正常</option><option>已退出</option><option>已移除</option></select>' +
+    '<select class="filter-select sm"><option value="">身份</option><option>教练</option><option>志愿者</option><option>管理员</option><option>学员</option></select>' +
+    '<select class="filter-select sm"><option value="">会员期数</option><option>一期</option><option>二期</option><option>三期</option></select>' +
+    '<select class="filter-select sm"><option value="">用户活跃情况</option><option>连续一周不活跃</option><option>连续两周不活跃</option><option>超过一个月未活跃</option></select>' +
+    '<select class="filter-select sm"><option value="">成果标签</option><option>千刀户</option><option>万刀户</option></select>' +
+    '<input class="filter-input date-range" type="text" placeholder="加入时间（开始）~ 加入时间（结束）">' +
+    '<div class="filter-actions">' +
+      '<button class="btn btn-primary">查询</button>' +
+      '<button class="btn btn-secondary">清空</button>' +
+      '<button class="btn btn-outline">导出</button>' +
+    '</div>';
 
   // Replace thead
-  thead.innerHTML = `<tr>
-    <th style="width:70px;">用户ID</th>
-    <th style="width:180px;">用户信息</th>
-    <th style="width:120px;">深海圈</th>
-    <th style="width:80px; text-align:center;">身份</th>
-    <th style="width:70px; text-align:center;">状态</th>
-    <th style="width:70px;">会员期数</th>
-    <th style="width:100px;">加入时间</th>
-    <th style="width:100px;">到期时间</th>
-    <th style="width:80px; text-align:center;">已学课程</th>
-    <th style="width:90px; text-align:center;">未学习天数</th>
-    <th style="width:70px; text-align:center;">发帖数</th>
-    <th style="width:90px; text-align:center;">群发言</th>
-    <th class="sticky-right" style="width:100px; text-align:center;">操作</th>
-  </tr>`;
+  thead.innerHTML =
+    '<tr>' +
+    '<th style="width:70px;">用户ID</th>' +
+    '<th style="width:180px;">用户信息</th>' +
+    '<th style="width:120px;">深海圈</th>' +
+    '<th style="width:80px; text-align:center;">身份</th>' +
+    '<th style="width:70px; text-align:center;">状态</th>' +
+    '<th style="width:70px;">会员期数</th>' +
+    '<th style="width:100px;">加入时间</th>' +
+    '<th style="width:100px;">到期时间</th>' +
+    '<th style="width:80px; text-align:center;">已学课程</th>' +
+    '<th style="width:90px; text-align:center;">未学习天数</th>' +
+    '<th style="width:70px; text-align:center;">发帖数</th>' +
+    '<th style="width:90px; text-align:center;">群发言</th>' +
+    '<th>标签</th>' +
+    '<th class="sticky-right" style="width:100px; text-align:center;">操作</th>' +
+    '</tr>';
 
   // Replace tbody with 深海圈 data
   var shUsers = [
-    { id:100234, name:'李明远', phone:'138****5678', circle:'深海圈-AI变现', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'12/28', noStudy:3, posts:45, groupMsg:128 },
-    { id:100567, name:'王思涵', phone:'135****2345', circle:'深海圈-短视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'20/32', noStudy:1, posts:89, groupMsg:256 },
-    { id:100891, name:'张小鱼', phone:'139****8901', circle:'深海圈-电商实战', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'25/25', noStudy:0, posts:156, groupMsg:512 },
-    { id:101023, name:'陈梦琪', phone:'136****4567', circle:'深海圈-AI变现', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', join:'2026-01-10', expire:'2027-01-09', courses:'5/28', noStudy:18, posts:3, groupMsg:12 },
-    { id:101156, name:'刘大伟', phone:'137****7890', circle:'深海圈-自媒体', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'18/22', noStudy:5, posts:78, groupMsg:345 },
-    { id:101298, name:'赵颖', phone:'152****1234', circle:'深海圈-短视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'8/32', noStudy:45, posts:6, groupMsg:18 },
-    { id:101432, name:'周明', phone:'159****5678', circle:'深海圈-电商实战', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'2/25', noStudy:92, posts:0, groupMsg:3 }
+    { id:100234, name:'李明远', phone:'138****5678', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'12/28', noStudy:3, posts:45, groupMsg:128, tags:'千刀户' },
+    { id:100567, name:'王思涵', phone:'135****2345', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'20/32', noStudy:1, posts:89, groupMsg:256, tags:'万刀户' },
+    { id:100891, name:'张小鱼', phone:'139****8901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'25/25', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
+    { id:101023, name:'陈梦琪', phone:'136****4567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', join:'2026-01-10', expire:'2027-01-09', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
+    { id:101156, name:'刘大伟', phone:'137****7890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'18/22', noStudy:5, posts:78, groupMsg:345, tags:'千刀户' },
+    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', join:'2025-06-15', expire:'2026-06-14', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' },
+    { id:101432, name:'周明', phone:'159****5678', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', join:'2024-12-01', expire:'2025-11-30', courses:'2/25', noStudy:92, posts:0, groupMsg:3, tags:'' }
   ];
-  tbody.innerHTML = shUsers.map(function(u) {
+  var rows = '';
+  for (var i = 0; i < shUsers.length; i++) {
+    var u = shUsers[i];
     var studyWarn = u.noStudy >= 14 ? '<span class="warn-number">' + u.noStudy + '天</span>' : u.noStudy + '天';
-    return '<tr>' +
+    rows += '<tr>' +
       '<td>' + u.id + '</td>' +
-      '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name[0] + '</div><div><div class="customer-name">' + u.name + '</div><div class="customer-phone">' + u.phone + '</div></div></div></td>' +
+      '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name.charAt(0) + '</div><div><div class="customer-name">' + u.name + '</div><div class="customer-phone">' + u.phone + '</div></div></div></td>' +
       '<td>' + u.circle + '</td>' +
       '<td style="text-align:center"><span class="tag ' + u.roleCls + '">' + u.role + '</span></td>' +
       '<td style="text-align:center"><span class="tag ' + u.statusCls + '">' + u.status + '</span></td>' +
@@ -4842,15 +4840,14 @@ function enterShenhaiView() {
       '<td style="text-align:center">' + studyWarn + '</td>' +
       '<td style="text-align:center">' + u.posts + '</td>' +
       '<td style="text-align:center">' + u.groupMsg + '次</td>' +
-      '<td class="sticky-right" style="text-align:center"><button class="btn btn-text" onclick="openShenhaiDetail(' + shUsers.indexOf(u) + ')">详情</button></td>' +
+      '<td>' + (u.tags ? u.tags.split(' ').map(function(t){ return '<span class="tag tag-default">' + t + '</span>'; }).join(' ') : '—') + '</td>' +
+      '<td class="sticky-right" style="text-align:center"><button class="btn btn-text" onclick="openShenhaiDetail(' + i + ')">详情</button></td>' +
       '</tr>';
-  }).join('');
+  }
+  tbody.innerHTML = rows;
 
   // Update pagination
   totalEl.textContent = '共 1,286 条记录';
-
-  // Update page title
-  document.querySelector('.page-title').textContent = '客户管理 — 深海圈视图';
 }
 
 function exitShenhaiView() {
@@ -4859,54 +4856,53 @@ function exitShenhaiView() {
   document.getElementById('tableHead').innerHTML = savedDefaultTheadHTML;
   document.getElementById('tableBody').innerHTML = savedDefaultTbodyHTML;
   document.getElementById('paginationTotal').textContent = '共 400 条记录';
-  document.querySelector('.page-title').textContent = '客户管理';
 }
 
 /* ======== 深海圈详情抽屉 ======== */
 var shenhaiDetailData = [
-  { id:100234, name:'李明远', phone:'138****5678', wechat:'limingyuan_2024', circle:'深海圈-AI变现', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'', achievement:'千刀户',
+  { id:100234, name:'李明远', phone:'138****5678', wechat:'limingyuan_2024', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'', achievement:'千刀户',
     courseLearned:12, courseCompleted:8, liveWatched:5, lastStudy:'2026-03-27 14:30', noStudy:3, homework:6,
     posts:45, comments:23, likes:156, anchors:12, lastLogin:'2026-03-28 09:15', noLoginDays:2,
     groupMsg:128, lastGroupMsg:'2026-03-29 16:40',
     customTags:['企微渠道','高互动'], remark:'积极参与社区活动，已完成AI变现课程大部分内容',
     courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:85},{name:'自媒体AI辅助创作',p:60},{name:'AI绘画商业应用',p:40},{name:'AI视频脚本生成',p:20}]
   },
-  { id:100567, name:'王思涵', phone:'135****2345', wechat:'wangsh_video', circle:'深海圈-短视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
+  { id:100567, name:'王思涵', phone:'135****2345', wechat:'wangsh_video', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
     courseLearned:20, courseCompleted:18, liveWatched:12, lastStudy:'2026-03-29 20:10', noStudy:1, homework:15,
     posts:89, comments:67, likes:423, anchors:38, lastLogin:'2026-03-29 20:10', noLoginDays:1,
     groupMsg:256, lastGroupMsg:'2026-03-30 08:20',
     customTags:['核心成员','短视频达人','公众号导流'], remark:'社区活跃度极高，多次帮助新成员',
     courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:100},{name:'短视频变现路径',p:92},{name:'直播带货入门',p:70}]
   },
-  { id:100891, name:'张小鱼', phone:'139****8901', wechat:'zhangxy_coach', circle:'深海圈-电商实战', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
+  { id:100891, name:'张小鱼', phone:'139****8901', wechat:'zhangxy_coach', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
     courseLearned:25, courseCompleted:25, liveWatched:20, lastStudy:'2026-03-30 10:00', noStudy:0, homework:25,
     posts:156, comments:134, likes:890, anchors:75, lastLogin:'2026-03-30 10:00', noLoginDays:0,
     groupMsg:512, lastGroupMsg:'2026-03-30 11:30',
     customTags:['金牌教练','电商专家'], remark:'一期教练，课程完成度100%，负责电商模块答疑',
     courses:[{name:'电商选品方法论',p:100},{name:'店铺运营全流程',p:100},{name:'供应链管理基础',p:100}]
   },
-  { id:101023, name:'陈梦琪', phone:'136****4567', wechat:'chenmq_ai', circle:'深海圈-AI变现', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', userPeriod:'第三期', join:'2026-01-10', expire:'2027-01-09', active:'连续两周不活跃', achievement:'',
+  { id:101023, name:'陈梦琪', phone:'136****4567', wechat:'chenmq_ai', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', userPeriod:'第三期', join:'2026-01-10', expire:'2027-01-09', active:'连续两周不活跃', achievement:'',
     courseLearned:5, courseCompleted:2, liveWatched:1, lastStudy:'2026-03-12 16:45', noStudy:18, homework:1,
     posts:3, comments:5, likes:8, anchors:0, lastLogin:'2026-03-15 08:30', noLoginDays:15,
     groupMsg:12, lastGroupMsg:'2026-03-10 20:15',
     customTags:['新人'], remark:'',
     courses:[{name:'AI写作变现入门',p:45},{name:'ChatGPT提示词进阶',p:30}]
   },
-  { id:101156, name:'刘大伟', phone:'137****7890', wechat:'liudw_admin', circle:'深海圈-自媒体', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'千刀户',
+  { id:101156, name:'刘大伟', phone:'137****7890', wechat:'liudw_admin', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'千刀户',
     courseLearned:18, courseCompleted:15, liveWatched:9, lastStudy:'2026-03-25 11:20', noStudy:5, homework:10,
     posts:78, comments:45, likes:234, anchors:19, lastLogin:'2026-03-29 14:00', noLoginDays:1,
     groupMsg:345, lastGroupMsg:'2026-03-29 18:45',
     customTags:['管理核心','自媒体老手'], remark:'负责自媒体圈日常管理，处理违规内容',
     courses:[{name:'公众号涨粉策略',p:100},{name:'小红书运营',p:100},{name:'知乎高赞写作',p:88}]
   },
-  { id:101298, name:'赵颖', phone:'152****1234', wechat:'zhaoying_2025', circle:'深海圈-短视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'超过一个月未活跃', achievement:'',
+  { id:101298, name:'赵颖', phone:'152****1234', wechat:'zhaoying_2025', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'超过一个月未活跃', achievement:'',
     courseLearned:8, courseCompleted:3, liveWatched:2, lastStudy:'2026-02-13 09:30', noStudy:45, homework:2,
     posts:6, comments:8, likes:12, anchors:1, lastLogin:'2026-02-15 10:00', noLoginDays:43,
     groupMsg:18, lastGroupMsg:'2026-02-10 14:20',
     customTags:[], remark:'因个人原因退出，表示未来可能回归',
     courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:55}]
   },
-  { id:101432, name:'周明', phone:'159****5678', wechat:'zhouming_biz', circle:'深海圈-电商实战', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'超过一个月未活跃', achievement:'',
+  { id:101432, name:'周明', phone:'159****5678', wechat:'zhouming_biz', circle:'B站好物', role:'学员', roleCls:'tag-muted', status:'已移除', statusCls:'tag-danger', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'超过一个月未活跃', achievement:'',
     courseLearned:2, courseCompleted:0, liveWatched:0, lastStudy:'2024-12-28 15:00', noStudy:92, homework:0,
     posts:0, comments:0, likes:0, anchors:0, lastLogin:'2025-01-05 09:00', noLoginDays:449,
     groupMsg:3, lastGroupMsg:'2024-12-20 11:00',
@@ -4918,112 +4914,96 @@ var shenhaiDetailData = [
 function openShenhaiDetail(idx) {
   var u = shenhaiDetailData[idx];
   var modal = document.getElementById('detailModal');
-
-  // Build 深海圈 detail content
   var sidebar = modal.querySelector('.detail-sidebar');
   var mainEl = modal.querySelector('.detail-main');
 
-  // Replace sidebar content
-  sidebar.innerHTML = `
-    <div class="detail-avatar-area">
-      <div class="detail-avatar" style="font-size:24px; color:var(--color-text-3); display:flex; align-items:center; justify-content:center;">${u.name[0]}</div>
-      <div>
-        <div class="detail-name">
-          ${u.name}
-          <span class="tag ${u.statusCls}" style="font-size:11px; height:18px; margin-left:4px;">${u.status}</span>
-        </div>
-        <div style="font-size:13px; color:var(--color-text-3); margin-top:2px;">${u.circle} · ${u.period}</div>
-        <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
-          <span class="tag ${u.roleCls}" style="font-size:11px; height:18px;">${u.role}</span>
-          ${u.achievement ? '<span class="tag" style="font-size:11px; height:18px; background:#FFFBE6; color:#D48806; border:1px solid #FFE58F;">' + u.achievement + '</span>' : ''}
-          ${u.active ? '<span class="tag tag-danger" style="font-size:11px; height:18px;">' + u.active + '</span>' : ''}
-        </div>
-      </div>
-    </div>
+  // Build tags HTML
+  var tagsHtml = '';
+  for (var t = 0; t < u.customTags.length; t++) {
+    tagsHtml += '<span class="detail-tag">' + u.customTags[t] + '</span>';
+  }
 
-    <div class="detail-section-title" style="margin-top:20px;">运营标签</div>
-    <div class="detail-label-group">
-      <div class="detail-label-title">用户期数</div>
-      <div class="detail-tags-list"><span class="detail-tag" style="background:var(--color-primary-1); color:var(--color-primary-6);">${u.userPeriod}</span></div>
-    </div>
-    <div class="detail-label-group">
-      <div class="detail-label-title">活跃情况</div>
-      <div class="detail-tags-list">${u.active ? '<span class="detail-tag" style="background:var(--color-danger-1); color:var(--color-danger-6);">' + u.active + '</span>' : '<span class="detail-tag" style="background:var(--color-success-1); color:var(--color-success-6);">活跃</span>'}</div>
-    </div>
-    <div class="detail-label-group">
-      <div class="detail-label-title">成果标签</div>
-      <div class="detail-tags-list">${u.achievement ? '<span class="detail-tag" style="background:#FFFBE6; color:#D48806; border:1px solid #FFE58F;">' + u.achievement + '</span>' : '<span style="color:var(--color-text-4);">—</span>'}</div>
-    </div>
-    <div class="detail-label-group">
-      <div class="detail-label-title">自定义标签</div>
-      <div class="detail-tags-list">
-        ${u.customTags.map(function(t) { return '<span class="detail-tag">' + t + '</span>'; }).join('')}
-        <span class="detail-tag" style="color:var(--color-primary-6); border-color:var(--color-primary-2); cursor:pointer;">+ 添加标签</span>
-      </div>
-    </div>
-    <div class="detail-section-title" style="margin-top:16px;">运营备注</div>
-    <textarea style="width:100%; min-height:60px; border:1px solid var(--color-border-default); border-radius:6px; padding:8px 10px; font-size:13px; color:var(--color-text-1); resize:vertical; outline:none; font-family:inherit;" placeholder="添加运营备注...">${u.remark}</textarea>
-  `;
+  // Build courses HTML
+  var coursesHtml = '';
+  for (var ci = 0; ci < u.courses.length; ci++) {
+    var c = u.courses[ci];
+    coursesHtml += '<tr><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + (ci+1) + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.name + '</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">' + c.p + '%</td></tr>';
+  }
 
-  // Replace main content - 深海圈专属 tabs
   var warnStudy = u.noStudy >= 14 ? '<span class="warn-number">' + u.noStudy + ' 天</span>' : u.noStudy + ' 天';
   var warnLogin = u.noLoginDays >= 14 ? '<span class="warn-number">' + u.noLoginDays + ' 天</span>' : u.noLoginDays + ' 天';
-  mainEl.innerHTML = `
-    <div class="detail-tabs">
-      <div class="detail-tab active">客户档案</div>
-    </div>
-    <div class="tab-panel active" style="padding:20px;">
-      <!-- 基础信息 -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:14px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-          <span style="width:3px; height:14px; background:var(--color-primary-6); border-radius:2px; display:inline-block;"></span>基础信息
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid var(--color-border-default); border-radius:8px; overflow:hidden;">
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">用户ID</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.id}</td><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">深海圈</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.circle}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">昵称</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.name}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">状态</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);"><span class="tag ${u.statusCls}">${u.status}</span></td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">手机号</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.phone}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">微信号</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.wechat}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">身份</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);"><span class="tag ${u.roleCls}">${u.role}</span></td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">会员期数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.period}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">加入时间</td><td style="padding:8px 12px;">${u.join}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">到期时间</td><td style="padding:8px 12px;">${u.expire}</td></tr>
-        </table>
-      </div>
+  var achievementTag = u.achievement ? '<span class="tag" style="font-size:11px; height:18px; background:#FFFBE6; color:#D48806; border:1px solid #FFE58F;">' + u.achievement + '</span>' : '';
+  var activeTag = u.active ? '<span class="tag tag-danger" style="font-size:11px; height:18px;">' + u.active + '</span>' : '';
+  var activeLabel = u.active ? '<span class="detail-tag" style="background:var(--color-danger-1); color:var(--color-danger-6);">' + u.active + '</span>' : '<span class="detail-tag" style="background:var(--color-success-1); color:var(--color-success-6);">活跃</span>';
+  var achieveLabel = u.achievement ? '<span class="detail-tag" style="background:#FFFBE6; color:#D48806; border:1px solid #FFE58F;">' + u.achievement + '</span>' : '<span style="color:var(--color-text-4);">—</span>';
 
-      <!-- 学习行为 -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:14px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-          <span style="width:3px; height:14px; background:var(--color-primary-6); border-radius:2px; display:inline-block;"></span>学习行为
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid var(--color-border-default); border-radius:8px; overflow:hidden;">
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">已学课程数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);"><span style="color:var(--color-primary-6); cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';">${u.courseLearned} 门课程 ▾</span><div style="display:none; margin-top:8px; border:1px solid var(--color-border-default); border-radius:6px; overflow:hidden;"><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">#</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">进度</th></tr></thead><tbody>${u.courses.map(function(c,i){return '<tr><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">'+(i+1)+'</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">'+c.name+'</td><td style="padding:6px 10px; border-top:1px solid var(--color-border-default);">'+c.p+'%</td></tr>';}).join('')}</tbody></table></div></td><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">已完成课程</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.courseCompleted} 门课程</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">直播观看数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.liveWatched} 场直播</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">最近学习时间</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.lastStudy}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">未学习天数</td><td style="padding:8px 12px;">${warnStudy}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">作业提交</td><td style="padding:8px 12px;">${u.homework} 份作业</td></tr>
-        </table>
-      </div>
+  var cellL = 'style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);"';
+  var cellV = 'style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);"';
+  var cellLn = 'style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3);"';
+  var cellVn = 'style="padding:8px 12px;"';
+  var tblS = 'style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid var(--color-border-default); border-radius:8px; overflow:hidden;"';
+  var secTitle = '<div style="font-size:14px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="width:3px; height:14px; background:var(--color-primary-6); border-radius:2px; display:inline-block;"></span>';
 
-      <!-- 社区活跃 -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:14px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-          <span style="width:3px; height:14px; background:var(--color-primary-6); border-radius:2px; display:inline-block;"></span>社区活跃
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid var(--color-border-default); border-radius:8px; overflow:hidden;">
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">累计发帖数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.posts}</td><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">累计评论数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.comments}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">累计获赞数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.likes}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3); border-bottom:1px solid var(--color-border-default);">累计锚点数</td><td style="padding:8px 12px; border-bottom:1px solid var(--color-border-default);">${u.anchors}</td></tr>
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">最近登录</td><td style="padding:8px 12px;">${u.lastLogin}</td><td style="background:var(--color-fill-3); padding:8px 12px; color:var(--color-text-3);">未登录天数</td><td style="padding:8px 12px;">${warnLogin}</td></tr>
-        </table>
-      </div>
+  // Sidebar
+  sidebar.innerHTML =
+    '<div class="detail-avatar-area">' +
+      '<div class="detail-avatar" style="font-size:24px; color:var(--color-text-3); display:flex; align-items:center; justify-content:center;">' + u.name.charAt(0) + '</div>' +
+      '<div>' +
+        '<div class="detail-name">' + u.name + ' <span class="tag ' + u.statusCls + '" style="font-size:11px; height:18px; margin-left:4px;">' + u.status + '</span></div>' +
+        '<div style="font-size:13px; color:var(--color-text-3); margin-top:2px;">' + u.circle + ' · ' + u.period + '</div>' +
+        '<div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">' +
+          '<span class="tag ' + u.roleCls + '" style="font-size:11px; height:18px;">' + u.role + '</span>' +
+          achievementTag + activeTag +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section-title" style="margin-top:20px;">运营标签</div>' +
+    '<div class="detail-label-group"><div class="detail-label-title">用户期数</div><div class="detail-tags-list"><span class="detail-tag" style="background:var(--color-primary-1); color:var(--color-primary-6);">' + u.userPeriod + '</span></div></div>' +
+    '<div class="detail-label-group"><div class="detail-label-title">活跃情况</div><div class="detail-tags-list">' + activeLabel + '</div></div>' +
+    '<div class="detail-label-group"><div class="detail-label-title">成果标签</div><div class="detail-tags-list">' + achieveLabel + '</div></div>' +
+    '<div class="detail-label-group"><div class="detail-label-title">自定义标签</div><div class="detail-tags-list">' + tagsHtml + '<span class="detail-tag" style="color:var(--color-primary-6); border-color:var(--color-primary-2); cursor:pointer;">+ 添加标签</span></div></div>' +
+    '<div class="detail-section-title" style="margin-top:16px;">运营备注</div>' +
+    '<textarea style="width:100%; min-height:60px; border:1px solid var(--color-border-default); border-radius:6px; padding:8px 10px; font-size:13px; color:var(--color-text-1); resize:vertical; outline:none; font-family:inherit;" placeholder="添加运营备注...">' + u.remark + '</textarea>';
 
-      <!-- 社群活跃 -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:14px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-          <span style="width:3px; height:14px; background:var(--color-primary-6); border-radius:2px; display:inline-block;"></span>社群活跃
-        </div>
-        <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid var(--color-border-default); border-radius:8px; overflow:hidden;">
-          <tr><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3);">群发言次数</td><td style="padding:8px 12px;">${u.groupMsg} 次（近30天）</td><td style="background:var(--color-fill-3); padding:8px 12px; width:100px; color:var(--color-text-3);">最近群发言</td><td style="padding:8px 12px;">${u.lastGroupMsg}</td></tr>
-        </table>
-      </div>
-    </div>
-  `;
+  // Main content
+  mainEl.innerHTML =
+    '<div class="detail-tabs"><div class="detail-tab active">客户档案</div></div>' +
+    '<div class="tab-panel active" style="padding:20px;">' +
+      // 基础信息
+      '<div style="margin-bottom:20px;">' + secTitle + '基础信息</div>' +
+        '<table ' + tblS + '>' +
+          '<tr><td ' + cellL + '>用户ID</td><td ' + cellV + '>' + u.id + '</td><td ' + cellL + '>深海圈</td><td ' + cellV + '>' + u.circle + '</td></tr>' +
+          '<tr><td ' + cellL + '>昵称</td><td ' + cellV + '>' + u.name + '</td><td ' + cellL + '>状态</td><td ' + cellV + '><span class="tag ' + u.statusCls + '">' + u.status + '</span></td></tr>' +
+          '<tr><td ' + cellL + '>手机号</td><td ' + cellV + '>' + u.phone + '</td><td ' + cellL + '>微信号</td><td ' + cellV + '>' + u.wechat + '</td></tr>' +
+          '<tr><td ' + cellL + '>身份</td><td ' + cellV + '><span class="tag ' + u.roleCls + '">' + u.role + '</span></td><td ' + cellL + '>会员期数</td><td ' + cellV + '>' + u.period + '</td></tr>' +
+          '<tr><td ' + cellLn + '>加入时间</td><td ' + cellVn + '>' + u.join + '</td><td ' + cellLn + '>到期时间</td><td ' + cellVn + '>' + u.expire + '</td></tr>' +
+        '</table>' +
+      '</div>' +
+      // 学习行为
+      '<div style="margin-bottom:20px;">' + secTitle + '学习行为</div>' +
+        '<table ' + tblS + '>' +
+          '<tr><td ' + cellL + '>已学课程数</td><td ' + cellV + '><span style="color:var(--color-primary-6); cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';">' + u.courseLearned + ' 门课程 ▾</span><div style="display:none; margin-top:8px; border:1px solid var(--color-border-default); border-radius:6px; overflow:hidden;"><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">#</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">进度</th></tr></thead><tbody>' + coursesHtml + '</tbody></table></div></td><td ' + cellL + '>已完成课程</td><td ' + cellV + '>' + u.courseCompleted + ' 门课程</td></tr>' +
+          '<tr><td ' + cellL + '>直播观看数</td><td ' + cellV + '>' + u.liveWatched + ' 场直播</td><td ' + cellL + '>最近学习时间</td><td ' + cellV + '>' + u.lastStudy + '</td></tr>' +
+          '<tr><td ' + cellLn + '>未学习天数</td><td ' + cellVn + '>' + warnStudy + '</td><td ' + cellLn + '>作业提交</td><td ' + cellVn + '>' + u.homework + ' 份作业</td></tr>' +
+        '</table>' +
+      '</div>' +
+      // 社区活跃
+      '<div style="margin-bottom:20px;">' + secTitle + '社区活跃</div>' +
+        '<table ' + tblS + '>' +
+          '<tr><td ' + cellL + '>累计发帖数</td><td ' + cellV + '>' + u.posts + '</td><td ' + cellL + '>累计评论数</td><td ' + cellV + '>' + u.comments + '</td></tr>' +
+          '<tr><td ' + cellL + '>累计获赞数</td><td ' + cellV + '>' + u.likes + '</td><td ' + cellL + '>累计锚点数</td><td ' + cellV + '>' + u.anchors + '</td></tr>' +
+          '<tr><td ' + cellLn + '>最近登录</td><td ' + cellVn + '>' + u.lastLogin + '</td><td ' + cellLn + '>未登录天数</td><td ' + cellVn + '>' + warnLogin + '</td></tr>' +
+        '</table>' +
+      '</div>' +
+      // 社群活跃
+      '<div style="margin-bottom:20px;">' + secTitle + '社群活跃</div>' +
+        '<table ' + tblS + '>' +
+          '<tr><td ' + cellLn + '>群发言次数</td><td ' + cellVn + '>' + u.groupMsg + ' 次（近30天）</td><td ' + cellLn + '>最近群发言</td><td ' + cellVn + '>' + u.lastGroupMsg + '</td></tr>' +
+        '</table>' +
+      '</div>' +
+    '</div>';
 
-  // Open the modal
+  // Open modal
   modal.classList.remove('hiding');
   modal.classList.add('show');
   if (typeof setPrdView === 'function') setPrdView('detail');
