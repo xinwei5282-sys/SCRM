@@ -5451,7 +5451,7 @@ function filterShSource(srcEl) {
   var subBar = panel.querySelector('.sh-sub-bar');
   if (currentSource && shSubConfig[currentSource]) {
     var subs = shSubConfig[currentSource];
-    var html = '';
+    var html = '<button class="activity-sub-chip active" data-filter="all" onclick="filterShActivity(this)">全部</button>';
     for (var i = 0; i < subs.length; i++) {
       html += '<button class="activity-sub-chip" data-filter="' + subs[i].filter + '" onclick="filterShActivity(this)">' + subs[i].label + '</button>';
     }
@@ -5470,16 +5470,12 @@ function filterShActivity(chipEl) {
   var filter = chipEl.getAttribute('data-filter');
   var panel = chipEl.closest('.tab-panel');
 
-  // Toggle chip active
+  // Update chip active
   var subBar = panel.querySelector('.sh-sub-bar');
-  var isActive = chipEl.classList.contains('active');
   subBar.querySelectorAll('.activity-sub-chip').forEach(function(c) { c.classList.remove('active'); });
-  if (!isActive) {
-    chipEl.classList.add('active');
-  }
+  chipEl.classList.add('active');
 
-  var activeChip = subBar.querySelector('.activity-sub-chip.active');
-  var currentFilter = activeChip ? activeChip.getAttribute('data-filter') : null;
+  var currentFilter = filter === 'all' ? null : filter;
 
   var activeSource = panel.querySelector('.activity-source-item.active');
   var currentSource = activeSource ? activeSource.getAttribute('data-source') : null;
