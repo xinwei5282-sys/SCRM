@@ -5010,7 +5010,7 @@ function openShenhaiDetail(idx) {
   var aiTagsHtml = '';
   if (u.aiTags) {
     for (var ai = 0; ai < u.aiTags.length; ai++) {
-      aiTagsHtml += '<span class="ai-summary-badge" style="margin-right:4px;">' + u.aiTags[ai] + '</span>';
+      aiTagsHtml += '<span class="ai-summary-tag">' + u.aiTags[ai] + '</span>';
     }
   }
 
@@ -5021,11 +5021,18 @@ function openShenhaiDetail(idx) {
       // AI 客户分析
       '<div class="ai-summary-card" style="margin-bottom:20px;">' +
         '<div class="ai-summary-header">' +
-          '<svg class="ai-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' +
+          '<svg class="ai-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>' +
           '<span class="ai-summary-title">AI 客户分析</span>' +
         '</div>' +
-        '<div style="font-size:13px; color:var(--color-text-2); line-height:20px; margin-bottom:10px;">' + (u.aiSummary || '') + '</div>' +
-        '<div style="display:flex; gap:4px; flex-wrap:wrap;">' + aiTagsHtml + '</div>' +
+        '<div class="ai-summary-body">' + (u.aiSummary || '') + '</div>' +
+        '<div class="ai-summary-tags">' + aiTagsHtml + '</div>' +
+        '<div class="ai-summary-footer">' +
+          '<span class="ai-summary-time">生成于 2026-03-30 14:00</span>' +
+          '<button class="ai-summary-refresh" onclick="this.textContent=\'生成中...\';var b=this;setTimeout(function(){b.innerHTML=\'<svg viewBox=&quot;0 0 24 24&quot; width=&quot;14&quot; height=&quot;14&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><path d=&quot;M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8&quot;/><path d=&quot;M3 3v5h5&quot;/></svg> 重新生成\';},1000);">' +
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>' +
+            ' 重新生成' +
+          '</button>' +
+        '</div>' +
       '</div>' +
       // 基础信息
       '<div style="margin-bottom:20px;">' + secTitle + '基础信息</div>' +
