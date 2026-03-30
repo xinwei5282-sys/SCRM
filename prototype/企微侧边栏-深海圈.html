@@ -1643,6 +1643,11 @@
 
 <div class="scenes-row">
 
+<button class="prd-toggle" onclick="document.body.classList.toggle('prd-on')">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="scenes-row">
   <!-- ======================================================
        深海圈运营侧边栏
        ====================================================== -->
@@ -2390,9 +2395,166 @@
     </div>
     <div class="scene-label">深海圈侧边栏 · 交互原型</div>
     </div>
-  </div>
 
-</div>
+    <!-- ===== PRD 面板（按Tab切换） ===== -->
+    <div class="prd-panel active" data-prd-tab="overview" data-prd-key="shenhai-s1" data-prd-version="20260330">
+      <div class="prd-title">深海圈 · 概览</div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">Tab 结构（5个）</div>
+        <div class="prd-card-body">概览 | 客户档案 | 客户动态 | 沟通记录 | 积分记录
+
+头部标题：深海圈运营
+底部操作栏：「写跟进」按钮</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">身份卡片</div>
+        <div class="prd-card-body">头像　取姓氏首字
+昵称　点击复制
+星球编号　NO.xxxxx 点击复制
+圈子列表　AI产品出海 · B站好物（取所有正常圈子）
+备注　来源 CRM，点击编辑
+
+成果标签
+　仅展示千刀户/万刀户
+　无成果则不显示标签区
+　不展示「学员」「企微」等标签</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">AI 客户分析</div>
+        <div class="prd-card-body">初始态　空状态 + "生成客户分析"按钮
+生成态　流式打字输出（逐字+光标闪烁）
+完成态　分析文案 + AI标签（渐显）+ footer
+　含「重新生成」按钮
+样式　复用 ai-portrait-gen-card</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">圈子信息 + 学习概况</div>
+        <div class="prd-card-body">圈子信息（每个圈子独立一组）
+　所属圈子 / 会员状态 / 加入时间 / 到期时间
+　展示规则：
+　　全部正常 → 全部展示
+　　部分正常 → 只展示正常的
+　　全部过期 → 只展示最晚到期的
+
+学习概况（汇总所有圈子）
+　已学课程 / 已完成 / 直播观看
+　作业提交 / 未学习天数 / 群发言</div>
+      </div>
+      <div class="prd-card" style="--accent: #757980;">
+        <div class="prd-card-title">标签 + 最近跟进</div>
+        <div class="prd-card-body">客户标签（2组）
+　运营标签　期数 + 活跃情况 + 成果标签
+　自定义标签　运营手动打标 + 「+添加」入口
+
+最近跟进
+　来源 CRM，显示最近 2 条
+　含「更多请前往CRM后台查看」</div>
+      </div>
+    </div>
+
+    <div class="prd-panel" data-prd-tab="profile" data-prd-key="shenhai-s2" data-prd-version="20260330">
+      <div class="prd-title">深海圈 · 客户档案</div>
+      <div class="prd-card" style="--accent: #586E93;">
+        <div class="prd-card-title">基础信息</div>
+        <div class="prd-card-body">使用 personal-info-grid 结构（与交付组一致）
+　用户ID（可复制）/ 昵称
+　手机号（脱敏+眼睛，可复制）/ 微信号（可复制）</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">学习行为（按圈子分 section）</div>
+        <div class="prd-card-body">每个圈子独立一个 member-subsection-header
+标题格式：「学习行为 — {圈子名}」
+
+每 section 含 8 个字段：
+　已学课程 / 已完成 / 直播观看 / 最近学习
+　未学习天数 / 作业提交 / 加入时间 / 到期时间
+
+多圈用户显示多个 section</div>
+      </div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">社区活跃 + 社群活跃</div>
+        <div class="prd-card-body">社区活跃（6字段）
+　发帖数 / 评论数 / 获赞数 / 锚点数
+　最近登录 / 未登录天数
+
+社群活跃（2字段）
+　群发言（近30天）/ 最近群发言</div>
+      </div>
+    </div>
+
+    <div class="prd-panel" data-prd-tab="behavior" data-prd-key="shenhai-s3" data-prd-version="20260330">
+      <div class="prd-title">深海圈 · 客户动态</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">两级筛选</div>
+        <div class="prd-card-body">一级统计卡片（metrics-grid + metric-filterable）
+　深海圈社区　总互动数，点击展开：
+　　发帖 / 阅读 / 评论 / 点赞 / 投锚
+　课程学习　总学习行为数，点击展开：
+　　完成课程 / 观看直播 / 提交作业
+
+交互：点击一级卡片 → 高亮 + 展开二级chips
+　再次点击取消 → 恢复全部
+　点击二级chip → 进一步过滤时间线</div>
+      </div>
+      <div class="prd-card" style="--accent: #36A590;">
+        <div class="prd-card-title">行为时间线</div>
+        <div class="prd-card-body">按日期分组（今天/昨天/具体日期）
+每条含：类型标签 + 时间 + 描述
+
+内容格式：
+　#话题 高亮（如 #AI产品出海 #B站好物）
+　阅读时长标注（如 5min / 12min）
+　涵盖多圈子数据
+
+data-activity 属性：
+　社区类：community-post / community-read
+　　community-comment / community-like / community-anchor
+　课程类：course-done / course-live / course-homework</div>
+      </div>
+    </div>
+
+    <div class="prd-panel" data-prd-tab="comms" data-prd-key="shenhai-s4" data-prd-version="20260330">
+      <div class="prd-title">深海圈 · 沟通记录</div>
+      <div class="prd-card" style="--accent: #327CFB;">
+        <div class="prd-card-title">AI 沟通总结</div>
+        <div class="prd-card-body">生成按钮 + 时间范围选择
+　近3个月（默认）/ 近半年 / 近1年 / 全部
+生成后展示总结卡片
+　含「重新生成」「复制」按钮</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">沟通时间轴 + 聊天记录</div>
+        <div class="prd-card-body">沟通时间轴
+　近30天沟通记录列表
+　标签分类：学习跟进 / 内容推送 / 主动关怀
+
+聊天记录
+　按日期分组的聊天气泡
+　运营消息（左对齐）+ 用户消息（右对齐）</div>
+      </div>
+    </div>
+
+    <div class="prd-panel" data-prd-tab="points" data-prd-key="shenhai-s5" data-prd-version="20260330">
+      <div class="prd-title">深海圈 · 积分记录</div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">积分概览 + 明细</div>
+        <div class="prd-card-body">概览卡片（3张）
+　龙珠（橙色渐变）：余额 / +获取 / -消耗
+　碎片（绿色渐变）：余额 / +获取 / -消耗
+　术值（蓝色渐变）：余额 / +获取 / -消耗
+
+筛选栏
+　积分类型（全部/龙珠/术值/碎片）
+　变动方向（全部/获取/消耗）
+
+明细表
+　时间 / 积分类型 / 变动 / 余额 / 来源用途 / 备注</div>
+      </div>
+    </div>
+
+  </div><!-- /scene-wrapper -->
+
+</div><!-- /scenes-row -->
 
 <script>
   /* ── 写跟进表单 ── */
