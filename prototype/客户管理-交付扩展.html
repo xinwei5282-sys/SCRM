@@ -5022,11 +5022,7 @@ function openShenhaiDetail(idx) {
           ' <span class="tag ' + u.statusCls + '" style="font-size:11px; height:18px; margin-left:4px;">' + u.status + '</span>' +
         '</div>' +
         '<div class="detail-note"><span class="detail-note-text">备注：' + (u.remark || '暂无') + '</span></div>' +
-        '<div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">' +
-          '<span class="tag tag-orange" style="font-size:11px; height:18px;">深海圈会员</span>' +
-          '<span class="tag ' + u.roleCls + '" style="font-size:11px; height:18px;">' + u.role + '</span>' +
-          achievementTag + activeTag +
-        '</div>' +
+        (u.achievement ? '<div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">' + achievementTag + '</div>' : '') +
       '</div>' +
     '</div>' +
 
