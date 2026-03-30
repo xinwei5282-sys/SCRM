@@ -4752,6 +4752,8 @@ var shenhaiViewActive = false;
 var savedDefaultFilterHTML = '';
 var savedDefaultTheadHTML = '';
 var savedDefaultTbodyHTML = '';
+var savedDetailSidebarHTML = '';
+var savedDetailMainHTML = '';
 
 function switchTypeTab(tabEl, type) {
   // Update active tab
@@ -4776,6 +4778,9 @@ function enterShenhaiView() {
   savedDefaultFilterHTML = filterRow.innerHTML;
   savedDefaultTheadHTML = thead.innerHTML;
   savedDefaultTbodyHTML = tbody.innerHTML;
+  var modal = document.getElementById('detailModal');
+  savedDetailSidebarHTML = modal.querySelector('.detail-sidebar').innerHTML;
+  savedDetailMainHTML = modal.querySelector('.detail-main').innerHTML;
 
   // Replace filters
   filterRow.innerHTML =
@@ -4862,6 +4867,22 @@ function exitShenhaiView() {
   document.getElementById('tableHead').innerHTML = savedDefaultTheadHTML;
   document.getElementById('tableBody').innerHTML = savedDefaultTbodyHTML;
   document.getElementById('paginationTotal').textContent = '共 400 条记录';
+  // Restore detail drawer
+  var modal = document.getElementById('detailModal');
+  modal.querySelector('.detail-sidebar').innerHTML = savedDetailSidebarHTML;
+  modal.querySelector('.detail-main').innerHTML = savedDetailMainHTML;
+  // Re-bindtab switching
+  modal.querySelectorAll('.detail-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      this.parentElement.querySelectorAll('.detail-tab').forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      var main = this.closest('.detail-main');
+      main.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      var panel = main.querySelector('[data-panel="' + tabId + '"]');
+      if (panel) panel.classList.add('active');
+    });
+  });
 }
 
 /* ======== 深海圈详情抽屉 ======== */
