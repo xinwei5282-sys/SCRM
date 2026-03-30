@@ -60,11 +60,11 @@
         "切换回其他客户类型时恢复原视图"
       ],
       "priority": 6,
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": [5],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-30T15:10:00+08:00",
+      "completed_at": "2026-03-30T15:30:00+08:00",
+      "notes": "在客户管理-交付扩展.html中添加4个JS函数(switchCustomerTypeView/enterShenhaiView/exitShenhaiView/openShenhaiDetail)，7条深海圈示例数据，筛选项/表格列/详情内容动态切换。"
     },
     {
       "id": 7,
@@ -79,11 +79,11 @@
         "运营标签区块展示5个字段，自定义标签可编辑"
       ],
       "priority": 7,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [6],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-30T15:10:00+08:00",
+      "completed_at": "2026-03-30T15:30:00+08:00",
+      "notes": "详情抽屉与列表视图一起实现。openShenhaiDetail()替换左侧边栏(运营标签+备注)和右侧主区(客户档案Tab含4个区块表格)。"
     }
   ]
 }
