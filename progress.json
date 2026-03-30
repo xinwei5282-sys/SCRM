@@ -2,7 +2,7 @@
   "project": "深海圈客户管理",
   "description": "基于深海圈字段规格，创建独立的深海圈客户管理页面（PRD + HTML 原型），包含列表页和详情抽屉",
   "created_at": "2026-03-30T14:00:00+08:00",
-  "updated_at": "2026-03-30T14:00:00+08:00",
+  "updated_at": "2026-03-30T14:30:00+08:00",
   "tasks": [
     {
       "id": 1,
@@ -35,11 +35,11 @@
         "分页组件正常显示"
       ],
       "priority": 2,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [1],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-30T14:16:00+08:00",
+      "completed_at": "2026-03-30T14:30:00+08:00",
+      "notes": "列表页含搜索区(2行7个筛选项)、统计栏(4指标)、表格(13列10条数据)、分页。"
     },
     {
       "id": 3,
@@ -56,11 +56,11 @@
         "点击遮罩或关闭按钮可关闭抽屉"
       ],
       "priority": 3,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [2],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-30T14:16:00+08:00",
+      "completed_at": "2026-03-30T14:30:00+08:00",
+      "notes": "详情抽屉与列表页一起实现。含用户概要+5个区块(基础信息10字段、学习行为6字段含课程展开、社区活跃6字段、社群活跃2字段、运营标签5字段含编辑)。"
     },
     {
       "id": 4,
