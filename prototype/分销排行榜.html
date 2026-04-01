@@ -373,35 +373,6 @@ body {
   color: var(--color-text-1);
 }
 
-/* Detail User Summary */
-.detail-user-summary {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: var(--color-card);
-  margin-bottom: 12px;
-}
-.detail-user-summary .avatar {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.detail-user-summary .info {
-  flex: 1;
-}
-.detail-user-summary .nickname {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-text-1);
-}
-.detail-user-summary .star-id {
-  font-size: 13px;
-  color: var(--color-text-3);
-  margin-top: 2px;
-}
-
 /* Stats Cards */
 .stats-row {
   display: grid;
@@ -588,15 +559,6 @@ body {
     <span class="detail-nav-title">成交明细</span>
   </div>
 
-  <!-- User Summary -->
-  <div class="detail-user-summary" id="detailUserSummary">
-    <img class="avatar" src="" alt="" id="detailAvatar">
-    <div class="info">
-      <div class="nickname" id="detailNickname"></div>
-      <div class="star-id" id="detailStarId"></div>
-    </div>
-  </div>
-
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card success">
@@ -702,9 +664,6 @@ function showDetail(userId) {
   const user = rankData.find(d => d.id === userId);
   if (!user) return;
 
-  document.getElementById('detailAvatar').src = user.avatar;
-  document.getElementById('detailNickname').textContent = user.name;
-  document.getElementById('detailStarId').textContent = user.starId;
   document.getElementById('statValid').textContent = user.validDeals;
   document.getElementById('statRefund').textContent = user.refundDeals;
 
