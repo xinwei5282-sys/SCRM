@@ -4965,6 +4965,15 @@ function switchToPage(page) {
     if (item.textContent.trim() === targetText) item.classList.add('active');
   });
 
+  // 切换到排行榜时隐藏 PRD 面板和按钮
+  var prdToggle = document.querySelector('.prd-toggle');
+  if (page === 'rank') {
+    document.body.classList.remove('prd-on');
+    if (prdToggle) prdToggle.style.display = 'none';
+  } else {
+    if (prdToggle) prdToggle.style.display = '';
+  }
+
   // 重置滚动位置
   document.querySelector('.content').scrollTop = 0;
 }
