@@ -2539,8 +2539,7 @@
             跳至 <input type="text" value="5"> 页
           </div>
         </div>
-      </div>
-    </div>
+      </div><!-- /page-card -->
       </div><!-- /customerPage -->
 
       <!-- ======== 分销排行榜管理页 ======== -->
@@ -2824,12 +2823,12 @@
             <button class="page-btn">&gt;</button>
           </div>
         </div>
-      </div>
+      </div><!-- /page-card -->
       </div><!-- /rankAdminPage -->
 
-    </div>
-  </div>
-</div>
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
 
 <!-- ======== 分销排行榜弹窗 ======== -->
 
@@ -4927,24 +4926,23 @@
 function switchToPage(page) {
   var customerPage = document.getElementById('customerPage');
   var rankPage = document.getElementById('rankAdminPage');
-  var menuItems = document.querySelectorAll('.menu-sub .menu-item');
+  var allMenuItems = document.querySelectorAll('.menu-sub .menu-item');
 
-  if (page === 'rank') {
-    customerPage.style.display = 'none';
-    rankPage.style.display = '';
-    // 更新侧边栏高亮
-    menuItems.forEach(function(item) {
-      item.classList.remove('active');
-      if (item.textContent.trim() === '分销排行榜') item.classList.add('active');
-    });
-  } else {
-    customerPage.style.display = '';
-    rankPage.style.display = 'none';
-    menuItems.forEach(function(item) {
-      item.classList.remove('active');
-      if (item.textContent.trim() === '客户管理') item.classList.add('active');
-    });
-  }
+  // 切换页面可见性
+  customerPage.style.display = (page === 'rank') ? 'none' : 'block';
+  rankPage.style.display = (page === 'rank') ? 'block' : 'none';
+
+  // 更新侧边栏高亮
+  allMenuItems.forEach(function(item) {
+    item.classList.remove('active');
+  });
+  var targetText = (page === 'rank') ? '分销排行榜' : '客户管理';
+  allMenuItems.forEach(function(item) {
+    if (item.textContent.trim() === targetText) item.classList.add('active');
+  });
+
+  // 重置滚动位置
+  document.querySelector('.content').scrollTop = 0;
 }
 
 /* 排行榜子Tab切换 */
@@ -4967,11 +4965,6 @@ function closeRankModal(id) {
 ['campaignModal','mergeModal','orderModal','importModal'].forEach(function(id) {
   var el = document.getElementById(id);
   if (el) el.addEventListener('click', function(e) { if (e.target === el) closeRankModal(id); });
-});
-
-/* 客户管理菜单点击恢复 */
-document.querySelector('.menu-sub .menu-item.active')?.addEventListener('click', function() {
-  switchToPage('customer');
 });
 
 function toggleMenu(group) {
