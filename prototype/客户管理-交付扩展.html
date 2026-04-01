@@ -1943,6 +1943,51 @@
     border-radius: 8px 2px 8px 8px;
   }
   .chat-time { font-size: 11px; color: var(--color-text-4); margin-top: 4px; flex-shrink: 0; }
+
+  /* ======== 排行榜居中弹窗（覆盖抽屉样式） ======== */
+  .rank-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .rank-modal-overlay .rank-modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    top: auto; right: auto;
+    height: auto;
+    box-shadow: var(--shadow-modal);
+    animation: rankModalIn 200ms ease-out;
+    display: flex;
+    flex-direction: column;
+  }
+  @keyframes rankModalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .rank-modal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .rank-modal .modal-header .modal-title { font-size: 16px; font-weight: 700; }
+  .rank-modal .modal-header .modal-close {
+    width: 28px; height: 28px;
+    border: none; background: none;
+    font-size: 18px; color: var(--color-text-3);
+    cursor: pointer; border-radius: var(--radius-btn);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rank-modal .modal-header .modal-close:hover { background: var(--color-fill-hover); }
 </style>
 </head>
 <body>
@@ -2833,8 +2878,8 @@
 <!-- ======== 分销排行榜弹窗 ======== -->
 
 <!-- 活动创建/编辑弹窗 -->
-<div class="modal-overlay" id="campaignModal" style="display:none; align-items:center; justify-content:center;">
-  <div class="modal" style="width:480px; max-height:80vh; overflow-y:auto;">
+<div class="rank-modal-overlay" id="campaignModal">
+  <div class="rank-modal">
     <div class="modal-header">
       <span class="modal-title">创建活动</span>
       <button class="modal-close" onclick="closeRankModal('campaignModal')">&times;</button>
@@ -2874,8 +2919,8 @@
 </div>
 
 <!-- KOC 合并规则弹窗 -->
-<div class="modal-overlay" id="mergeModal">
-  <div class="modal" style="width:480px;">
+<div class="rank-modal-overlay" id="mergeModal">
+  <div class="rank-modal">
     <div class="modal-header">
       <span class="modal-title">KOC 合并规则</span>
       <button class="modal-close" onclick="closeRankModal('mergeModal')">&times;</button>
@@ -2914,8 +2959,8 @@
 </div>
 
 <!-- 手动添加订单弹窗 -->
-<div class="modal-overlay" id="orderModal">
-  <div class="modal" style="width:480px;">
+<div class="rank-modal-overlay" id="orderModal">
+  <div class="rank-modal">
     <div class="modal-header">
       <span class="modal-title">手动添加订单</span>
       <button class="modal-close" onclick="closeRankModal('orderModal')">&times;</button>
@@ -2960,8 +3005,8 @@
 </div>
 
 <!-- Excel 导入弹窗 -->
-<div class="modal-overlay" id="importModal">
-  <div class="modal" style="width:520px;">
+<div class="rank-modal-overlay" id="importModal">
+  <div class="rank-modal" style="width:520px;">
     <div class="modal-header">
       <span class="modal-title">Excel 批量导入订单</span>
       <button class="modal-close" onclick="closeRankModal('importModal')">&times;</button>
