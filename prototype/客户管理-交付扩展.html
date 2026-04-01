@@ -4971,6 +4971,14 @@ function toggleMenu(group) {
   group.classList.toggle('open');
 }
 
+// URL 参数检测：?page=rank 自动切换到分销排行榜
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('page') === 'rank') {
+    switchToPage('rank');
+  }
+})();
+
 function setPrdView(view) {
   var panel = document.querySelector('.prd-panel');
   var hint = document.getElementById('prdContextHint');
