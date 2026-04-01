@@ -36,11 +36,11 @@
         "样式遵循 Nova 设计语言"
       ],
       "priority": 2,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [1],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-04-01T10:16:00+08:00",
+      "completed_at": "2026-04-01T10:30:00+08:00",
+      "notes": "排行榜+明细页在同一HTML中，15条mock数据，微信登录模拟，前三名奖牌，当前用户高亮"
     },
     {
       "id": 3,
@@ -54,11 +54,11 @@
         "有返回排行榜的导航"
       ],
       "priority": 3,
-      "status": "pending",
+      "status": "completed",
       "depends_on": [2],
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-04-01T10:16:00+08:00",
+      "completed_at": "2026-04-01T10:30:00+08:00",
+      "notes": "与Task2合并在同一文件中，含统计卡片(有效/退款)+10条mock明细+状态标签样式区分"
     },
     {
       "id": 4,
