@@ -201,6 +201,16 @@ body {
   color: var(--color-accent);
   font-family: DIN, PingFang SC, sans-serif;
 }
+.my-rank-info .deal-count-clickable {
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px;
+  border-radius: var(--radius-btn);
+  transition: background 100ms;
+}
+.my-rank-info .deal-count-clickable:active {
+  background: var(--color-primary-light);
+}
 .my-rank-info .deal-count .label {
   font-size: 11px;
   color: var(--color-text-3);
@@ -542,9 +552,9 @@ body {
           </div>
         </div>
       </div>
-      <div class="deal-count">
+      <div class="deal-count deal-count-clickable" onclick="showDetail(CURRENT_USER_ID)">
         <div class="num" id="myDealCount">32</div>
-        <div class="label">成交人数</div>
+        <div class="label">成交人数 &rsaquo;</div>
       </div>
     </div>
   </div>
