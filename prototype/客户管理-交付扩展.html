@@ -2941,26 +2941,30 @@
     <div class="modal-body" style="padding:20px;">
       <div style="margin-bottom:16px;">
         <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">主账号 <span style="color:var(--color-danger-6);">*</span></label>
-        <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">排行榜将展示此账号的信息（搜索 CRM 客户库）</div>
-        <div style="border:1px solid var(--color-border-default); border-radius:var(--radius-card); padding:8px;">
-          <div style="display:inline-flex; align-items:center; gap:6px; padding:4px 8px; background:var(--color-primary-1); border-radius:var(--radius-btn);">
+        <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">排行榜将展示此账号的信息</div>
+        <input class="filter-input" style="width:100%;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索">
+        <!-- 搜索结果示例（选中后显示） -->
+        <div style="margin-top:8px;">
+          <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:var(--color-primary-1); border:1px solid var(--color-primary-2); border-radius:var(--radius-btn);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-6)" stroke-width="1.5"><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg>
             <span style="font-size:13px; font-weight:500; color:var(--color-primary-6);">阿强</span>
             <span style="font-size:11px; color:var(--color-text-3);">#10234</span>
+            <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1; margin-left:4px;">&times;</button>
           </div>
         </div>
       </div>
       <div>
         <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">子账号</label>
         <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">这些账号的成交数据将归入主账号统计</div>
-        <div style="border:1px solid var(--color-border-default); border-radius:var(--radius-card); padding:8px; display:flex; flex-wrap:wrap; gap:6px;">
+        <input class="filter-input" style="width:100%; margin-bottom:8px;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索添加">
+        <!-- 已添加的子账号 -->
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
           <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
             阿强小号 #10235 <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1;">&times;</button>
           </span>
           <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
             强哥 #10236 <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1;">&times;</button>
           </span>
-          <button style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border:1px dashed var(--color-border-default); border-radius:var(--radius-btn); background:none; color:var(--color-text-3); font-size:12px; cursor:pointer;">+ 添加子账号</button>
         </div>
       </div>
     </div>
