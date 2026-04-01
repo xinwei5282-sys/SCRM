@@ -276,8 +276,11 @@
   .btn-outline:hover { background: var(--color-fill-hover); }
   .btn-text {
     background: none;
+    border: none;
     color: var(--color-primary-6);
     padding: 0 4px;
+    cursor: pointer;
+    font-size: 13px;
   }
   .btn-text:hover { color: var(--color-primary-7); }
   .btn-sync {
@@ -2607,11 +2610,10 @@
           <h1 class="page-title">分销排行榜</h1>
         </div>
 
-        <!-- Tabs: 活动管理 / KOC合并规则 / 订单管理 -->
+        <!-- Tabs: 活动管理 / KOC合并规则 -->
         <div class="type-tabs" id="rankTabs">
           <div class="type-tab active" onclick="switchRankTab(this,'campaigns')">活动管理</div>
           <div class="type-tab" onclick="switchRankTab(this,'koc')">KOC 合并规则</div>
-          <div class="type-tab" onclick="switchRankTab(this,'orders')">订单管理</div>
         </div>
 
         <!-- === Tab: 活动管理 === -->
@@ -2643,6 +2645,7 @@
                   <td>
                     <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
                     <button class="btn-text" onclick="window.open('分销排行榜.html')">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('418 大促分销排行榜')">订单</button>
                   </td>
                 </tr>
                 <tr>
@@ -2656,6 +2659,7 @@
                   <td>
                     <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
                     <button class="btn-text">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('春季招募排行榜')">订单</button>
                   </td>
                 </tr>
                 <tr>
@@ -2669,6 +2673,7 @@
                   <td>
                     <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
                     <button class="btn-text">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('520 情人节分销榜')">订单</button>
                   </td>
                 </tr>
               </tbody>
@@ -2752,15 +2757,17 @@
           </div>
         </div>
 
-        <!-- === Tab: 订单管理 === -->
-        <div class="rank-tab-content" id="rankTabOrders" style="display:none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--color-border-default);">
+        <!-- === 订单管理子页面（从活动列表点击「订单」进入） === -->
+        <div id="rankOrderPage" style="display:none;">
+          <!-- 返回 + 活动名称 -->
+          <div style="display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid var(--color-border-default);">
+            <button class="btn btn-secondary" style="height:28px; padding:0 10px; font-size:12px;" onclick="hideOrderPage()">← 返回活动列表</button>
+            <span style="font-size:15px; font-weight:600;" id="orderPageTitle">418 大促分销排行榜</span>
+            <span style="font-size:13px; color:var(--color-text-3);">— 订单管理</span>
+          </div>
+          <!-- 筛选 + 操作 -->
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; border-bottom:1px solid var(--color-border-default);">
             <div style="display:flex; gap:12px; align-items:center;">
-              <select class="filter-select" style="min-width:180px;">
-                <option>418 大促分销排行榜</option>
-                <option>春季招募排行榜</option>
-                <option>520 情人节分销榜</option>
-              </select>
               <select class="filter-select" style="min-width:120px;">
                 <option>全部来源</option>
                 <option>系统自动</option>
@@ -2945,11 +2952,11 @@
         <input class="filter-input" style="width:100%;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索">
         <!-- 搜索结果示例（选中后显示） -->
         <div style="margin-top:8px;">
-          <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:var(--color-primary-1); border:1px solid var(--color-primary-2); border-radius:var(--radius-btn);">
+          <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background:var(--color-primary-1); border:1px solid var(--color-primary-2); border-radius:var(--radius-btn);">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-6)" stroke-width="1.5"><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg>
             <span style="font-size:13px; font-weight:500; color:var(--color-primary-6);">阿强</span>
             <span style="font-size:11px; color:var(--color-text-3);">#10234</span>
-            <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1; margin-left:4px;">&times;</button>
+            <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
           </div>
         </div>
       </div>
@@ -2958,12 +2965,12 @@
         <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">这些账号的成交数据将归入主账号统计</div>
         <input class="filter-input" style="width:100%; margin-bottom:8px;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索添加">
         <!-- 已添加的子账号 -->
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
-            阿强小号 #10235 <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1;">&times;</button>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
+            阿强小号 #10235 <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
           </span>
-          <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
-            强哥 #10236 <button style="border:none; background:none; cursor:pointer; color:var(--color-text-4); font-size:14px; line-height:1;">&times;</button>
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
+            强哥 #10236 <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
           </span>
         </div>
       </div>
@@ -5011,7 +5018,25 @@ function switchRankTab(el, tab) {
   el.classList.add('active');
   document.getElementById('rankTabCampaigns').style.display = tab === 'campaigns' ? '' : 'none';
   document.getElementById('rankTabKoc').style.display = tab === 'koc' ? '' : 'none';
-  document.getElementById('rankTabOrders').style.display = tab === 'orders' ? '' : 'none';
+  document.getElementById('rankOrderPage').style.display = 'none';
+  document.getElementById('rankTabs').style.display = '';
+}
+
+/* 订单管理子页面 */
+function showOrderPage(campaignName) {
+  document.getElementById('rankTabCampaigns').style.display = 'none';
+  document.getElementById('rankTabKoc').style.display = 'none';
+  document.getElementById('rankTabs').style.display = 'none';
+  document.getElementById('orderPageTitle').textContent = campaignName;
+  document.getElementById('rankOrderPage').style.display = '';
+}
+function hideOrderPage() {
+  document.getElementById('rankOrderPage').style.display = 'none';
+  document.getElementById('rankTabs').style.display = '';
+  document.getElementById('rankTabCampaigns').style.display = '';
+  document.querySelectorAll('#rankTabs .type-tab').forEach(function(t, i) {
+    t.classList.toggle('active', i === 0);
+  });
 }
 
 /* 排行榜弹窗 */
