@@ -1,22 +1,79 @@
 {
-  "project": "深海圈侧边栏",
-  "description": "基于深海圈客户管理数据模型，创建企微侧边栏原型，样式严格对齐交付组侧边栏",
-  "created_at": "2026-03-30T19:30:00+08:00",
-  "updated_at": "2026-03-30T19:30:00+08:00",
+  "project": "分销排行榜",
+  "description": "通用分销排行榜 H5 + 后台 KOC 合并管理，支持多活动复用，首期用于 418 活动",
+  "created_at": "2026-04-01T10:00:00+08:00",
+  "updated_at": "2026-04-01T10:00:00+08:00",
   "tasks": [
     {
       "id": 1,
-      "title": "创建深海圈侧边栏HTML原型",
-      "description": "基于企微侧边栏-交付组的CSS/结构，创建深海圈专用侧边栏",
+      "title": "撰写分销排行榜 PRD",
+      "description": "编写完整 PRD 文档，包含排行榜 H5（列表页+明细页）、微信登录、KOC 合并规则后台配置、多活动复用机制",
       "acceptance_criteria": [
-        "文件prototype/企微侧边栏-深海圈.html存在",
-        "样式严格对齐交付组侧边栏",
-        "包含5个Tab：概览/客户档案/客户动态/沟通记录/积分记录"
+        "PRD_分销排行榜.md 文件存在且内容完整",
+        "包含用户故事、页面结构、字段定义、状态流转",
+        "包含 KOC 合并规则管理的后台需求",
+        "包含多活动复用的配置方案",
+        "PRD.md 索引已更新"
       ],
       "priority": 1,
-      "status": "in_progress",
+      "status": "completed",
       "depends_on": [],
-      "started_at": "2026-03-30T19:30:00+08:00",
+      "started_at": "2026-04-01T10:05:00+08:00",
+      "completed_at": "2026-04-01T10:15:00+08:00",
+      "notes": "PRD 含12章节，覆盖H5前台(排行榜+明细+微信登录)+后台(活动管理+KOC合并)+数据模型+接口"
+    },
+    {
+      "id": 2,
+      "title": "创建排行榜 H5 列表页原型",
+      "description": "排行榜主页面：微信登录态、排名列表（排名/头像+昵称/星球编号/成交人数）、当前用户高亮、活动标题",
+      "acceptance_criteria": [
+        "prototype/分销排行榜.html 文件存在",
+        "包含活动标题区域",
+        "包含排行榜列表，字段：排名/分销人(头像+昵称)/星球编号/成交人数",
+        "前三名有特殊样式（奖牌）",
+        "当前登录用户行高亮显示",
+        "点击行可跳转明细（锚点模拟）",
+        "样式遵循 Nova 设计语言"
+      ],
+      "priority": 2,
+      "status": "pending",
+      "depends_on": [1],
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "title": "创建成交明细页原型",
+      "description": "点击排行榜某行后展示的明细页：顶部统计（有效数量/退款数量）、成交人列表（头像+昵称+星球编号+订单状态）",
+      "acceptance_criteria": [
+        "明细页在同一 HTML 文件中（或独立文件）",
+        "顶部有数据统计：有效数量、退款数量",
+        "成交人列表字段：头像+昵称+星球编号+订单状态",
+        "订单状态有视觉区分（已付款/已退款）",
+        "有返回排行榜的导航"
+      ],
+      "priority": 3,
+      "status": "pending",
+      "depends_on": [2],
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "title": "创建 KOC 合并规则后台管理页原型",
+      "description": "SCRM 后台页面：活动管理列表 + KOC 合并规则配置（主账号绑定子账号），PC 端",
+      "acceptance_criteria": [
+        "prototype/分销排行榜-后台.html 文件存在",
+        "包含活动列表页（活动名称/时间/状态/操作）",
+        "包含 KOC 合并规则配置（主账号+子账号列表）",
+        "PC 端布局，遵循 Nova 设计语言"
+      ],
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [1],
+      "started_at": null,
       "completed_at": null,
       "notes": ""
     }
