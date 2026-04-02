@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>418 分销排行榜</title>
+<link rel="stylesheet" href="prd-editor.css">
 <style>
 /* === Reset & Base === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -483,9 +484,135 @@ body {
   color: var(--color-text-3);
   font-size: 14px;
 }
+/* === PRD Panel (H5 适配) === */
+.prd-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid var(--color-accent);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.prd-toggle .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+body.prd-on .prd-toggle {
+  background: var(--color-accent);
+  color: #fff;
+}
+body.prd-on .prd-toggle .dot { background: #fff; }
+
+.prd-panel {
+  display: none;
+  position: fixed;
+  top: 0; right: 0;
+  width: 320px;
+  height: 100vh;
+  background: #FFFBF0;
+  border-left: 2px solid #F0E6CC;
+  overflow-y: auto;
+  z-index: 800;
+  padding: 16px;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+  font-size: 12px;
+}
+body.prd-on .prd-panel { display: block; }
+body.prd-on .prd-toggle { right: 332px; }
+body.prd-on { margin-right: 320px; }
 </style>
 </head>
 <body>
+
+<!-- PRD Toggle -->
+<button class="prd-toggle" onclick="document.body.classList.toggle('prd-on')">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<!-- PRD Panel -->
+<div class="prd-panel" data-prd-key="rank-h5" data-prd-version="20260401">
+  <div class="prd-context-hint">分销排行榜 H5 · PRD v2.1</div>
+
+  <div class="prd-section">
+    <div class="prd-section-title orange">1. 页面概述</div>
+    <div class="prd-item">独立 H5 页面，微信内打开，<strong>max-width: 375px</strong></div>
+    <div class="prd-item">包含两个视图：排行榜列表页 + 成交明细页（同一HTML内切换）</div>
+    <div class="prd-item">微信网页授权登录（静默 + 用户确认）</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">2. 排行榜列表页</div>
+    <div class="prd-label">Header 区域</div>
+    <div class="prd-item">橙色渐变背景 linear-gradient(162deg, #FF7D00, #D25F00)</div>
+    <div class="prd-item">活动标题 22px/700 + 副标题 13px + 状态标签（圆角胶囊，绿色脉冲动画）</div>
+    <div class="prd-label">我的排名卡片</div>
+    <div class="prd-item"><strong>未登录</strong>：显示微信登录按钮（#07C160 微信绿）</div>
+    <div class="prd-item"><strong>已登录</strong>：排名圆圈 + 头像+昵称+星球编号 + 成交人数</div>
+    <div class="prd-item">成交人数区域<strong>可点击</strong>（带 > 箭头），跳转成交明细页</div>
+    <div class="prd-item">卡片 margin-top: -12px 悬浮在 Header 上</div>
+    <div class="prd-label">排行榜列表</div>
+    <div class="prd-item">Grid 布局：48px(排名) / 1fr(分销人) / 80px(星球编号) / 56px(成交)</div>
+    <div class="prd-item">前三名：奖牌图标 🥇🥈🥉（22px），成交数橙色</div>
+    <div class="prd-item">当前用户行：<strong>绿色背景</strong> + 左侧 3px 绿色边框</div>
+    <div class="prd-item">仅自己的行可点击进入明细</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">3. 排名算法</div>
+    <div class="prd-item">统一<strong>按人统计</strong>，不按订单笔数</div>
+    <div class="prd-item">有效成交人数 = 已付款人数 - 已退款人数</div>
+    <div class="prd-item">同分按首笔成交时间升序</div>
+    <div class="prd-item">KOC 多账号合并后统一计算</div>
+    <div class="prd-item">同一用户多次付款只计 1 人</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title blue">4. 成交明细页</div>
+    <div class="prd-item">导航栏：← 返回 + "成交明细" 标题，sticky 吸顶</div>
+    <div class="prd-label">统计卡片</div>
+    <div class="prd-item">2 列 Grid：有效成交（绿色 28px DIN）/ 已退款（红色 28px DIN）</div>
+    <div class="prd-label">成交人列表</div>
+    <div class="prd-item">每行：36px 圆形头像 + 昵称 + 星球编号 + 状态标签</div>
+    <div class="prd-item"><strong>已付款</strong> = 绿色标签（#F4FFE8 / #52C41A）</div>
+    <div class="prd-item"><strong>已退款</strong> = 红色标签（#FFEDE8 / #F54A45）+ 昵称<strong>删除线</strong></div>
+    <div class="prd-item">按成交时间倒序</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title orange">5. 微信登录</div>
+    <div class="prd-item">scope=snsapi_base（静默）→ 获取 openid</div>
+    <div class="prd-item">scope=snsapi_userinfo（弹窗）→ 获取头像昵称</div>
+    <div class="prd-item">localStorage 存 token，有效期 7 天</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title red">6. 交互状态</div>
+    <div class="prd-item"><strong>活动未开始</strong>：倒计时 + "活动即将开始"</div>
+    <div class="prd-item"><strong>活动进行中</strong>：绿色脉冲 + "活动进行中"</div>
+    <div class="prd-item"><strong>活动已结束</strong>：数据冻结 + "活动已结束"</div>
+    <div class="prd-item"><strong>非KOC登录</strong>：我的排名显示"暂无分销记录"</div>
+    <div class="prd-item"><strong>空状态</strong>：明细页 "暂无成交记录"</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">7. 设计规范</div>
+    <div class="prd-item">Nova 设计语言：radius-btn 6px / radius-card 8px / padding 16px</div>
+    <div class="prd-item">数字字体：DIN（成交人数、统计数字）</div>
+    <div class="prd-item">按钮按下：缩放 0.96 + 透明度 0.8 / 150ms ease</div>
+    <div class="prd-item">页面切换：JS display toggle（无路由）</div>
+  </div>
+</div>
 
 <!-- ============ 排行榜列表页 ============ -->
 <div class="rank-page" id="rankPage">
@@ -697,5 +824,6 @@ function showRankPage() {
 // Init
 renderRankList();
 </script>
+<script src="prd-editor.js"></script>
 </body>
 </html>
