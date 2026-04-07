@@ -1244,60 +1244,6 @@
   }
   .followup-tl-rounds { font-size: 10px; color: var(--color-text-4); margin-left: 4px; }
 
-  /* ===== 新人进度 ===== */
-  .newcomer-progress {
-    margin: 0 16px 12px;
-    padding: 12px;
-    background: var(--color-fill-2);
-    border-radius: var(--radius-card);
-    border: 1px solid var(--color-border-default);
-  }
-  .newcomer-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-  .newcomer-icon {
-    font-size: 14px;
-  }
-  .newcomer-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-text-2);
-  }
-  .newcomer-stage-badge {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-accent-orange-6);
-    background: var(--color-accent-orange-1);
-    padding: 1px 8px;
-    border-radius: var(--radius-xs);
-  }
-  .newcomer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .newcomer-field {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .newcomer-field-label {
-    font-size: 10px;
-    color: var(--color-text-4);
-  }
-  .newcomer-field-value {
-    font-size: 12px;
-    color: var(--color-text-2);
-    line-height: 18px;
-  }
-  .newcomer-field.full-width {
-    grid-column: 1 / -1;
-  }
-
   /* ===== 备注栏 ===== */
   .notes-section {
     padding: 0 16px 12px;
@@ -1617,7 +1563,6 @@
     .identity-nickname { font-size: 18px; }
     .identity-meta { font-size: 13px; }
     .personal-info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px 16px; }
-    .newcomer-grid { grid-template-columns: repeat(3, 1fr); }
     .metrics-grid.metrics-5col { grid-template-columns: repeat(5, 1fr); }
     .metrics-grid.metrics-4col { grid-template-columns: repeat(4, 1fr); }
     .status-tags-bar { padding: 0 20px 14px; }
@@ -1631,7 +1576,6 @@
   /* ===== 容器查询：超宽屏（>650px） ===== */
   @container sidebar (min-width: 650px) {
     .personal-info-grid { grid-template-columns: repeat(4, 1fr); }
-    .newcomer-grid { grid-template-columns: repeat(4, 1fr); }
     .identity-card { padding: 24px 20px; }
   }
 </style>

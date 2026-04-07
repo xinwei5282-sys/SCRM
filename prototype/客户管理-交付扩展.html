@@ -396,16 +396,16 @@
   }
   .customer-avatar svg { width: 18px; height: 18px; color: var(--color-text-4); }
   .customer-name { font-weight: 500; color: var(--color-text-1); display: flex; align-items: center; gap: 3px; }
-  .customer-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
-  .customer-name .icon-external { width: 12px; height: 12px; min-width: 12px; flex-shrink: 0; opacity: 0; color: var(--color-text-4); transition: opacity 100ms; }
+  .customer-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: color 100ms; }
   .customer-name-link:hover { color: var(--color-primary-6); }
-  .customer-name-link:hover .icon-external { opacity: 1; color: var(--color-primary-6); }
   .customer-phone { font-size: 12px; color: var(--color-text-3); }
-  .phone-mask { display: inline-flex; align-items: center; gap: 2px; cursor: default; }
-  .phone-mask .phone-eye { display: none; width: 14px; height: 14px; cursor: pointer; color: var(--color-text-4); flex-shrink: 0; transition: color 100ms; }
+  .phone-mask { display: inline-flex; align-items: center; gap: 3px; cursor: pointer; }
+  .phone-mask .phone-eye { display: none; width: 13px; height: 13px; color: var(--color-text-4); flex-shrink: 0; transition: color 100ms; }
   .phone-mask:hover .phone-eye { display: inline-block; }
-  .phone-mask .phone-eye:hover { color: var(--color-text-2); }
+  .phone-mask:hover .phone-eye:hover { color: var(--color-text-2); }
   .phone-mask.revealed .phone-eye { display: inline-block; color: var(--color-primary-6); }
+  .detail-phone-mask { font-size: 14px; }
+  .detail-phone-mask .phone-eye { width: 14px; height: 14px; }
 
   /* Tags / Badges */
   .tag {
@@ -682,6 +682,8 @@
     z-index: 400;
   }
   .modal-overlay.show { display: block; }
+  .modal-overlay.show.modal-center { display: flex; align-items: center; justify-content: center; }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
   .modal {
     background: var(--color-fill-1);
     border-radius: var(--radius-card) 0 0 var(--radius-card);
@@ -770,10 +772,8 @@
     flex-shrink: 0;
   }
   .detail-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
-  .detail-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .detail-name-link { color: var(--color-text-1); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: color 100ms; }
   .detail-name-link:hover { color: var(--color-primary-6); }
-  .detail-name-link .icon-external { width: 14px; height: 14px; min-width: 14px; flex-shrink: 0; color: var(--color-text-4); transition: color 100ms; }
-  .detail-name-link:hover .icon-external { color: var(--color-primary-6); }
   .detail-note { font-size: 12px; color: var(--color-text-3); margin-bottom: 8px; }
   .detail-tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .detail-section-title {
@@ -950,59 +950,6 @@
     height: 14px;
   }
 
-  /* Newcomer Progress Card */
-  .newcomer-progress {
-    padding: 14px;
-    background: var(--color-fill-2);
-    border-radius: 8px;
-    border: 1px solid var(--color-border-default);
-    margin-bottom: 16px;
-  }
-  .newcomer-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-  .newcomer-icon {
-    font-size: 14px;
-  }
-  .newcomer-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-2);
-  }
-  .newcomer-stage-badge {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-accent-orange-6);
-    background: var(--color-accent-orange-1);
-    padding: 1px 8px;
-    border-radius: 4px;
-  }
-  .newcomer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .newcomer-field {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .newcomer-field.full-width {
-    grid-column: 1 / -1;
-  }
-  .newcomer-field-label {
-    font-size: 11px;
-    color: var(--color-text-4);
-  }
-  .newcomer-field-value {
-    font-size: 13px;
-    color: var(--color-text-2);
-    line-height: 18px;
-  }
 
   /* High-Frequency Projects */
   .freq-projects {
@@ -2003,7 +1950,7 @@
         <div class="type-tabs" id="typeTabs">
           <div class="type-tab active" onclick="switchTypeTab(this, '官网会员')">官网会员</div>
           <div class="type-tab" onclick="switchTypeTab(this, '深海圈会员')">深海圈会员</div>
-          <div class="type-tab" onclick="switchTypeTab(this, '航海会员')">航海会员</div>
+          <div class="type-tab" onclick="switchTypeTab(this, '航海家会员')">航海家会员</div>
         </div>
 
         <!-- ======== Search Filters ======== -->
@@ -2014,6 +1961,12 @@
               <option value="">渠道</option>
               <option>企微</option>
               <option>个微</option>
+            </select>
+            <select class="filter-select sm">
+              <option value="">客户类型</option>
+              <option>官网</option>
+              <option>航海家</option>
+              <option>深海圈</option>
             </select>
             <select class="filter-select sm">
               <option value="">好友状态</option>
@@ -2111,12 +2064,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 580</td>
@@ -2140,12 +2093,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
                 <td>鱼丸 320</td>
@@ -2169,12 +2122,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-shenhai">深海圈会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
                 <td class="col-delivery">—</td>
                 <td>鱼丸 150</td>
@@ -2198,12 +2151,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">放大期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 580</td>
@@ -2228,12 +2181,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="186****0413" data-phone="18632100413" onclick="togglePhone(this)"><span class="phone-text">186****0413</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">探索期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-zhongcao">种草官</span></td>
                 <td>鱼丸 230</td>
@@ -2257,12 +2210,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">Maggie🌸</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="186****0413" data-phone="18632100413" onclick="togglePhone(this)"><span class="phone-text">186****0413</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">探索期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
                 <td>鱼丸 180</td>
@@ -2287,12 +2240,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">大锤日记<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">大锤日记</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="159****8821" data-phone="15976888821" onclick="togglePhone(this)"><span class="phone-text">159****8821</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">新手期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-zhiyuan">志愿者</span></td>
                 <td>鱼丸 45</td>
@@ -2317,12 +2270,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-zuju">组局官</span> <span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 1,200</td>
@@ -2346,12 +2299,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-hanghj">航海家</span></td>
                 <td>鱼丸 800</td>
@@ -2375,12 +2328,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">云朵上的猫</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="177****6655" data-phone="17712346655" onclick="togglePhone(this)"><span class="phone-text">177****6655</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-zuju">组局官</span> <span class="tag tag-role-chuanshu">传术师</span></td>
                 <td>鱼丸 1,200</td>
@@ -2405,12 +2358,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">强哥电商笔记<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">强哥电商笔记</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="135****9074" data-phone="13598769074" onclick="togglePhone(this)"><span class="phone-text">135****9074</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">新手期</span></td>
                 <td class="col-delivery">—</td>
                 <td>鱼丸 90</td>
@@ -2435,12 +2388,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-guanwang">官网会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-chuanshu">传术师</span> <span class="tag tag-role-zhiyuan">志愿者</span></td>
                 <td>鱼丸 350</td>
@@ -2464,12 +2417,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-hanghai">航海会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery"><span class="tag tag-role-jiaolian">航海教练</span></td>
                 <td>鱼丸 280</td>
@@ -2493,12 +2446,12 @@
                   <div class="customer-info">
                     <div class="customer-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg></div>
                     <div>
-                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>
+                      <div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">婉清reading📚</a></div>
                       <div class="customer-phone"><span class="phone-mask" data-masked="152****3318" data-phone="15265433318" onclick="togglePhone(this)"><span class="phone-text">152****3318</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
                     </div>
                   </div>
                 </td>
-                <td style="text-align:center;"><span class="tag type-shenhai">深海圈会员</span></td>
+                <td style="text-align:center;"><span class="tag type-guanwang">官网</span> <span class="tag type-hanghai">航海家</span> <span class="tag type-shenhai">深海圈</span></td>
                 <td class="col-delivery"><span class="tag tag-stage">增长期</span></td>
                 <td class="col-delivery">—</td>
                 <td>鱼丸 120</td>
@@ -2559,7 +2512,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 3 3 4-4 7 7"/><circle cx="15" cy="9" r="2"/></svg>
           </div>
           <div>
-            <div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业<svg class="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a> <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
+            <div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页">峰哥聊副业</a> <span class="tag tag-success" style="font-size:11px; height:18px; margin-left:4px;">在期</span> <span class="tag tag-stage" style="font-size:11px; height:18px; margin-left:2px;">放大期</span></div>
             <div class="detail-note"><span class="detail-note-text" id="detailNoteText">备注：副业达人</span><svg class="detail-note-edit" onclick="editDetailNote()" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;cursor:pointer;color:var(--color-text-4);vertical-align:middle;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg><input class="detail-note-input" id="detailNoteInput" style="display:none;font-size:12px;color:var(--color-text-3);border:1px solid var(--color-primary-6);border-radius:4px;padding:1px 6px;outline:none;width:120px;" /></div>
             <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
               <span class="tag tag-role-chuanshu" style="font-size:11px; height:18px;">传术师</span>
@@ -2597,38 +2550,6 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
                 重新生成
               </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 新人进度 -->
-        <div class="detail-section-title">新人进度</div>
-        <div class="newcomer-progress">
-          <div class="newcomer-header">
-            <span class="newcomer-icon">🎯</span>
-            <span class="newcomer-title">作业关键信息</span>
-            <span class="newcomer-stage-badge">放大期</span>
-          </div>
-          <div class="newcomer-grid">
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">方向 & 赛道</span>
-              <span class="newcomer-field-value">AI视频、自媒体</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">当前状态</span>
-              <span class="newcomer-field-value">稳定产出中</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">优势</span>
-              <span class="newcomer-field-value">有剪辑基础，执行力强，连续3次航海</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">短板</span>
-              <span class="newcomer-field-value">缺少变现路径认知</span>
-            </div>
-            <div class="newcomer-field full-width">
-              <span class="newcomer-field-label">目标 & 展望</span>
-              <span class="newcomer-field-value">实现航海变现 1000 元，建立稳定的视频创作流程</span>
             </div>
           </div>
         </div>
@@ -2734,14 +2655,7 @@
             <tr>
               <th>手机号</th>
               <td>
-                <span class="profile-editable">
-                  <span class="profile-value copyable-cell" onclick="copyText('13856782736')">138****2736</span>
-                </span>
-                <span class="profile-edit-form">
-                  <input type="text" class="profile-edit-input" value="13856782736">
-                  <button class="profile-save-btn" onclick="saveEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-                  <button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                </span>
+                <span class="phone-mask detail-phone-mask" data-masked="138****2736" data-phone="13856782736" onclick="togglePhone(this)"><span class="phone-text">138****2736</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
               </td>
               <th>微信号</th>
               <td>
@@ -2798,10 +2712,10 @@
               <th></th><td></td>
             </tr>
 
-            <!-- ===== 2b. 会员信息 — 航海会员（鱼丸 320） ===== -->
-            <tr><td class="section-header" colspan="4">会员信息 — 航海会员（鱼丸 320）</td></tr>
+            <!-- ===== 2b. 会员信息 — 航海家会员（鱼丸 320） ===== -->
+            <tr><td class="section-header" colspan="4">会员信息 — 航海家会员（鱼丸 320）</td></tr>
             <tr>
-              <th>会员类型</th><td><span class="tag type-hanghai" style="height:20px; font-size:11px;">航海会员</span></td>
+              <th>会员类型</th><td><span class="tag type-hanghai" style="height:20px; font-size:11px;">航海家会员</span></td>
               <th>会员状态</th><td><span class="tag tag-success" style="height:20px; font-size:11px;">在期</span></td>
             </tr>
             <tr>
@@ -3853,7 +3767,7 @@
                     <td>2024-01-11 15:30:00</td>
                   </tr>
                   <tr>
-                    <td>航海会员</td>
+                    <td>航海家会员</td>
                     <td>新增</td>
                     <td><span class="tag tag-muted">过期</span></td>
                     <td>¥3,365.00</td>
@@ -3877,7 +3791,7 @@
                     <td>2023-01-01 09:00:00</td>
                   </tr>
                   <tr>
-                    <td>航海会员</td>
+                    <td>航海家会员</td>
                     <td><span style="color:var(--color-danger-6);">退出</span></td>
                     <td><span class="tag tag-muted">过期</span></td>
                     <td>¥3,365.00</td>
@@ -4081,6 +3995,17 @@
   </div>
 </div>
 
+<!-- ======== Course Detail Modal ======== -->
+<div class="modal-overlay modal-center" id="courseModal" onclick="if(event.target===this)closeCourseModal()">
+  <div style="background:var(--color-fill-1); border-radius:var(--radius-card); width:420px; max-height:70vh; display:flex; flex-direction:column; animation:modalIn 200ms ease-out;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--color-border-default);">
+      <span style="font-size:16px; font-weight:600; color:var(--color-text-1);" id="courseModalTitle">已学课程</span>
+      <button style="background:none; border:none; font-size:20px; color:var(--color-text-3); cursor:pointer; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%;" onclick="closeCourseModal()" onmouseover="this.style.background='var(--color-fill-hover)'" onmouseout="this.style.background='none'">&times;</button>
+    </div>
+    <div style="padding:16px; overflow-y:auto;" id="courseModalBody"></div>
+  </div>
+</div>
+
 <!-- ======== PRD Annotation Panel ======== -->
 <div class="prd-panel" data-prd-key="delivery-ext" data-prd-version="20260310c" data-prd-view="list" id="prdPanelGuanwang">
   <div class="prd-context-hint" id="prdContextHint">当前：列表页</div>
@@ -4134,7 +4059,7 @@
     <div class="prd-item">好友状态 — 下拉：好友 / 客户删除 / 双向删除</div>
     <div class="prd-item">鱼丸：根据当前角色显示对应的选项，如果数据权限只允许查看自己，鱼丸的搜索字段不显示，列表默认显示全部自己的鱼丸账号</div>
     <div class="prd-item">标签：点击后打开标签的弹窗</div>
-    <div class="prd-item"><strong>客户类型</strong> — 下拉：官网会员 / 航海会员 / 深海圈会员（一个客户可能有多个身份）根据岗位角色权限显示可以下拉的选项</div>
+    <div class="prd-item"><strong>客户类型</strong> — 下拉：官网会员 / 航海家会员 / 深海圈会员（一个客户可能有多个身份）根据岗位角色权限显示可以下拉的选项</div>
     <div class="prd-item"><strong>所属阶段</strong> <span class="prd-tag-new">NEW</span> — 下拉单选：新手期 / 探索期 / 增长期 / 放大期</div>
     <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 下拉多选：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家（允许多个）</div>
     <div class="prd-item"><strong>专属服务</strong> — 下拉：交付人员列表</div>
@@ -4151,8 +4076,8 @@
     <div class="prd-section-title green">4. 表格列定义</div>
     <div class="prd-label">完整列清单（按显示顺序）</div>
     <div class="prd-item"><strong>星球ID</strong> — 展示星球编号</div>
-    <div class="prd-item"><strong>客户信息</strong> — 头像 + 微信昵称 + 手机号脱敏；手机号hover显示眼睛，点击展开；<strong>点击昵称跳转官网社区个人主页</strong>（新窗口），hover 显示外链图标 <span class="prd-tag-new">NEW</span></div>
-    <div class="prd-item"><strong>客户类型</strong>（原「关系类型」改名）— 标签：官网会员（蓝）/ 航海会员（绿）/ 深海圈会员（橙）</div>
+    <div class="prd-item"><strong>客户信息</strong> — 头像 + 微信昵称 + 手机号脱敏；手机号 hover 显示眼睛图标，点击切换明文/脱敏；<strong>昵称 hover 变主色</strong>，点击打开客户详情</div>
+    <div class="prd-item"><strong>客户类型</strong>（原「关系类型」改名）— 标签：官网会员（蓝）/ 航海家会员（绿）/ 深海圈会员（橙）</div>
     <div class="prd-item"><strong>所属阶段</strong> <span class="prd-tag-new">NEW</span> — 单选。枚举值：新手期 / 探索期 / 增长期 / 放大期</div>
     <div class="prd-item"><strong>会员身份</strong> <span class="prd-tag-new">NEW</span> — 允许多个，逗号分隔。枚举值：组局官 / 种草官 / 航海教练 / 志愿者 / 传术师 / 航海家</div>
     <div class="prd-item"><strong>鱼丸</strong> — 原有字段，显示鱼丸账号名称</div>
@@ -4197,10 +4122,6 @@
     <div class="prd-item"><strong>生成中</strong>：按钮隐藏，sparkle 图标闪烁动画；正文区逐字打印（streaming），光标闪烁，关键词高亮显示</div>
     <div class="prd-item"><strong>生成完成</strong>：正文内容 + AI 标签（高活跃度、高续费意愿、AI赛道偏好等）渐入 + 底部显示生成时间</div>
     <div class="prd-item">支持手动<strong>「重新生成」</strong>按钮（带旋转动画），重新执行生成流程</div>
-    <div class="prd-label">新人进度 <span class="prd-tag-new">NEW</span></div>
-    <div class="prd-item"><strong>作业关键信息</strong>卡片 — 浅灰背景容器，右上角显示当前阶段徽章（橙色）</div>
-    <div class="prd-item">2列网格字段：方向&赛道 / 当前状态 / 优势 / 短板 / 目标&展望（跨两列）</div>
-    <div class="prd-item">数据来源：客户新人作业表单提交的关键信息，由交付人员维护更新</div>
     <div class="prd-label">高频参与项目 <span class="prd-tag-new">NEW</span></div>
     <div class="prd-item">展示客户参与频次最高的航海/活动项目，蓝色标签样式，附带参与次数（×N）</div>
     <div class="prd-item">数据来源：系统自动统计客户的航海报名、活动参与记录</div>
@@ -4220,7 +4141,7 @@
     <div class="prd-item">以四栏表格（th-td-th-td）展示，按分组用 section-header 分隔</div>
     <div class="prd-label">1. 基础信息</div>
     <div class="prd-item">客户ID / <strong>星球编号</strong>（<span class="prd-tag-new">点击复制</span>）/ <strong>星球昵称</strong>（<span class="prd-tag-new">点击复制</span>）/ 性别</div>
-    <div class="prd-item"><strong>手机号</strong>（脱敏显示，<span class="prd-tag-new">点击复制完整号码</span>）/ <strong>微信号</strong>（<span class="prd-tag-new">点击复制</span>）</div>
+    <div class="prd-item"><strong>手机号</strong>（脱敏显示，hover 显示眼睛图标，点击切换明文/脱敏）/ <strong>微信号</strong>（<span class="prd-tag-new">点击复制</span>）</div>
     <div class="prd-label">2. 个人信息</div>
     <div class="prd-item"><strong>城市</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>职业</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>岗位方向</strong>（<span class="prd-tag-new">可编辑</span>）</div>
     <div class="prd-item"><strong>参加工作年限</strong>（<span class="prd-tag-new">可编辑</span>）/ <strong>年收入</strong>（<span class="prd-tag-new">可编辑</span>）</div>
@@ -4376,7 +4297,7 @@
     <div class="prd-label">背景</div>
     <div class="prd-item">CRM 区分三条业务线：<strong>官网、深海圈、航海家</strong>，深海圈核心关注学习行为、社区活跃、社群活跃</div>
     <div class="prd-label">切换方式</div>
-    <div class="prd-item">标题栏下方<strong>面包屑 Tab 页签</strong>：官网会员 | <strong>深海圈会员</strong> | 航海会员</div>
+    <div class="prd-item">标题栏下方<strong>面包屑 Tab 页签</strong>：官网会员 | <strong>深海圈会员</strong> | 航海家会员</div>
     <div class="prd-item">点击 Tab 后筛选区、表格列、详情内容全部切换为对应业务线数据</div>
     <div class="prd-label">核心原则</div>
     <div class="prd-item"><strong>一人多圈子</strong>：一个用户可同时属于多个深海圈，学习数据按圈子区分</div>
@@ -4392,6 +4313,7 @@
     <div class="prd-item"><strong>鱼丸</strong> — 下拉</div>
     <div class="prd-item"><strong>专属销售</strong> — 下拉（员工列表）</div>
     <div class="prd-item"><strong>专属服务</strong> — 下拉（员工列表）</div>
+    <div class="prd-item"><strong>客户类型</strong> — 下拉：官网 / 航海家 / 深海圈（用户维度，显示多个）</div>
     <div class="prd-item"><strong>标签</strong> — 下拉（自定义标签列表）</div>
     <div class="prd-item"><strong>加入时间</strong> — 日期范围</div>
     <div class="prd-item"><strong>最近跟进时间</strong> — 日期范围，筛选最近跟进过的客户</div>
@@ -4400,9 +4322,9 @@
 
   <div class="prd-section" data-prd-context="list" id="sh-s3">
     <div class="prd-section-title green">3. 表格列定义</div>
-    <div class="prd-item">用户ID / 用户信息（头像+昵称+脱敏手机号）/ <strong>所属圈子</strong> / 会员状态 / <strong>好友状态</strong></div>
+    <div class="prd-item">用户ID / 用户信息（头像+昵称+脱敏手机号）/ <strong>客户类型</strong>（多个标签）/ <strong>所属圈子</strong> / 会员状态（4态：会员/待审核/非会员/已退款）/ <strong>好友状态</strong></div>
     <div class="prd-item">鱼丸 / 专属销售 / 专属服务</div>
-    <div class="prd-item">已学课程（已学/总数）/ 未学习天数（≥14天红色警告）/ 发帖数 / 群发言</div>
+    <div class="prd-item">已学课程数 / 未学习天数（≥14天红色警告）/ 发帖数 / 群发言</div>
     <div class="prd-item">加入时间 / <strong>会员到期</strong> / 标签</div>
     <div class="prd-item">操作列：<strong>详情</strong> + <strong>打标签</strong></div>
   </div>
@@ -4410,8 +4332,8 @@
   <div class="prd-section" data-prd-context="detail" id="sh-s4">
     <div class="prd-section-title orange">4. 详情 — 左侧边栏</div>
     <div class="prd-label">用户概要</div>
-    <div class="prd-item">头像 + 昵称 + 状态标签（正常-绿/已退出-灰）+ 会员状态标签（会员-绿/待审核-橙/非会员-灰/已退款-红）+ 备注</div>
-    <div class="prd-item">仅展示<strong>千刀户/万刀户</strong>成果标签（无则不显示标签区）</div>
+    <div class="prd-item">头像 + 昵称（<span class="prd-tag-new">可点击跳转社区主页</span>，外链图标）+ 状态标签（正常-绿/已退出-灰）+ 会员状态标签（会员-绿/待审核-橙/非会员-灰/已退款-红）+ 备注（<span class="prd-tag-new">可编辑</span>，铅笔图标）</div>
+    <div class="prd-item">角色标签显示（如：千刀户/万刀户成果标签，无则不显示标签区）</div>
     <div class="prd-label">AI 客户分析</div>
     <div class="prd-item">初始为空状态 + "生成客户分析"按钮</div>
     <div class="prd-item">点击后<strong>流式打字输出</strong>（逐字显示 + 光标闪烁），完成后渐显 AI 标签 + footer</div>
@@ -4427,17 +4349,16 @@
   <div class="prd-section" data-prd-context="detail" id="sh-s5">
     <div class="prd-section-title green">5. 详情 — 客户档案 Tab</div>
     <div class="prd-label">基础信息</div>
-    <div class="prd-item">用户ID / 昵称 / 手机号 / 微信号（4个字段，不含所属圈子/状态/加入到期时间）</div>
+    <div class="prd-item">用户ID / 昵称 / 手机号 / <strong>星球编号</strong>（<span class="prd-tag-new">可复制</span>）/ <strong>星球昵称</strong>（<span class="prd-tag-new">可复制</span>）/ 微信号（后接<span class="prd-tag-new">跳转按钮</span>）/ <strong>客户类型</strong>（人维度，可多个：官网会员/深海圈会员/航海家会员）</div>
     <div class="prd-label">会员信息 <span class="prd-tag-new">NEW</span></div>
-    <div class="prd-item">按圈子分 section「会员信息 — {圈子名}」，每个圈子独立配置人员：</div>
-    <div class="prd-item">销售鱼丸（+好友状态标签）/ 专属销售 / 服务鱼丸（+好友状态标签）/ 专属服务 / 会员状态（7态标签）/ 加入方式 / 加入时间 / 会员到期 / 加入金额 / 续费次数 / 推荐人（头像+姓名+编号，无则 —）</div>
+    <div class="prd-item">按鱼丸业务线分 section「会员信息 — {业务线}（{鱼丸}）」，每个业务线独立展示：</div>
+    <div class="prd-item">会员类型标签 / 会员状态（4态：会员/待审核/非会员/已退款）/ 销售鱼丸 / <strong>专属销售</strong>（<span class="prd-tag-new">可编辑</span>，企微好友列表）/ 服务鱼丸 / <strong>专属服务</strong>（<span class="prd-tag-new">可编辑</span>）/ 会员到期时间 / 加入方式 / 加入金额 / 续费次数 / 推荐人（头像+姓名+编号，无则 —）</div>
+    <div class="prd-item">官网会员额外显示：<strong>是否领取体验卡</strong> + <strong>领取时间</strong></div>
     <div class="prd-label">学习行为（按圈子分 section）</div>
     <div class="prd-item">一人多圈子：每个圈子独立一个 section，标题为「学习行为 — {圈子名}」</div>
-    <div class="prd-item">每 section 含：已学课程数（可展开列表）/ 已完成课程 / 直播观看数 / 最近学习时间 / 连续未学习 / 作业提交 / <strong>加入时间</strong> / <strong>到期时间</strong></div>
-    <div class="prd-label">社区活跃</div>
-    <div class="prd-item">累计发帖数 / 评论数 / 获赞数 / 锚点数 / 最近登录 / 未登录天数</div>
+    <div class="prd-item">每 section 含：已学课程数（点击弹窗显示每门课程学习情况）/ 直播观看数 / 最近学习时间 / 连续未学习 / 作业提交 / <strong>加入时间</strong> / <strong>到期时间</strong></div>
     <div class="prd-label">社群活跃</div>
-    <div class="prd-item">群发言次数（近30天）/ 最近群发言</div>
+    <div class="prd-item">累计发帖数 / 评论数 / 获赞数 / 锚点数 / 群发言次数（近30天）/ 最近群发言 / 最近登录 / 未登录天数</div>
     <div class="prd-label">其他信息</div>
     <div class="prd-item">首次添加时间 / 入群时间 / 是否进入企微群聊 / unionID / externalid</div>
   </div>
@@ -4835,6 +4756,25 @@ function togglePhone(el) {
   }
 }
 
+// 深海圈备注编辑
+function editShDetailNote() {
+  var textEl = document.getElementById('shDetailNoteText');
+  var inputEl = document.getElementById('shDetailNoteInput');
+  var raw = textEl.textContent.replace(/^备注[：:]/, '');
+  inputEl.value = raw;
+  textEl.style.display = 'none';
+  textEl.nextElementSibling.style.display = 'none';
+  inputEl.style.display = 'inline-block';
+  inputEl.focus();
+  inputEl.onblur = inputEl.onkeydown = function(e) {
+    if (e.type === 'keydown' && e.key !== 'Enter') return;
+    textEl.textContent = '备注：' + inputEl.value;
+    textEl.style.display = '';
+    textEl.nextElementSibling.style.display = '';
+    inputEl.style.display = 'none';
+  };
+}
+
 // 备注编辑
 function editDetailNote() {
   var textEl = document.getElementById('detailNoteText');
@@ -4913,6 +4853,7 @@ function enterShenhaiView() {
         '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;cursor:pointer;"><input type="checkbox" value="B站好物" style="accent-color:#36A590;"> B站好物</label>' +
       '</div>' +
     '</div>' +
+    '<select class="filter-select sm"><option value="">客户类型</option><option>官网</option><option>航海家</option><option>深海圈</option></select>' +
     '<select class="filter-select sm"><option value="">会员状态</option><option>会员</option><option>待审核</option><option>非会员</option><option>已退款</option></select>' +
     '<select class="filter-select sm"><option value="">好友状态</option><option>双向好友</option><option>客户删除</option><option>双向删除</option></select>' +
     '<select class="filter-select sm"><option value="">鱼丸</option><option>鱼丸120</option><option>鱼丸580</option></select>' +
@@ -4934,6 +4875,7 @@ function enterShenhaiView() {
     '<th style="width:70px;">用户ID</th>' +
     '<th style="width:180px;">用户信息</th>' +
     '<th style="width:120px;">所属圈子</th>' +
+    '<th style="width:100px; text-align:center;">客户类型</th>' +
     '<th style="width:80px; text-align:center;">会员状态</th>' +
     '<th style="width:80px;">好友状态</th>' +
     '<th>鱼丸</th>' +
@@ -4951,12 +4893,12 @@ function enterShenhaiView() {
 
   // Replace tbody with 深海圈 data
   var shUsers = [
-    { id:100234, name:'李明远', phone:'138****5678', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', friend:'双向好友', friendCls:'friend-ok', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 320', sales:'潇墨', service:'李李', courses:'12/28', noStudy:3, posts:45, groupMsg:128, tags:'千刀户' },
-    { id:100567, name:'王思涵', phone:'135****2345', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', friend:'双向好友', friendCls:'friend-ok', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'麻球', service:'潇墨', courses:'20/32', noStudy:1, posts:89, groupMsg:256, tags:'万刀户' },
-    { id:100891, name:'张小鱼', phone:'139****8901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', friend:'双向好友', friendCls:'friend-ok', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'乔溪', service:'麻球', courses:'25/25', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
-    { id:101023, name:'陈梦琪', phone:'136****4567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', friend:'双向好友', friendCls:'friend-ok', period:'三期', join:'2026-01-10', expire:'2027-01-09', yuwan:'鱼丸 120', sales:'潇墨', service:'乔溪', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
-    { id:101156, name:'刘大伟', phone:'137****7890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'已退出', statusCls:'tag-muted', friend:'客户删除', friendCls:'friend-deleted', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 320', sales:'李李', service:'李李', courses:'18/22', noStudy:5, posts:78, groupMsg:345, tags:'千刀户' },
-    { id:101298, name:'赵颖', phone:'152****1234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', friend:'双向删除', friendCls:'friend-deleted', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', courses:'8/32', noStudy:45, posts:6, groupMsg:18, tags:'一月未活跃' }
+    { id:100234, name:'李明远', phone:'138****5678', fullPhone:'13812345678', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'会员', statusCls:'tag-success', types:[{n:'深海圈',c:'type-shenhai'},{n:'官网',c:'type-guanwang'}], friend:'双向好友', friendCls:'friend-ok', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 320', sales:'潇墨', service:'李李', courses:'8/28', noStudy:2, posts:45, groupMsg:128, tags:'千刀户' },
+    { id:100567, name:'王思涵', phone:'135****2345', fullPhone:'13567892345', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'会员', statusCls:'tag-success', types:[{n:'深海圈',c:'type-shenhai'},{n:'官网',c:'type-guanwang'},{n:'航海家',c:'type-hanghai'}], friend:'双向好友', friendCls:'friend-ok', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'麻球', service:'潇墨', courses:'14/32', noStudy:1, posts:89, groupMsg:256, tags:'万刀户' },
+    { id:100891, name:'张小鱼', phone:'139****8901', fullPhone:'13956788901', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'会员', statusCls:'tag-success', types:[{n:'深海圈',c:'type-shenhai'}], friend:'双向好友', friendCls:'friend-ok', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 580', sales:'乔溪', service:'麻球', courses:'12/12', noStudy:0, posts:156, groupMsg:512, tags:'万刀户 金牌教练' },
+    { id:101023, name:'陈梦琪', phone:'136****4567', fullPhone:'13698764567', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'待审核', statusCls:'tag-warning', types:[{n:'深海圈',c:'type-shenhai'}], friend:'双向好友', friendCls:'friend-ok', period:'三期', join:'2026-01-10', expire:'2027-01-09', yuwan:'鱼丸 120', sales:'潇墨', service:'乔溪', courses:'5/28', noStudy:18, posts:3, groupMsg:12, tags:'两周不活跃' },
+    { id:101156, name:'刘大伟', phone:'137****7890', fullPhone:'13743217890', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'非会员', statusCls:'tag-muted', types:[{n:'深海圈',c:'type-shenhai'},{n:'官网',c:'type-guanwang'}], friend:'客户删除', friendCls:'friend-deleted', period:'一期', join:'2024-12-01', expire:'2025-11-30', yuwan:'鱼丸 320', sales:'李李', service:'李李', courses:'18/22', noStudy:13, posts:78, groupMsg:345, tags:'千刀户' },
+    { id:101298, name:'赵颖', phone:'152****1234', fullPhone:'15287651234', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退款', statusCls:'tag-danger', types:[{n:'深海圈',c:'type-shenhai'}], friend:'双向删除', friendCls:'friend-deleted', period:'二期', join:'2025-06-15', expire:'2026-06-14', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', courses:'8/32', noStudy:53, posts:6, groupMsg:18, tags:'一月未活跃' }
   ];
   var rows = '';
   for (var i = 0; i < shUsers.length; i++) {
@@ -4964,8 +4906,9 @@ function enterShenhaiView() {
     var studyWarn = u.noStudy >= 14 ? '<span class="warn-number">' + u.noStudy + '天</span>' : u.noStudy + '天';
     rows += '<tr>' +
       '<td>' + u.id + '</td>' +
-      '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name.charAt(0) + '</div><div><div class="customer-name">' + u.name + '</div><div class="customer-phone">' + u.phone + '</div></div></div></td>' +
+      '<td><div class="customer-info"><div class="customer-avatar" style="font-size:14px;color:var(--color-text-3)">' + u.name.charAt(0) + '</div><div><div class="customer-name"><a class="customer-name-link" href="javascript:void(0)" title="查看社区主页">' + u.name + '</a></div><div class="customer-phone"><span class="phone-mask" data-masked="' + u.phone + '" data-phone="' + u.fullPhone + '" onclick="togglePhone(this)"><span class="phone-text">' + u.phone + '</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></div></div></div></td>' +
       '<td>' + u.circle + '</td>' +
+      '<td style="text-align:center">' + u.types.map(function(t){ return '<span class="tag ' + t.c + '" style="font-size:11px;height:18px;">' + t.n + '</span>'; }).join(' ') + '</td>' +
       '<td style="text-align:center"><span class="tag ' + u.statusCls + '">' + u.status + '</span></td>' +
       '<td><span class="' + u.friendCls + '">' + u.friend + '</span></td>' +
       '<td>' + u.yuwan + '</td>' +
@@ -5013,69 +4956,162 @@ function exitShenhaiView() {
 
 /* ======== 深海圈详情抽屉 ======== */
 var shenhaiDetailData = [
-  { id:100234, name:'李明远', phone:'138****5678', wechat:'limingyuan_2024', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'', achievement:'千刀户',
-    circles:[
-      {name:'AI产品出海', salesYuwan:'鱼丸 320', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 120', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'潇墨', service:'李李', join:'2025-06-15', expire:'2026-06-14', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'王大力', referrerNo:'NO.23456', courseLearned:8, courseCompleted:6, liveWatched:3, lastStudy:'2026-03-27 14:30', noStudy:3, homework:4, courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:85},{name:'自媒体AI辅助创作',p:60},{name:'AI绘画商业应用',p:40}]},
-      {name:'B站好物', salesYuwan:'鱼丸 120', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 580', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'麻球', service:'乔溪', join:'2026-01-10', expire:'2027-01-09', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,799.00', renewCount:0, referrer:'李明远', referrerNo:'NO.100234', courseLearned:4, courseCompleted:2, liveWatched:2, lastStudy:'2026-03-25 10:00', noStudy:5, homework:2, courses:[{name:'B站选品攻略',p:100},{name:'好物视频拍摄',p:70},{name:'B站运营进阶',p:30}]}
+  // ---- 用户1: 李明远 — 双圈活跃学员，千刀户 ----
+  { id:100234, name:'李明远', phone:'138****5678', fullPhone:'13812345678', wechat:'limingyuan_2024', planetId:'56234', planetName:'明远出海记', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'', achievement:'千刀户',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'},{name:'官网会员',cls:'type-guanwang'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 320', sales:'潇墨', service:'李李', qwFriends:['潇墨','李李','乔溪'], memberStatus:'正常', memberStatusCls:'tag-success', join:'2025-06-15', expire:'2026-06-14', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'王大力', referrerNo:'NO.23456'},
+      {type:'官网会员', typeCls:'type-guanwang', yuwan:'鱼丸 580', sales:'潇墨', service:'潇墨', qwFriends:['潇墨','李李'], memberStatus:'在期', memberStatusCls:'tag-success', join:'2024-03-10', expire:'2026-12-01', joinMethod:'续费', joinAmount:'¥3,365.00', renewCount:2, referrer:'王大力', referrerNo:'NO.23456', trialCard:'是', trialCardTime:'2024-01-12 09:00'}
     ],
-    posts:45, comments:23, likes:156, anchors:12, lastLogin:'2026-03-28 09:15', noLoginDays:2,
-    groupMsg:128, lastGroupMsg:'2026-03-29 16:40',
+    circles:[
+      {name:'AI产品出海', salesYuwan:'鱼丸 320', sales:'潇墨', serviceYuwan:'鱼丸 120', service:'李李', join:'2025-06-15', expire:'2026-06-14', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'王大力', referrerNo:'NO.23456',
+        qwFriends:['潇墨','李李','乔溪'],
+        courseLearned:8, liveWatched:3, lastStudy:'2026-04-05 14:30', noStudy:2, homework:4,
+        courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:85},{name:'自媒体AI辅助创作',p:60},{name:'AI绘画商业应用',p:40},{name:'AI产品0→1实战',p:25},{name:'出海市场调研方法',p:15},{name:'AI Agent 工作流搭建',p:0},{name:'跨境电商AI选品',p:0}]},
+      {name:'B站好物', salesYuwan:'鱼丸 120', sales:'麻球', serviceYuwan:'鱼丸 580', service:'乔溪', join:'2026-01-10', expire:'2027-01-09', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,799.00', renewCount:0, referrer:'李明远', referrerNo:'NO.100234',
+        qwFriends:['麻球','乔溪','潇墨'],
+        courseLearned:4, liveWatched:2, lastStudy:'2026-04-03 10:00', noStudy:4, homework:2,
+        courses:[{name:'B站选品攻略',p:100},{name:'好物视频拍摄',p:70},{name:'B站运营进阶',p:30},{name:'供应链对接实操',p:0}]}
+    ],
+    posts:45, comments:23, likes:156, anchors:12, lastLogin:'2026-04-06 09:15', noLoginDays:1,
+    groupMsg:128, lastGroupMsg:'2026-04-06 16:40',
     customTags:['企微渠道','高互动'], remark:'积极参与社区活动，已完成AI变现课程大部分内容',
-    aiSummary:'学习积极性高，同时参与AI产品出海和B站好物两个圈子。AI方向完成度最佳（6/8），B站方向正在学习中。社区互动活跃（发帖45、获赞156），具备内容创作潜力。',
+    aiSummary:'学习积极性高，同时参与AI产品出海和B站好物两个圈子。AI方向完成度最佳（8门课已学），B站方向正在学习中。社区互动活跃（发帖45、获赞156），具备内容创作潜力。',
     aiTags:['高学习力','内容创作者','双圈学员','潜力KOL']
   },
-  { id:100567, name:'王思涵', phone:'135****2345', wechat:'wangsh_video', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
-    circles:[
-      {name:'YouTube AI 视频', salesYuwan:'鱼丸 580', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 320', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'麻球', service:'潇墨', join:'2024-12-01', expire:'2025-11-30', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥2,399.00', renewCount:1, referrer:'张晓峰', referrerNo:'NO.87191', courseLearned:14, courseCompleted:12, liveWatched:8, lastStudy:'2026-03-29 20:10', noStudy:1, homework:10, courses:[{name:'短视频剪辑基础',p:100},{name:'YouTube运营实战',p:100},{name:'短视频变现路径',p:92},{name:'直播带货入门',p:70}]},
-      {name:'AI产品出海', salesYuwan:'鱼丸 320', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 580', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'潇墨', service:'李李', join:'2025-03-15', expire:'2026-03-14', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'', courseLearned:6, courseCompleted:6, liveWatched:4, lastStudy:'2026-03-28 16:00', noStudy:2, homework:5, courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:100},{name:'AI绘画商业应用',p:88}]}
+  // ---- 用户2: 王思涵 — 双圈志愿者，万刀户标杆 ----
+  { id:100567, name:'王思涵', phone:'135****2345', fullPhone:'13567892345', wechat:'wangsh_video', planetId:'43567', planetName:'思涵的视频日记', circle:'YouTube AI 视频', role:'志愿者', roleCls:'tag-info', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'},{name:'官网会员',cls:'type-guanwang'},{name:'航海家会员',cls:'type-hanghai'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 580', sales:'麻球', service:'潇墨', qwFriends:['麻球','潇墨','李李','乔溪'], memberStatus:'正常', memberStatusCls:'tag-success', join:'2024-12-01', expire:'2025-11-30', joinMethod:'新增', joinAmount:'¥2,399.00', renewCount:1, referrer:'张晓峰', referrerNo:'NO.87191'},
+      {type:'官网会员', typeCls:'type-guanwang', yuwan:'鱼丸 320', sales:'潇墨', service:'潇墨', qwFriends:['潇墨','李李'], memberStatus:'在期', memberStatusCls:'tag-success', join:'2024-06-01', expire:'2026-06-01', joinMethod:'购买', joinAmount:'¥2,365.00', renewCount:1, referrer:'', referrerNo:'', trialCard:'是', trialCardTime:'2024-05-20 10:30'},
+      {type:'航海家会员', typeCls:'type-hanghai', yuwan:'鱼丸 150', sales:'乔溪', service:'乔溪', qwFriends:['乔溪','潇墨'], memberStatus:'在期', memberStatusCls:'tag-success', join:'2025-03-15', expire:'2026-03-14', joinMethod:'购买', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:''}
     ],
-    posts:89, comments:67, likes:423, anchors:38, lastLogin:'2026-03-29 20:10', noLoginDays:1,
-    groupMsg:256, lastGroupMsg:'2026-03-30 08:20',
+    circles:[
+      {name:'YouTube AI 视频', salesYuwan:'鱼丸 580', sales:'麻球', serviceYuwan:'鱼丸 320', service:'潇墨', join:'2024-12-01', expire:'2025-11-30', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥2,399.00', renewCount:1, referrer:'张晓峰', referrerNo:'NO.87191',
+        qwFriends:['麻球','潇墨','李李','乔溪'],
+        courseLearned:14, liveWatched:8, lastStudy:'2026-04-06 20:10', noStudy:1, homework:10,
+        courses:[{name:'短视频剪辑基础',p:100},{name:'YouTube运营实战',p:100},{name:'短视频变现路径',p:100},{name:'直播带货入门',p:92},{name:'YouTube SEO优化',p:85},{name:'视频号冷启动',p:78},{name:'千粉达人养成',p:65},{name:'MCN签约指南',p:50},{name:'直播间运营进阶',p:35},{name:'短视频IP打造',p:20},{name:'跨平台分发策略',p:10},{name:'视频电商选品',p:5},{name:'达人带货数据分析',p:0},{name:'品牌合作谈判技巧',p:0}]},
+      {name:'AI产品出海', salesYuwan:'鱼丸 320', sales:'潇墨', serviceYuwan:'鱼丸 580', service:'李李', join:'2025-03-15', expire:'2026-03-14', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'',
+        qwFriends:['潇墨','李李','乔溪'],
+        courseLearned:6, liveWatched:4, lastStudy:'2026-04-05 16:00', noStudy:2, homework:5,
+        courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:100},{name:'AI绘画商业应用',p:88},{name:'AI产品0→1实战',p:72},{name:'出海市场调研方法',p:45},{name:'AI Agent 工作流搭建',p:0}]}
+    ],
+    posts:89, comments:67, likes:423, anchors:38, lastLogin:'2026-04-06 20:10', noLoginDays:1,
+    groupMsg:256, lastGroupMsg:'2026-04-07 08:20',
     customTags:['核心成员','短视频达人','公众号导流'], remark:'社区活跃度极高，多次帮助新成员',
     aiSummary:'社区标杆用户，万刀户。同时参与YouTube AI视频和AI产品出海两个圈子，课程完成度极高。社区活跃度TOP级（发帖89、获赞423）。建议提升为教练候选人。',
     aiTags:['超级活跃','万刀户','双圈标杆','教练候选']
   },
-  { id:100891, name:'张小鱼', phone:'139****8901', wechat:'zhangxy_coach', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
-    circles:[
-      {name:'B站好物', salesYuwan:'鱼丸 580', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 580', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'乔溪', service:'麻球', join:'2024-12-01', expire:'2025-11-30', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:1, referrer:'刘大伟', referrerNo:'NO.101156', courseLearned:25, courseCompleted:25, liveWatched:20, lastStudy:'2026-03-30 10:00', noStudy:0, homework:25, courses:[{name:'电商选品方法论',p:100},{name:'店铺运营全流程',p:100},{name:'供应链管理基础',p:100}]}
+  // ---- 用户3: 张小鱼 — 金牌教练，满分完成 ----
+  { id:100891, name:'张小鱼', phone:'139****8901', fullPhone:'13956788901', wechat:'zhangxy_coach', planetId:'38901', planetName:'小鱼电商笔记', circle:'B站好物', role:'教练', roleCls:'tag-orange', status:'正常', statusCls:'tag-success', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'万刀户',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 580', sales:'乔溪', service:'麻球', qwFriends:['乔溪','麻球','潇墨','李李'], memberStatus:'正常', memberStatusCls:'tag-success', join:'2024-12-01', expire:'2025-11-30', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:1, referrer:'刘大伟', referrerNo:'NO.101156'}
     ],
-    posts:156, comments:134, likes:890, anchors:75, lastLogin:'2026-03-30 10:00', noLoginDays:0,
-    groupMsg:512, lastGroupMsg:'2026-03-30 11:30',
+    circles:[
+      {name:'B站好物', salesYuwan:'鱼丸 580', sales:'乔溪', serviceYuwan:'鱼丸 580', service:'麻球', join:'2024-12-01', expire:'2025-11-30', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:1, referrer:'刘大伟', referrerNo:'NO.101156',
+        qwFriends:['乔溪','麻球','潇墨','李李'],
+        courseLearned:12, liveWatched:20, lastStudy:'2026-04-07 10:00', noStudy:0, homework:12,
+        courses:[{name:'电商选品方法论',p:100},{name:'店铺运营全流程',p:100},{name:'供应链管理基础',p:100},{name:'B站选品攻略',p:100},{name:'好物视频拍摄',p:100},{name:'B站运营进阶',p:100},{name:'供应链对接实操',p:100},{name:'直播带货入门',p:100},{name:'电商数据分析',p:100},{name:'私域流量搭建',p:100},{name:'售后与复购策略',p:100},{name:'品牌孵化路径',p:100}]}
+    ],
+    posts:156, comments:134, likes:890, anchors:75, lastLogin:'2026-04-07 10:00', noLoginDays:0,
+    groupMsg:512, lastGroupMsg:'2026-04-07 11:30',
     customTags:['金牌教练','电商专家'], remark:'一期教练，课程完成度100%，负责电商模块答疑',
     aiSummary:'金牌教练，全部课程100%完成。社区影响力极大（发帖156、获赞890、锚点75），群发言最活跃（512次/月）。是电商模块的核心支柱。',
     aiTags:['金牌教练','电商专家','核心支柱','满分完成']
   },
-  { id:101023, name:'陈梦琪', phone:'136****4567', wechat:'chenmq_ai', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', userPeriod:'第三期', join:'2026-01-10', expire:'2027-01-09', active:'连续两周不活跃', achievement:'',
-    circles:[
-      {name:'AI产品出海', salesYuwan:'鱼丸 120', salesFriend:'双向好友', salesFriendCls:'friend-ok', serviceYuwan:'鱼丸 120', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'潇墨', service:'乔溪', join:'2026-01-10', expire:'2027-01-09', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'', courseLearned:5, courseCompleted:2, liveWatched:1, lastStudy:'2026-03-12 16:45', noStudy:18, homework:1, courses:[{name:'AI写作变现入门',p:45},{name:'ChatGPT提示词进阶',p:30}]}
+  // ---- 用户4: 陈梦琪 — 三期新人，流失风险 ----
+  { id:101023, name:'陈梦琪', phone:'136****4567', fullPhone:'13698764567', wechat:'chenmq_ai', planetId:'61023', planetName:'梦琪AI探索', circle:'AI产品出海', role:'学员', roleCls:'tag-muted', status:'正常', statusCls:'tag-success', period:'三期', userPeriod:'第三期', join:'2026-01-10', expire:'2027-01-09', active:'连续两周不活跃', achievement:'',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 120', sales:'潇墨', service:'乔溪', qwFriends:['潇墨','乔溪'], memberStatus:'正常', memberStatusCls:'tag-success', join:'2026-01-10', expire:'2027-01-09', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:''}
     ],
-    posts:3, comments:5, likes:8, anchors:0, lastLogin:'2026-03-15 08:30', noLoginDays:15,
-    groupMsg:12, lastGroupMsg:'2026-03-10 20:15',
+    circles:[
+      {name:'AI产品出海', salesYuwan:'鱼丸 120', sales:'潇墨', serviceYuwan:'鱼丸 120', service:'乔溪', join:'2026-01-10', expire:'2027-01-09', memberStatus:'正常', memberStatusCls:'tag-success', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'',
+        qwFriends:['潇墨','乔溪'],
+        courseLearned:5, liveWatched:1, lastStudy:'2026-03-20 16:45', noStudy:18, homework:1,
+        courses:[{name:'AI写作变现入门',p:45},{name:'ChatGPT提示词进阶',p:30},{name:'自媒体AI辅助创作',p:10},{name:'AI绘画商业应用',p:5},{name:'AI产品0→1实战',p:0}]}
+    ],
+    posts:3, comments:5, likes:8, anchors:0, lastLogin:'2026-03-22 08:30', noLoginDays:16,
+    groupMsg:12, lastGroupMsg:'2026-03-18 20:15',
     customTags:['新人'], remark:'',
-    aiSummary:'三期新学员，加入后学习动力不足，连续两周不活跃。课程完成度低（2/5），属于流失高风险用户，建议尽快安排1V1关怀触达。',
+    aiSummary:'三期新学员，加入后学习动力不足，连续两周不活跃。已学5门课但完成度均较低，属于流失高风险用户，建议尽快安排1V1关怀触达。',
     aiTags:['流失风险','低活跃','需关怀','新人']
   },
-  { id:101156, name:'刘大伟', phone:'137****7890', wechat:'liudw_admin', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'已退出', statusCls:'tag-muted', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'千刀户',
-    circles:[
-      {name:'AI产品出海', salesYuwan:'鱼丸 320', salesFriend:'客户删除', salesFriendCls:'friend-deleted', serviceYuwan:'鱼丸 120', serviceFriend:'双向好友', serviceFriendCls:'friend-ok', sales:'李李', service:'李李', join:'2024-12-01', expire:'2025-11-30', memberStatus:'已退出', memberStatusCls:'tag-muted', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'张小鱼', referrerNo:'NO.100891', courseLearned:18, courseCompleted:15, liveWatched:9, lastStudy:'2026-03-25 11:20', noStudy:5, homework:10, courses:[{name:'公众号涨粉策略',p:100},{name:'小红书运营',p:100},{name:'知乎高赞写作',p:88}]}
+  // ---- 用户5: 刘大伟 — 管理员，已退出 ----
+  { id:101156, name:'刘大伟', phone:'137****7890', fullPhone:'13743217890', wechat:'liudw_admin', planetId:'71156', planetName:'大伟说运营', circle:'AI产品出海', role:'管理员', roleCls:'tag-purple', status:'已退出', statusCls:'tag-muted', period:'一期', userPeriod:'第一期', join:'2024-12-01', expire:'2025-11-30', active:'', achievement:'千刀户',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'},{name:'官网会员',cls:'type-guanwang'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 320', sales:'李李', service:'李李', qwFriends:['李李'], memberStatus:'已退出', memberStatusCls:'tag-muted', join:'2024-12-01', expire:'2025-11-30', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'张小鱼', referrerNo:'NO.100891'},
+      {type:'官网会员', typeCls:'type-guanwang', yuwan:'鱼丸 580', sales:'李李', service:'李李', qwFriends:['李李'], memberStatus:'在期', memberStatusCls:'tag-success', join:'2024-06-01', expire:'2026-06-01', joinMethod:'购买', joinAmount:'¥2,365.00', renewCount:1, referrer:'', referrerNo:'', trialCard:'否', trialCardTime:''}
     ],
-    posts:78, comments:45, likes:234, anchors:19, lastLogin:'2026-03-29 14:00', noLoginDays:1,
-    groupMsg:345, lastGroupMsg:'2026-03-29 18:45',
+    circles:[
+      {name:'AI产品出海', salesYuwan:'鱼丸 320', sales:'李李', serviceYuwan:'鱼丸 120', service:'李李', join:'2024-12-01', expire:'2025-11-30', memberStatus:'已退出', memberStatusCls:'tag-muted', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'张小鱼', referrerNo:'NO.100891',
+        qwFriends:['李李'],
+        courseLearned:18, liveWatched:9, lastStudy:'2026-03-25 11:20', noStudy:13, homework:10,
+        courses:[{name:'AI写作变现入门',p:100},{name:'ChatGPT提示词进阶',p:100},{name:'自媒体AI辅助创作',p:100},{name:'AI绘画商业应用',p:100},{name:'AI产品0→1实战',p:100},{name:'出海市场调研方法',p:100},{name:'AI Agent 工作流搭建',p:95},{name:'跨境电商AI选品',p:90},{name:'公众号涨粉策略',p:100},{name:'小红书运营',p:100},{name:'知乎高赞写作',p:88},{name:'自媒体矩阵运营',p:82},{name:'内容IP变现',p:75},{name:'付费社群运营',p:70},{name:'社群SOP搭建',p:60},{name:'用户增长策略',p:50},{name:'数据驱动运营',p:35},{name:'团队管理入门',p:20}]}
+    ],
+    posts:78, comments:45, likes:234, anchors:19, lastLogin:'2026-04-05 14:00', noLoginDays:2,
+    groupMsg:345, lastGroupMsg:'2026-04-04 18:45',
     customTags:['管理核心','自媒体老手'], remark:'负责自媒体圈日常管理，处理违规内容',
-    aiSummary:'管理核心，一期老成员。课程完成度高（15/18），社区内容产出稳定。负责日常管理和违规处理，责任心强。',
+    aiSummary:'管理核心，一期老成员。课程完成度高（18门课已学），社区内容产出稳定。负责日常管理和违规处理，责任心强。会员已退出但仍保持社区活跃。',
     aiTags:['千刀户','管理核心','内容稳定','高责任心']
   },
-  { id:101298, name:'赵颖', phone:'152****1234', wechat:'zhaoying_2025', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退出', statusCls:'tag-muted', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'超过一个月未活跃', achievement:'',
-    circles:[
-      {name:'YouTube AI 视频', salesYuwan:'鱼丸 120', salesFriend:'双向删除', salesFriendCls:'friend-deleted', serviceYuwan:'鱼丸 120', serviceFriend:'双向删除', serviceFriendCls:'friend-deleted', sales:'麻球', service:'潇墨', join:'2025-06-15', expire:'2026-06-14', memberStatus:'已退出', memberStatusCls:'tag-muted', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'', courseLearned:8, courseCompleted:3, liveWatched:2, lastStudy:'2026-02-13 09:30', noStudy:45, homework:2, courses:[{name:'短视频剪辑基础',p:100},{name:'抖音运营实战',p:55}]}
+  // ---- 用户6: 赵颖 — 已退出，一个月未活跃 ----
+  { id:101298, name:'赵颖', phone:'152****1234', fullPhone:'15287651234', wechat:'zhaoying_2025', planetId:'81298', planetName:'颖子的副业路', circle:'YouTube AI 视频', role:'学员', roleCls:'tag-muted', status:'已退款', statusCls:'tag-warning', period:'二期', userPeriod:'第二期', join:'2025-06-15', expire:'2026-06-14', active:'超过一个月未活跃', achievement:'',
+    customerTypes:[{name:'深海圈会员',cls:'type-shenhai'}],
+    bizLines:[
+      {type:'深海圈会员', typeCls:'type-shenhai', yuwan:'鱼丸 120', sales:'麻球', service:'潇墨', qwFriends:['麻球'], memberStatus:'已退款', memberStatusCls:'tag-danger', join:'2025-06-15', expire:'2026-06-14', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:''}
     ],
-    posts:6, comments:8, likes:12, anchors:1, lastLogin:'2026-02-15 10:00', noLoginDays:43,
+    circles:[
+      {name:'YouTube AI 视频', salesYuwan:'鱼丸 120', sales:'麻球', serviceYuwan:'鱼丸 120', service:'潇墨', join:'2025-06-15', expire:'2026-06-14', memberStatus:'已退出', memberStatusCls:'tag-muted', joinMethod:'新增', joinAmount:'¥1,999.00', renewCount:0, referrer:'', referrerNo:'',
+        qwFriends:['麻球'],
+        courseLearned:8, liveWatched:2, lastStudy:'2026-02-13 09:30', noStudy:53, homework:2,
+        courses:[{name:'短视频剪辑基础',p:100},{name:'YouTube运营实战',p:100},{name:'短视频变现路径',p:55},{name:'直播带货入门',p:40},{name:'YouTube SEO优化',p:25},{name:'视频号冷启动',p:15},{name:'千粉达人养成',p:5},{name:'MCN签约指南',p:0}]}
+    ],
+    posts:6, comments:8, likes:12, anchors:1, lastLogin:'2026-02-15 10:00', noLoginDays:51,
     groupMsg:18, lastGroupMsg:'2026-02-10 14:20',
     customTags:[], remark:'因个人原因退出，表示未来可能回归',
-    aiSummary:'二期学员，已退出。退出前连续一个月未活跃，课程完成度低。建议定期保持轻度联系。',
+    aiSummary:'二期学员，已退出。退出前连续一个月未活跃，8门课仅2门完成。建议定期保持轻度联系，关注回归可能。',
     aiTags:['已退出','回归可能','低完成度','需跟踪']
   }
 ];
+
+function showCourseModal(userIdx, circleIdx) {
+  var u = shenhaiDetailData[userIdx];
+  var g = u.circles[circleIdx];
+  document.getElementById('courseModalTitle').textContent = '已学课程 — ' + g.name;
+  var html = '<table style="width:100%; border-collapse:collapse; font-size:13px;">' +
+    '<thead><tr>' +
+    '<th style="background:var(--color-fill-3); padding:8px 12px; text-align:left; font-weight:500; color:var(--color-text-3); width:36px;">#</th>' +
+    '<th style="background:var(--color-fill-3); padding:8px 12px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th>' +
+    '<th style="background:var(--color-fill-3); padding:8px 12px; text-align:right; font-weight:500; color:var(--color-text-3); width:80px;">学习进度</th>' +
+    '</tr></thead><tbody>';
+  for (var i = 0; i < g.courses.length; i++) {
+    var c = g.courses[i];
+    var barColor = c.p === 100 ? 'var(--color-success-6)' : 'var(--color-primary-6)';
+    html += '<tr style="border-top:1px solid var(--color-border-default);">' +
+      '<td style="padding:10px 12px; color:var(--color-text-3);">' + (i+1) + '</td>' +
+      '<td style="padding:10px 12px; color:var(--color-text-1);">' + c.name + '</td>' +
+      '<td style="padding:10px 12px; text-align:right;">' +
+        '<div style="display:flex; align-items:center; gap:8px; justify-content:flex-end;">' +
+          '<div style="flex:1; max-width:80px; height:6px; background:var(--color-fill-3); border-radius:3px; overflow:hidden;">' +
+            '<div style="width:' + c.p + '%; height:100%; background:' + barColor + '; border-radius:3px;"></div>' +
+          '</div>' +
+          '<span style="font-size:12px; color:' + (c.p === 100 ? 'var(--color-success-6)' : 'var(--color-text-2)') + '; min-width:36px; text-align:right;">' + c.p + '%</span>' +
+        '</div>' +
+      '</td></tr>';
+  }
+  html += '</tbody></table>';
+  document.getElementById('courseModalBody').innerHTML = html;
+  var modal = document.getElementById('courseModal');
+  modal.classList.add('show');
+}
+function closeCourseModal() {
+  var modal = document.getElementById('courseModal');
+  modal.classList.remove('show');
+}
 
 function openShenhaiDetail(idx) {
   var u = shenhaiDetailData[idx];
@@ -5097,21 +5133,45 @@ function openShenhaiDetail(idx) {
     }
   }
 
-  // Build per-circle member info HTML
+  // Build customer types HTML
+  var customerTypesHtml = '';
+  if (u.customerTypes) {
+    for (var ct = 0; ct < u.customerTypes.length; ct++) {
+      customerTypesHtml += '<span class="tag ' + u.customerTypes[ct].cls + '" style="height:20px; font-size:11px;">' + u.customerTypes[ct].name + '</span> ';
+    }
+  }
+
+  // Build per-bizLine member info HTML（按鱼丸业务线划分，与官网结构一致）
   var memberInfoHtml = '';
-  for (var mi = 0; mi < u.circles.length; mi++) {
-    var mc = u.circles[mi];
-    var circleReferrerHtml = mc.referrer
-      ? '<span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#51B7A1,#36A590);color:#fff;font-size:10px;font-weight:700;">' + mc.referrer.charAt(0) + '</span><span>' + mc.referrer + '</span><span style="color:#757980;font-size:11px;">' + mc.referrerNo + '</span></span>'
+  var bizLines = u.bizLines || [];
+  var editBtnSvg = '<button class="profile-edit-btn" onclick="startEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>';
+  var saveCancelBtns = '<button class="profile-save-btn" onclick="saveEditField(this,\'select\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button><button class="profile-cancel-btn" onclick="cancelEditField(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+  for (var bi = 0; bi < bizLines.length; bi++) {
+    var bz = bizLines[bi];
+    var bzReferrerHtml = bz.referrer
+      ? '<span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#51B7A1,#36A590);color:#fff;font-size:10px;font-weight:700;">' + bz.referrer.charAt(0) + '</span><span>' + bz.referrer + '</span><span style="color:#757980;font-size:11px;">' + bz.referrerNo + '</span></span>'
       : '<span style="color:var(--color-text-4);">—</span>';
+    var friends = bz.qwFriends || [];
+    var salesOpts = '', serviceOpts = '';
+    for (var fi = 0; fi < friends.length; fi++) {
+      salesOpts += '<option' + (friends[fi] === bz.sales ? ' selected' : '') + '>' + friends[fi] + '</option>';
+      serviceOpts += '<option' + (friends[fi] === bz.service ? ' selected' : '') + '>' + friends[fi] + '</option>';
+    }
     memberInfoHtml +=
-      '<tr><td class="section-header" colspan="4">会员信息 — ' + mc.name + '</td></tr>' +
-      '<tr><th>销售鱼丸</th><td>' + mc.salesYuwan + ' <span class="' + mc.salesFriendCls + '" style="margin-left:4px;">' + mc.salesFriend + '</span></td><th>专属销售</th><td><strong>' + mc.sales + '</strong></td></tr>' +
-      '<tr><th>服务鱼丸</th><td>' + mc.serviceYuwan + ' <span class="' + mc.serviceFriendCls + '" style="margin-left:4px;">' + mc.serviceFriend + '</span></td><th>专属服务</th><td><strong>' + mc.service + '</strong></td></tr>' +
-      '<tr><th>会员状态</th><td><span class="tag ' + mc.memberStatusCls + '" style="height:20px; font-size:11px;">' + mc.memberStatus + '</span></td><th>加入方式</th><td>' + mc.joinMethod + '</td></tr>' +
-      '<tr><th>加入时间</th><td>' + mc.join + '</td><th>会员到期</th><td>' + mc.expire + '</td></tr>' +
-      '<tr><th>加入金额</th><td>' + mc.joinAmount + '</td><th>续费次数</th><td>' + mc.renewCount + '</td></tr>' +
-      '<tr><th>推荐人</th><td>' + circleReferrerHtml + '</td><th></th><td></td></tr>';
+      '<tr><td class="section-header" colspan="4">会员信息 — ' + bz.type + '（' + bz.yuwan + '）</td></tr>' +
+      '<tr><th>会员类型</th><td><span class="tag ' + bz.typeCls + '" style="height:20px; font-size:11px;">' + bz.type + '</span></td><th>会员状态</th><td><span class="tag ' + bz.memberStatusCls + '" style="height:20px; font-size:11px;">' + bz.memberStatus + '</span></td></tr>' +
+      '<tr><th>销售鱼丸</th><td>' + bz.yuwan + '</td><th>专属销售</th><td>' +
+        '<span class="profile-editable"><span class="profile-value"><strong>' + bz.sales + '</strong></span>' + editBtnSvg + '</span>' +
+        '<span class="profile-edit-form"><select class="profile-edit-select">' + salesOpts + '</select>' + saveCancelBtns + '</span>' +
+      '</td></tr>' +
+      '<tr><th>服务鱼丸</th><td>' + bz.yuwan + '</td><th>专属服务</th><td>' +
+        '<span class="profile-editable"><span class="profile-value"><strong>' + bz.service + '</strong></span>' + editBtnSvg + '</span>' +
+        '<span class="profile-edit-form"><select class="profile-edit-select">' + serviceOpts + '</select>' + saveCancelBtns + '</span>' +
+      '</td></tr>' +
+      '<tr><th>会员到期时间</th><td>' + bz.expire + '</td><th>加入方式</th><td>' + bz.joinMethod + '</td></tr>' +
+      '<tr><th>加入金额</th><td>' + bz.joinAmount + '</td><th>续费次数</th><td>' + bz.renewCount + '</td></tr>' +
+      (bz.type === '官网会员' ? '<tr><th>是否领取体验卡</th><td>' + (bz.trialCard || '—') + '</td><th>领取体验卡时间</th><td>' + (bz.trialCardTime || '—') + '</td></tr>' : '') +
+      '<tr><th>推荐人</th><td>' + bzReferrerHtml + '</td><th></th><td></td></tr>';
   }
 
   // Build per-circle learning HTML
@@ -5128,7 +5188,7 @@ function openShenhaiDetail(idx) {
     var gWarn = g.noStudy >= 14 ? '<span class="warn-number">' + g.noStudy + ' 天</span>' : g.noStudy + ' 天';
     learningHtml +=
       '<tr><td class="section-header" colspan="4">学习行为 — ' + g.name + '</td></tr>' +
-      '<tr><th>已学课程数</th><td><span style="color:var(--color-primary-6); cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';">' + g.courseLearned + ' 门课程 ▾</span><div style="display:none; margin-top:8px; border:1px solid var(--color-border-default); border-radius:6px; overflow:hidden;"><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">#</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">课程名称</th><th style="background:var(--color-fill-3); padding:6px 10px; text-align:left; font-weight:500; color:var(--color-text-3);">进度</th></tr></thead><tbody>' + gCoursesHtml + '</tbody></table></div></td><th>已完成课程</th><td>' + g.courseCompleted + ' 门课程</td></tr>' +
+      '<tr><th>已学课程数</th><td colspan="3"><span style="color:var(--color-primary-6); cursor:pointer;" onclick="showCourseModal(' + idx + ',' + gi + ')">' + g.courseLearned + ' 门课程 <svg style="width:12px;height:12px;vertical-align:-1px;margin-left:2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span></td></tr>' +
       '<tr><th>直播观看数</th><td>' + g.liveWatched + ' 场直播</td><th>最近学习时间</th><td>' + g.lastStudy + '</td></tr>' +
       '<tr><th>连续未学习</th><td>' + gWarn + '</td><th>作业提交</th><td>' + g.homework + ' 份作业</td></tr>' +
       '<tr><th>加入时间</th><td>' + g.join + '</td><th>到期时间</th><td>' + g.expire + '</td></tr>';
@@ -5144,11 +5204,14 @@ function openShenhaiDetail(idx) {
     '<div class="detail-avatar-area">' +
       '<div class="detail-avatar" style="font-size:24px; color:var(--color-text-3); display:flex; align-items:center; justify-content:center;">' + u.name.charAt(0) + '</div>' +
       '<div>' +
-        '<div class="detail-name">' + u.name +
+        '<div class="detail-name"><a class="detail-name-link" href="javascript:void(0)" title="查看社区主页">' + u.name + '</a>' +
           ' <span class="tag ' + u.statusCls + '" style="font-size:11px; height:18px; margin-left:4px;">' + u.status + '</span>' +
         '</div>' +
-        '<div class="detail-note"><span class="detail-note-text">备注：' + (u.remark || '暂无') + '</span></div>' +
-        (u.achievement ? '<div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">' + achievementTag + '</div>' : '') +
+        '<div class="detail-note"><span class="detail-note-text" id="shDetailNoteText">备注：' + (u.remark || '暂无') + '</span><svg class="detail-note-edit" onclick="editShDetailNote()" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;cursor:pointer;color:var(--color-text-4);vertical-align:middle;"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg><input class="detail-note-input" id="shDetailNoteInput" style="display:none;font-size:12px;color:var(--color-text-3);border:1px solid var(--color-primary-6);border-radius:4px;padding:1px 6px;outline:none;width:120px;" /></div>' +
+        '<div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">' +
+          '<span class="tag ' + u.roleCls + '" style="font-size:11px; height:18px;">' + u.role + '</span>' +
+          (u.achievement ? ' ' + achievementTag : '') +
+        '</div>' +
       '</div>' +
     '</div>' +
 
@@ -5222,8 +5285,9 @@ function openShenhaiDetail(idx) {
     '<div class="profile-table"><table>' +
       // 基础信息
       '<tr><td class="section-header" colspan="4">基础信息</td></tr>' +
-      '<tr><th>用户ID</th><td>' + u.id + '</td><th>昵称</th><td>' + u.name + '</td></tr>' +
-      '<tr><th>手机号</th><td>' + u.phone + '</td><th>微信号</th><td>' + u.wechat + '</td></tr>' +
+      '<tr><th>用户ID</th><td class="copyable-cell" onclick="copyText(\'' + u.id + '\')">' + u.id + '</td><th>昵称</th><td class="copyable-cell" onclick="copyText(\'' + u.name.replace(/'/g, "\\'") + '\')">' + u.name + '</td></tr>' +
+      '<tr><th>星球编号</th><td class="copyable-cell" onclick="copyText(\'' + u.planetId + '\')">' + u.planetId + '</td><th>星球昵称</th><td class="copyable-cell" onclick="copyText(\'' + (u.planetName||'').replace(/'/g, "\\'") + '\')">' + u.planetName + '</td></tr>' +
+      '<tr><th>手机号</th><td><span class="phone-mask detail-phone-mask" data-masked="' + u.phone + '" data-phone="' + (u.fullPhone||u.phone) + '" onclick="togglePhone(this)"><span class="phone-text">' + u.phone + '</span><svg class="phone-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span></td><th>微信号</th><td><span class="copyable-cell" style="display:inline;" onclick="copyText(\'' + u.wechat + '\')">' + u.wechat + '</span></td></tr>' +
 
       // 会员信息
       memberInfoHtml +
@@ -5231,15 +5295,12 @@ function openShenhaiDetail(idx) {
       // 学习行为 — 按圈子分 section
       learningHtml +
 
-      // 社区活跃
-      '<tr><td class="section-header" colspan="4">社区活跃</td></tr>' +
+      // 社区 & 社群活跃（合并）
+      '<tr><td class="section-header" colspan="4">社群活跃</td></tr>' +
       '<tr><th>累计发帖数</th><td>' + u.posts + '</td><th>累计评论数</th><td>' + u.comments + '</td></tr>' +
       '<tr><th>累计获赞数</th><td>' + u.likes + '</td><th>累计锚点数</th><td>' + u.anchors + '</td></tr>' +
-      '<tr><th>最近登录</th><td>' + u.lastLogin + '</td><th>未登录天数</th><td>' + warnLogin + '</td></tr>' +
-
-      // 社群活跃
-      '<tr><td class="section-header" colspan="4">社群活跃</td></tr>' +
       '<tr><th>群发言次数</th><td>' + u.groupMsg + ' 次（近30天）</td><th>最近群发言</th><td>' + u.lastGroupMsg + '</td></tr>' +
+      '<tr><th>最近登录</th><td>' + u.lastLogin + '</td><th>未登录天数</th><td>' + warnLogin + '</td></tr>' +
 
       // 其他信息
       '<tr><td class="section-header" colspan="4">其他信息</td></tr>' +

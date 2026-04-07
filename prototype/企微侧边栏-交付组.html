@@ -1252,60 +1252,6 @@
   .followup-tl-rounds { font-size: 10px; color: var(--color-text-4); margin-left: 4px; }
   /* Mobile chat records */
 
-  /* ===== 新人进度 ===== */
-  .newcomer-progress {
-    margin: 0 16px 12px;
-    padding: 12px;
-    background: var(--color-fill-2);
-    border-radius: var(--radius-card);
-    border: 1px solid var(--color-border-default);
-  }
-  .newcomer-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-  .newcomer-icon {
-    font-size: 14px;
-  }
-  .newcomer-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-text-2);
-  }
-  .newcomer-stage-badge {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-accent-orange-6);
-    background: var(--color-accent-orange-1);
-    padding: 1px 8px;
-    border-radius: var(--radius-xs);
-  }
-  .newcomer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .newcomer-field {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .newcomer-field-label {
-    font-size: 10px;
-    color: var(--color-text-4);
-  }
-  .newcomer-field-value {
-    font-size: 12px;
-    color: var(--color-text-2);
-    line-height: 18px;
-  }
-  .newcomer-field.full-width {
-    grid-column: 1 / -1;
-  }
-
   /* ===== 备注栏 ===== */
   .notes-section {
     padding: 0 16px 12px;
@@ -1627,7 +1573,6 @@
     .identity-nickname { font-size: 18px; }
     .identity-meta { font-size: 13px; }
     .personal-info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px 16px; }
-    .newcomer-grid { grid-template-columns: repeat(3, 1fr); }
     .metrics-grid.metrics-5col { grid-template-columns: repeat(5, 1fr); }
     .metrics-grid.metrics-4col { grid-template-columns: repeat(4, 1fr); }
     .status-tags-bar { padding: 0 20px 14px; }
@@ -1641,7 +1586,6 @@
   /* ===== 容器查询：超宽屏（>650px） ===== */
   @container sidebar (min-width: 650px) {
     .personal-info-grid { grid-template-columns: repeat(4, 1fr); }
-    .newcomer-grid { grid-template-columns: repeat(4, 1fr); }
     .identity-card { padding: 24px 20px; }
   }
 </style>
@@ -1758,42 +1702,6 @@
             <span class="metric-value">3天前</span>
           </div>
         </div>
-
-        <!-- 新人进度 -->
-        <div class="section-header">
-          <span class="section-title">新人进度</span>
-        </div>
-        <div class="newcomer-progress">
-          <div class="newcomer-header">
-            <span class="newcomer-icon">🎯</span>
-            <span class="newcomer-title">作业关键信息</span>
-            <span class="newcomer-stage-badge">探索期</span>
-          </div>
-          <div class="newcomer-grid">
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">方向 & 赛道</span>
-              <span class="newcomer-field-value">AI视频、自媒体</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">当前状态</span>
-              <span class="newcomer-field-value">探索中</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">优势</span>
-              <span class="newcomer-field-value">有剪辑基础，执行力强</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">短板</span>
-              <span class="newcomer-field-value">缺少变现路径认知</span>
-            </div>
-            <div class="newcomer-field full-width">
-              <span class="newcomer-field-label">目标 & 展望</span>
-              <span class="newcomer-field-value">实现航海变现 1000 元，建立稳定的视频创作流程</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="divider-thick"></div>
 
         <!-- 高频参与航海 -->
         <div class="section-header">
@@ -2814,7 +2722,7 @@
 
 概览（本场景）
 　身份卡片 + 身份&amp;阶段标签 + AI画像总结
-　+ 关键指标 + 新人进度 + 高频参与航海
+　+ 关键指标 + 高频参与航海
 　+ 客户标签 + 最近跟进
 
 全局交互
@@ -2845,19 +2753,11 @@
 来源　　AI 模型基于用户行为数据生成</div>
       </div>
       <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">关键指标 + 新人进度</div>
+        <div class="prd-card-title">关键指标</div>
         <div class="prd-card-body">关键指标（2列网格，3项）
 　会员首次加入时间　来源 鱼丸系统
 　会员到期时间　来源 鱼丸系统
-　最近跟进　　　来源 CRM
-
-新人进度（作业关键信息卡片）
-　方向 &amp; 赛道　用户选择的探索方向
-　当前状态　　探索中 / 执行中 / 已变现
-　优势　　　　用户自述
-　短板　　　　用户自述
-　目标 &amp; 展望　用户目标描述
-　来源　新手任务系统</div>
+　最近跟进　　　来源 CRM</div>
       </div>
       <div class="prd-card" style="--accent: #757980;">
         <div class="prd-card-title">高频航海 + 标签 + 跟进</div>
@@ -3103,42 +3003,6 @@
             <span class="metric-value" style="color: var(--color-danger-6);">15天前</span>
           </div>
         </div>
-
-        <!-- 新人进度 -->
-        <div class="section-header">
-          <span class="section-title">新人进度</span>
-        </div>
-        <div class="newcomer-progress">
-          <div class="newcomer-header">
-            <span class="newcomer-icon">🎯</span>
-            <span class="newcomer-title">作业关键信息</span>
-            <span class="newcomer-stage-badge">增长期</span>
-          </div>
-          <div class="newcomer-grid">
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">方向 & 赛道</span>
-              <span class="newcomer-field-value">跨境电商、出海</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">当前状态</span>
-              <span class="newcomer-field-value">增长瓶颈期</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">优势</span>
-              <span class="newcomer-field-value">有电商运营经验，年营收500W+</span>
-            </div>
-            <div class="newcomer-field">
-              <span class="newcomer-field-label">短板</span>
-              <span class="newcomer-field-value">流量获取依赖付费，缺少私域体系</span>
-            </div>
-            <div class="newcomer-field full-width">
-              <span class="newcomer-field-label">目标 & 展望</span>
-              <span class="newcomer-field-value">搭建私域流量体系，降低获客成本</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="divider-thick"></div>
 
         <!-- 高频参与航海 -->
         <div class="section-header">
