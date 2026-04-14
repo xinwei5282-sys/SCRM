@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>销售运营过程监控与智能预警 - SCRM</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-1: #FFF7E9;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-soft: 0 12px 28px rgba(23, 32, 38, 0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  .layout { display: flex; height: 100vh; }
+
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-group-title {
+    padding: 8px 16px 4px;
+    font-size: 12px;
+    color: var(--color-text-4);
+    text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item a { color: inherit; text-decoration:none; width:100%; display:flex; justify-content:space-between; }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-group { display:flex; flex-direction:column; }
+  .menu-sub {
+    overflow:hidden;
+    max-height:0;
+    transition:max-height 200ms ease;
+    display:flex;
+    flex-direction:column;
+  }
+  .menu-group.open .menu-sub { max-height: 200px; }
+  .menu-group .arrow { font-size: 12px; color: var(--color-text-4); }
+  .menu-sub .menu-item { padding-left: 36px; font-size: 13px; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  .content { flex: 1; padding: 16px; overflow-y: auto; }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+
+  .view-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+  }
+  .view-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .view-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+
+  .btn,
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+  }
+  .btn {
+    padding: 0 12px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 120ms;
+  }
+  .btn-primary { background: var(--color-primary-6); color: white; }
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-secondary { background: var(--color-fill-3); color: var(--color-text-1); }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    margin: 16px 20px 0;
+    padding: 22px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #E7FAF4 0%, #F8FCFB 58%, #FFF6EA 100%);
+    box-shadow: var(--shadow-soft);
+  }
+  .hero:after {
+    content: '';
+    position: absolute;
+    right: -36px;
+    top: -28px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,125,0,0.14), transparent 70%);
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 16px;
+  }
+  .hero-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #2E7769;
+  }
+  .hero-title {
+    margin-top: 10px;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #173832;
+  }
+  .hero-desc {
+    margin-top: 12px;
+    max-width: 680px;
+    font-size: 14px;
+    color: #4F6660;
+    line-height: 22px;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .soft-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.78);
+    border: 1px solid rgba(36,37,40,0.06);
+    font-size: 12px;
+    color: var(--color-text-2);
+  }
+  .hero-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .hero-stat {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.76);
+    border: 1px solid rgba(36,37,40,0.05);
+  }
+  .hero-stat-label { font-size: 11px; color: var(--color-text-3); }
+  .hero-stat-value {
+    margin-top: 8px;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+  .hero-stat-note {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 18px;
+    color: #61736F;
+  }
+  .hero-stat.warning .hero-stat-value { color: var(--color-warning-6); }
+  .hero-stat.danger .hero-stat-value { color: var(--color-danger-6); }
+
+  .filter-area {
+    padding: 16px 20px;
+    border-top: 1px solid var(--color-border-default);
+    border-bottom: 1px solid var(--color-border-default);
+    margin-top: 16px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-input,
+  .filter-select {
+    border: 1px solid var(--color-border-default);
+    padding: 0 10px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover { border-color: var(--color-border-hover); }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54,165,144,0.12);
+  }
+  .filter-input.wide { min-width: 240px; }
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  .overview-grid {
+    padding: 16px 20px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) 420px;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .overview-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .kpi-section { padding: 18px; }
+  .kpi-section .section-head { padding: 0; }
+  .kpi-section .kpi-grid { margin-top: 16px; }
+  .kpi-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FFF, #FBFCFC);
+    border: 1px solid var(--color-fill-3);
+  }
+  .kpi-label { font-size: 12px; color: var(--color-text-3); }
+  .kpi-value {
+    margin-top: 10px;
+    font-size: 30px;
+    line-height: 34px;
+    font-weight: 700;
+  }
+  .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .kpi-delta.good { background: var(--color-success-1); color: var(--color-success-6); }
+  .kpi-delta.warn { background: var(--color-warning-1); color: var(--color-warning-6); }
+  .trend-chart {
+    margin-top: 16px;
+    width: 100%;
+    height: 280px;
+  }
+  .trend-fallback {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--color-fill-2);
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .canvas {
+    padding: 16px 20px 20px;
+    display: block;
+  }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+
+  .section-card {
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-fill-3);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 18px 0;
+  }
+  .section-head h3 { font-size: 16px; }
+  .section-head p {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .ghost-link {
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-6);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .story-grid {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .funnel-panel {
+    border: 1px solid var(--color-fill-3);
+    border-radius: 16px;
+    padding: 16px;
+    background: linear-gradient(180deg, #FFFFFF, #F7F9FA);
+  }
+  .funnel-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .funnel-panel-desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .funnel-chart {
+    margin-top: 16px;
+    width: 100%;
+    height: 360px;
+  }
+  .funnel-fallback {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--color-fill-2);
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-soft { background: var(--color-fill-3); color: var(--color-text-3); }
+  .tag-p1 { background: var(--color-danger-1); color: var(--color-danger-6); }
+  .tag-p2 { background: var(--color-warning-1); color: var(--color-warning-6); }
+  .tag-p3 { background: var(--color-info-1); color: var(--color-info-6); }
+
+  .duo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .pad { padding: 18px; }
+  .bar-list {
+    margin-top: 14px;
+    display: grid;
+    gap: 14px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 58px 58px;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .bar-track {
+    height: 12px;
+    border-radius: 999px;
+    background: var(--color-fill-3);
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2E8D7B 0%, #59B5A2 100%);
+  }
+  .dist-chart {
+    margin-top: 16px;
+    width: 100%;
+    height: 320px;
+  }
+  .dist-fallback {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--color-fill-2);
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .time-stats {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+  }
+  .time-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) 68px 68px;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .time-track {
+    height: 12px;
+    border-radius: 999px;
+    background: #EEF2F4;
+    overflow: hidden;
+  }
+  .time-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #327CFB 0%, #69A4FF 100%);
+  }
+  .time-value {
+    font-weight: 600;
+    color: var(--color-text-2);
+    text-align: right;
+  }
+  .time-rate {
+    color: var(--color-text-3);
+    text-align: right;
+  }
+
+  .table-wrap {
+    overflow: auto;
+    margin-top: 14px;
+    border: 1px solid var(--color-fill-3);
+    border-radius: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-fill-3);
+    white-space: nowrap;
+  }
+  th {
+    background: #F9FBFB;
+    color: var(--color-text-3);
+    font-weight: 500;
+  }
+  .row-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .minor { font-size: 12px; color: var(--color-text-3); }
+
+  .alert-panel { padding: 18px; }
+  .alert-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .summary-tile {
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--color-fill-2);
+  }
+  .summary-tile-label { font-size: 11px; color: var(--color-text-3); }
+  .summary-tile-value {
+    margin-top: 8px;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+  .alert-list {
+    margin-top: 16px;
+    display: grid;
+    gap: 12px;
+  }
+  .alert-item {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--color-fill-3);
+    background: linear-gradient(180deg, #FFF, #FCFCFC);
+  }
+  .alert-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .alert-text {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .alert-meta {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .alert-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .owner-stats {
+    margin-top: 16px;
+    border: 1px solid var(--color-fill-3);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #FFF;
+  }
+  .owner-stats-head,
+  .owner-stats-row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) 72px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  .owner-stats-head {
+    background: #F9FBFB;
+    color: var(--color-text-3);
+    font-weight: 500;
+  }
+  .owner-stats-row {
+    border-top: 1px solid var(--color-fill-3);
+  }
+  .owner-stats-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-2);
+  }
+  .owner-stats-rate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .owner-progress-wrap {
+    display: grid;
+    gap: 6px;
+  }
+  .owner-progress-bar {
+    width: 100%;
+    height: 12px;
+    display: flex;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-fill-3);
+  }
+  .owner-progress-done {
+    height: 100%;
+    background: linear-gradient(90deg, #2E8D7B 0%, #59B5A2 100%);
+  }
+  .owner-progress-todo {
+    height: 100%;
+    background: #E9EDF0;
+  }
+  .owner-progress-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--color-text-3);
+  }
+  .owner-progress-meta strong {
+    color: var(--color-text-2);
+    font-weight: 600;
+  }
+  .note-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 19px;
+    color: var(--color-text-3);
+    background: var(--color-fill-2);
+  }
+
+  @media (max-width: 1440px) {
+    .overview-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1180px) {
+    .canvas,
+    .duo-grid,
+    .hero-grid,
+    .story-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item"><span>首页</span></div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>客户</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
+          <div class="menu-item active" onclick="event.stopPropagation();">销售运营监控</div>
+        </div>
+      </div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>营销</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='分销排行榜-后台.html'">分销排行榜</div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <div class="header-bell">🔔</div>
+      <div class="header-user">
+        <div class="header-avatar">SC</div>
+        <span>运营负责人</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-card">
+        <!-- HERO_DISABLED_START
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <div class="hero-label">本期经营摘要</div>
+              <div class="hero-title">主要问题不在流量不够，而在中段承接断层。</div>
+              <div class="hero-desc">当前线索量稳定，但从进群到问卷、从问卷到有效跟进两段存在明显衰减。建议先处理已进群未激活和已填问卷未承接两类客户，再看渠道扩量。</div>
+              <div class="hero-tags">
+                <div class="soft-pill">强口径优先</div>
+                <div class="soft-pill">聊天类指标仅作样本观察</div>
+                <div class="soft-pill">自动群发不计入人工跟进</div>
+              </div>
+            </div>
+            <div class="hero-side">
+              <div class="hero-stat warning">
+                <div class="hero-stat-label">最大断点</div>
+                <div class="hero-stat-value">问卷率 21.4%</div>
+                <div class="hero-stat-note">从领卡到问卷的承接效率偏低，影响后续高潜识别。</div>
+              </div>
+              <div class="hero-stat danger">
+                <div class="hero-stat-label">需立即处理</div>
+                <div class="hero-stat-value">6 条 P1 预警</div>
+                <div class="hero-stat-note">集中在问卷后 24h 未跟进和异议超时未承接。</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-label">渠道风险</div>
+                <div class="hero-stat-value">内容投放 13.1%</div>
+                <div class="hero-stat-note">删除率高于均值，需核查线索质量和首触达脚本。</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-label">机会窗口</div>
+                <div class="hero-stat-value">129 位待激活</div>
+                <div class="hero-stat-note">已进群未填问卷客户仍具备较高承接价值。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        HERO_DISABLED_END -->
+
+        <div class="filter-area">
+          <div class="filter-row">
+            <select class="filter-select">
+              <option>期次：9体146</option>
+            </select>
+            <select class="filter-select">
+              <option>销售：全部</option>
+              <option>销售：秋秋</option>
+              <option>销售：琪琪</option>
+              <option>销售：杰瑞</option>
+              <option>销售：莹莹</option>
+            </select>
+            <select class="filter-select">
+              <option>客户状态：全部</option>
+              <option>客户状态：双向好友</option>
+              <option>客户状态：客户删除</option>
+              <option>客户状态：员工删除</option>
+              <option>客户状态：双向删除</option>
+            </select>
+            <select class="filter-select"><option>是否进群：全部</option></select>
+            <select class="filter-select">
+              <option>问卷状态：全部</option>
+              <option>问卷状态：已填写</option>
+              <option>问卷状态：未填写</option>
+            </select>
+            <select class="filter-select"><option>客户来源：全部</option></select>
+          </div>
+        </div>
+
+        <section class="overview-grid">
+          <div class="overview-stack">
+            <div class="section-card kpi-section">
+              <div class="section-head">
+                <div>
+                  <h3>数据统计</h3>
+                  <p>聚焦关键转化节点，先看总量与阶段效率，再判断执行优先级。</p>
+                </div>
+              </div>
+              <div class="kpi-grid">
+                <div class="kpi-card">
+                  <div class="kpi-label">总线索数</div>
+                  <div class="kpi-value">2,524</div>
+                  <div class="kpi-delta good">较昨日 +82</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">双向好友率</div>
+                  <div class="kpi-value">84.6%</div>
+                  <div class="kpi-delta good">较昨日 +1.2%</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">进群率</div>
+                  <div class="kpi-value">51.3%</div>
+                  <div class="kpi-delta warn">较昨日 -2.4%</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">问卷率</div>
+                  <div class="kpi-value">21.4%</div>
+                  <div class="kpi-delta warn">中段承接偏弱</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">观看直播间</div>
+                  <div class="kpi-value">312</div>
+                  <div class="kpi-delta good">较昨日 +24</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">付款数</div>
+                  <div class="kpi-value">119</div>
+                  <div class="kpi-delta good">转化率 67.6%</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">交易完成数</div>
+                  <div class="kpi-value">108</div>
+                  <div class="kpi-delta good">转化率 90.8%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="story-grid" style="grid-template-columns:1fr;">
+              <div class="funnel-panel">
+                <div class="funnel-panel-title">转化漏斗</div>
+                <div class="funnel-panel-desc">从线索进入，到最终交易完成的完整转化链路。</div>
+                <div id="conversion-funnel-chart" class="funnel-chart"></div>
+                <div id="conversion-funnel-fallback" class="funnel-fallback" style="display:none;">ECharts 未加载，当前无法渲染转化漏斗。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style="padding:16px 20px 0;">
+          <div class="section-card pad">
+            <div class="section-head" style="padding:0;">
+              <div>
+                <h3>趋势图</h3>
+                <p>查看近 7 天线索、问卷和付款变化，快速识别波动时点。</p>
+              </div>
+            </div>
+            <div id="overview-trend-chart" class="trend-chart"></div>
+            <div id="overview-trend-fallback" class="trend-fallback" style="display:none;">ECharts 未加载，当前无法渲染趋势图。</div>
+          </div>
+        </section>
+
+        <section class="canvas">
+          <div class="stack">
+            <!--
+            <div class="section-card">
+              <div class="story-grid" style="grid-template-columns:1fr;">
+                <div class="funnel-panel">
+                  <div class="funnel-panel-title">客户留存漏斗</div>
+                  <div class="funnel-panel-desc">从线索到双向好友、进群和 7 日留存，观察首轮承接表现。</div>
+                  <div id="retention-funnel-chart" class="funnel-chart"></div>
+                  <div id="retention-funnel-fallback" class="funnel-fallback" style="display:none;">ECharts 未加载，当前无法渲染客户留存漏斗。</div>
+                </div>
+              </div>
+            </div>
+            -->
+
+            <div class="duo-grid">
+              <div class="section-card pad">
+                <div class="section-head" style="padding:0;">
+                  <div>
+                    <h3>销售预警完成统计</h3>
+                    <p>按销售汇总预警事项处理进度，优先暴露积压和执行差异。</p>
+                  </div>
+                </div>
+                <div class="owner-stats">
+                  <div class="owner-stats-head">
+                    <div>销售</div>
+                    <div>处理进度</div>
+                    <div>完成率</div>
+                  </div>
+                  <div class="owner-stats-row">
+                    <div class="owner-stats-name">秋秋</div>
+                    <div class="owner-progress-wrap">
+                      <div class="owner-progress-bar">
+                        <div class="owner-progress-done" style="width:75%;"></div>
+                        <div class="owner-progress-todo" style="width:25%;"></div>
+                      </div>
+                      <div class="owner-progress-meta"><span><strong>已完成 9</strong> / 总预警 12</span><span>未完成 3</span></div>
+                    </div>
+                    <div><span class="owner-stats-rate">75%</span></div>
+                  </div>
+                  <div class="owner-stats-row">
+                    <div class="owner-stats-name">琪琪</div>
+                    <div class="owner-progress-wrap">
+                      <div class="owner-progress-bar">
+                        <div class="owner-progress-done" style="width:70%;"></div>
+                        <div class="owner-progress-todo" style="width:30%;"></div>
+                      </div>
+                      <div class="owner-progress-meta"><span><strong>已完成 7</strong> / 总预警 10</span><span>未完成 3</span></div>
+                    </div>
+                    <div><span class="owner-stats-rate">70%</span></div>
+                  </div>
+                  <div class="owner-stats-row">
+                    <div class="owner-stats-name">杰瑞</div>
+                    <div class="owner-progress-wrap">
+                      <div class="owner-progress-bar">
+                        <div class="owner-progress-done" style="width:56%;"></div>
+                        <div class="owner-progress-todo" style="width:44%;"></div>
+                      </div>
+                      <div class="owner-progress-meta"><span><strong>已完成 5</strong> / 总预警 9</span><span>未完成 4</span></div>
+                    </div>
+                    <div><span class="owner-stats-rate">56%</span></div>
+                  </div>
+                  <div class="owner-stats-row">
+                    <div class="owner-stats-name">莹莹</div>
+                    <div class="owner-progress-wrap">
+                      <div class="owner-progress-bar">
+                        <div class="owner-progress-done" style="width:79%;"></div>
+                        <div class="owner-progress-todo" style="width:21%;"></div>
+                      </div>
+                      <div class="owner-progress-meta"><span><strong>已完成 11</strong> / 总预警 14</span><span>未完成 3</span></div>
+                    </div>
+                    <div><span class="owner-stats-rate">79%</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card pad">
+                <div class="section-head" style="padding:0;">
+                  <div>
+                    <h3>销售任务完成时间统计</h3>
+                    <p>按销售查看任务平均完成时长，辅助识别谁的处理速度慢、超时更多。</p>
+                  </div>
+                </div>
+                <div class="time-stats">
+                  <div class="time-row"><strong>秋秋</strong><div class="time-track"><div class="time-fill" style="width:42%;"></div></div><div class="time-value">1.8h</div><div class="time-rate">超时 8%</div></div>
+                  <div class="time-row"><strong>琪琪</strong><div class="time-track"><div class="time-fill" style="width:51%;"></div></div><div class="time-value">2.2h</div><div class="time-rate">超时 11%</div></div>
+                  <div class="time-row"><strong>杰瑞</strong><div class="time-track"><div class="time-fill" style="width:72%;"></div></div><div class="time-value">3.1h</div><div class="time-rate">超时 19%</div></div>
+                  <div class="time-row"><strong>莹莹</strong><div class="time-track"><div class="time-fill" style="width:46%;"></div></div><div class="time-value">2.0h</div><div class="time-rate">超时 9%</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="duo-grid">
+              <div class="section-card pad">
+                <div class="section-head" style="padding:0;">
+                  <div>
+                    <h3>鱼丸销售对比</h3>
+                    <p>按鱼丸销售查看问卷率和付费率，更容易看出不同销售的承接差异。</p>
+                  </div>
+                </div>
+                <div class="bar-list">
+                  <div class="bar-row"><strong>秋秋</strong><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div><span>72%</span><span>5.2%</span></div>
+                  <div class="bar-row"><strong>琪琪</strong><div class="bar-track"><div class="bar-fill" style="width:69%"></div></div><span>69%</span><span>4.8%</span></div>
+                  <div class="bar-row"><strong>杰瑞</strong><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><span>63%</span><span>4.2%</span></div>
+                  <div class="bar-row"><strong>莹莹</strong><div class="bar-track"><div class="bar-fill" style="width:47%"></div></div><span>47%</span><span>2.9%</span></div>
+                </div>
+                <div class="minor" style="margin-top:14px;">建议不要把单期表现直接归因为个人能力，默认结合多期数据观察。</div>
+              </div>
+
+              <div class="section-card pad">
+                <div class="section-head" style="padding:0;">
+                  <div>
+                    <h3>成交分布</h3>
+                    <p>按来源渠道看成交笔数与占比，快速识别主要成交贡献来源。</p>
+                  </div>
+                </div>
+                <div id="deal-distribution-chart" class="dist-chart"></div>
+                <div id="deal-distribution-fallback" class="dist-fallback" style="display:none;">ECharts 未加载，当前无法渲染成交分布。</div>
+              </div>
+            </div>
+
+          <div class="section-card pad">
+            <div class="section-head" style="padding:0;">
+              <div>
+                <h3>销售数据汇总</h3>
+                <p>留存、转化 + 待办完成情况统一呈现。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                    <tr>
+                      <th>销售</th>
+                      <th>线索</th>
+                      <th>领卡</th>
+                      <th>问卷</th>
+                      <th>下单</th>
+                      <th>付款</th>
+                      <th>交易完成</th>
+                      <th>观看直播间</th>
+                      <th>7 日留存率</th>
+                      <th>待办总数</th>
+                      <th>本周完成</th>
+                      <th>延期待办</th>
+                      <th>完成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>秋秋</td><td>412</td><td>198</td><td>87</td><td>34</td><td>28</td><td>25</td><td>62%</td><td>95</td><td>18</td><td>15</td><td>3</td><td>83%</td></tr>
+                    <tr><td>琪琪</td><td>381</td><td>175</td><td>76</td><td>29</td><td>22</td><td>18</td><td>57%</td><td>88</td><td>16</td><td>12</td><td>4</td><td>75%</td></tr>
+                    <tr><td>杰瑞</td><td>329</td><td>142</td><td>68</td><td>21</td><td>17</td><td>13</td><td>48%</td><td>72</td><td>21</td><td>13</td><td>8</td><td>62%</td></tr>
+                    <tr><td>莹莹</td><td>402</td><td>172</td><td>90</td><td>27</td><td>20</td><td>19</td><td>64%</td><td>104</td><td>22</td><td>18</td><td>4</td><td>82%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+  (function() {
+    var chartInstances = [];
+
+    function buildFunnelOption(title, data) {
+      return {
+        animationDuration: 500,
+        animationDurationUpdate: 300,
+        color: ['#36A590', '#55B7A1', '#73C8B3', '#93D7C5', '#B2E5D7', '#D0F0E8', '#E8F7F3'],
+        tooltip: {
+          trigger: 'item',
+          formatter: function(params) {
+            var item = params.data || {};
+            var lines = [
+              '<strong>' + params.name + '</strong>',
+              '人数：' + params.value
+            ];
+            if (item.rate) lines.push('转化率：' + item.rate);
+            if (item.drop) lines.push('流失：' + item.drop);
+            return lines.join('<br>');
+          }
+        },
+        series: [
+          {
+            name: title,
+            type: 'funnel',
+            left: '34%',
+            top: 16,
+            bottom: 16,
+            width: '58%',
+            min: 0,
+            max: data[0].value,
+            minSize: '28%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 8,
+            label: {
+              show: true,
+              position: 'left',
+              color: '#3B3D40',
+              fontSize: 12,
+              lineHeight: 18,
+              align: 'left',
+              formatter: function(params) {
+                var item = params.data || {};
+                var lines = [params.name + '  ' + params.value];
+                if (item.rate) lines.push(item.rate);
+                if (item.drop) lines.push(item.drop);
+                return lines.join('\n');
+              }
+            },
+            labelLine: {
+              show: true,
+              length: 16,
+              lineStyle: {
+                color: '#BDC1C7'
+              }
+            },
+            itemStyle: {
+              borderColor: '#FFFFFF',
+              borderWidth: 2,
+              opacity: 0.95
+            },
+            emphasis: {
+              label: { fontWeight: 700 }
+            },
+            data: data
+          }
+        ]
+      };
+    }
+
+    function initFunnelChart(containerId, fallbackId, title, data) {
+      var container = document.getElementById(containerId);
+      var fallback = document.getElementById(fallbackId);
+      if (!container) return;
+      if (!window.echarts) {
+        if (fallback) fallback.style.display = 'block';
+        container.style.display = 'none';
+        return;
+      }
+      var chart = window.echarts.init(container);
+      chart.setOption(buildFunnelOption(title, data));
+      chartInstances.push(chart);
+    }
+
+    function initDealDistributionChart(containerId, fallbackId, data) {
+      var container = document.getElementById(containerId);
+      var fallback = document.getElementById(fallbackId);
+      if (!container) return;
+      if (!window.echarts) {
+        if (fallback) fallback.style.display = 'block';
+        container.style.display = 'none';
+        return;
+      }
+      var chart = window.echarts.init(container);
+      chart.setOption({
+        animationDuration: 500,
+        color: ['#FF7D00', '#FF9B3D', '#FFC270', '#FFD9A8'],
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}<br/>成交 {c} 单 ({d}%)'
+        },
+        legend: {
+          bottom: 0,
+          left: 'center',
+          itemWidth: 10,
+          itemHeight: 10,
+          textStyle: {
+            color: '#757980',
+            fontSize: 12
+          }
+        },
+        series: [
+          {
+            name: '成交分布',
+            type: 'pie',
+            radius: ['42%', '70%'],
+            center: ['50%', '44%'],
+            avoidLabelOverlap: true,
+            itemStyle: {
+              borderColor: '#FFFFFF',
+              borderWidth: 2
+            },
+            label: {
+              show: true,
+              formatter: '{b}\n{d}%',
+              color: '#3B3D40',
+              fontSize: 12
+            },
+            labelLine: {
+              length: 10,
+              length2: 8
+            },
+            data: data
+          }
+        ]
+      });
+      chartInstances.push(chart);
+    }
+
+    function initTrendChart(containerId, fallbackId) {
+      var container = document.getElementById(containerId);
+      var fallback = document.getElementById(fallbackId);
+      if (!container) return;
+      if (!window.echarts) {
+        if (fallback) fallback.style.display = 'block';
+        container.style.display = 'none';
+        return;
+      }
+      var chart = window.echarts.init(container);
+      chart.setOption({
+        animationDuration: 500,
+        color: ['#36A590', '#FF9B3D', '#327CFB'],
+        tooltip: { trigger: 'axis' },
+        legend: {
+          top: 0,
+          right: 0,
+          textStyle: { color: '#757980', fontSize: 12 }
+        },
+        grid: {
+          left: 8,
+          right: 8,
+          top: 36,
+          bottom: 8,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['04-07', '04-08', '04-09', '04-10', '04-11', '04-12', '04-13'],
+          axisLine: { lineStyle: { color: '#E4E4E7' } },
+          axisLabel: { color: '#757980' }
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: { show: false },
+          splitLine: { lineStyle: { color: '#F2F5F7' } },
+          axisLabel: { color: '#757980' }
+        },
+        series: [
+          {
+            name: '线索',
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 7,
+            data: [312, 338, 356, 342, 371, 389, 416],
+            areaStyle: { color: 'rgba(54,165,144,0.10)' }
+          },
+          {
+            name: '问卷',
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 7,
+            data: [56, 61, 72, 68, 75, 83, 91]
+          },
+          {
+            name: '付款',
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 7,
+            data: [12, 15, 18, 16, 21, 19, 24]
+          }
+        ]
+      });
+      chartInstances.push(chart);
+    }
+
+    initFunnelChart('conversion-funnel-chart', 'conversion-funnel-fallback', '转化漏斗', [
+      { value: 2524, name: '线索', rate: '基准层' },
+      { value: 1005, name: '领卡', rate: '39.8%', drop: '流失 1519' },
+      { value: 541, name: '问卷', rate: '53.8%', drop: '流失 464' },
+      { value: 176, name: '下单', rate: '32.5%', drop: '流失 365' },
+      { value: 119, name: '付款', rate: '67.6%', drop: '流失 57' },
+      { value: 108, name: '交易完成', rate: '90.8%', drop: '流失 11' }
+    ]);
+
+    /*
+    initFunnelChart('retention-funnel-chart', 'retention-funnel-fallback', '客户留存漏斗', [
+      { value: 2524, name: '线索', rate: '基准层' },
+      { value: 2136, name: '双向好友', rate: '84.6%', drop: '流失 388' },
+      { value: 1295, name: '进群数', rate: '60.6%', drop: '流失 841' },
+      { value: 103, name: '7日留存率', rate: '8.0%', drop: '流失 1192' }
+    ]);
+    */
+
+    initDealDistributionChart('deal-distribution-chart', 'deal-distribution-fallback', [
+      { value: 43, name: 'KOC导流' },
+      { value: 33, name: '直播导流' },
+      { value: 26, name: '私域转介绍' },
+      { value: 17, name: '内容投放' }
+    ]);
+
+    initTrendChart('overview-trend-chart', 'overview-trend-fallback');
+
+    window.addEventListener('resize', function() {
+      chartInstances.forEach(function(chart) {
+        chart.resize();
+      });
+    });
+  })();
+</script>
+<script>
+function toggleMenu(group) {
+  group.classList.toggle('open');
+}
+</script>
+</body>
+</html>

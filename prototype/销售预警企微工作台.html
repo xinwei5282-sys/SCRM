@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>销售预警企微工作台</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-1: #FFF7E9;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-border-default: #E4E4E7;
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-pill: 9999px;
+    --shadow-card: 0 8px 24px rgba(20, 28, 32, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    background: #E0E2E6;
+    padding: 40px 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .page-title { font-size: 20px; font-weight: 700; color: var(--color-text-1); margin-bottom: 8px; }
+  .page-subtitle { font-size: 13px; color: var(--color-text-3); margin-bottom: 28px; }
+  .workbench {
+    width: 360px;
+    height: 760px;
+    background: var(--color-fill-1);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    padding: 14px 16px 12px;
+    background: linear-gradient(135deg, #EAF9F4 0%, #F7FCFB 55%, #FFF7ED 100%);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .header-title { font-size: 16px; font-weight: 700; color: var(--color-text-1); }
+  .header-role {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.8);
+    color: var(--color-text-2);
+    font-size: 12px;
+  }
+  .header-summary {
+    font-size: 13px;
+    line-height: 20px;
+    color: #4F6660;
+  }
+  .stats {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    border-bottom: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+  }
+  .stat {
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--color-fill-2);
+  }
+  .stat-label { font-size: 11px; color: var(--color-text-3); }
+  .stat-value { margin-top: 6px; font-size: 20px; font-weight: 700; color: var(--color-text-1); }
+  .filters {
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--color-border-default);
+    overflow-x: auto;
+    background: var(--color-fill-1);
+  }
+  .chip {
+    flex: 0 0 auto;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+  }
+  .chip.active { background: var(--color-primary-1); color: var(--color-primary-6); font-weight: 600; }
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 88px;
+    background: var(--color-fill-2);
+    display: grid;
+    gap: 10px;
+  }
+  .card {
+    background: var(--color-fill-1);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--color-border-default);
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .customer { font-size: 14px; font-weight: 700; color: var(--color-text-1); }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .tag.p1 { background: var(--color-danger-1); color: var(--color-danger-6); }
+  .tag.p2 { background: var(--color-warning-1); color: var(--color-warning-6); }
+  .tag.done { background: var(--color-success-1); color: var(--color-success-6); }
+  .desc { margin-top: 10px; font-size: 13px; line-height: 20px; color: var(--color-text-2); }
+  .meta { margin-top: 8px; font-size: 12px; line-height: 18px; color: var(--color-text-3); }
+  .strategy {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #F8FBFA 0%, #F2F7F5 100%);
+    border: 1px solid #E6EFEB;
+  }
+  .strategy-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2F6B5F;
+  }
+  .strategy-text {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-2);
+  }
+  .actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    flex: 1;
+    height: 32px;
+    border-radius: var(--radius-btn);
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .btn-primary { background: var(--color-primary-6); color: white; }
+  .btn-secondary { background: var(--color-fill-3); color: var(--color-text-1); }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 360px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.96);
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-note { font-size: 12px; color: var(--color-text-3); }
+  .footer-link { font-size: 12px; color: var(--color-primary-6); }
+
+  .bottom-nav {
+    position: absolute;
+    bottom: 0;
+    width: 360px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.98);
+    border-top: 1px solid var(--color-border-default);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 44px;
+    border-radius: 10px;
+    color: var(--color-text-3);
+    font-size: 11px;
+  }
+  .nav-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="page-title">销售预警企微工作台</div>
+  <div class="page-subtitle">面向一线销售，处理待跟进、异议超时、问卷后未承接等动作型提醒</div>
+
+  <div style="position: relative;">
+    <div class="workbench">
+      <div class="header">
+        <div class="header-top">
+          <div class="header-title">我的待处理预警</div>
+          <div class="header-role">销售工作台</div>
+        </div>
+        <div class="header-summary">今天有 6 条高优先级提醒，其中 2 条已超过处理时限，建议优先按客户价值顺序处理。当前页作为企微工作台中的一个功能页，可与现有能力切换。</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-label">待处理</div><div class="stat-value">11</div></div>
+        <div class="stat"><div class="stat-label">超时</div><div class="stat-value">2</div></div>
+        <div class="stat"><div class="stat-label">已完成</div><div class="stat-value">7</div></div>
+      </div>
+
+      <div class="filters">
+        <div class="chip active">全部</div>
+        <div class="chip">P1</div>
+        <div class="chip">问卷后未跟进</div>
+        <div class="chip">异议超时</div>
+        <div class="chip">进群未激活</div>
+      </div>
+
+      <div class="list">
+        <div class="card">
+          <div class="card-top">
+          <div class="customer">有余</div>
+          <div class="tag p1">P1 高潜未跟进</div>
+          </div>
+          <div class="desc">客户已添加好友 3 天，仍未领卡、未填问卷，且当前没有新的人工跟进。</div>
+          <div class="meta">来源：KOC导流 · 最近跟进：04-03 20:30 · 建议动作：先补领卡和问卷承接</div>
+          <div class="strategy">
+            <div class="strategy-title">跟进策略建议</div>
+            <div class="strategy-text">先确认客户是否还记得领取权益入口，再用一句话说明问卷价值，优先把“领卡 + 填问卷”两步一次性推进，完成后立即约首轮需求沟通。</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary">查看客户</button>
+            <button class="btn btn-primary">立即联系</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+          <div class="customer">阿森</div>
+          <div class="tag p2">问卷后未跟进</div>
+          </div>
+          <div class="desc">客户已完成问卷 24 小时，但还没有销售承接动作，存在高潜流失风险。</div>
+          <div class="meta">来源：直播导流 · 问卷完成：今天 09:20 · 建议动作：优先做方向确认和约下一步</div>
+          <div class="strategy">
+            <div class="strategy-title">跟进策略建议</div>
+            <div class="strategy-text">先复述问卷里最明确的需求点建立被理解感，再只追问一个预算或时间点，最后明确约定下一步动作，避免把首次承接聊成信息收集。</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary">查看问卷</button>
+            <button class="btn btn-primary">去跟进</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+          <div class="customer">小万</div>
+          <div class="tag p2">异议超时</div>
+          </div>
+          <div class="desc">客户提出价格相关异议后，已超过 6 小时没有新的人工回应。</div>
+          <div class="meta">来源：内容投放 · 异议类型：价格高 / 价值感知不足 · 建议动作：发送标准异议承接话术</div>
+          <div class="strategy">
+            <div class="strategy-title">跟进策略建议</div>
+            <div class="strategy-text">不要直接重复报价，先确认客户卡点是预算、效果还是决策人，再补一个相似案例或阶段性方案，把对话从“贵不贵”拉回“值不值、怎么开始”。</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary">查看原话</button>
+            <button class="btn btn-primary">已承接</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+          <div class="customer">陈墨</div>
+          <div class="tag done">已完成</div>
+          </div>
+          <div class="desc">该客户的“进群未激活”提醒已由销售在 10:42 关闭，后台可继续追踪关闭后是否转化。</div>
+          <div class="meta">关闭方式：手动处理 · 关闭人：秋秋 · 后续状态：待观察</div>
+          <div class="strategy">
+            <div class="strategy-title">跟进策略建议</div>
+            <div class="strategy-text">若 24 小时内仍未激活，可补发一次群内高价值内容入口，并私聊说明群内能获得的具体收益；若已激活，则转入常规培育节奏，无需重复提醒。</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary">查看记录</button>
+            <button class="btn btn-secondary">再次跟进</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-note">企微侧只承担提醒与处理，不承担团队经营分析。</div>
+      <div class="footer-link">查看全部历史</div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <div>👤</div>
+        <div>客户画像</div>
+      </div>
+      <div class="nav-item active">
+        <div>⚠️</div>
+        <div>过程预警</div>
+      </div>
+      <div class="nav-item">
+        <div>📝</div>
+        <div>跟进记录</div>
+      </div>
+      <div class="nav-item">
+        <div>📦</div>
+        <div>订单列表</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
