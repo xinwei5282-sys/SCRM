@@ -4377,7 +4377,7 @@
   <div class="prd-section" data-prd-context="list" id="sh-s1">
     <div class="prd-section-title orange">1. 需求概述</div>
     <div class="prd-label">背景</div>
-    <div class="prd-item">CRM 区分三条业务线：<strong>官网、深海圈、航海家</strong>，深海圈核心关注学习行为、社区活跃、社群活跃</div>
+    <div class="prd-item">CRM 区分三条业务线：<strong>官网、深海圈、航海家</strong>，深海圈核心关注学习行为、社区活跃</div>
     <div class="prd-label">切换方式</div>
     <div class="prd-item">标题栏下方<strong>面包屑 Tab 页签</strong>：官网会员 | <strong>深海圈会员</strong> | 航海会员</div>
     <div class="prd-item">点击 Tab 后筛选区、表格列、详情内容全部切换为对应业务线数据</div>
@@ -4404,7 +4404,7 @@
     <div class="prd-section-title green">3. 表格列定义</div>
     <div class="prd-item">用户ID / 用户信息（头像+昵称+脱敏手机号）/ <strong>所属圈子</strong> / 会员状态 / <strong>好友状态</strong></div>
     <div class="prd-item">鱼丸 / 专属销售 / 专属服务</div>
-    <div class="prd-item">已学课程（已学/总数）/ 未学习天数（≥14天红色警告）/ 发帖数 / 群发言</div>
+    <div class="prd-item">已学课程（已学/总数）/ 未学习天数（≥14天红色警告）/ 发帖数</div>
     <div class="prd-item">加入时间 / <strong>会员到期</strong> / 标签</div>
     <div class="prd-item">操作列：<strong>详情</strong> + <strong>打标签</strong></div>
   </div>
@@ -4437,8 +4437,6 @@
     <div class="prd-item">每 section 含：已学课程数（可展开列表）/ 已完成课程 / 直播观看数 / 最近学习时间 / 连续未学习 / 作业提交 / <strong>加入时间</strong> / <strong>到期时间</strong></div>
     <div class="prd-label">社区活跃</div>
     <div class="prd-item">累计发帖数 / 评论数 / 获赞数 / 锚点数 / 最近登录 / 未登录天数</div>
-    <div class="prd-label">社群活跃</div>
-    <div class="prd-item">群发言次数（近30天）/ 最近群发言</div>
     <div class="prd-label">其他信息</div>
     <div class="prd-item">首次添加时间 / 入群时间 / 是否进入企微群聊 / unionID / externalid</div>
   </div>
@@ -4942,7 +4940,6 @@ function enterShenhaiView() {
     '<th style="width:80px; text-align:center;">已学课程</th>' +
     '<th style="width:90px; text-align:center;">未学习天数</th>' +
     '<th style="width:70px; text-align:center;">发帖数</th>' +
-    '<th style="width:90px; text-align:center;">群发言</th>' +
     '<th style="width:100px;">加入时间</th>' +
     '<th style="width:100px;">会员到期</th>' +
     '<th>标签</th>' +
@@ -4974,7 +4971,6 @@ function enterShenhaiView() {
       '<td style="text-align:center">' + u.courses + '</td>' +
       '<td style="text-align:center">' + studyWarn + '</td>' +
       '<td style="text-align:center">' + u.posts + '</td>' +
-      '<td style="text-align:center">' + u.groupMsg + '次</td>' +
       '<td>' + u.join + '</td>' +
       '<td>' + u.expire + '</td>' +
       '<td>' + (u.tags ? u.tags.split(' ').map(function(t){ return '<span class="tag tag-default">' + t + '</span>'; }).join(' ') : '—') + '</td>' +
@@ -5236,10 +5232,6 @@ function openShenhaiDetail(idx) {
       '<tr><th>累计发帖数</th><td>' + u.posts + '</td><th>累计评论数</th><td>' + u.comments + '</td></tr>' +
       '<tr><th>累计获赞数</th><td>' + u.likes + '</td><th>累计锚点数</th><td>' + u.anchors + '</td></tr>' +
       '<tr><th>最近登录</th><td>' + u.lastLogin + '</td><th>未登录天数</th><td>' + warnLogin + '</td></tr>' +
-
-      // 社群活跃
-      '<tr><td class="section-header" colspan="4">社群活跃</td></tr>' +
-      '<tr><th>群发言次数</th><td>' + u.groupMsg + ' 次（近30天）</td><th>最近群发言</th><td>' + u.lastGroupMsg + '</td></tr>' +
 
       // 其他信息
       '<tr><td class="section-header" colspan="4">其他信息</td></tr>' +

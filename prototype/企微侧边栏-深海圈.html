@@ -671,6 +671,65 @@
     color: var(--color-text-1);
     line-height: 20px;
   }
+  .personal-info-value.is-alert {
+    color: var(--color-danger-6);
+    font-weight: 600;
+  }
+  .personal-info-value.is-expandable {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    width: fit-content;
+    padding: 0 4px;
+    margin: 0 -4px;
+    border-radius: var(--radius-xs);
+    transition: background 0.1s;
+  }
+  .personal-info-value.is-expandable:hover {
+    background: var(--color-fill-hover);
+  }
+  .expand-caret {
+    font-size: 10px;
+    color: var(--color-text-4);
+    transition: transform 0.15s ease;
+  }
+  .personal-info-value.is-expandable.expanded .expand-caret {
+    transform: rotate(180deg);
+  }
+  .course-list-panel {
+    display: none;
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    padding: 10px 12px;
+    border-radius: var(--radius-card);
+    background: var(--color-fill-2);
+    border: 1px solid var(--color-border-default);
+    flex-direction: column;
+    gap: 8px;
+  }
+  .course-list-panel.open {
+    display: flex;
+  }
+  .course-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .course-list-name {
+    font-size: 12px;
+    color: var(--color-text-2);
+    line-height: 18px;
+    min-width: 0;
+    flex: 1;
+  }
+  .course-list-progress {
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+    white-space: nowrap;
+  }
   .personal-info-value.text-long {
     font-size: 12px;
     color: var(--color-text-2);
@@ -829,6 +888,8 @@
     align-items: center;
     gap: 4px;
   }
+  .metric-value.info { color: var(--color-info-6); }
+  .metric-value.neutral { color: var(--color-text-3); }
   .metric-value.danger { color: var(--color-danger-6); }
   .metric-value.warning { color: var(--color-warning-6); }
   .metric-value.good { color: var(--color-success-6); }
@@ -1736,7 +1797,7 @@
           </div>
           <div class="metric-item">
             <span class="metric-label">会员状态</span>
-            <span class="metric-value good">正常</span>
+            <span class="metric-value good">已确认</span>
           </div>
           <div class="metric-item">
             <span class="metric-label">加入时间</span>
@@ -1758,7 +1819,7 @@
           </div>
           <div class="metric-item">
             <span class="metric-label">会员状态</span>
-            <span class="metric-value good">正常</span>
+            <span class="metric-value info">已付费</span>
           </div>
           <div class="metric-item">
             <span class="metric-label">加入时间</span>
@@ -1881,13 +1942,118 @@
 
         <div class="divider-thick"></div>
 
+        <!-- 会员信息 -->
+        <div class="member-subsection-header">会员信息 — AI产品出海</div>
+        <div class="personal-info-section">
+          <div class="personal-info-grid">
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员类型</span>
+              <span class="personal-info-value"><span class="member-type-tag type-shenhai">深海圈会员</span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员状态</span>
+              <span class="personal-info-value"><span class="member-status-tag status-active">已确认</span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">专属服务</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '李李')">李李<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入方式</span>
+              <span class="personal-info-value">新增</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入时间</span>
+              <span class="personal-info-value">2025-06-15</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员到期</span>
+              <span class="personal-info-value">2026-06-14</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入金额</span>
+              <span class="personal-info-value">¥1,999.00</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">续费次数</span>
+              <span class="personal-info-value">0</span>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">推荐人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">张</span><span class="recommender-name">张小鱼</span><span class="recommender-star">NO.100891</span></span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="member-subsection-header">会员信息 — B站好物</div>
+        <div class="personal-info-section">
+          <div class="personal-info-grid">
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员类型</span>
+              <span class="personal-info-value"><span class="member-type-tag type-shenhai">深海圈会员</span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员状态</span>
+              <span class="personal-info-value"><span class="member-status-tag" style="background:var(--color-info-1);color:var(--color-info-6);">已付费</span></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">专属服务</span>
+              <span class="personal-info-value editable" onclick="startEdit(this, '潇墨')">潇墨<svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入方式</span>
+              <span class="personal-info-value">新增</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入时间</span>
+              <span class="personal-info-value">2026-01-10</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">会员到期</span>
+              <span class="personal-info-value">2027-01-09</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">加入金额</span>
+              <span class="personal-info-value">¥699.00</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">续费次数</span>
+              <span class="personal-info-value">0</span>
+            </div>
+            <div class="personal-info-item full-width">
+              <span class="personal-info-label">推荐人</span>
+              <span class="personal-info-value"><span class="recommender-info"><span class="recommender-avatar">王</span><span class="recommender-name">王大力</span><span class="recommender-star">NO.23456</span></span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-thick"></div>
+
         <!-- 学习行为 — AI产品出海 -->
         <div class="member-subsection-header">学习行为 — AI产品出海</div>
         <div class="personal-info-section">
           <div class="personal-info-grid">
             <div class="personal-info-item">
               <span class="personal-info-label">已学课程</span>
-              <span class="personal-info-value">8门</span>
+              <span class="personal-info-value is-expandable" onclick="toggleCourseList(this, 'courseListAi')">8门 <span class="expand-caret">▾</span></span>
+            </div>
+            <div class="course-list-panel" id="courseListAi">
+              <div class="course-list-item">
+                <span class="course-list-name">AI写作变现入门</span>
+                <span class="course-list-progress">100%</span>
+              </div>
+              <div class="course-list-item">
+                <span class="course-list-name">出海工具链全解析</span>
+                <span class="course-list-progress">85%</span>
+              </div>
+              <div class="course-list-item">
+                <span class="course-list-name">独立站冷启动投放</span>
+                <span class="course-list-progress">70%</span>
+              </div>
+              <div class="course-list-item">
+                <span class="course-list-name">AI产品定价策略</span>
+                <span class="course-list-progress">60%</span>
+              </div>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">已完成</span>
@@ -1903,7 +2069,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">未学习天数</span>
-              <span class="personal-info-value" style="color:var(--color-text-1);">3天</span>
+              <span class="personal-info-value">3天</span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">作业提交</span>
@@ -1926,7 +2092,21 @@
           <div class="personal-info-grid">
             <div class="personal-info-item">
               <span class="personal-info-label">已学课程</span>
-              <span class="personal-info-value">4门</span>
+              <span class="personal-info-value is-expandable" onclick="toggleCourseList(this, 'courseListBili')">4门 <span class="expand-caret">▾</span></span>
+            </div>
+            <div class="course-list-panel" id="courseListBili">
+              <div class="course-list-item">
+                <span class="course-list-name">B站选题与爆款拆解</span>
+                <span class="course-list-progress">100%</span>
+              </div>
+              <div class="course-list-item">
+                <span class="course-list-name">好物带货视频脚本</span>
+                <span class="course-list-progress">80%</span>
+              </div>
+              <div class="course-list-item">
+                <span class="course-list-name">橱窗转化页优化</span>
+                <span class="course-list-progress">45%</span>
+              </div>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">已完成</span>
@@ -1942,7 +2122,7 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">未学习天数</span>
-              <span class="personal-info-value">5天</span>
+              <span class="personal-info-value is-alert">16天</span>
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">作业提交</span>
@@ -1987,24 +2167,36 @@
             </div>
             <div class="personal-info-item">
               <span class="personal-info-label">未登录天数</span>
-              <span class="personal-info-value">2天</span>
+              <span class="personal-info-value is-alert">18天</span>
             </div>
           </div>
         </div>
 
         <div class="divider-thick"></div>
 
-        <!-- 社群活跃 -->
-        <div class="member-subsection-header">社群活跃</div>
+        <!-- 其他信息 -->
+        <div class="member-subsection-header">其他信息</div>
         <div class="personal-info-section">
           <div class="personal-info-grid">
             <div class="personal-info-item">
-              <span class="personal-info-label">群发言</span>
-              <span class="personal-info-value">128次(近30天)</span>
+              <span class="personal-info-label">首次添加时间</span>
+              <span class="personal-info-value">2025-06-12 10:18</span>
             </div>
             <div class="personal-info-item">
-              <span class="personal-info-label">最近群发言</span>
-              <span class="personal-info-value">2026-03-29</span>
+              <span class="personal-info-label">入群时间</span>
+              <span class="personal-info-value">2025-06-15 20:30</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">是否进入企微群聊</span>
+              <span class="personal-info-value">是</span>
+            </div>
+            <div class="personal-info-item">
+              <span class="personal-info-label">unionID</span>
+              <span class="personal-info-value copyable" onclick="copyText(this, 'oX5kZ100234AbcDeFgH')">oX5kZ100234AbcDeFgH</span>
+            </div>
+            <div class="personal-info-item" style="grid-column: 1 / -1;">
+              <span class="personal-info-label">externalid</span>
+              <span class="personal-info-value copyable" onclick="copyText(this, 'wmE100234XyZ_ext')">wmE100234XyZ_ext</span>
             </div>
           </div>
         </div>
@@ -2415,7 +2607,7 @@
         <div class="prd-card-body">头像　取姓氏首字
 昵称　点击复制
 星球编号　NO.xxxxx 点击复制
-圈子列表　AI产品出海 · B站好物（取所有正常圈子）
+圈子列表　AI产品出海 · B站好物（取状态为已付费/已确认的圈子）
 备注　来源 CRM，点击编辑
 
 成果标签
@@ -2435,10 +2627,12 @@
         <div class="prd-card-title">圈子信息 + 学习概况</div>
         <div class="prd-card-body">圈子信息（每个圈子独立一组）
 　所属圈子 / 会员状态 / 加入时间 / 到期时间
+　状态枚举：待付款 / 已付费 / 已确认 / 已完成 / 已驳回 / 已退款 / 已取消
+　颜色：橙 / 蓝 / 绿 / 灰 / 红 / 红 / 灰
 　展示规则：
-　　全部正常 → 全部展示
-　　部分正常 → 只展示正常的
-　　全部过期 → 只展示最晚到期的
+　　有已确认/已付费 → 优先展示这些有效圈子
+　　仅有待付款 → 展示待付款圈子
+　　全部已完成/已取消/已退款/已驳回 → 只展示最近结束的一条
 
 学习概况（汇总所有圈子）
 　已学课程 / 已完成 / 直播观看
@@ -2464,7 +2658,13 @@
 　用户ID（可复制）/ 昵称
 　手机号（脱敏+眼睛，可复制）/ 微信号（可复制）</div>
       </div>
-      <div class="prd-card" style="--accent: #36A590;">
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">会员信息</div>
+        <div class="prd-card-body">按圈子分 section 展示
+　会员类型 / 会员状态 / 专属服务 / 加入方式
+　加入时间 / 会员到期 / 加入金额 / 续费次数 / 推荐人</div>
+      </div>
+        <div class="prd-card" style="--accent: #36A590;">
         <div class="prd-card-title">学习行为（按圈子分 section）</div>
         <div class="prd-card-body">每个圈子独立一个 member-subsection-header
 标题格式：「学习行为 — {圈子名}」
@@ -2473,16 +2673,25 @@
 　已学课程 / 已完成 / 直播观看 / 最近学习
 　未学习天数 / 作业提交 / 加入时间 / 到期时间
 
+交互：
+　点击已学课程数，展开课程列表（课程名 + 进度）
+
+规则：
+　未学习天数 ≥14 天标红
+
 多圈用户显示多个 section</div>
       </div>
       <div class="prd-card" style="--accent: #327CFB;">
-        <div class="prd-card-title">社区活跃 + 社群活跃</div>
+        <div class="prd-card-title">社区活跃</div>
         <div class="prd-card-body">社区活跃（6字段）
 　发帖数 / 评论数 / 获赞数 / 锚点数
-　最近登录 / 未登录天数
-
-社群活跃（2字段）
-　群发言（近30天）/ 最近群发言</div>
+　最近登录 / 未登录天数（≥14天标红）</div>
+      </div>
+      <div class="prd-card" style="--accent: #FF7D00;">
+        <div class="prd-card-title">其他信息</div>
+        <div class="prd-card-body">补充客户管理深海圈详情字段
+　首次添加时间 / 入群时间 / 是否进入企微群聊
+　unionID / externalid</div>
       </div>
     </div>
 
@@ -2603,6 +2812,14 @@ data-activity 属性：
     toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(function() { toast.remove(); }, 1200);
+  }
+
+  function toggleCourseList(trigger, panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    var isOpen = panel.classList.contains('open');
+    panel.classList.toggle('open', !isOpen);
+    trigger.classList.toggle('expanded', !isOpen);
   }
 
   /* ── 字段内联编辑 ── */
