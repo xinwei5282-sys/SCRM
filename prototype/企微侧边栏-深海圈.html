@@ -1179,6 +1179,7 @@
     display: flex;
     gap: 12px;
     margin-bottom: 8px;
+    flex-wrap: wrap;
   }
   .chat-meta-item {
     display: flex;
@@ -1226,6 +1227,33 @@
   .chat-ai-gen-desc {
     font-size: 12px; color: var(--color-text-3); line-height: 18px;
     margin-bottom: 12px; text-align: left;
+  }
+  .chat-ai-gen-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .chat-range-select {
+    height: 32px;
+    min-width: 112px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--color-primary-2);
+    border-radius: var(--radius-btn);
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .chat-range-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
   }
   .chat-ai-gen-btn {
     display: inline-flex; align-items: center; gap: 4px; justify-content: center;
@@ -2319,7 +2347,15 @@
             <span class="ai-title">AI 沟通记录总结</span>
           </div>
           <div class="chat-ai-gen-desc">基于客户沟通记录数据，AI 自动生成沟通分析</div>
-          <button class="chat-ai-gen-btn" id="chatAiGenBtn" onclick="generateChatAiSummary()">✦ 生成沟通总结</button>
+          <div class="chat-ai-gen-controls">
+            <select class="chat-range-select" id="chatSummaryRange">
+              <option value="1m">近1个月</option>
+              <option value="3m" selected>近3个月</option>
+              <option value="6m">近半年</option>
+              <option value="all">全部</option>
+            </select>
+            <button class="chat-ai-gen-btn" id="chatAiGenBtn" onclick="generateChatAiSummary()">✦ 生成沟通总结</button>
+          </div>
         </div>
         <div class="chat-summary-card hidden" id="chatSummaryCard">
           <div class="chat-summary-header">
@@ -2335,8 +2371,12 @@
               学习意愿
               <span class="chat-meta-value" style="color: var(--color-success-6);">积极</span>
             </div>
+            <div class="chat-meta-item">
+              总结范围
+              <span class="chat-meta-value" id="chatSummaryRangeLabel">近3个月</span>
+            </div>
           </div>
-          <div class="chat-summary-text">用户学习态度积极，课程完成度较高。近期主动咨询进阶课程，对AI产品出海方向兴趣浓厚。群内发言活跃，经常分享学习心得和实操经验。建议持续推送高质量内容，引导参与更多互动。</div>
+          <div class="chat-summary-text" id="chatSummaryText">用户学习态度积极，课程完成度较高。近期主动咨询进阶课程，对AI产品出海方向兴趣浓厚。沟通响应及时，常围绕课程进度和进阶内容展开交流。建议持续推送高质量内容，引导参与更多互动。</div>
         </div>
 
         <div class="divider-thick"></div>
@@ -2375,28 +2415,6 @@
           </div>
         </div>
 
-        <!-- 聊天气泡预览 -->
-        <div class="divider-thick"></div>
-        <div class="section-header">
-          <span class="section-title">最近消息</span>
-        </div>
-        <div style="padding: 0 16px 12px; display: flex; flex-direction: column; gap: 8px;">
-          <!-- 运营消息 -->
-          <div style="display: flex; gap: 8px; align-items: flex-start;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-6); display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">运</div>
-            <div style="background: var(--color-fill-3); padding: 8px 12px; border-radius: 2px 8px 8px 8px; font-size: 12px; color: var(--color-text-1); line-height: 18px; max-width: 80%;">您好～看到您最近在AI产品出海课程中进度不错，第12课的作业写得很好！有什么需要帮助的吗？</div>
-          </div>
-          <!-- 用户消息 -->
-          <div style="display: flex; gap: 8px; align-items: flex-start; flex-direction: row-reverse;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--color-accent-orange-6), #D25F00); display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">李</div>
-            <div style="background: var(--color-primary-1); padding: 8px 12px; border-radius: 8px 2px 8px 8px; font-size: 12px; color: var(--color-text-1); line-height: 18px; max-width: 80%;">谢谢关心！课程确实很有收获，我计划这周完成第13课。另外想问下B站好物的进阶课程什么时候开？</div>
-          </div>
-          <!-- 运营回复 -->
-          <div style="display: flex; gap: 8px; align-items: flex-start;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-6); display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">运</div>
-            <div style="background: var(--color-fill-3); padding: 8px 12px; border-radius: 2px 8px 8px 8px; font-size: 12px; color: var(--color-text-1); line-height: 18px; max-width: 80%;">B站好物进阶课程下周一开放，我已经帮您预约好了～到时候会第一时间通知您 🎉</div>
-          </div>
-        </div>
         </div><!-- /tab-content comms -->
 
         <!-- ===== Tab: 积分记录 ===== -->
@@ -2681,19 +2699,15 @@ data-activity 属性：
       <div class="prd-card" style="--accent: #327CFB;">
         <div class="prd-card-title">AI 沟通总结</div>
         <div class="prd-card-body">生成按钮 + 时间范围选择
-　近3个月（默认）/ 近半年 / 近1年 / 全部
+　近1个月 / 近3个月（默认）/ 近半年 / 全部
 生成后展示总结卡片
 　含「重新生成」「复制」按钮</div>
       </div>
       <div class="prd-card" style="--accent: #FF7D00;">
-        <div class="prd-card-title">沟通时间轴 + 聊天记录</div>
+        <div class="prd-card-title">沟通时间轴</div>
         <div class="prd-card-body">沟通时间轴
 　近30天沟通记录列表
-　标签分类：学习跟进 / 内容推送 / 主动关怀
-
-聊天记录
-　按日期分组的聊天气泡
-　运营消息（左对齐）+ 用户消息（右对齐）</div>
+　标签分类：学习跟进 / 内容推送 / 主动关怀</div>
       </div>
     </div>
 
@@ -2826,7 +2840,24 @@ data-activity 属性：
     var btn = document.getElementById('chatAiGenBtn');
     var genCard = document.getElementById('chatAiGenCard');
     var card = document.getElementById('chatSummaryCard');
+    var rangeSelect = document.getElementById('chatSummaryRange');
+    var rangeLabel = document.getElementById('chatSummaryRangeLabel');
+    var summaryText = document.getElementById('chatSummaryText');
+    var labels = {
+      '1m': '近1个月',
+      '3m': '近3个月',
+      '6m': '近半年',
+      'all': '全部'
+    };
+    var summaries = {
+      '1m': '近1个月内，用户主要围绕AI产品出海课程进度与作业反馈进行沟通，提问频次较高，近期还主动咨询了B站好物进阶课程开放时间。整体互动积极，适合继续做节奏型学习跟进。',
+      '3m': '近3个月内，用户学习态度积极，课程完成度较高。近期主动咨询进阶课程，对AI产品出海方向兴趣浓厚。沟通响应及时，常围绕课程进度和进阶内容展开交流。建议持续推送高质量内容，引导参与更多互动。',
+      '6m': '近半年内，用户持续保持稳定沟通，话题覆盖课程学习、阶段作业、进阶内容与跨圈子学习计划。整体呈现长期投入特征，适合结合成长节点做分层运营与高阶转化。',
+      'all': '全量聊天记录显示，用户从加入初期的课程适应、到中期的实操提问、再到近期的进阶内容咨询，沟通轨迹完整且持续。属于长期可培育用户，建议结合历史兴趣主题做精细化运营。'
+    };
     if (btn.disabled) return;
+    if (rangeSelect && rangeLabel) rangeLabel.textContent = labels[rangeSelect.value] || '近3个月';
+    if (rangeSelect && summaryText) summaryText.textContent = summaries[rangeSelect.value] || summaries['3m'];
     btn.textContent = '生成中...';
     btn.disabled = true;
     setTimeout(function() {
