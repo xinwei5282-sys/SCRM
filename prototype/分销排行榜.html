@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>418 分销排行榜</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+/* === Reset & Base === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: PingFang SC, Tahoma, Helvetica, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+  background: #F2F5F7;
+  color: #242528;
+  min-height: 100vh;
+  max-width: 375px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* === Color Tokens === */
+:root {
+  --color-primary: #36A590;
+  --color-primary-light: #E9FFF8;
+  --color-primary-border: #BCEDDD;
+  --color-accent: #FF7D00;
+  --color-accent-dark: #D25F00;
+  --color-bg: #F2F5F7;
+  --color-card: #FFFFFF;
+  --color-text-1: #242528;
+  --color-text-2: #3B3D40;
+  --color-text-3: #757980;
+  --color-text-4: #BDC1C7;
+  --color-border: #E4E4E7;
+  --color-success: #52C41A;
+  --color-success-bg: #F4FFE8;
+  --color-danger: #F54A45;
+  --color-danger-bg: #FFEDE8;
+  --radius-btn: 6px;
+  --radius-card: 8px;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* === Header === */
+.header {
+  background: linear-gradient(162deg, #FF7D00, #D25F00);
+  padding: 48px 16px 24px;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: -20px;
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 32px;
+  position: relative;
+  z-index: 1;
+}
+.header-subtitle {
+  font-size: 13px;
+  line-height: 20px;
+  opacity: 0.8;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+.header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  line-height: 18px;
+  position: relative;
+  z-index: 1;
+}
+.header-status .dot {
+  width: 6px; height: 6px;
+  background: #52FF6A;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* === My Rank Card === */
+.my-rank-card {
+  margin: -12px 16px 16px;
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  position: relative;
+  z-index: 2;
+}
+.my-rank-login {
+  text-align: center;
+  padding: 8px 0;
+}
+.my-rank-login p {
+  font-size: 13px;
+  color: var(--color-text-3);
+  margin-bottom: 12px;
+}
+.btn-wx-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  height: 36px;
+  background: #07C160;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 100ms;
+}
+.btn-wx-login:active { opacity: 0.9; }
+.btn-wx-login svg { width: 18px; height: 18px; }
+
+.my-rank-info {
+  display: none;
+}
+.my-rank-info.show {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.my-rank-info .rank-number {
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: DIN, PingFang SC, sans-serif;
+  flex-shrink: 0;
+}
+.my-rank-info .user-meta {
+  flex: 1;
+  min-width: 0;
+}
+.my-rank-info .user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.my-rank-info .avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.my-rank-info .nickname {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.my-rank-info .star-id {
+  font-size: 12px;
+  color: var(--color-text-3);
+  margin-top: 2px;
+}
+.my-rank-info .deal-count {
+  text-align: right;
+  flex-shrink: 0;
+}
+.my-rank-info .deal-count .num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-accent);
+  font-family: DIN, PingFang SC, sans-serif;
+}
+.my-rank-info .deal-count-clickable {
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px;
+  border-radius: var(--radius-btn);
+  transition: background 100ms;
+}
+.my-rank-info .deal-count-clickable:active {
+  background: var(--color-primary-light);
+}
+.my-rank-info .deal-count .label {
+  font-size: 11px;
+  color: var(--color-text-3);
+}
+
+/* === Rank List === */
+.rank-section {
+  padding: 0 16px 16px;
+}
+.rank-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-1);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rank-list {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* Table Header */
+.rank-list-header {
+  display: grid;
+  grid-template-columns: 48px 1fr 80px 56px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  font-size: 12px;
+  color: var(--color-text-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.rank-list-header .col-deal {
+  text-align: right;
+}
+
+/* Table Row */
+.rank-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 80px 56px;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 100ms;
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-row:active { background: var(--color-bg); }
+
+/* Current user highlight */
+.rank-row.current-user {
+  background: var(--color-primary-light);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 9px;
+}
+
+/* Rank number */
+.rank-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-2);
+  text-align: center;
+  font-family: DIN, PingFang SC, sans-serif;
+}
+.rank-num.gold { color: transparent; font-size: 0; }
+.rank-num.gold::before { content: '🥇'; font-size: 22px; }
+.rank-num.silver { color: transparent; font-size: 0; }
+.rank-num.silver::before { content: '🥈'; font-size: 22px; }
+.rank-num.bronze { color: transparent; font-size: 0; }
+.rank-num.bronze::before { content: '🥉'; font-size: 22px; }
+
+/* User cell */
+.rank-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.rank-user .avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.rank-user .name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Star ID */
+.rank-star {
+  font-size: 12px;
+  color: var(--color-text-3);
+  font-family: DIN, PingFang SC, sans-serif;
+}
+
+/* Deal count */
+.rank-deal {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-1);
+  text-align: right;
+  font-family: DIN, PingFang SC, sans-serif;
+}
+.rank-row.current-user .rank-deal {
+  color: var(--color-primary);
+}
+
+/* Top 3 special */
+.rank-row:nth-child(2) .rank-deal { color: var(--color-accent); }
+.rank-row:nth-child(3) .rank-deal { color: var(--color-accent); }
+.rank-row:nth-child(4) .rank-deal { color: var(--color-accent); }
+
+/* === Detail Page === */
+.detail-page {
+  display: none;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+.detail-page.show {
+  display: block;
+}
+
+/* Detail Nav */
+.detail-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-btn);
+  transition: background 100ms;
+}
+.btn-back:active { background: var(--color-bg); }
+.btn-back svg { width: 20px; height: 20px; color: var(--color-text-1); }
+.detail-nav-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-1);
+}
+
+/* Stats Cards */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+.stat-card .stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: DIN, PingFang SC, sans-serif;
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--color-text-3);
+  margin-top: 4px;
+}
+.stat-card.success .stat-num { color: var(--color-success); }
+.stat-card.danger .stat-num { color: var(--color-danger); }
+
+/* Detail List */
+.detail-list-section {
+  padding: 0 16px 16px;
+}
+.detail-list-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-1);
+  margin-bottom: 12px;
+}
+.detail-list {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row .avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.detail-row .info {
+  flex: 1;
+  min-width: 0;
+}
+.detail-row .name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.detail-row .name.refunded {
+  text-decoration: line-through;
+  color: var(--color-text-3);
+}
+.detail-row .star-id {
+  font-size: 12px;
+  color: var(--color-text-3);
+  margin-top: 2px;
+}
+.detail-row .status-tag {
+  padding: 2px 8px;
+  border-radius: var(--radius-btn);
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.status-tag.paid {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+.status-tag.refunded {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* === Rank List Page Container === */
+.rank-page {
+  display: block;
+}
+.rank-page.hide {
+  display: none;
+}
+
+/* === Empty State === */
+.empty-state {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--color-text-3);
+  font-size: 14px;
+}
+/* === PRD Panel (H5 适配) === */
+.prd-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid var(--color-accent);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.prd-toggle .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+body.prd-on .prd-toggle {
+  background: var(--color-accent);
+  color: #fff;
+}
+body.prd-on .prd-toggle .dot { background: #fff; }
+
+.prd-panel {
+  display: none;
+  position: fixed;
+  top: 0; right: 0;
+  width: 320px;
+  height: 100vh;
+  background: #FFFBF0;
+  border-left: 2px solid #F0E6CC;
+  overflow-y: auto;
+  z-index: 800;
+  padding: 16px;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+  font-size: 12px;
+}
+body.prd-on .prd-panel { display: block; }
+body.prd-on .prd-toggle { right: 332px; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle -->
+<button class="prd-toggle" onclick="document.body.classList.toggle('prd-on')">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<!-- PRD Panel -->
+<div class="prd-panel" data-prd-key="rank-h5" data-prd-version="20260401">
+  <div class="prd-context-hint">分销排行榜 H5 · PRD v2.1</div>
+
+  <div class="prd-section">
+    <div class="prd-section-title orange">1. 页面概述</div>
+    <div class="prd-item">独立 H5 页面，微信内打开，<strong>max-width: 375px</strong></div>
+    <div class="prd-item">包含两个视图：排行榜列表页 + 成交明细页（同一HTML内切换）</div>
+    <div class="prd-item">微信网页授权登录（静默 + 用户确认）</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">2. 排行榜列表页</div>
+    <div class="prd-label">Header 区域</div>
+    <div class="prd-item">橙色渐变背景 linear-gradient(162deg, #FF7D00, #D25F00)</div>
+    <div class="prd-item">活动标题 22px/700 + 副标题 13px + 状态标签（圆角胶囊，绿色脉冲动画）</div>
+    <div class="prd-label">我的排名卡片</div>
+    <div class="prd-item"><strong>未登录</strong>：显示微信登录按钮（#07C160 微信绿）</div>
+    <div class="prd-item"><strong>已登录</strong>：排名圆圈 + 头像+昵称+星球编号 + 成交人数</div>
+    <div class="prd-item">成交人数区域<strong>可点击</strong>（带 > 箭头），跳转成交明细页</div>
+    <div class="prd-item">卡片 margin-top: -12px 悬浮在 Header 上</div>
+    <div class="prd-label">排行榜列表</div>
+    <div class="prd-item">Grid 布局：48px(排名) / 1fr(分销人) / 80px(星球编号) / 56px(成交)</div>
+    <div class="prd-item">前三名：奖牌图标 🥇🥈🥉（22px），成交数橙色</div>
+    <div class="prd-item">当前用户行：<strong>绿色背景</strong> + 左侧 3px 绿色边框</div>
+    <div class="prd-item">仅自己的行可点击进入明细</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">3. 排名算法</div>
+    <div class="prd-item">统一<strong>按人统计</strong>，不按订单笔数</div>
+    <div class="prd-item">有效成交人数 = 已付款人数 - 已退款人数</div>
+    <div class="prd-item">同分按首笔成交时间升序</div>
+    <div class="prd-item">KOC 多账号合并后统一计算</div>
+    <div class="prd-item">同一用户多次付款只计 1 人</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title blue">4. 成交明细页</div>
+    <div class="prd-item">导航栏：← 返回 + "成交明细" 标题，sticky 吸顶</div>
+    <div class="prd-label">统计卡片</div>
+    <div class="prd-item">2 列 Grid：有效成交（绿色 28px DIN）/ 已退款（红色 28px DIN）</div>
+    <div class="prd-label">成交人列表</div>
+    <div class="prd-item">每行：36px 圆形头像 + 昵称 + 星球编号 + 状态标签</div>
+    <div class="prd-item"><strong>已付款</strong> = 绿色标签（#F4FFE8 / #52C41A）</div>
+    <div class="prd-item"><strong>已退款</strong> = 红色标签（#FFEDE8 / #F54A45）+ 昵称<strong>删除线</strong></div>
+    <div class="prd-item">按成交时间倒序</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title orange">5. 微信登录</div>
+    <div class="prd-item">scope=snsapi_base（静默）→ 获取 openid</div>
+    <div class="prd-item">scope=snsapi_userinfo（弹窗）→ 获取头像昵称</div>
+    <div class="prd-item">localStorage 存 token，有效期 7 天</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title red">6. 交互状态</div>
+    <div class="prd-item"><strong>活动未开始</strong>：倒计时 + "活动即将开始"</div>
+    <div class="prd-item"><strong>活动进行中</strong>：绿色脉冲 + "活动进行中"</div>
+    <div class="prd-item"><strong>活动已结束</strong>：数据冻结 + "活动已结束"</div>
+    <div class="prd-item"><strong>非KOC登录</strong>：我的排名显示"暂无分销记录"</div>
+    <div class="prd-item"><strong>空状态</strong>：明细页 "暂无成交记录"</div>
+  </div>
+
+  <div class="prd-section">
+    <div class="prd-section-title green">7. 设计规范</div>
+    <div class="prd-item">Nova 设计语言：radius-btn 6px / radius-card 8px / padding 16px</div>
+    <div class="prd-item">数字字体：DIN（成交人数、统计数字）</div>
+    <div class="prd-item">按钮按下：缩放 0.96 + 透明度 0.8 / 150ms ease</div>
+    <div class="prd-item">页面切换：JS display toggle（无路由）</div>
+  </div>
+</div>
+
+<!-- ============ 排行榜列表页 ============ -->
+<div class="rank-page" id="rankPage">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">418 分销排行榜</div>
+    <div class="header-subtitle">邀请好友加入，一起赚取佣金</div>
+    <div class="header-status">
+      <span class="dot"></span>
+      活动进行中
+    </div>
+  </div>
+
+  <!-- My Rank Card -->
+  <div class="my-rank-card">
+    <!-- 未登录状态 -->
+    <div class="my-rank-login" id="loginPrompt">
+      <p>登录查看我的排名</p>
+      <button class="btn-wx-login" onclick="mockLogin()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.122 1.094 4.051 2.834 5.413l-.734 2.2 2.556-1.285c.89.252 1.844.39 2.835.39.3 0 .598-.014.893-.04a5.49 5.49 0 0 1-.182-1.382c0-3.42 3.318-6.206 7.412-6.206.26 0 .516.012.77.036C15.7 5.156 12.524 2.188 8.691 2.188zm-3.11 4.09c.61 0 1.106.496 1.106 1.106 0 .611-.496 1.107-1.107 1.107-.61 0-1.106-.496-1.106-1.107 0-.61.496-1.106 1.106-1.106zm5.998 0c.61 0 1.107.496 1.107 1.106 0 .611-.497 1.107-1.107 1.107-.61 0-1.107-.496-1.107-1.107 0-.61.497-1.106 1.107-1.106zm4.724 3.088c-3.615 0-6.548 2.46-6.548 5.492 0 3.032 2.933 5.492 6.548 5.492.703 0 1.377-.1 2.01-.285l1.964.988-.564-1.69c1.413-1.106 2.302-2.672 2.302-4.505 0-3.032-2.933-5.492-6.548-5.492h-.164zm-2.328 3.05c.497 0 .899.403.899.9 0 .497-.402.899-.9.899a.899.899 0 0 1-.898-.9c0-.496.402-.899.899-.899zm4.656 0c.497 0 .899.403.899.9 0 .497-.402.899-.9.899a.899.899 0 0 1-.898-.9c0-.496.402-.899.899-.899z"/></svg>
+        微信登录
+      </button>
+    </div>
+
+    <!-- 已登录状态 -->
+    <div class="my-rank-info" id="myRankInfo">
+      <div class="rank-number" id="myRankNum">5</div>
+      <div class="user-meta">
+        <div class="user-row">
+          <img class="avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=me" alt="">
+          <div>
+            <div class="nickname">我的昵称</div>
+            <div class="star-id">#66688</div>
+          </div>
+        </div>
+      </div>
+      <div class="deal-count deal-count-clickable" onclick="showDetail(CURRENT_USER_ID)">
+        <div class="num" id="myDealCount">32</div>
+        <div class="label">成交人数 &rsaquo;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rank List -->
+  <div class="rank-section">
+    <div class="rank-section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      排行榜
+    </div>
+    <div class="rank-list">
+      <!-- Header -->
+      <div class="rank-list-header">
+        <span>排名</span>
+        <span>分销人</span>
+        <span>星球编号</span>
+        <span class="col-deal">成交</span>
+      </div>
+      <!-- Rows generated by JS -->
+      <div id="rankListBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 成交明细页 ============ -->
+<div class="detail-page" id="detailPage">
+  <div class="detail-nav">
+    <button class="btn-back" onclick="showRankPage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="detail-nav-title">成交明细</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card success">
+      <div class="stat-num" id="statValid">0</div>
+      <div class="stat-label">有效成交</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-num" id="statRefund">0</div>
+      <div class="stat-label">已退款</div>
+    </div>
+  </div>
+
+  <!-- Detail List -->
+  <div class="detail-list-section">
+    <div class="detail-list-title">成交人列表</div>
+    <div class="detail-list" id="detailListBody"></div>
+  </div>
+</div>
+
+<script>
+// === Mock Data ===
+const CURRENT_USER_ID = 5; // 模拟当前登录用户
+let isLoggedIn = false;
+
+const rankData = [
+  { id: 1, name: '阿强', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=aq', starId: '#10234', deals: 52, validDeals: 48, refundDeals: 4 },
+  { id: 2, name: '小鱼儿', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xy', starId: '#20567', deals: 41, validDeals: 39, refundDeals: 2 },
+  { id: 3, name: '大头', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=dt', starId: '#31089', deals: 38, validDeals: 35, refundDeals: 3 },
+  { id: 4, name: '星辰海', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xc', starId: '#40321', deals: 35, validDeals: 34, refundDeals: 1 },
+  { id: 5, name: '我的昵称', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=me', starId: '#66688', deals: 32, validDeals: 30, refundDeals: 2 },
+  { id: 6, name: '蓝莓酱', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lm', starId: '#51234', deals: 28, validDeals: 27, refundDeals: 1 },
+  { id: 7, name: '追风少年', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zf', starId: '#60987', deals: 25, validDeals: 25, refundDeals: 0 },
+  { id: 8, name: '柠檬茶', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=nm', starId: '#72345', deals: 22, validDeals: 20, refundDeals: 2 },
+  { id: 9, name: '小白龙', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xb', starId: '#83456', deals: 19, validDeals: 18, refundDeals: 1 },
+  { id: 10, name: '紫薇花', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zw', starId: '#94567', deals: 16, validDeals: 16, refundDeals: 0 },
+  { id: 11, name: '老王说事', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lw', starId: '#10567', deals: 14, validDeals: 13, refundDeals: 1 },
+  { id: 12, name: '明日之星', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mr', starId: '#11678', deals: 12, validDeals: 11, refundDeals: 1 },
+  { id: 13, name: '海上花', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=hs', starId: '#12789', deals: 10, validDeals: 10, refundDeals: 0 },
+  { id: 14, name: '风之子', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fz', starId: '#13890', deals: 8, validDeals: 7, refundDeals: 1 },
+  { id: 15, name: '春暖花开', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ch', starId: '#14901', deals: 6, validDeals: 6, refundDeals: 0 },
+];
+
+// 成交明细 mock 数据
+const detailData = {
+  5: [
+    { name: '张三', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=z3', starId: '#80001', status: 'paid' },
+    { name: '李四', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=l4', starId: '#80002', status: 'paid' },
+    { name: '王五', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=w5', starId: '#80003', status: 'refunded' },
+    { name: '赵六', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=z6', starId: '#80004', status: 'paid' },
+    { name: '钱七', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=q7', starId: '#80005', status: 'paid' },
+    { name: '孙八', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=s8', starId: '#80006', status: 'refunded' },
+    { name: '周九', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=z9', starId: '#80007', status: 'paid' },
+    { name: '吴十', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ws', starId: '#80008', status: 'paid' },
+    { name: '郑十一', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zs', starId: '#80009', status: 'paid' },
+    { name: '刘十二', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ls', starId: '#80010', status: 'paid' },
+  ]
+};
+
+// === Render ===
+function renderRankList() {
+  const body = document.getElementById('rankListBody');
+  body.innerHTML = rankData.map((item, index) => {
+    const rank = index + 1;
+    let rankClass = '';
+    if (rank === 1) rankClass = 'gold';
+    else if (rank === 2) rankClass = 'silver';
+    else if (rank === 3) rankClass = 'bronze';
+
+    const isCurrent = isLoggedIn && item.id === CURRENT_USER_ID;
+    const rowClass = isCurrent ? 'rank-row current-user' : 'rank-row';
+    const clickHandler = isCurrent ? `onclick="showDetail(${item.id})"` : '';
+
+    return `
+      <div class="${rowClass}" ${clickHandler}>
+        <div class="rank-num ${rankClass}">${rank}</div>
+        <div class="rank-user">
+          <img class="avatar" src="${item.avatar}" alt="">
+          <span class="name">${item.name}</span>
+        </div>
+        <span class="rank-star">${item.starId}</span>
+        <span class="rank-deal">${item.deals}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function mockLogin() {
+  isLoggedIn = true;
+  document.getElementById('loginPrompt').style.display = 'none';
+  document.getElementById('myRankInfo').classList.add('show');
+
+  // 找到当前用户排名
+  const userIndex = rankData.findIndex(d => d.id === CURRENT_USER_ID);
+  if (userIndex >= 0) {
+    document.getElementById('myRankNum').textContent = userIndex + 1;
+    document.getElementById('myDealCount').textContent = rankData[userIndex].deals;
+  }
+
+  renderRankList();
+}
+
+function showDetail(userId) {
+  const user = rankData.find(d => d.id === userId);
+  if (!user) return;
+
+  document.getElementById('statValid').textContent = user.validDeals;
+  document.getElementById('statRefund').textContent = user.refundDeals;
+
+  // Render detail list
+  const details = detailData[userId] || [];
+  const listBody = document.getElementById('detailListBody');
+  if (details.length === 0) {
+    listBody.innerHTML = '<div class="empty-state">暂无成交记录</div>';
+  } else {
+    listBody.innerHTML = details.map(d => `
+      <div class="detail-row">
+        <img class="avatar" src="${d.avatar}" alt="">
+        <div class="info">
+          <div class="name ${d.status === 'refunded' ? 'refunded' : ''}">${d.name}</div>
+          <div class="star-id">${d.starId}</div>
+        </div>
+        <span class="status-tag ${d.status}">${d.status === 'paid' ? '已付款' : '已退款'}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('rankPage').classList.add('hide');
+  document.getElementById('detailPage').classList.add('show');
+}
+
+function showRankPage() {
+  document.getElementById('detailPage').classList.remove('show');
+  document.getElementById('rankPage').classList.remove('hide');
+}
+
+// Init
+renderRankList();
+</script>
+<script src="prd-editor.js"></script>
+</body>
+</html>

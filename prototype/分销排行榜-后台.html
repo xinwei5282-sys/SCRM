@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分销排行榜 - 后台管理</title>
+<link rel="stylesheet" href="prd-editor.css">
+<style>
+  /* ========================================================
+   * Design Tokens — Nova 紧凑布局
+   * 来源：.claude/design-foundation.md
+   * ======================================================== */
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-3-hover: #E8EBED;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-overlay: rgba(0,0,0,0.8);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-modal: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: PingFang SC, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  /* ======== Layout ======== */
+  .layout { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .sidebar-menu { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .menu-group-title {
+    padding: 8px 16px 4px;
+    font-size: 12px;
+    color: var(--color-text-4);
+    text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--color-text-2);
+    font-size: 14px;
+    transition: background 100ms;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item .arrow { font-size: 12px; color: var(--color-text-4); transition: transform 200ms; }
+  .menu-group { }
+  .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
+  .menu-sub { overflow: hidden; max-height: 0; transition: max-height 200ms ease; }
+  .menu-group.open > .menu-sub { max-height: 200px; }
+  .menu-sub .menu-item { padding-left: 40px; font-size: 13px; }
+
+  /* Header */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .header-bell { font-size: 18px; color: var(--color-text-3); cursor: pointer; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Page Title */
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+
+  /* ======== Search Filters ======== */
+  .filter-area {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-row:last-child { margin-bottom: 0; }
+
+  .filter-input,
+  .filter-select {
+    height: 32px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--color-text-1);
+    background: var(--color-fill-1);
+    outline: none;
+    transition: border-color 150ms;
+    min-width: 160px;
+  }
+  .filter-input:hover,
+  .filter-select:hover {
+    border-color: var(--color-border-hover);
+  }
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54, 165, 144, 0.15);
+  }
+  .filter-input::placeholder { color: var(--color-text-4); }
+  .filter-input.wide { min-width: 220px; }
+  .filter-input.date-range { min-width: 260px; }
+
+  .filter-select {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* Buttons */
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 100ms;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--color-primary-6);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--color-fill-3);
+    color: var(--color-text-1);
+  }
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-outline:hover { background: var(--color-fill-hover); }
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--color-primary-6);
+    padding: 0 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .btn-text:hover { color: var(--color-primary-7); }
+
+  /* ======== Table ======== */
+  .table-wrapper {
+    overflow-x: auto;
+    position: relative;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--color-fill-3);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border-default);
+    color: var(--color-text-2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border-default);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .data-table tr:hover td {
+    background: var(--color-fill-hover);
+  }
+
+  /* Cell helpers */
+  .customer-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .customer-avatar svg { width: 18px; height: 18px; color: var(--color-text-4); }
+  .customer-name { font-weight: 500; color: var(--color-text-1); }
+  .customer-phone { font-size: 12px; color: var(--color-text-3); }
+
+  /* Tags / Badges */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-default {
+    background: var(--color-fill-3);
+    color: var(--color-text-2);
+  }
+  .tag-primary {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+  }
+  .tag-success {
+    background: var(--color-success-1);
+    color: var(--color-success-6);
+  }
+  .tag-warning {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+  }
+  .tag-danger {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+  .tag-info {
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+
+  /* ======== Customer Type Tabs ======== */
+  .type-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--color-border-default);
+    padding: 0 20px;
+    background: var(--color-fill-1);
+  }
+  .type-tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 100ms;
+    white-space: nowrap;
+  }
+  .type-tab:hover { color: var(--color-text-1); }
+  .type-tab.active {
+    color: var(--color-primary-6);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary-6);
+  }
+
+  /* ======== Pagination ======== */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-3);
+  }
+  .pagination-bar .total { margin-right: 8px; }
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+  .page-btn:hover { border-color: var(--color-primary-6); color: var(--color-primary-6); }
+  .page-btn.active {
+    background: var(--color-primary-6);
+    color: white;
+    border-color: var(--color-primary-6);
+  }
+  .page-btn.disabled {
+    color: var(--color-text-4);
+    cursor: not-allowed;
+    border-color: var(--color-border-default);
+  }
+
+  /* ======== Responsive ======== */
+  .filter-select.sm { min-width: 130px; }
+
+  /* ======== 排行榜居中弹窗 ======== */
+  .rank-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--color-overlay);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .rank-modal-overlay .rank-modal {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    top: auto; right: auto;
+    height: auto;
+    box-shadow: var(--shadow-modal);
+    animation: rankModalIn 200ms ease-out;
+    display: flex;
+    flex-direction: column;
+  }
+  @keyframes rankModalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .rank-modal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .rank-modal .modal-header .modal-title { font-size: 16px; font-weight: 700; }
+  .rank-modal .modal-header .modal-close {
+    width: 28px; height: 28px;
+    border: none; background: none;
+    font-size: 18px; color: var(--color-text-3);
+    cursor: pointer; border-radius: var(--radius-btn);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rank-modal .modal-header .modal-close:hover { background: var(--color-fill-hover); }
+  .rank-modal .modal-body {
+    display: block;
+    overflow-y: auto;
+    flex: none;
+  }
+  .rank-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: rgba(242,245,247,0.5);
+  }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+
+  /* PRD Right Panel (fixed) */
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  .prd-context-hint { font-size: 12px; color: var(--color-text-3); margin-bottom: 12px; padding: 6px 10px; background: #FFF5E6; border-radius: 6px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- PRD Toggle Button -->
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
+<div class="layout">
+  <!-- ======== Sidebar ======== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SCRM</div>
+    <nav class="sidebar-menu">
+      <div class="menu-item"><span>首页</span></div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item"><span>客户</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
+        </div>
+      </div>
+      <div class="menu-group open" onclick="toggleMenu(this)">
+        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>营销</span><span class="arrow">&#8250;</span></div>
+        <div class="menu-sub">
+          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
+          <div class="menu-item active" onclick="event.stopPropagation();">分销排行榜</div>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ======== Main ======== -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-bell">&#128276;</span>
+      <div class="header-user">
+        <div class="header-avatar">M</div>
+        <span style="font-size:13px; color: var(--color-text-2);">momo.zxy</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="page-card">
+        <div class="page-title-bar">
+          <h1 class="page-title">分销排行榜</h1>
+        </div>
+
+        <!-- Tabs: 活动管理 / KOC合并规则 -->
+        <div class="type-tabs" id="rankTabs">
+          <div class="type-tab active" onclick="switchRankTab(this,'campaigns')">活动管理</div>
+          <div class="type-tab" onclick="switchRankTab(this,'koc')">KOC 合并规则</div>
+        </div>
+
+        <!-- === Tab: 活动管理 === -->
+        <div class="rank-tab-content" id="rankTabCampaigns">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--color-border-default);">
+            <span style="font-size:13px; color:var(--color-text-3);">共 3 个活动</span>
+            <button class="btn btn-primary" onclick="openRankModal('campaignModal')">+ 创建活动</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" style="min-width:0; table-layout:auto;">
+              <thead>
+                <tr>
+                  <th style="width:25%;">活动名称</th>
+                  <th style="width:25%;">活动时间</th>
+                  <th style="width:10%;">状态</th>
+                  <th style="width:25%;">排行榜链接</th>
+                  <th style="width:15%;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>418 大促分销排行榜</strong></td>
+                  <td style="color:var(--color-text-3);">2026-04-15 ~ 2026-04-20</td>
+                  <td><span class="tag tag-success" style="font-size:11px;">进行中</span></td>
+                  <td>
+                    <span style="font-size:12px; color:var(--color-text-3);">h5.scrm.com/rank/418</span>
+                    <button class="btn-text" style="font-size:12px;" onclick="alert('已复制')">复制</button>
+                  </td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
+                    <button class="btn-text" onclick="window.open('分销排行榜.html')">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('418 大促分销排行榜')">订单</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>春季招募排行榜</strong></td>
+                  <td style="color:var(--color-text-3);">2026-03-01 ~ 2026-03-15</td>
+                  <td><span class="tag" style="font-size:11px; background:var(--color-fill-3); color:var(--color-text-3);">已结束</span></td>
+                  <td>
+                    <span style="font-size:12px; color:var(--color-text-3);">h5.scrm.com/rank/spring</span>
+                    <button class="btn-text" style="font-size:12px;" onclick="alert('已复制')">复制</button>
+                  </td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
+                    <button class="btn-text">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('春季招募排行榜')">订单</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>520 情人节分销榜</strong></td>
+                  <td style="color:var(--color-text-3);">2026-05-18 ~ 2026-05-22</td>
+                  <td><span class="tag" style="font-size:11px; background:var(--color-warning-1); color:var(--color-warning-6);">未开始</span></td>
+                  <td>
+                    <span style="font-size:12px; color:var(--color-text-3);">h5.scrm.com/rank/520</span>
+                    <button class="btn-text" style="font-size:12px;" onclick="alert('已复制')">复制</button>
+                  </td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('campaignModal')">编辑</button>
+                    <button class="btn-text">预览</button>
+                    <button class="btn-text" onclick="showOrderPage('520 情人节分销榜')">订单</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- === Tab: KOC 合并规则 === -->
+        <div class="rank-tab-content" id="rankTabKoc" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--color-border-default);">
+            <div>
+              <span style="font-size:13px; color:var(--color-text-3);">共 3 条合并规则</span>
+              <span style="font-size:12px; color:var(--color-text-4); margin-left:8px;">全局配置，对所有活动生效</span>
+            </div>
+            <button class="btn btn-primary" onclick="openRankModal('mergeModal')">+ 新建规则</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" style="min-width:800px;">
+              <thead>
+                <tr>
+                  <th style="width:200px;">主账号</th>
+                  <th>子账号</th>
+                  <th style="width:120px;">创建时间</th>
+                  <th style="width:120px;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="customer-info">
+                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
+                      <div><div class="customer-name">阿强</div><div class="customer-phone">#10234</div></div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="tag" style="font-size:11px; margin-right:4px;">阿强小号 #10235</span>
+                    <span class="tag" style="font-size:11px;">强哥 #10236</span>
+                  </td>
+                  <td style="color:var(--color-text-3);">2026-04-01 10:23:15</td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('mergeModal')">编辑</button>
+                    <button class="btn-text" style="color:var(--color-danger-6);">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="customer-info">
+                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
+                      <div><div class="customer-name">小鱼儿</div><div class="customer-phone">#20567</div></div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="tag" style="font-size:11px;">鱼鱼 #20568</span>
+                  </td>
+                  <td style="color:var(--color-text-3);">2026-04-01 14:08:42</td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('mergeModal')">编辑</button>
+                    <button class="btn-text" style="color:var(--color-danger-6);">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="customer-info">
+                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
+                      <div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="tag" style="font-size:11px; margin-right:4px;">大头哥 #31090</span>
+                    <span class="tag" style="font-size:11px; margin-right:4px;">DaTou #31091</span>
+                    <span class="tag" style="font-size:11px;">头哥带货 #31092</span>
+                  </td>
+                  <td style="color:var(--color-text-3);">2026-03-28 09:15:33</td>
+                  <td>
+                    <button class="btn-text" onclick="openRankModal('mergeModal')">编辑</button>
+                    <button class="btn-text" style="color:var(--color-danger-6);">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- === 订单管理子页面（从活动列表点击「订单」进入） === -->
+        <div id="rankOrderPage" style="display:none;">
+          <!-- 返回 + 活动名称 -->
+          <div style="display:flex; align-items:center; gap:12px; padding:16px 20px; border-bottom:1px solid var(--color-border-default);">
+            <button class="btn btn-secondary" style="height:28px; padding:0 10px; font-size:12px;" onclick="hideOrderPage()">← 返回活动列表</button>
+            <span style="font-size:15px; font-weight:600;" id="orderPageTitle">418 大促分销排行榜</span>
+            <span style="font-size:13px; color:var(--color-text-3);">— 订单管理</span>
+          </div>
+          <!-- 筛选区（参考客户管理 filter-area 样式） -->
+          <div class="filter-area">
+            <div class="filter-row">
+              <input class="filter-input wide" type="text" placeholder="分销人（昵称/星球编号/手机号）">
+              <input class="filter-input wide" type="text" placeholder="成交人（昵称/星球编号/手机号）">
+              <select class="filter-select sm">
+                <option value="">订单状态</option>
+                <option>已付款</option>
+                <option>已退款</option>
+              </select>
+              <select class="filter-select sm">
+                <option value="">订单来源</option>
+                <option>星橙订单</option>
+                <option>视频号订单</option>
+                <option>官网订单</option>
+                <option>企微订单</option>
+                <option>支付宝订单</option>
+                <option>星球订单</option>
+              </select>
+              <input class="filter-input date-range" type="text" placeholder="成交时间（开始）~ 成交时间（结束）">
+            </div>
+            <div class="filter-row">
+              <div class="filter-actions">
+                <button class="btn btn-primary">查询</button>
+                <button class="btn btn-secondary">清空</button>
+                <button class="btn btn-secondary">导出</button>
+                <button class="btn btn-outline" onclick="openRankModal('importModal')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Excel 导入
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" style="min-width:1100px;">
+              <thead>
+                <tr>
+                  <th>商户单号/订单号</th>
+                  <th>订单状态</th>
+                  <th>支付金额</th>
+                  <th>订单来源</th>
+                  <th>用户信息</th>
+                  <th>分享者</th>
+                  <th>付款时间</th>
+                  <th>退款时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1496978341769...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416092301</div></td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#FFF4E6; color:#E8590C;">星橙订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">姚致蓝</div><div class="customer-phone">#195033</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">更绿</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-16 09:23</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1534490211769...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416101502</div></td>
+                  <td><span class="tag" style="font-size:11px; background:var(--color-danger-1); color:var(--color-danger-6);">已退款</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#E7F5FF; color:#1C7ED6;">视频号订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">唐志和Alexand*</div><div class="customer-phone">#199097</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小星探</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-16 10:15</td>
+                  <td style="color:var(--color-text-3);">2026-04-18 11:30</td>
+                </tr>
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1117079117700...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416163603</div></td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:var(--color-primary-1); color:var(--color-primary-6);">官网订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">🍊橙子</div><div class="customer-phone">#199105</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小星探</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-16 16:36</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1496978341888...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260415143004</div></td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#FFF4E6; color:#E8590C;">星橙订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">赵六</div><div class="customer-phone">#201456</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-15 14:30</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <!-- Excel 导入数据 — 企微订单 -->
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041709320...</td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#F3F0FF; color:#7048E8;">企微订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">林小北</div><div class="customer-phone">#205678</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">阿强</div><div class="customer-phone">#10234</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-17 09:32</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <!-- Excel 导入数据 — 支付宝订单 -->
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041711450...</td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#FFF9DB; color:#E67700;">支付宝订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">张明远</div><div class="customer-phone">#208901</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">更绿</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-17 11:45</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <!-- Excel 导入数据 — 星球订单 -->
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041714200...</td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#EBFBEE; color:#2B8A3E;">星球订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">王小花</div><div class="customer-phone">#210345</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小鱼儿</div><div class="customer-phone">#20567</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-17 14:20</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+                <!-- Excel 导入数据 — 星球订单（已退款） -->
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041618050...</td>
+                  <td><span class="tag" style="font-size:11px; background:var(--color-danger-1); color:var(--color-danger-6);">已退款</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#EBFBEE; color:#2B8A3E;">星球订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">李大壮</div><div class="customer-phone">#211567</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-16 18:05</td>
+                  <td style="color:var(--color-text-3);">2026-04-18 09:30</td>
+                </tr>
+                <!-- Excel 导入数据 — 视频号订单 -->
+                <tr>
+                  <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">2026041815220...</div><div style="color:var(--color-text-4); margin-top:2px;">VH20260418152207</div></td>
+                  <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
+                  <td style="font-weight:600;">3,365.00</td>
+                  <td><span class="tag" style="font-size:11px; background:#E7F5FF; color:#1C7ED6;">视频号订单</span></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">周小米</div><div class="customer-phone">#212890</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">星辰海</div><div class="customer-phone">#40321</div></div></div></td>
+                  <td style="color:var(--color-text-3);">2026-04-18 15:22</td>
+                  <td style="color:var(--color-text-4);">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination-bar">
+            <span class="total">共 68 条记录</span>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">&gt;</button>
+          </div>
+        </div>
+      </div><!-- /page-card -->
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ======== 分销排行榜弹窗 ======== -->
+
+<!-- 活动创建/编辑弹窗 -->
+<div class="rank-modal-overlay" id="campaignModal">
+  <div class="rank-modal">
+    <div class="modal-header">
+      <span class="modal-title">创建活动</span>
+      <button class="modal-close" onclick="closeRankModal('campaignModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">活动名称 <span style="color:var(--color-danger-6);">*</span></label>
+        <input class="filter-input" style="width:100%;" placeholder="如：418 大促分销排行榜">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">活动时间 <span style="color:var(--color-danger-6);">*</span></label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input class="filter-input" type="date" value="2026-04-15" style="flex:1;">
+          <span style="color:var(--color-text-4);">~</span>
+          <input class="filter-input" type="date" value="2026-04-20" style="flex:1;">
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">活动 Banner 图</label>
+        <div style="border:2px dashed var(--color-border-default); border-radius:var(--radius-card); padding:20px; text-align:center; cursor:pointer;" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" style="display:none;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:4px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <div style="font-size:13px; color:var(--color-text-3);">点击上传 Banner 图</div>
+          <div style="font-size:12px; color:var(--color-text-4); margin-top:2px;">建议尺寸 750×300，支持 JPG/PNG</div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">活动规则 <span style="color:var(--color-danger-6);">*</span></label>
+        <textarea class="filter-input" style="width:100%; height:120px; padding:8px 10px; resize:vertical;" placeholder="请输入活动规则，如：&#10;1. 通过专属邀请链接成交的订单计入排行&#10;2. 退款订单自动扣除&#10;3. 排名按有效成交人数降序，相同则先达到者优先"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding:12px 20px; border-top:1px solid var(--color-border-default); background:rgba(242,245,247,0.5);">
+      <button class="btn btn-outline" onclick="closeRankModal('campaignModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeRankModal('campaignModal')">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- KOC 合并规则弹窗 -->
+<div class="rank-modal-overlay" id="mergeModal">
+  <div class="rank-modal">
+    <div class="modal-header">
+      <span class="modal-title">KOC 合并规则</span>
+      <button class="modal-close" onclick="closeRankModal('mergeModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">主账号 <span style="color:var(--color-danger-6);">*</span></label>
+        <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">排行榜将展示此账号的信息</div>
+        <input class="filter-input" style="width:100%;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索">
+        <!-- 搜索结果示例（选中后显示） -->
+        <div style="margin-top:8px;">
+          <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background:var(--color-primary-1); border:1px solid var(--color-primary-2); border-radius:var(--radius-btn);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-6)" stroke-width="1.5"><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg>
+            <span style="font-size:13px; font-weight:500; color:var(--color-primary-6);">阿强</span>
+            <span style="font-size:11px; color:var(--color-text-3);">#10234</span>
+            <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">子账号</label>
+        <div style="font-size:12px; color:var(--color-text-4); margin-bottom:6px;">这些账号的成交数据将归入主账号统计</div>
+        <input class="filter-input" style="width:100%; margin-bottom:8px;" placeholder="输入星球编号 / 昵称 / 手机号 / 用户ID 搜索添加">
+        <!-- 已添加的子账号 -->
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
+            阿强小号 #10235 <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
+          </span>
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--color-fill-3); border-radius:var(--radius-btn); font-size:13px;">
+            强哥 #10236 <button style="border:none; background:none; cursor:pointer; color:var(--color-danger-6); font-size:16px; line-height:1; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;" onmouseover="this.style.background='var(--color-danger-1)'" onmouseout="this.style.background='none'">&times;</button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding:12px 20px; border-top:1px solid var(--color-border-default); background:rgba(242,245,247,0.5);">
+      <button class="btn btn-outline" onclick="closeRankModal('mergeModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeRankModal('mergeModal')">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Excel 导入弹窗 -->
+<div class="rank-modal-overlay" id="importModal">
+  <div class="rank-modal" style="width:520px;">
+    <div class="modal-header">
+      <span class="modal-title">Excel 批量导入订单</span>
+      <button class="modal-close" onclick="closeRankModal('importModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">1. 下载导入模板</label>
+        <button class="btn btn-outline" style="font-size:12px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载 Excel 模板
+        </button>
+        <div style="margin-top:8px; overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:11px; color:var(--color-text-3);">
+            <thead>
+              <tr style="background:var(--color-fill-3);">
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">A 商户订单号</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">B 时间</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">C 订单来源</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">D 成员编号</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">E 用户昵称</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">F 支付金额</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">G 分享者编号</th>
+                <th style="padding:4px 6px; text-align:left; font-weight:600; white-space:nowrap; border:1px solid var(--color-border-default);">H 订单状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default); white-space:nowrap;">14969783417...</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default); white-space:nowrap;">2026-02-01T15:45</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">支付宝</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">195033</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">姚致蓝</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">3365.00</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">11148</td>
+                <td style="padding:3px 6px; border:1px solid var(--color-border-default);">支付成功</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">2. 上传 Excel 文件</label>
+        <div style="border:2px dashed var(--color-border-default); border-radius:var(--radius-card); padding:24px; text-align:center; cursor:pointer;" onclick="this.querySelector('input').click()">
+          <input type="file" accept=".xlsx,.xls" style="display:none;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-size:13px; color:var(--color-text-3);">点击或拖拽上传 Excel 文件</div>
+          <div style="font-size:12px; color:var(--color-text-4); margin-top:4px;">支持 .xlsx / .xls</div>
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">3. 校验结果预览</label>
+        <div style="background:var(--color-fill-3); border-radius:var(--radius-card); padding:16px; text-align:center; color:var(--color-text-4); font-size:13px;">
+          上传文件后显示校验结果
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px; padding:12px 20px; border-top:1px solid var(--color-border-default); background:rgba(242,245,247,0.5);">
+      <button class="btn btn-outline" onclick="closeRankModal('importModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeRankModal('importModal')" disabled style="opacity:0.5;">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== 分销排行榜 PRD 标注面板 ======== -->
+<div class="prd-panel" data-prd-key="rank" data-prd-version="20260401" data-prd-view="list" id="prdPanelRank">
+  <div class="prd-context-hint">分销排行榜 · PRD v2.0</div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-label">背景</div>
+    <div class="prd-item">KOC 通过分享链接邀请新用户下单，需实时排行榜展示分销战绩，形成竞争氛围</div>
+    <div class="prd-item">部分 KOC 拥有<strong>多个账号</strong>，需合并展示；部分渠道系统无法自动获取订单，需 <strong>Excel 导入</strong>补录</div>
+    <div class="prd-label">产品目标</div>
+    <div class="prd-item">激励 KOC 分销（转化率提升 20%）</div>
+    <div class="prd-item">排行榜实时更新，退款自动扣除</div>
+    <div class="prd-item">通用模板，支持<strong>多活动复用</strong></div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title green">2. H5 排行榜（微信内访问）</div>
+    <div class="prd-label">排行榜列表页</div>
+    <div class="prd-item">橙色渐变 Header + 活动标题 + 状态标签</div>
+    <div class="prd-item"><strong>我的排名卡片</strong>：登录后显示排名+头像+昵称+成交人数（<strong>可点击查看明细</strong>）</div>
+    <div class="prd-item">排行榜列表：排名 / 分销人(头像+昵称) / 星球编号 / 成交人数</div>
+    <div class="prd-item">前三名<strong>奖牌图标</strong>（🥇🥈🥉），当前用户行<strong>绿色高亮</strong></div>
+    <div class="prd-label">排名算法</div>
+    <div class="prd-item">1. 按有效成交人数降序（有效 = 已付款 - 已退款）</div>
+    <div class="prd-item">2. 同分按首笔成交时间升序</div>
+    <div class="prd-item">3. KOC 多账号合并后统一计算</div>
+    <div class="prd-label">成交明细页</div>
+    <div class="prd-item">统计卡片：有效成交数 + 已退款数</div>
+    <div class="prd-item">成交人列表：头像 + 昵称 + 星球编号 + 订单状态（已付款绿/已退款红+删除线）</div>
+    <div class="prd-label">微信登录</div>
+    <div class="prd-item">静默授权（snsapi_base）+ 用户确认（snsapi_userinfo）</div>
+    <div class="prd-item">localStorage 存 token，有效期 7 天</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title blue">3. 活动管理（后台 Tab 1）</div>
+    <div class="prd-label">活动列表</div>
+    <div class="prd-item">字段：活动名称 / 活动时间 / 状态（未开始/进行中/已结束）/ 排行榜链接（可复制）</div>
+    <div class="prd-item">操作：编辑 / 预览 / <strong>订单</strong>（进入该活动订单管理子页面）</div>
+    <div class="prd-label">活动创建/编辑（居中弹窗）</div>
+    <div class="prd-item"><strong>活动名称</strong> *（文本）</div>
+    <div class="prd-item"><strong>活动时间</strong> *（日期范围）</div>
+    <div class="prd-item"><strong>活动 Banner 图</strong>（图片上传，建议 750×300）</div>
+    <div class="prd-item"><strong>活动规则</strong> *（多行文本）</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title green">4. KOC 合并规则（后台 Tab 2）</div>
+    <div class="prd-label">业务说明</div>
+    <div class="prd-item">部分 KOC 使用多个微信号/手机号分销，通过合并规则将子账号数据归入主账号</div>
+    <div class="prd-label">规则列表</div>
+    <div class="prd-item">主账号（头像+昵称+编号）/ 子账号（tag 列表）/ 创建时间（<strong>精确到秒</strong>）/ 操作</div>
+    <div class="prd-label">规则编辑（居中弹窗）</div>
+    <div class="prd-item">主账号 + 子账号均通过<strong>搜索添加</strong>：星球编号 / 昵称 / 手机号 / 用户ID</div>
+    <div class="prd-item">选中显示为 tag（可 × 删除），删除按钮红色 hover</div>
+    <div class="prd-label">约束规则</div>
+    <div class="prd-item">一个账号只能出现在一条规则中 / 删除规则恢复独立 / 实时生效 / <strong>跨活动全局配置</strong></div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title red">5. 订单管理（活动级子页面）</div>
+    <div class="prd-label">入口</div>
+    <div class="prd-item">从活动列表点击「订单」进入，顶部显示<strong>← 返回活动列表 + 活动名称 — 订单管理</strong></div>
+    <div class="prd-label">筛选区（参考客户管理样式）</div>
+    <div class="prd-item">分销人搜索（昵称/星球编号/手机号）/ 成交人搜索 / 订单状态 / 订单来源 / 付款时间范围</div>
+    <div class="prd-item">操作按钮：查询 / 清空 / 导出 / Excel 导入</div>
+    <div class="prd-label">订单列表（列序对齐导入模板）</div>
+    <div class="prd-item"><strong>商户单号/订单号</strong> — 双行显示（商户号上+订单号下），无则显示 —</div>
+    <div class="prd-item"><strong>订单状态</strong> — 支付成功（绿）/ 已退款（红）</div>
+    <div class="prd-item"><strong>支付金额</strong> — 加粗显示</div>
+    <div class="prd-item"><strong>订单来源</strong> — 星橙(橙)/视频号(蓝)/官网(绿)/企微/支付宝/星球/Excel导入</div>
+    <div class="prd-item"><strong>用户信息</strong> — 头像 + 昵称 + 星球编号（复用 customer-info 组件）</div>
+    <div class="prd-item"><strong>分享者</strong> — 与用户信息同布局（头像 + 昵称 + 星球编号）</div>
+    <div class="prd-item"><strong>付款时间</strong> / <strong>退款时间</strong>（未退款显示 —）</div>
+    <div class="prd-label">订单来源（系统自动获取）</div>
+    <div class="prd-item">星橙订单 / 视频号订单 / 官网订单 / 企微订单 / 支付宝订单 / 星球订单</div>
+    <div class="prd-label">⚠️ 星球订单特殊说明 <span class="prd-tag-new">重要</span></div>
+    <div class="prd-item">星球订单<strong>只有商户单号，没有订单号</strong>，也<strong>无法关联退款单与原付款单</strong>的对应关系</div>
+    <div class="prd-item">因此星球订单的排行榜统计<strong>按人维度</strong>聚合：同一分享者邀请的同一用户，不论有多少笔订单，只计为 1 人</div>
+    <div class="prd-item">退款处理：如果该用户有任一退款记录，则从有效成交人数中扣除该人（而非按单扣除）</div>
+    <div class="prd-label">统计维度</div>
+    <div class="prd-item">排行榜统一<strong>按人统计</strong>（成交人数），不按订单笔数统计</div>
+    <div class="prd-item">同一用户通过不同渠道多次付款，仍只计为 1 人</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title orange">6. Excel 批量导入</div>
+    <div class="prd-label">导入模板字段</div>
+    <div class="prd-item">A <strong>商户订单号</strong>（去重）/ B <strong>时间</strong> / C <strong>订单来源</strong></div>
+    <div class="prd-item">D <strong>成员编号</strong>（成交人星球编号）/ E <strong>用户昵称</strong> / F <strong>支付金额</strong></div>
+    <div class="prd-item">G <strong>分享者编号</strong>（<strong>只填星球编号</strong>，系统自动匹配昵称头像）/ H <strong>订单状态</strong></div>
+    <div class="prd-label">导入流程</div>
+    <div class="prd-item">下载模板 → 填写数据 → 上传 Excel → 数据校验 → 预览结果 → 确认导入</div>
+    <div class="prd-label">校验规则</div>
+    <div class="prd-item">分享者编号须存在 / 商户订单号去重 / 付款时间须在活动范围内 / 状态仅接受 支付成功/已退款</div>
+  </div>
+
+  <div class="prd-section" data-prd-context="list">
+    <div class="prd-section-title green">7. 页面入口与导航</div>
+    <div class="prd-item">后台独立页面，侧边栏「营销 → 分销排行榜」</div>
+    <div class="prd-item">从其他后台页面（标签管理/人群包/自动化标签）侧边栏可跳转</div>
+    <div class="prd-item">两个 Tab：活动管理 / KOC 合并规则</div>
+    <div class="prd-item">订单管理为<strong>活动级子页面</strong>，从活动列表「订单」按钮进入</div>
+  </div>
+</div><!-- /prd-panel rank -->
+
+<script>
+/* 排行榜子Tab切换 */
+function switchRankTab(el, tab) {
+  document.querySelectorAll('#rankTabs .type-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('rankTabCampaigns').style.display = tab === 'campaigns' ? '' : 'none';
+  document.getElementById('rankTabKoc').style.display = tab === 'koc' ? '' : 'none';
+  document.getElementById('rankOrderPage').style.display = 'none';
+  document.getElementById('rankTabs').style.display = '';
+}
+
+/* 订单管理子页面 */
+function showOrderPage(campaignName) {
+  document.getElementById('rankTabCampaigns').style.display = 'none';
+  document.getElementById('rankTabKoc').style.display = 'none';
+  document.getElementById('rankTabs').style.display = 'none';
+  document.getElementById('orderPageTitle').textContent = campaignName;
+  document.getElementById('rankOrderPage').style.display = '';
+}
+function hideOrderPage() {
+  document.getElementById('rankOrderPage').style.display = 'none';
+  document.getElementById('rankTabs').style.display = '';
+  document.getElementById('rankTabCampaigns').style.display = '';
+  document.querySelectorAll('#rankTabs .type-tab').forEach(function(t, i) {
+    t.classList.toggle('active', i === 0);
+  });
+}
+
+/* 排行榜弹窗 */
+function openRankModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+function closeRankModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+// 点击遮罩关闭
+['campaignModal','mergeModal','importModal'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('click', function(e) { if (e.target === el) closeRankModal(id); });
+});
+
+function toggleMenu(group) {
+  group.classList.toggle('open');
+}
+
+// PRD Panel toggle
+function togglePRD() {
+  document.body.classList.toggle('prd-on');
+}
+</script>
+<script src="prd-editor.js"></script>
+</body>
+</html>
