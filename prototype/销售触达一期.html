@@ -1248,6 +1248,9 @@
     box-shadow: 0 0 0 3px rgba(245,74,69,0.1);
   }
 
+  /* 全宽字段内单行输入框限宽，避免拉到整行宽度 */
+  .field.full .input:not([style*="width"]) { max-width: 480px; }
+
   .field-error {
     margin-top: 6px;
     font-size: 12px;
@@ -1376,16 +1379,16 @@
                   </div>
                   <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
                 </div>
-                <div class="field">
-                  <label class="required">所属鱼丸</label>
-                  <div class="radio-group">
-                    <span class="radio-chip">全部鱼丸</span>
-                    <span class="radio-chip active">部分鱼丸</span>
-                  </div>
                 </div>
                 <div class="field full">
-                  <label>执行成员</label>
-                  <input class="input" value="华东一组、华南一组、直播线索组">
+                  <label class="required">所属鱼丸</label>
+                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;">
+                    <span class="radio-chip" id="chip-all-sales">全部鱼丸</span>
+                    <span class="radio-chip active" id="chip-designated">部分鱼丸</span>
+                    <div id="member-wrapper" style="display:flex;align-items:center;gap:8px;">
+                      <input class="input" id="member-input" value="华东一组、华南一组、直播线索组" style="width:260px;">
+                    </div>
+                  </div>
                 </div>
                 <div class="field full">
                   <label class="required">发送通道</label>
@@ -1545,10 +1548,6 @@
                     </div>
                   </div>
                   <div class="field-error" id="time-error">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
-                </div>
-                <div class="field full">
-                  <label>备注</label>
-                  <input class="input" value="第二波触达，重点关注近 15 天新增线索。">
                 </div>
               </div>
             </div>
@@ -2242,6 +2241,21 @@
 
     if (chipImmediate) chipImmediate.addEventListener("click", () => setSendMode("immediate"));
     if (chipScheduled) chipScheduled.addEventListener("click", () => setSendMode("scheduled"));
+
+    /* ---- 所属鱼丸切换 ---- */
+    const chipAllSales = document.getElementById("chip-all-sales");
+    const chipDesignated = document.getElementById("chip-designated");
+    const memberWrapper = document.getElementById("member-wrapper");
+
+    function setMemberMode(mode) {
+      const isDesignated = mode === "designated";
+      if (chipAllSales) chipAllSales.classList.toggle("active", !isDesignated);
+      if (chipDesignated) chipDesignated.classList.toggle("active", isDesignated);
+      if (memberWrapper) memberWrapper.style.display = isDesignated ? "flex" : "none";
+    }
+
+    if (chipAllSales) chipAllSales.addEventListener("click", () => setMemberMode("all"));
+    if (chipDesignated) chipDesignated.addEventListener("click", () => setMemberMode("designated"));
 
     /* ---- Send time validation (09:00–21:00) ---- */
     const timeInput = document.getElementById("send-time-input");
