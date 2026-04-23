@@ -1361,7 +1361,7 @@
               </div>
 
               <div class="form-grid">
-                <div class="field">
+                <div class="field full">
                   <label class="required">任务名称</label>
                   <input class="input" value="4月直播邀约第二批">
                   <div class="field-note">建议包含活动名/批次，方便列表复盘</div>
@@ -1375,6 +1375,17 @@
                     <span class="radio-chip active">活动通知</span>
                   </div>
                   <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
+                </div>
+                <div class="field">
+                  <label class="required">执行人范围</label>
+                  <div class="radio-group">
+                    <span class="radio-chip">全部销售</span>
+                    <span class="radio-chip active">指定销售</span>
+                  </div>
+                </div>
+                <div class="field full">
+                  <label>执行成员</label>
+                  <input class="input" value="华东一组、华南一组、直播线索组">
                 </div>
                 <div class="field full">
                   <label class="required">发送通道</label>
@@ -1537,17 +1548,6 @@
                   <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM">
                   <div class="time-range-hint"><span class="dot"></span>仅允许 09:00 – 21:00 发送，超出时段任务将被拦截</div>
                   <div class="field-error" id="time-error">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
-                </div>
-                <div class="field">
-                  <label class="required">执行人范围</label>
-                  <div class="radio-group">
-                    <span class="radio-chip">全部销售</span>
-                    <span class="radio-chip active">指定销售</span>
-                  </div>
-                </div>
-                <div class="field">
-                  <label>执行成员</label>
-                  <input class="input" value="华东一组、华南一组、直播线索组">
                 </div>
                 <div class="field full">
                   <label>备注</label>
