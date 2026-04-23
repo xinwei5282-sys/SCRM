@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>销售运营过程监控看板 - SCRM</title>
 <link rel="stylesheet" href="prd-editor.css">
+<script src="scrm-sidebar.js"></script>
 <style>
   :root {
     --color-primary-1: #E9FFF8;
@@ -87,6 +88,7 @@
     color: var(--color-text-2);
     font-size: 14px;
     transition: background 100ms;
+    text-decoration: none;
   }
   .menu-item a { color: inherit; text-decoration:none; width:100%; display:flex; justify-content:space-between; }
   .menu-item:hover { background: var(--color-fill-hover); }
@@ -923,28 +925,7 @@
 <button class="prd-toggle" onclick="togglePRD()"><span class="dot"></span>PRD 标注</button>
 
 <div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-logo">SCRM</div>
-    <nav class="sidebar-menu">
-      <div class="menu-item"><span>首页</span></div>
-      <div class="menu-group open" onclick="toggleMenu(this)">
-        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>客户</span><span class="arrow">&#8250;</span></div>
-        <div class="menu-sub">
-          <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
-          <div class="menu-item active" onclick="event.stopPropagation();">销售运营看板</div>
-        </div>
-      </div>
-      <div class="menu-group open" onclick="toggleMenu(this)">
-        <div class="menu-item"><span>营销</span><span class="arrow">&#8250;</span></div>
-        <div class="menu-sub">
-          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='分销排行榜-后台.html'">分销排行榜</div>
-        </div>
-      </div>
-    </nav>
-  </aside>
+  <aside class="sidebar" id="scrm-sidebar"><script>renderSCRMPrototypeSidebar(document.currentScript.parentElement, "sales-warning");</script></aside>
 
   <main class="main">
     <div class="header">

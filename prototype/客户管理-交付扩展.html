@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>客户管理 - 交付侧数据扩展原型</title>
 <link rel="stylesheet" href="prd-editor.css">
+<script src="scrm-sidebar.js"></script>
 <style>
   /* ========================================================
    * Design Tokens — Nova 紧凑布局
@@ -93,6 +94,7 @@
     color: var(--color-text-2);
     font-size: 14px;
     transition: background 100ms;
+    text-decoration: none;
   }
   .menu-item:hover { background: var(--color-fill-hover); }
   .menu-item.active {
@@ -1905,28 +1907,7 @@
 
 <div class="layout">
   <!-- ======== Sidebar ======== -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">SCRM</div>
-    <nav class="sidebar-menu">
-      <div class="menu-item"><span>首页</span></div>
-      <div class="menu-group open" onclick="toggleMenu(this)">
-        <div class="menu-item" style="font-weight:600; color: var(--color-text-1);"><span>客户</span><span class="arrow">&#8250;</span></div>
-        <div class="menu-sub">
-          <div class="menu-item active" onclick="event.stopPropagation();">客户管理</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='销售运营过程监控与预警.html'">销售运营看板</div>
-        </div>
-      </div>
-      <div class="menu-group open" onclick="toggleMenu(this)">
-        <div class="menu-item"><span>营销</span><span class="arrow">&#8250;</span></div>
-        <div class="menu-sub">
-          <div class="menu-item" onclick="event.stopPropagation();location.href='人群包管理.html'">人群包管理</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='自动化标签管理.html'">自动化标签</div>
-          <div class="menu-item" onclick="event.stopPropagation();location.href='分销排行榜-后台.html'">分销排行榜</div>
-        </div>
-      </div>
-    </nav>
-  </aside>
+  <aside class="sidebar" id="scrm-sidebar"><script>renderSCRMPrototypeSidebar(document.currentScript.parentElement, "customer-list");</script></aside>
 
   <!-- ======== Main ======== -->
   <div class="main">
