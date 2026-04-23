@@ -4,7 +4,7 @@
 > 状态：已按最新 H5 更新
 > 日期：2026-04-22
 > 对应原型：[prototype/销售运营过程监控与预警.html](prototype/销售运营过程监控与预警.html)
-> 相关设计：[UI_Design_销售运营过程监控与预警.md](UI_Design_销售运营过程监控与预警.md)
+> 相关设计：[UI_Design_销售运营过程监控与预警.md](../ui-design/UI_Design_销售运营过程监控与预警.md)
 
 ---
 

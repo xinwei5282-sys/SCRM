@@ -3,7 +3,7 @@
 > 设计基础：`.claude/design-foundation.md`（颜色、字体、间距、圆角、组件规范等所有 Token 定义均以该文件为准）
 > 设计语言：Nova 紧凑布局（容器 padding 16px, gap 16px, btn 32px, radius-btn 6px, radius-card 8px）
 > 版本：v1.0 | 日期：2026-03-06
-> PRD 对应：[PRD_企微侧边栏.md](PRD_企微侧边栏.md) v4.0
+> PRD 对应：[PRD_企微侧边栏.md](../prd/PRD_企微侧边栏.md) v4.0
 
 ---
 
