@@ -939,12 +939,53 @@
     flex-direction: column;
   }
 
+  .condition-connector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    height: 24px;
+    background: var(--color-fill-2);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .connector-line {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-default);
+  }
+
+  .connector-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-default);
+    color: var(--color-text-3);
+    letter-spacing: 0.5px;
+  }
+
+  .connector-badge.and {
+    color: var(--color-primary-6);
+    border-color: #c0e8da;
+    background: var(--color-primary-1);
+  }
+
+  .connector-badge.or {
+    color: var(--color-info-6);
+    border-color: #d5e7ff;
+    background: var(--color-info-1);
+  }
+
   .condition-row {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 9px 14px;
-    border-bottom: 1px solid var(--color-border-default);
   }
 
   .condition-row:last-child { border-bottom: none; }
@@ -1109,15 +1150,24 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: var(--color-fill-3);
+    background: #d6ede5;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-primary-7);
     flex-shrink: 0;
+    letter-spacing: -0.3px;
   }
 
-  .channel-card.selected .channel-icon { background: #c5ede1; }
+  .channel-icon.xingyun {
+    background: #e8eeff;
+    color: #3a5bd9;
+  }
+
+  .channel-card.selected .channel-icon { background: #b8e4d4; }
+  .channel-card.selected .channel-icon.xingyun { background: #d8e0ff; }
 
   .channel-name-row {
     display: flex;
@@ -1196,51 +1246,6 @@
               </div>
             </div>
 
-            <div class="hero-strip">
-              <div class="hero-card">
-                <h2>先把触达能力做成一个能稳定跑起来的任务工具</h2>
-                <p>一期优先解决“怎么快速建任务、怎么避免骚扰、怎么复盘结果”这三个问题，后续再升级到可配置人群和模板体系。</p>
-                <div class="hero-meta">
-                  <span class="tag primary">固定场景</span>
-                  <span class="tag">手动内容</span>
-                  <span class="tag info">结果回流</span>
-                  <span class="tag warn">前置拦截</span>
-                </div>
-              </div>
-              <div class="hero-side">
-                <div class="hero-side-card">
-                  <h3>当前任务状态</h3>
-                  <div class="mini-metric"><strong>待提交</strong><span>建议先完成人数预览</span></div>
-                </div>
-                <div class="hero-side-card">
-                  <h3>推荐动作</h3>
-                  <div class="mini-metric"><strong>预览人数</strong><span>确认排除原因占比是否合理</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="kpi-grid">
-              <div class="kpi-card primary">
-                <div class="kpi-label">本周触达任务</div>
-                <div class="kpi-value">24</div>
-                <div class="kpi-note">较上周 +6，活动通知占比最高</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">平均创建时长</div>
-                <div class="kpi-value">2.6m</div>
-                <div class="kpi-note">满足一期 < 3 分钟目标</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">平均回复率</div>
-                <div class="kpi-value">18.4%</div>
-                <div class="kpi-note">沉默唤醒低于活动通知</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">防骚扰排除率</div>
-                <div class="kpi-value">12.7%</div>
-                <div class="kpi-note">主要原因：最近已触达、冷静期</div>
-              </div>
-            </div>
 
             <div class="section">
               <div class="section-title">
@@ -1265,6 +1270,33 @@
                     <span class="radio-chip active">活动通知</span>
                   </div>
                   <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
+                </div>
+                <div class="field full">
+                  <label class="required">发送通道</label>
+                  <div class="channel-cards" id="channel-cards">
+                    <div class="channel-card selected" data-channel="wecom">
+                      <div class="channel-header">
+                        <div class="channel-icon">企微</div>
+                        <div class="channel-name-row">
+                          <strong>企微官方群发</strong>
+                          <span class="channel-badge safe">合规</span>
+                        </div>
+                      </div>
+                      <div class="channel-desc">通过企业微信官方 API 发送，消息来源可见、客户体验稳定，有回执记录。</div>
+                      <div class="channel-limits">每账号每日 200 条 · 同一客户每月最多收 4 条 · 适合通知类批量触达</div>
+                    </div>
+                    <div class="channel-card" data-channel="xingyun">
+                      <div class="channel-header">
+                        <div class="channel-icon xingyun">星云</div>
+                        <div class="channel-name-row">
+                          <strong>星云</strong>
+                          <span class="channel-badge caution">谨慎使用</span>
+                        </div>
+                      </div>
+                      <div class="channel-desc">通过星云工具发送，支持更自由的内容格式，适合个性化话术和高价值客户触达。</div>
+                      <div class="channel-limits">建议用于 A 类 / 高意向客户 · 控制单账号日发量 · 注意发送频率</div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="field full">
@@ -1300,6 +1332,12 @@
                         <button class="btn-icon" title="删除此条件">×</button>
                       </div>
 
+                      <div class="condition-connector" data-connector="and">
+                        <div class="connector-line"></div>
+                        <span class="connector-badge and">且</span>
+                        <div class="connector-line"></div>
+                      </div>
+
                       <div class="condition-row">
                         <select class="select cond-select">
                           <option>活动标签</option>
@@ -1319,6 +1357,12 @@
                           <input class="tag-input" placeholder="继续输入标签...">
                         </div>
                         <button class="btn-icon" title="删除此条件">×</button>
+                      </div>
+
+                      <div class="condition-connector" data-connector="and">
+                        <div class="connector-line"></div>
+                        <span class="connector-badge and">且</span>
+                        <div class="connector-line"></div>
                       </div>
 
                       <div class="condition-row">
@@ -1356,35 +1400,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="field-note">标签条件取"且"或"或"关系可在上方切换；"不包含"条件将排除命中的客户。</div>
-                </div>
-
-                <div class="field full">
-                  <label class="required">发送通道</label>
-                  <div class="channel-cards" id="channel-cards">
-                    <div class="channel-card selected" data-channel="wecom">
-                      <div class="channel-header">
-                        <div class="channel-icon">💬</div>
-                        <div class="channel-name-row">
-                          <strong>企微官方群发</strong>
-                          <span class="channel-badge safe">合规</span>
-                        </div>
-                      </div>
-                      <div class="channel-desc">通过企业微信官方 API 发送，消息来源可见、客户体验稳定，有回执记录。</div>
-                      <div class="channel-limits">每账号每日 200 条 · 同一客户每月最多收 4 条 · 适合通知类批量触达</div>
-                    </div>
-                    <div class="channel-card" data-channel="xingyun">
-                      <div class="channel-header">
-                        <div class="channel-icon">⚡</div>
-                        <div class="channel-name-row">
-                          <strong>星云</strong>
-                          <span class="channel-badge caution">谨慎使用</span>
-                        </div>
-                      </div>
-                      <div class="channel-desc">通过星云工具发送，支持更自由的内容格式，适合个性化话术和高价值客户触达。</div>
-                      <div class="channel-limits">建议用于 A 类 / 高意向客户 · 控制单账号日发量 · 注意发送频率</div>
-                    </div>
-                  </div>
+                  <div class="field-note">条件之间逻辑关系（且 / 或）可在上方切换；"不包含"条件将排除命中的客户。</div>
                 </div>
               </div>
             </div>
@@ -1402,11 +1418,7 @@
                 <div class="field full">
                   <label class="required">推送内容</label>
                   <textarea class="textarea">Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
-                  <div class="field-note">建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
-                  <div class="message-preview">
-                    <small>内容快照预览</small>
-                    Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。
-                  </div>
+                  <div class=”field-note”>建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
                 </div>
                 <div class="field">
                   <label class="required">发送方式</label>
@@ -1560,24 +1572,6 @@
                 <button class="btn">重置</button>
               </div>
             </div>
-
-            <div class="section" style="padding-top:0;">
-              <div class="insight-grid">
-                <div class="insight-card">
-                  <h4>创建高峰场景</h4>
-                  <p>活动通知任务最多，占本周触达任务的 41.7%，说明运营批量触达仍是当前核心需求。</p>
-                </div>
-                <div class="insight-card">
-                  <h4>高回复类型</h4>
-                  <p>商机推进类任务回复率最高，适合沉淀为后续最佳实践和标准话术模板。</p>
-                </div>
-                <div class="insight-card">
-                  <h4>异常观察</h4>
-                  <p>新线索首触达失败主要来自通道回执异常，建议补偿重试而不是重复建新任务。</p>
-                </div>
-              </div>
-            </div>
-
             <div class="table-wrap">
               <table>
                 <thead>
@@ -1623,7 +1617,10 @@
                     <td>415</td>
                     <td>63</td>
                     <td>15.2%</td>
-                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                    <td><div style="display:flex;gap:6px;">
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                    </div></td>
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">商机推进-试用到期提醒</a></td>
@@ -1637,7 +1634,10 @@
                     <td>278</td>
                     <td>82</td>
                     <td>29.5%</td>
-                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                    <td><div style="display:flex;gap:6px;">
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                    </div></td>
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">新线索首触达-表单导入</a></td>
@@ -1651,7 +1651,10 @@
                     <td>521</td>
                     <td>111</td>
                     <td>21.3%</td>
-                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                    <td><div style="display:flex;gap:6px;">
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                    </div></td>
                   </tr>
                 </tbody>
               </table>
@@ -1972,16 +1975,44 @@
     });
 
     /* ---- Logic toggle (且 / 或) ---- */
+    function currentLogic() {
+      const active = document.querySelector("#logic-toggle .logic-btn.active");
+      return active ? active.dataset.logic : "all";
+    }
+
+    function updateConnectors() {
+      const logic = currentLogic();
+      const label = logic === "all" ? "且" : "或";
+      const cls = logic === "all" ? "and" : "or";
+      document.querySelectorAll(".condition-connector").forEach(c => {
+        const badge = c.querySelector(".connector-badge");
+        badge.textContent = label;
+        badge.className = "connector-badge " + cls;
+        c.dataset.connector = logic === "all" ? "and" : "or";
+      });
+    }
+
     document.getElementById("logic-toggle").addEventListener("click", (e) => {
       const btn = e.target.closest(".logic-btn");
       if (!btn) return;
       btn.parentElement.querySelectorAll(".logic-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
+      updateConnectors();
     });
 
     /* ---- Add condition row ---- */
     document.getElementById("add-cond-btn").addEventListener("click", () => {
       const container = document.getElementById("builder-conditions");
+      const logic = currentLogic();
+      const label = logic === "all" ? "且" : "或";
+      const cls = logic === "all" ? "and" : "or";
+
+      const connector = document.createElement("div");
+      connector.className = "condition-connector";
+      connector.dataset.connector = cls;
+      connector.innerHTML = `<div class="connector-line"></div><span class="connector-badge ${cls}">${label}</span><div class="connector-line"></div>`;
+      container.appendChild(connector);
+
       const row = document.createElement("div");
       row.className = "condition-row";
       row.innerHTML = `
@@ -2002,14 +2033,21 @@
         </div>
         <button class="btn-icon" title="删除此条件">×</button>`;
       container.appendChild(row);
-      bindConditionRow(row);
+      bindConditionRow(row, connector);
       row.querySelector(".tag-input").focus();
     });
 
     /* ---- Remove condition row ---- */
-    function bindConditionRow(row) {
+    function bindConditionRow(row, connectorBefore) {
       row.querySelector(".btn-icon").addEventListener("click", () => {
-        if (document.querySelectorAll(".condition-row").length > 1) row.remove();
+        if (document.querySelectorAll(".condition-row").length > 1) {
+          if (connectorBefore) connectorBefore.remove();
+          else {
+            const next = row.nextElementSibling;
+            if (next && next.classList.contains("condition-connector")) next.remove();
+          }
+          row.remove();
+        }
       });
       /* Enter key adds chip in tag-value-area */
       row.querySelector(".tag-input").addEventListener("keydown", (e) => {
@@ -2029,9 +2067,21 @@
     }
 
     /* bind existing rows + chip delete */
-    document.querySelectorAll(".condition-row").forEach(bindConditionRow);
+    document.querySelectorAll(".condition-row").forEach(row => {
+      const prev = row.previousElementSibling;
+      const connector = prev && prev.classList.contains("condition-connector") ? prev : null;
+      bindConditionRow(row, connector);
+    });
     document.querySelectorAll(".chip-del").forEach(del => {
       del.addEventListener("click", () => del.parentElement.remove());
+    });
+
+    /* ---- 数据按钮：跳到详情页并激活客户明细 tab ---- */
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".nav-to-detail-data")) return;
+      gotoPage("detail");
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === "customers"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel === "customers"));
     });
 
     /* ---- Channel card selection ---- */
