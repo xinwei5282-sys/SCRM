@@ -303,14 +303,16 @@
   .customer-avatar {
     width: 32px;
     height: 32px;
-    border-radius: 4px;
-    background: var(--color-fill-3);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #51B7A1, #36A590);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
   }
-  .customer-avatar svg { width: 18px; height: 18px; color: var(--color-text-4); }
   .customer-name { font-weight: 500; color: var(--color-text-1); }
   .customer-phone { font-size: 12px; color: var(--color-text-3); }
 
@@ -540,6 +542,7 @@
         <div class="menu-sub">
           <div class="menu-item" onclick="event.stopPropagation();location.href='客户管理-交付扩展.html'">客户管理</div>
           <div class="menu-item" onclick="event.stopPropagation();location.href='标签管理.html'">标签管理</div>
+          <div class="menu-item" onclick="event.stopPropagation();location.href='销售运营过程监控与预警.html'">销售运营看板</div>
         </div>
       </div>
       <div class="menu-group open" onclick="toggleMenu(this)">
@@ -665,8 +668,8 @@
                 <tr>
                   <td>
                     <div class="customer-info">
-                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
-                      <div><div class="customer-name">阿强</div><div class="customer-phone">#10234</div></div>
+                      <div class="customer-avatar">强</div>
+                      <div><div class="customer-name">阿强</div><div class="customer-phone">星球编号 #10234</div></div>
                     </div>
                   </td>
                   <td>
@@ -682,8 +685,8 @@
                 <tr>
                   <td>
                     <div class="customer-info">
-                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
-                      <div><div class="customer-name">小鱼儿</div><div class="customer-phone">#20567</div></div>
+                      <div class="customer-avatar">鱼</div>
+                      <div><div class="customer-name">小鱼儿</div><div class="customer-phone">星球编号 #20567</div></div>
                     </div>
                   </td>
                   <td>
@@ -698,8 +701,8 @@
                 <tr>
                   <td>
                     <div class="customer-info">
-                      <div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
-                      <div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div>
+                      <div class="customer-avatar">大</div>
+                      <div><div class="customer-name">大头</div><div class="customer-phone">星球编号 #31089</div></div>
                     </div>
                   </td>
                   <td>
@@ -736,15 +739,6 @@
                 <option>已付款</option>
                 <option>已退款</option>
               </select>
-              <select class="filter-select sm">
-                <option value="">订单来源</option>
-                <option>星橙订单</option>
-                <option>视频号订单</option>
-                <option>官网订单</option>
-                <option>企微订单</option>
-                <option>支付宝订单</option>
-                <option>星球订单</option>
-              </select>
               <input class="filter-input date-range" type="text" placeholder="成交时间（开始）~ 成交时间（结束）">
             </div>
             <div class="filter-row">
@@ -766,7 +760,6 @@
                   <th>商户单号/订单号</th>
                   <th>订单状态</th>
                   <th>支付金额</th>
-                  <th>订单来源</th>
                   <th>用户信息</th>
                   <th>分享者</th>
                   <th>付款时间</th>
@@ -778,9 +771,8 @@
                   <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1496978341769...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416092301</div></td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#FFF4E6; color:#E8590C;">星橙订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">姚致蓝</div><div class="customer-phone">#195033</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">更绿</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">姚</div><div><div class="customer-name">姚致蓝</div><div class="customer-phone">星球编号 #195033</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">更</div><div><div class="customer-name">更绿</div><div class="customer-phone">星球编号 #11148</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-16 09:23</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -788,9 +780,8 @@
                   <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1534490211769...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416101502</div></td>
                   <td><span class="tag" style="font-size:11px; background:var(--color-danger-1); color:var(--color-danger-6);">已退款</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#E7F5FF; color:#1C7ED6;">视频号订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">唐志和Alexand*</div><div class="customer-phone">#199097</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小星探</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">唐</div><div><div class="customer-name">唐志和Alexand*</div><div class="customer-phone">星球编号 #199097</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">星</div><div><div class="customer-name">小星探</div><div class="customer-phone">星球编号 #11148</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-16 10:15</td>
                   <td style="color:var(--color-text-3);">2026-04-18 11:30</td>
                 </tr>
@@ -798,9 +789,8 @@
                   <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1117079117700...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260416163603</div></td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:var(--color-primary-1); color:var(--color-primary-6);">官网订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">🍊橙子</div><div class="customer-phone">#199105</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小星探</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">橙</div><div><div class="customer-name">🍊橙子</div><div class="customer-phone">星球编号 #199105</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">星</div><div><div class="customer-name">小星探</div><div class="customer-phone">星球编号 #11148</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-16 16:36</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -808,9 +798,8 @@
                   <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">1496978341888...</div><div style="color:var(--color-text-4); margin-top:2px;">SC20260415143004</div></td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#FFF4E6; color:#E8590C;">星橙订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">赵六</div><div class="customer-phone">#201456</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">赵</div><div><div class="customer-name">赵六</div><div class="customer-phone">星球编号 #201456</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">大</div><div><div class="customer-name">大头</div><div class="customer-phone">星球编号 #31089</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-15 14:30</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -819,9 +808,8 @@
                   <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041709320...</td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#F3F0FF; color:#7048E8;">企微订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">林小北</div><div class="customer-phone">#205678</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">阿强</div><div class="customer-phone">#10234</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">林</div><div><div class="customer-name">林小北</div><div class="customer-phone">星球编号 #205678</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">强</div><div><div class="customer-name">阿强</div><div class="customer-phone">星球编号 #10234</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-17 09:32</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -831,8 +819,8 @@
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
                   <td><span class="tag" style="font-size:11px; background:#FFF9DB; color:#E67700;">支付宝订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">张明远</div><div class="customer-phone">#208901</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">更绿</div><div class="customer-phone">#11148</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">张</div><div><div class="customer-name">张明远</div><div class="customer-phone">星球编号 #208901</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">更</div><div><div class="customer-name">更绿</div><div class="customer-phone">星球编号 #11148</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-17 11:45</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -841,9 +829,8 @@
                   <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041714200...</td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#EBFBEE; color:#2B8A3E;">星球订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">王小花</div><div class="customer-phone">#210345</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">小鱼儿</div><div class="customer-phone">#20567</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">王</div><div><div class="customer-name">王小花</div><div class="customer-phone">星球编号 #210345</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">鱼</div><div><div class="customer-name">小鱼儿</div><div class="customer-phone">星球编号 #20567</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-17 14:20</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
@@ -852,9 +839,8 @@
                   <td style="font-size:12px; font-family:monospace; color:var(--color-text-2);">2026041618050...</td>
                   <td><span class="tag" style="font-size:11px; background:var(--color-danger-1); color:var(--color-danger-6);">已退款</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#EBFBEE; color:#2B8A3E;">星球订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">李大壮</div><div class="customer-phone">#211567</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">大头</div><div class="customer-phone">#31089</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">李</div><div><div class="customer-name">李大壮</div><div class="customer-phone">星球编号 #211567</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">大</div><div><div class="customer-name">大头</div><div class="customer-phone">星球编号 #31089</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-16 18:05</td>
                   <td style="color:var(--color-text-3);">2026-04-18 09:30</td>
                 </tr>
@@ -863,9 +849,8 @@
                   <td style="font-size:12px; font-family:monospace; white-space:nowrap;"><div style="color:var(--color-text-2);">2026041815220...</div><div style="color:var(--color-text-4); margin-top:2px;">VH20260418152207</div></td>
                   <td><span class="tag tag-success" style="font-size:11px;">支付成功</span></td>
                   <td style="font-weight:600;">3,365.00</td>
-                  <td><span class="tag" style="font-size:11px; background:#E7F5FF; color:#1C7ED6;">视频号订单</span></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">周小米</div><div class="customer-phone">#212890</div></div></div></td>
-                  <td><div class="customer-info"><div class="customer-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BDC1C7" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg></div><div><div class="customer-name">星辰海</div><div class="customer-phone">#40321</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">周</div><div><div class="customer-name">周小米</div><div class="customer-phone">星球编号 #212890</div></div></div></td>
+                  <td><div class="customer-info"><div class="customer-avatar">星</div><div><div class="customer-name">星辰海</div><div class="customer-phone">星球编号 #40321</div></div></div></td>
                   <td style="color:var(--color-text-3);">2026-04-18 15:22</td>
                   <td style="color:var(--color-text-4);">—</td>
                 </tr>
