@@ -3,7 +3,7 @@
 > 设计基础：`.claude/design-foundation.md`
 > 设计语言：Nova 紧凑布局
 > 版本：v1.1 | 日期：2026-04-13
-> PRD 对应：[PRD_销售运营过程监控与预警.md](PRD_销售运营过程监控与预警.md)
+> PRD 对应：[PRD_销售运营过程监控与预警.md](../prd/PRD_销售运营过程监控与预警.md)
 
 ---
 

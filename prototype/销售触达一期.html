@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>销售触达一期 - SCRM 原型</title>
+<link rel="stylesheet" href="prd-editor.css">
+<script src="scrm-sidebar.js"></script>
+<style>
+  :root {
+    --color-primary-1: #E9FFF8;
+    --color-primary-2: #BCEDDD;
+    --color-primary-6: #36A590;
+    --color-primary-7: #248F80;
+    --color-accent-orange-1: #FFF7E9;
+    --color-accent-orange-6: #FF7D00;
+    --color-text-1: #242528;
+    --color-text-2: #3B3D40;
+    --color-text-3: #757980;
+    --color-text-4: #BDC1C7;
+    --color-text-7: #FFFFFF;
+    --color-fill-1: #FFFFFF;
+    --color-fill-2: #F7F9FA;
+    --color-fill-3: #F2F5F7;
+    --color-fill-hover: #F2F5F7;
+    --color-surface-canvas: #F2F5F7;
+    --color-border-default: #E4E4E7;
+    --color-border-hover: rgba(117, 121, 128, 0.3);
+    --color-success-1: #F4FFE8;
+    --color-success-6: #52C41A;
+    --color-warning-1: #FFF9E8;
+    --color-warning-6: #FA9A1D;
+    --color-danger-1: #FFEDE8;
+    --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
+    --radius-btn: 6px;
+    --radius-card: 8px;
+    --radius-xs: 4px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-soft: 0 10px 24px rgba(23, 32, 38, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-text-1);
+    background: var(--color-surface-canvas);
+  }
+
+  .layout { display: flex; height: 100vh; }
+
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--color-fill-1);
+    border-right: 1px solid var(--color-border-default);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .sidebar-menu {
+    flex: 1;
+    padding: 8px 0;
+    overflow-y: auto;
+  }
+  .menu-group-title {
+    padding: 8px 16px 4px;
+    font-size: 12px;
+    color: var(--color-text-4);
+    text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 100ms;
+    text-decoration: none;
+  }
+  .menu-item:hover { background: var(--color-fill-hover); }
+  .menu-item.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .menu-item.parent-active {
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+  .menu-item .arrow {
+    font-size: 12px;
+    color: var(--color-text-4);
+    transition: transform 200ms;
+  }
+  .menu-group { }
+  .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
+  .menu-sub {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 200ms ease;
+  }
+  .menu-group.open > .menu-sub { max-height: 200px; }
+  .menu-sub .menu-item {
+    padding-left: 40px;
+    font-size: 13px;
+  }
+  .menu-item small {
+    font-size: 12px;
+    color: var(--color-text-4);
+  }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .header {
+    height: 48px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-2);
+  }
+
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary-6);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .page {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .page.active { display: flex; }
+
+  .page-card {
+    background: var(--color-fill-1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .page-title h1 {
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 4px;
+  }
+
+  .page-title p {
+    color: var(--color-text-3);
+    font-size: 13px;
+  }
+
+  .hero-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+    gap: 16px;
+    padding: 16px 20px 0;
+  }
+
+  .hero-card {
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #d5ebe3;
+    background:
+      radial-gradient(circle at top right, rgba(54,165,144,0.16), transparent 34%),
+      linear-gradient(135deg, #f7fffc 0%, #eef8f5 100%);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-card h2 {
+    font-size: 22px;
+    line-height: 30px;
+    margin-bottom: 6px;
+  }
+
+  .hero-card p {
+    color: var(--color-text-3);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-side {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hero-side-card {
+    border: 1px solid var(--color-border-default);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
+  }
+
+  .hero-side-card h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .mini-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .mini-metric strong {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .mini-metric span {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .nav-switcher {
+    display: inline-flex;
+    gap: 8px;
+    background: var(--color-fill-2);
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .switch-btn {
+    height: 32px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--color-text-2);
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .switch-btn.active {
+    background: var(--color-fill-1);
+    color: var(--color-primary-6);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    font-weight: 600;
+  }
+
+  .btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .btn.primary {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-6);
+    color: var(--color-text-7);
+  }
+
+  .btn.ghost {
+    background: var(--color-fill-3);
+    border-color: transparent;
+  }
+
+  .btn.warn {
+    color: var(--color-danger-6);
+    border-color: #ffd8cf;
+    background: #fff6f3;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    padding: 16px 20px 0;
+  }
+
+  .kpi-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .kpi-label {
+    color: var(--color-text-3);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .kpi-note {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .kpi-card.primary {
+    background: linear-gradient(180deg, #f3fffb 0%, #e7faf4 100%);
+    border-color: #cfece3;
+  }
+
+  .section {
+    padding: 16px 20px;
+    border-top: 1px solid var(--color-border-default);
+  }
+
+  .section:first-of-type { border-top: none; }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .section-title h2 {
+    font-size: 15px;
+    line-height: 24px;
+  }
+
+  .section-title span {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .section-copy {
+    color: var(--color-text-3);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .field.full { grid-column: 1 / -1; }
+
+  .field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--color-text-2);
+    font-weight: 600;
+  }
+
+  .required::after {
+    content: " *";
+    color: var(--color-danger-6);
+  }
+
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    color: var(--color-text-1);
+    border-radius: var(--radius-btn);
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .input,
+  .select {
+    height: 36px;
+    padding: 0 12px;
+  }
+
+  .textarea {
+    min-height: 136px;
+    padding: 10px 12px;
+    resize: vertical;
+  }
+
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54,165,144,0.12);
+  }
+
+  .field-note {
+    margin-top: 6px;
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .radio-group,
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .radio-chip,
+  .tag,
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid var(--color-border-default);
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+  }
+
+  .radio-chip.active,
+  .tag.primary {
+    border-color: #bfe5da;
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  .tag.warn {
+    border-color: #ffe0bf;
+    background: var(--color-accent-orange-1);
+    color: var(--color-accent-orange-6);
+  }
+
+  .tag.info {
+    border-color: #d5e7ff;
+    background: var(--color-info-1);
+    color: var(--color-info-6);
+  }
+
+  .tag.danger {
+    border-color: #ffd7ce;
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+
+  .preview-panel {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 16px;
+  }
+
+  .preview-box {
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fcfdfd;
+  }
+
+  .preview-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .preview-head h3 {
+    font-size: 14px;
+  }
+
+  .progress-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .progress-item {
+    display: grid;
+    grid-template-columns: 92px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .progress-track {
+    height: 8px;
+    background: #ecf2f3;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #52b89f 0%, #2a9a85 100%);
+  }
+
+  .progress-bar.warn {
+    background: linear-gradient(90deg, #ffc56c 0%, #f29a24 100%);
+  }
+
+  .progress-bar.danger {
+    background: linear-gradient(90deg, #ffb39f 0%, #f26350 100%);
+  }
+
+  .message-preview {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px dashed #cdd9dc;
+    background: #fafcfc;
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+
+  .message-preview small {
+    display: block;
+    color: var(--color-text-3);
+    margin-bottom: 6px;
+  }
+
+  .metric-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .metric-item {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--color-fill-2);
+  }
+
+  .metric-item strong {
+    display: block;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .metric-item span {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .risk-alert {
+    border: 1px solid #ffd9b5;
+    background: #fffaf2;
+    color: #9a5b07;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--color-border-default);
+    background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, #ffffff 100%);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-border-default);
+    text-align: left;
+    vertical-align: middle;
+    font-size: 13px;
+  }
+
+  th {
+    color: var(--color-text-3);
+    font-weight: 600;
+    background: #fbfcfc;
+  }
+
+  tr:hover td { background: #fcfefe; }
+
+  .table-wrap { overflow-x: auto; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .filters .input,
+  .filters .select { width: auto; min-width: 160px; }
+
+  .tiny-link {
+    color: var(--color-primary-6);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .status-pill.success {
+    color: var(--color-success-6);
+    background: var(--color-success-1);
+    border-color: #d8efc7;
+  }
+
+  .status-pill.warning {
+    color: var(--color-warning-6);
+    background: var(--color-warning-1);
+    border-color: #fbe5b7;
+  }
+
+  .status-pill.danger {
+    color: var(--color-danger-6);
+    background: var(--color-danger-1);
+    border-color: #ffd8cf;
+  }
+
+  .status-pill.info {
+    color: var(--color-info-6);
+    background: var(--color-info-1);
+    border-color: #d9e8ff;
+  }
+
+  .detail-top {
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 18px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .detail-summary {
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+    margin-top: 12px;
+  }
+
+  .summary-item span {
+    display: block;
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .summary-item strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--color-text-1);
+  }
+
+  .detail-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail-banner {
+    margin: 0 20px;
+    padding: 14px 16px;
+    border: 1px solid #d8ebe4;
+    border-radius: 12px;
+    background:
+      linear-gradient(135deg, rgba(54,165,144,0.08) 0%, rgba(255,255,255,0.9) 55%),
+      #fbfefd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .detail-banner h3 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .detail-banner p {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .banner-grade {
+    text-align: right;
+    min-width: 88px;
+  }
+
+  .banner-grade strong {
+    display: block;
+    font-size: 28px;
+    line-height: 34px;
+    color: var(--color-primary-6);
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-left: 18px;
+    color: var(--color-text-2);
+    font-size: 13px;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+  }
+
+  .timeline-item small {
+    color: var(--color-text-3);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .tabbar {
+    display: inline-flex;
+    gap: 8px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--color-border-default);
+    background: #fff;
+  }
+
+  .tab-btn {
+    height: 42px;
+    padding: 0 4px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-size: 13px;
+  }
+
+  .tab-btn.active {
+    color: var(--color-primary-6);
+    border-bottom-color: var(--color-primary-6);
+    font-weight: 600;
+  }
+
+  .tab-panel {
+    display: none;
+    padding: 16px 20px 20px;
+  }
+
+  .tab-panel.active { display: block; }
+
+  .split-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .mini-card {
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fcfdfd;
+  }
+
+  .mini-card h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .empty-note {
+    padding: 16px;
+    text-align: center;
+    color: var(--color-text-3);
+    background: var(--color-fill-2);
+    border-radius: 8px;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .insight-card {
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+
+  .insight-card h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .insight-card p {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  @media (max-width: 1280px) {
+    .hero-strip,
+    .kpi-grid,
+    .form-grid,
+    .preview-panel,
+    .detail-top,
+    .split-cards,
+    .insight-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---- Tag Builder ---- */
+  .tag-builder {
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    background: #fafcfc;
+    overflow: hidden;
+  }
+
+  .builder-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-border-default);
+    background: var(--color-fill-2);
+    font-size: 13px;
+    color: var(--color-text-2);
+  }
+
+  .logic-toggle {
+    display: inline-flex;
+    background: var(--color-fill-3);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .logic-btn {
+    height: 26px;
+    padding: 0 10px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .logic-btn.active {
+    background: var(--color-fill-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .builder-conditions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .condition-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .condition-row:last-child { border-bottom: none; }
+
+  .cond-select { width: 120px; min-width: 120px; flex-shrink: 0; }
+  .op-select   { width: 90px;  min-width: 90px;  flex-shrink: 0; }
+
+  .tag-value-area {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 4px 8px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: var(--color-fill-1);
+    cursor: text;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--color-primary-1);
+    border: 1px solid #c0e8da;
+    color: var(--color-primary-6);
+    white-space: nowrap;
+  }
+
+  .tag-chip.neg {
+    background: var(--color-danger-1);
+    border-color: #ffd8cf;
+    color: var(--color-danger-6);
+  }
+
+  .chip-del {
+    cursor: pointer;
+    opacity: 0.55;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .chip-del:hover { opacity: 1; }
+
+  .tag-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    min-width: 110px;
+    color: var(--color-text-2);
+  }
+
+  .tag-input::placeholder { color: var(--color-text-4); }
+
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--color-text-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .btn-icon:hover {
+    background: var(--color-fill-3);
+    color: var(--color-danger-6);
+  }
+
+  .builder-footer {
+    padding: 8px 14px;
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--color-fill-2);
+    flex-wrap: wrap;
+  }
+
+  .add-cond-btn {
+    height: 28px;
+    padding: 0 10px;
+    border: 1px dashed var(--color-border-default);
+    background: transparent;
+    border-radius: var(--radius-btn);
+    color: var(--color-primary-6);
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .add-cond-btn:hover { background: var(--color-primary-1); border-style: solid; }
+
+  .builder-preview-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+
+  .builder-preview-inline strong { color: var(--color-text-1); }
+
+  .mini-stat-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .mini-stat {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    background: var(--color-fill-3);
+    color: var(--color-text-3);
+    border: 1px solid var(--color-border-default);
+  }
+
+  /* ---- Channel Cards ---- */
+  .channel-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .channel-card {
+    border: 2px solid var(--color-border-default);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    background: var(--color-fill-1);
+    transition: border-color 150ms, background 150ms;
+  }
+
+  .channel-card:hover { border-color: rgba(54,165,144,0.4); }
+
+  .channel-card.selected {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-1);
+  }
+
+  .channel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .channel-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--color-fill-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .channel-card.selected .channel-icon { background: #c5ede1; }
+
+  .channel-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .channel-name-row strong { font-size: 14px; color: var(--color-text-1); }
+
+  .channel-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .channel-badge.safe {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    border: 1px solid #c0e8da;
+  }
+
+  .channel-badge.caution {
+    background: var(--color-warning-1);
+    color: var(--color-warning-6);
+    border: 1px solid #ffe0bf;
+  }
+
+  .channel-desc {
+    font-size: 12px;
+    color: var(--color-text-2);
+    margin-bottom: 8px;
+    line-height: 18px;
+  }
+
+  .channel-limits {
+    font-size: 11px;
+    color: var(--color-text-3);
+    padding: 6px 8px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 6px;
+    line-height: 16px;
+  }
+
+  .channel-card.selected .channel-limits {
+    background: rgba(54,165,144,0.07);
+  }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" id="scrm-sidebar"><script>renderSCRMPrototypeSidebar(document.currentScript.parentElement, "sales-touch");</script></aside>
+
+    <main class="main">
+      <header class="header">
+        <span>🔔</span>
+        <div class="header-user">
+          <span class="header-avatar">明</span>
+          <span>销售运营 · 明策</span>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page" data-page="create">
+          <div class="page-card">
+            <div class="page-title-bar">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <div class="page-title">
+                  <h1>新建触达任务</h1>
+                  <p>设置目标人群、发送通道与触达内容。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-strip">
+              <div class="hero-card">
+                <h2>先把触达能力做成一个能稳定跑起来的任务工具</h2>
+                <p>一期优先解决“怎么快速建任务、怎么避免骚扰、怎么复盘结果”这三个问题，后续再升级到可配置人群和模板体系。</p>
+                <div class="hero-meta">
+                  <span class="tag primary">固定场景</span>
+                  <span class="tag">手动内容</span>
+                  <span class="tag info">结果回流</span>
+                  <span class="tag warn">前置拦截</span>
+                </div>
+              </div>
+              <div class="hero-side">
+                <div class="hero-side-card">
+                  <h3>当前任务状态</h3>
+                  <div class="mini-metric"><strong>待提交</strong><span>建议先完成人数预览</span></div>
+                </div>
+                <div class="hero-side-card">
+                  <h3>推荐动作</h3>
+                  <div class="mini-metric"><strong>预览人数</strong><span>确认排除原因占比是否合理</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card primary">
+                <div class="kpi-label">本周触达任务</div>
+                <div class="kpi-value">24</div>
+                <div class="kpi-note">较上周 +6，活动通知占比最高</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">平均创建时长</div>
+                <div class="kpi-value">2.6m</div>
+                <div class="kpi-note">满足一期 < 3 分钟目标</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">平均回复率</div>
+                <div class="kpi-value">18.4%</div>
+                <div class="kpi-note">沉默唤醒低于活动通知</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">防骚扰排除率</div>
+                <div class="kpi-value">12.7%</div>
+                <div class="kpi-note">主要原因：最近已触达、冷静期</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <div>
+                  <h2>任务基础信息</h2>
+                  <div class="section-copy">定义任务名称、目标人群与发送通道。</div>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label class="required">任务名称</label>
+                  <input class="input" value="4月直播邀约第二批">
+                  <div class="field-note">建议包含活动名/批次，方便列表复盘</div>
+                </div>
+                <div class="field">
+                  <label class="required">触达场景</label>
+                  <div class="radio-group">
+                    <span class="radio-chip">新线索首触达</span>
+                    <span class="radio-chip">沉默客户唤醒</span>
+                    <span class="radio-chip">商机推进跟进</span>
+                    <span class="radio-chip active">活动通知</span>
+                  </div>
+                  <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
+                </div>
+
+                <div class="field full">
+                  <label class="required">目标人群</label>
+                  <div class="tag-builder">
+                    <div class="builder-header">
+                      <span>客户需满足</span>
+                      <div class="logic-toggle" id="logic-toggle">
+                        <button class="logic-btn active" data-logic="all">所有条件（且）</button>
+                        <button class="logic-btn" data-logic="any">任一条件（或）</button>
+                      </div>
+                      <span style="color:var(--color-text-4);font-size:12px;margin-left:auto;">防骚扰规则在提交后自动叠加，不影响此处估算</span>
+                    </div>
+
+                    <div class="builder-conditions" id="builder-conditions">
+                      <div class="condition-row">
+                        <select class="select cond-select">
+                          <option selected>活动标签</option>
+                          <option>客户层级</option>
+                          <option>客户状态</option>
+                          <option>加粉时长</option>
+                          <option>最近互动</option>
+                          <option>所属销售</option>
+                        </select>
+                        <select class="select op-select">
+                          <option selected>包含</option>
+                          <option>不包含</option>
+                        </select>
+                        <div class="tag-value-area">
+                          <span class="tag-chip">4月直播邀约<span class="chip-del">×</span></span>
+                          <input class="tag-input" placeholder="继续输入标签...">
+                        </div>
+                        <button class="btn-icon" title="删除此条件">×</button>
+                      </div>
+
+                      <div class="condition-row">
+                        <select class="select cond-select">
+                          <option>活动标签</option>
+                          <option selected>客户状态</option>
+                          <option>客户层级</option>
+                          <option>加粉时长</option>
+                          <option>最近互动</option>
+                          <option>所属销售</option>
+                        </select>
+                        <select class="select op-select">
+                          <option selected>包含</option>
+                          <option>不包含</option>
+                        </select>
+                        <div class="tag-value-area">
+                          <span class="tag-chip">潜在客户<span class="chip-del">×</span></span>
+                          <span class="tag-chip">意向客户<span class="chip-del">×</span></span>
+                          <input class="tag-input" placeholder="继续输入标签...">
+                        </div>
+                        <button class="btn-icon" title="删除此条件">×</button>
+                      </div>
+
+                      <div class="condition-row">
+                        <select class="select cond-select">
+                          <option>活动标签</option>
+                          <option>客户状态</option>
+                          <option selected>最近互动</option>
+                          <option>客户层级</option>
+                          <option>加粉时长</option>
+                          <option>所属销售</option>
+                        </select>
+                        <select class="select op-select">
+                          <option>包含</option>
+                          <option selected>不包含</option>
+                        </select>
+                        <div class="tag-value-area">
+                          <span class="tag-chip neg">30天内已回复<span class="chip-del">×</span></span>
+                          <input class="tag-input" placeholder="继续输入标签...">
+                        </div>
+                        <button class="btn-icon" title="删除此条件">×</button>
+                      </div>
+                    </div>
+
+                    <div class="builder-footer">
+                      <button class="add-cond-btn" id="add-cond-btn">＋ 添加条件</button>
+                      <div class="builder-preview-inline">
+                        <strong>预计命中：<span style="color:var(--color-primary-6);">1,248 人</span></strong>
+                        <div class="mini-stat-tags">
+                          <span class="mini-stat">华东 493</span>
+                          <span class="mini-stat">华南 361</span>
+                          <span class="mini-stat">华北 244</span>
+                          <span class="mini-stat">直播线索 150</span>
+                        </div>
+                        <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field-note">标签条件取"且"或"或"关系可在上方切换；"不包含"条件将排除命中的客户。</div>
+                </div>
+
+                <div class="field full">
+                  <label class="required">发送通道</label>
+                  <div class="channel-cards" id="channel-cards">
+                    <div class="channel-card selected" data-channel="wecom">
+                      <div class="channel-header">
+                        <div class="channel-icon">💬</div>
+                        <div class="channel-name-row">
+                          <strong>企微官方群发</strong>
+                          <span class="channel-badge safe">合规</span>
+                        </div>
+                      </div>
+                      <div class="channel-desc">通过企业微信官方 API 发送，消息来源可见、客户体验稳定，有回执记录。</div>
+                      <div class="channel-limits">每账号每日 200 条 · 同一客户每月最多收 4 条 · 适合通知类批量触达</div>
+                    </div>
+                    <div class="channel-card" data-channel="xingyun">
+                      <div class="channel-header">
+                        <div class="channel-icon">⚡</div>
+                        <div class="channel-name-row">
+                          <strong>星云</strong>
+                          <span class="channel-badge caution">谨慎使用</span>
+                        </div>
+                      </div>
+                      <div class="channel-desc">通过星云工具发送，支持更自由的内容格式，适合个性化话术和高价值客户触达。</div>
+                      <div class="channel-limits">建议用于 A 类 / 高意向客户 · 控制单账号日发量 · 注意发送频率</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <div>
+                  <h2>触达内容与执行设置</h2>
+                  <div class="section-copy">一期先不接模板变量，发送内容直接按任务快照保存。</div>
+                </div>
+                <span>一期只支持手动填写内容，不走模板变量渲染</span>
+              </div>
+
+              <div class="form-grid">
+                <div class="field full">
+                  <label class="required">推送内容</label>
+                  <textarea class="textarea">Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
+                  <div class="field-note">建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
+                  <div class="message-preview">
+                    <small>内容快照预览</small>
+                    Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="required">发送方式</label>
+                  <div class="radio-group">
+                    <span class="radio-chip">立即发送</span>
+                    <span class="radio-chip active">定时发送</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="required">发送时间</label>
+                  <input class="input" value="2026-04-24 19:30">
+                </div>
+                <div class="field">
+                  <label class="required">执行人范围</label>
+                  <div class="radio-group">
+                    <span class="radio-chip">全部销售</span>
+                    <span class="radio-chip active">指定销售</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>执行成员</label>
+                  <input class="input" value="华东一组、华南一组、直播线索组">
+                </div>
+                <div class="field full">
+                  <label>备注</label>
+                  <input class="input" value="第二波触达，重点关注近 15 天新增线索。">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <div>
+                  <h2>人群预览与防骚扰排除</h2>
+                  <div class="section-copy">先看命中人数，再看被排除的人和排除原因，避免“为什么少了几百人”无法解释。</div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn ghost">重新计算</button>
+                  <button class="btn primary">预览人数</button>
+                </div>
+              </div>
+
+              <div class="preview-panel">
+                <div class="preview-box">
+                  <div class="preview-head">
+                    <h3>本次任务人群预览</h3>
+                    <span class="tag primary">活动通知</span>
+                  </div>
+                  <div class="metric-row">
+                    <div class="metric-item">
+                      <strong>1,248</strong>
+                      <span>原始命中人数</span>
+                    </div>
+                    <div class="metric-item">
+                      <strong>186</strong>
+                      <span>防骚扰排除人数</span>
+                    </div>
+                    <div class="metric-item">
+                      <strong>1,062</strong>
+                      <span>最终可触达人数</span>
+                    </div>
+                  </div>
+                  <div class="tag-group">
+                    <span class="tag info">最近已触达 93</span>
+                    <span class="tag warn">冷静期 48</span>
+                    <span class="tag danger">本活动已触达 27</span>
+                    <span class="tag">已拉黑/已删除 18</span>
+                  </div>
+                  <div class="progress-stack">
+                    <div class="progress-item">
+                      <span>最近已触达</span>
+                      <div class="progress-track"><div class="progress-bar" style="width:50%;"></div></div>
+                      <strong>93</strong>
+                    </div>
+                    <div class="progress-item">
+                      <span>冷静期</span>
+                      <div class="progress-track"><div class="progress-bar warn" style="width:26%;"></div></div>
+                      <strong>48</strong>
+                    </div>
+                    <div class="progress-item">
+                      <span>本活动已触达</span>
+                      <div class="progress-track"><div class="progress-bar danger" style="width:15%;"></div></div>
+                      <strong>27</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="preview-box">
+                  <div class="preview-head">
+                    <h3>风险提示</h3>
+                    <span class="status-pill warning">中风险</span>
+                  </div>
+                  <div class="risk-alert">当前排除人数占比 14.9%，系统建议保持该批次发送时间不晚于 20:30，并优先在活动前 24 小时触达。</div>
+                  <div style="margin-top:12px;" class="timeline">
+                    <div class="timeline-item">
+                      <small>频控提醒</small>
+                      活动通知近 7 天已发送 1 次，建议不要重复追加第三批。
+                    </div>
+                    <div class="timeline-item">
+                      <small>内容提醒</small>
+                      当前文案偏邀约式，适合活动通知场景，不建议复用于沉默唤醒。
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-actions">
+              <button class="btn">取消</button>
+              <button class="btn ghost">保存草稿</button>
+              <button class="btn primary">提交执行</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page active" data-page="list">
+          <div class="page-card">
+            <div class="page-title-bar">
+              <div class="page-title">
+                <h1>销售触达</h1>
+                <p>管理触达任务，查看执行状态、命中人数与回复效果。</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="nav-switcher">
+                  <button class="list-subtab active" data-subtab="tasks">任务列表</button>
+                  <button class="list-subtab" data-subtab="blocks">拦截记录</button>
+                </div>
+                <button class="btn ghost" id="export-btn">导出</button>
+                <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="toolbar">
+                <div class="tag-group">
+                  <span class="tag primary">待执行 4</span>
+                  <span class="tag info">执行中 3</span>
+                  <span class="tag">已完成 11</span>
+                  <span class="tag danger">部分失败 2</span>
+                </div>
+                <div class="toolbar-right">
+                  <button class="btn ghost">批量导出</button>
+                  <button class="btn">任务设置</button>
+                </div>
+              </div>
+              <div class="filters">
+                <select class="select"><option>全部场景</option><option>新线索首触达</option><option>沉默客户唤醒</option><option>商机推进跟进</option><option selected>活动通知</option></select>
+                <select class="select"><option>全部状态</option><option>草稿</option><option>待执行</option><option selected>执行中</option><option>已完成</option></select>
+                <input class="input" value="最近30天">
+                <input class="input" placeholder="搜索任务名称">
+                <button class="btn">重置</button>
+              </div>
+            </div>
+
+            <div class="section" style="padding-top:0;">
+              <div class="insight-grid">
+                <div class="insight-card">
+                  <h4>创建高峰场景</h4>
+                  <p>活动通知任务最多，占本周触达任务的 41.7%，说明运营批量触达仍是当前核心需求。</p>
+                </div>
+                <div class="insight-card">
+                  <h4>高回复类型</h4>
+                  <p>商机推进类任务回复率最高，适合沉淀为后续最佳实践和标准话术模板。</p>
+                </div>
+                <div class="insight-card">
+                  <h4>异常观察</h4>
+                  <p>新线索首触达失败主要来自通道回执异常，建议补偿重试而不是重复建新任务。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>任务名称</th>
+                    <th>场景类型</th>
+                    <th>创建人</th>
+                    <th>发送方式</th>
+                    <th>计划时间</th>
+                    <th>状态</th>
+                    <th>命中人数</th>
+                    <th>排除人数</th>
+                    <th>实际触达</th>
+                    <th>回复人数</th>
+                    <th>回复率</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href="#" class="tiny-link">4月直播邀约第二批</a></td>
+                    <td>活动通知</td>
+                    <td>明策</td>
+                    <td>定时发送</td>
+                    <td>04-24 19:30</td>
+                    <td><span class="status-pill info">待执行</span></td>
+                    <td>1,248</td>
+                    <td>186</td>
+                    <td>1,062</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="list">复制</button></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#" class="tiny-link">沉默客户唤醒-报价后7天</a></td>
+                    <td>沉默客户唤醒</td>
+                    <td>王怡</td>
+                    <td>立即发送</td>
+                    <td>04-23 10:12</td>
+                    <td><span class="status-pill warning">执行中</span></td>
+                    <td>486</td>
+                    <td>71</td>
+                    <td>415</td>
+                    <td>63</td>
+                    <td>15.2%</td>
+                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#" class="tiny-link">商机推进-试用到期提醒</a></td>
+                    <td>商机推进跟进</td>
+                    <td>刘倩</td>
+                    <td>立即发送</td>
+                    <td>04-22 16:50</td>
+                    <td><span class="status-pill success">已完成</span></td>
+                    <td>302</td>
+                    <td>24</td>
+                    <td>278</td>
+                    <td>82</td>
+                    <td>29.5%</td>
+                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#" class="tiny-link">新线索首触达-表单导入</a></td>
+                    <td>新线索首触达</td>
+                    <td>陈颖</td>
+                    <td>立即发送</td>
+                    <td>04-22 09:30</td>
+                    <td><span class="status-pill danger">部分失败</span></td>
+                    <td>560</td>
+                    <td>39</td>
+                    <td>521</td>
+                    <td>111</td>
+                    <td>21.3%</td>
+                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="detail">
+          <div class="page-card">
+            <div class="page-title-bar">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <div class="page-title">
+                  <h1>任务结果详情</h1>
+                  <p>查看客户级执行结果、成员执行情况与完整日志，所有指标均基于任务快照统计。</p>
+                </div>
+              </div>
+              <div class="nav-switcher">
+                <button class="tab-btn active" data-tab="customers">客户明细</button>
+                <button class="tab-btn" data-tab="members">成员执行</button>
+                <button class="tab-btn" data-tab="logs">任务日志</button>
+              </div>
+            </div>
+
+            <div class="detail-banner">
+              <div>
+                <h3>本次任务表现优于同类场景均值</h3>
+                <p>回复率 29.5%，高于本月“商机推进跟进”均值 6.1pct。建议复用当前发送节奏，并保留后续跟进窗口。</p>
+              </div>
+              <div class="banner-grade">
+                <strong>A-</strong>
+                <span style="color:var(--color-text-3); font-size:12px;">质量评分</span>
+              </div>
+            </div>
+
+            <div class="detail-top">
+              <div class="detail-summary">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <h2 style="font-size:18px; margin-bottom:4px;">商机推进-试用到期提醒</h2>
+                    <div class="tag-group">
+                      <span class="tag primary">商机推进跟进</span>
+                      <span class="status-pill success">已完成</span>
+                    </div>
+                  </div>
+                  <button class="btn ghost">复制任务</button>
+                </div>
+                <div class="summary-grid">
+                  <div class="summary-item"><span>创建人</span><strong>刘倩</strong></div>
+                  <div class="summary-item"><span>发送方式</span><strong>立即发送</strong></div>
+                  <div class="summary-item"><span>创建时间</span><strong>2026-04-22 16:46</strong></div>
+                  <div class="summary-item"><span>计划时间</span><strong>2026-04-22 16:50</strong></div>
+                  <div class="summary-item"><span>执行人范围</span><strong>华东销售组</strong></div>
+                  <div class="summary-item"><span>推送内容</span><strong>试用即将到期，邀请完成演示与下一步沟通。</strong></div>
+                </div>
+              </div>
+
+              <div class="detail-aside">
+                <div class="mini-card">
+                  <h3>结果概览</h3>
+                  <div class="timeline">
+                    <div class="timeline-item"><small>命中人数</small>302</div>
+                    <div class="timeline-item"><small>排除人数</small>24</div>
+                    <div class="timeline-item"><small>实际触达人数</small>278</div>
+                    <div class="timeline-item"><small>回复人数</small>82，回复率 29.5%</div>
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <h3>主要排除原因</h3>
+                  <div class="tag-group">
+                    <span class="tag info">最近已触达 11</span>
+                    <span class="tag warn">冷静期 8</span>
+                    <span class="tag danger">超周频 5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="kpi-grid" style="padding-bottom:16px;">
+              <div class="kpi-card"><div class="kpi-label">命中人数</div><div class="kpi-value">302</div><div class="kpi-note">任务创建时固化</div></div>
+              <div class="kpi-card"><div class="kpi-label">排除人数</div><div class="kpi-value">24</div><div class="kpi-note">防骚扰拦截</div></div>
+              <div class="kpi-card"><div class="kpi-label">成功人数</div><div class="kpi-value">266</div><div class="kpi-note">发送成功率 95.7%</div></div>
+              <div class="kpi-card primary"><div class="kpi-label">回复人数</div><div class="kpi-value">82</div><div class="kpi-note">高于本月均值 6.1pct</div></div>
+            </div>
+
+            <div class="tab-panel active" data-panel="customers">
+              <div class="toolbar">
+                <div class="filters" style="margin-bottom:0;">
+                  <select class="select"><option>全部触达状态</option><option selected>成功</option><option>失败</option><option>已拦截</option></select>
+                  <select class="select"><option>全部回复状态</option><option selected>已回复</option><option>未回复</option></select>
+                  <input class="input" placeholder="搜索客户名称 / 客户ID">
+                </div>
+                <div class="toolbar-right">
+                  <span class="tag primary">已回复 82</span>
+                  <button class="btn ghost">导出客户明细</button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>客户名称</th>
+                      <th>客户ID</th>
+                      <th>所属销售</th>
+                      <th>触达状态</th>
+                      <th>是否回复</th>
+                      <th>回复时间</th>
+                      <th>排除原因</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>杭州·王晨</td><td>C_100281</td><td>刘倩</td><td><span class="status-pill success">成功</span></td><td>是</td><td>04-22 18:12</td><td>--</td></tr>
+                    <tr><td>深圳·林可</td><td>C_100429</td><td>刘倩</td><td><span class="status-pill success">成功</span></td><td>是</td><td>04-22 19:06</td><td>--</td></tr>
+                    <tr><td>上海·赵清</td><td>C_100563</td><td>周岚</td><td><span class="status-pill danger">失败</span></td><td>否</td><td>--</td><td>--</td></tr>
+                    <tr><td>苏州·何然</td><td>C_100612</td><td>周岚</td><td><span class="status-pill warning">已拦截</span></td><td>否</td><td>--</td><td>最近已触达、冷静期</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="members">
+              <div class="split-cards">
+                <div class="mini-card">
+                  <h3>成员执行明细</h3>
+                  <table>
+                    <thead>
+                      <tr><th>销售姓名</th><th>分配人数</th><th>已执行</th><th>回复人数</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>刘倩</td><td>118</td><td>118</td><td>37</td></tr>
+                      <tr><td>周岚</td><td>96</td><td>96</td><td>28</td></tr>
+                      <tr><td>陈宇</td><td>64</td><td>64</td><td>17</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="mini-card">
+                  <h3>执行观察</h3>
+                  <div class="timeline">
+                    <div class="timeline-item"><small>执行完成率</small>100%，无成员未执行</div>
+                    <div class="timeline-item"><small>高回复成员</small>刘倩回复率 31.4%，可复用其后续跟进节奏</div>
+                    <div class="timeline-item"><small>失败集中原因</small>主要为通道回执失败，建议补偿重试</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="logs">
+              <div class="mini-card">
+                <h3>任务日志</h3>
+                <div class="timeline">
+                  <div class="timeline-item"><small>2026-04-22 16:46</small>刘倩创建任务，场景为商机推进跟进。</div>
+                  <div class="timeline-item"><small>2026-04-22 16:47</small>系统计算命中客户 302 人，防骚扰排除 24 人。</div>
+                  <div class="timeline-item"><small>2026-04-22 16:50</small>发送执行服务开始处理任务，状态切换为执行中。</div>
+                  <div class="timeline-item"><small>2026-04-22 17:08</small>全部客户处理完成，任务状态切换为已完成。</div>
+                  <div class="timeline-item"><small>2026-04-22 19:30</small>结果回流服务补充回复结果，当前回复人数更新为 82。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="blocks">
+          <div class="page-card">
+            <div class="page-title-bar">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <div class="page-title">
+                  <h1>拦截记录</h1>
+                  <p>统一查看哪些客户被系统排除，以及拦截原因分布，便于运营理解命中人数变化。</p>
+                </div>
+              </div>
+              <div class="tag-group">
+                <span class="tag info">最近 30 天</span>
+                <span class="tag warn">总拦截 842</span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="filters">
+                <select class="select"><option>全部场景</option><option>新线索首触达</option><option>沉默客户唤醒</option><option>商机推进跟进</option><option selected>活动通知</option></select>
+                <select class="select"><option>全部原因</option><option selected>最近已触达</option><option>冷静期</option><option>超周频</option></select>
+                <input class="input" value="最近30天">
+                <input class="input" placeholder="搜索客户名称 / 任务名称">
+                <button class="btn">重置</button>
+              </div>
+            </div>
+
+            <div class="section" style="padding-top:0;">
+              <div class="insight-grid">
+                <div class="insight-card">
+                  <h4>主要风险类型</h4>
+                  <p>“最近已触达”是第一大排除原因，说明批量任务之间的间隔仍然偏短。</p>
+                </div>
+                <div class="insight-card">
+                  <h4>业务影响</h4>
+                  <p>如果取消拦截，本批命中人数可提升 14.9%，但客户体验风险会同步上升。</p>
+                </div>
+                <div class="insight-card">
+                  <h4>建议动作</h4>
+                  <p>把活动通知与沉默唤醒做任务互斥，优先保证高意向客户只进入一条触达链路。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="split-cards">
+                <div class="mini-card">
+                  <h3>拦截原因分布</h3>
+                  <div class="timeline">
+                    <div class="timeline-item"><small>最近已触达</small>412 人，占比 48.9%</div>
+                    <div class="timeline-item"><small>冷静期</small>203 人，占比 24.1%</div>
+                    <div class="timeline-item"><small>本活动已触达</small>128 人，占比 15.2%</div>
+                    <div class="timeline-item"><small>拉黑/删除/拒收</small>99 人，占比 11.8%</div>
+                  </div>
+                </div>
+                <div class="mini-card">
+                  <h3>运营建议</h3>
+                  <div class="empty-note">活动通知类任务的重复触达偏高，建议控制批次间隔，避免在同一周内追加第三批活动邀约。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>任务名称</th>
+                    <th>场景类型</th>
+                    <th>客户名称</th>
+                    <th>所属销售</th>
+                    <th>拦截原因</th>
+                    <th>拦截时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>4月直播邀约第二批</td>
+                    <td>活动通知</td>
+                    <td>杭州·王晨</td>
+                    <td>李辰</td>
+                    <td><span class="tag info">最近已触达</span></td>
+                    <td>04-23 15:12</td>
+                    <td><a class="tiny-link" href="#">查看任务</a></td>
+                  </tr>
+                  <tr>
+                    <td>4月直播邀约第二批</td>
+                    <td>活动通知</td>
+                    <td>深圳·沈乔</td>
+                    <td>林夕</td>
+                    <td><span class="tag warn">冷静期</span> <span class="tag info">最近已触达</span></td>
+                    <td>04-23 15:12</td>
+                    <td><a class="tiny-link" href="#">查看任务</a></td>
+                  </tr>
+                  <tr>
+                    <td>沉默客户唤醒-报价后7天</td>
+                    <td>沉默客户唤醒</td>
+                    <td>苏州·刘楠</td>
+                    <td>王怡</td>
+                    <td><span class="tag danger">超周频</span></td>
+                    <td>04-23 10:09</td>
+                    <td><a class="tiny-link" href="#">查看任务</a></td>
+                  </tr>
+                  <tr>
+                    <td>商机推进-试用到期提醒</td>
+                    <td>商机推进跟进</td>
+                    <td>上海·徐青</td>
+                    <td>周岚</td>
+                    <td><span class="tag">已拉黑/已删除</span></td>
+                    <td>04-22 16:48</td>
+                    <td><a class="tiny-link" href="#">查看任务</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /* ---- Page navigation ---- */
+    function gotoPage(target) {
+      document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.dataset.page === target));
+    }
+
+    document.addEventListener("click", (e) => {
+      const navBtn = e.target.closest(".nav-back");
+      if (navBtn && navBtn.dataset.target) {
+        gotoPage(navBtn.dataset.target);
+      }
+    });
+
+    /* ---- List sub-tabs: 任务列表 / 拦截记录 ---- */
+    document.querySelectorAll(".list-subtab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".list-subtab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const subtab = btn.dataset.subtab;
+        if (subtab === "blocks") {
+          gotoPage("blocks");
+        } else {
+          gotoPage("list");
+        }
+      });
+    });
+
+    /* ---- Detail tab switcher ---- */
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabPanels = document.querySelectorAll(".tab-panel");
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.tab;
+        tabButtons.forEach((item) => item.classList.toggle("active", item === button));
+        tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === target));
+      });
+    });
+
+    /* ---- Logic toggle (且 / 或) ---- */
+    document.getElementById("logic-toggle").addEventListener("click", (e) => {
+      const btn = e.target.closest(".logic-btn");
+      if (!btn) return;
+      btn.parentElement.querySelectorAll(".logic-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+
+    /* ---- Add condition row ---- */
+    document.getElementById("add-cond-btn").addEventListener("click", () => {
+      const container = document.getElementById("builder-conditions");
+      const row = document.createElement("div");
+      row.className = "condition-row";
+      row.innerHTML = `
+        <select class="select cond-select">
+          <option selected>活动标签</option>
+          <option>客户层级</option>
+          <option>客户状态</option>
+          <option>加粉时长</option>
+          <option>最近互动</option>
+          <option>所属销售</option>
+        </select>
+        <select class="select op-select">
+          <option selected>包含</option>
+          <option>不包含</option>
+        </select>
+        <div class="tag-value-area">
+          <input class="tag-input" placeholder="输入标签名...">
+        </div>
+        <button class="btn-icon" title="删除此条件">×</button>`;
+      container.appendChild(row);
+      bindConditionRow(row);
+      row.querySelector(".tag-input").focus();
+    });
+
+    /* ---- Remove condition row ---- */
+    function bindConditionRow(row) {
+      row.querySelector(".btn-icon").addEventListener("click", () => {
+        if (document.querySelectorAll(".condition-row").length > 1) row.remove();
+      });
+      /* Enter key adds chip in tag-value-area */
+      row.querySelector(".tag-input").addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== ",") return;
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (!val) return;
+        const opSel = row.querySelector(".op-select");
+        const isNeg = opSel.value === "不包含";
+        const chip = document.createElement("span");
+        chip.className = "tag-chip" + (isNeg ? " neg" : "");
+        chip.innerHTML = `${val}<span class="chip-del">×</span>`;
+        chip.querySelector(".chip-del").addEventListener("click", () => chip.remove());
+        e.target.parentElement.insertBefore(chip, e.target);
+        e.target.value = "";
+      });
+    }
+
+    /* bind existing rows + chip delete */
+    document.querySelectorAll(".condition-row").forEach(bindConditionRow);
+    document.querySelectorAll(".chip-del").forEach(del => {
+      del.addEventListener("click", () => del.parentElement.remove());
+    });
+
+    /* ---- Channel card selection ---- */
+    document.getElementById("channel-cards").addEventListener("click", (e) => {
+      const card = e.target.closest(".channel-card");
+      if (!card) return;
+      document.querySelectorAll(".channel-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+    });
+  </script>
+</body>
+</html>

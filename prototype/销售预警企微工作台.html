@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>销售预警企微工作台</title>
+<title>销售过程预警工作台</title>
 <link rel="stylesheet" href="prd-editor.css">
+<script src="prd-editor.js"></script>
 <style>
   :root {
     --color-primary-1: #E9FFF8;
@@ -28,6 +29,8 @@
     --color-warning-6: #FA9A1D;
     --color-danger-1: #FFEDE8;
     --color-danger-6: #F54A45;
+    --color-info-1: #E8F4FF;
+    --color-info-6: #327CFB;
     --radius-btn: 6px;
     --radius-card: 8px;
     --radius-pill: 9999px;
@@ -43,8 +46,63 @@
     flex-direction: column;
     align-items: center;
   }
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: #fff;
+    border: 1px solid var(--color-primary-6);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-primary-6);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .prd-toggle .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+  }
+  body.prd-on .prd-toggle {
+    right: 332px;
+    background: var(--color-primary-6);
+    color: #fff;
+  }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+  .prd-panel-fixed {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100vh;
+    background: #FFFBF0;
+    border-left: 2px solid #F0E6CC;
+    overflow-y: auto;
+    z-index: 800;
+    padding: 16px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.08);
+  }
+  body.prd-on .prd-panel-fixed { display: block; }
+  .prd-context-hint {
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--color-text-3);
+  }
   .page-title { font-size: 20px; font-weight: 700; color: var(--color-text-1); margin-bottom: 8px; }
   .page-subtitle { font-size: 13px; color: var(--color-text-3); margin-bottom: 28px; }
+  .phone-shell {
+    position: relative;
+    width: 360px;
+    padding-bottom: 114px;
+  }
   .workbench {
     width: 360px;
     height: 760px;
@@ -56,7 +114,7 @@
     flex-direction: column;
   }
   .header {
-    padding: 14px 16px 12px;
+    padding: 16px 16px 14px;
     background: linear-gradient(135deg, #EAF9F4 0%, #F7FCFB 55%, #FFF7ED 100%);
     border-bottom: 1px solid var(--color-border-default);
   }
@@ -64,28 +122,129 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    gap: 12px;
   }
-  .header-title { font-size: 16px; font-weight: 700; color: var(--color-text-1); }
-  .header-role {
-    display: inline-flex;
-    align-items: center;
-    height: 24px;
-    padding: 0 8px;
-    border-radius: var(--radius-pill);
-    background: rgba(255,255,255,0.8);
-    color: var(--color-text-2);
-    font-size: 12px;
-  }
+  .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-1); }
   .header-summary {
     font-size: 13px;
     line-height: 20px;
     color: #4F6660;
   }
+  .period-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .period-chip {
+    flex: 0 0 auto;
+    height: 24px;
+    padding: 0 10px;
+    border: 1px solid rgba(36, 143, 128, 0.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.72);
+    color: var(--color-text-3);
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(36, 143, 128, 0.12);
+  }
+  .period-chip::after {
+    content: "▾";
+    margin-left: 6px;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  .period-chip:hover {
+    background: rgba(255,255,255,0.96);
+    color: var(--color-text-2);
+  }
+  .period-chip.active {
+    background: var(--color-primary-6);
+    color: #fff;
+    border-color: var(--color-primary-6);
+  }
+  .period-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 96px;
+    padding: 6px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--color-border-default);
+    box-shadow: 0 10px 24px rgba(20, 28, 32, 0.12);
+    z-index: 20;
+  }
+  .period-switch.open .period-menu {
+    display: block;
+  }
+  .period-option {
+    width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-2);
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .period-option:hover {
+    background: var(--color-fill-2);
+  }
+  .period-option.active {
+    background: var(--color-primary-1);
+    color: var(--color-primary-6);
+    font-weight: 600;
+  }
+  .hero-summary {
+    margin: 12px 16px 0;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #F4FBF8 0%, #FFF9F0 100%);
+    border: 1px solid #DCEFE8;
+  }
+  .hero-summary-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hero-summary-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2F6B5F;
+  }
+  .hero-summary-link {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--color-primary-6);
+    text-decoration: none;
+  }
+  .hero-summary-main {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    color: var(--color-text-1);
+  }
+  .hero-summary-sub {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-3);
+  }
   .stats {
-    padding: 12px 16px;
+    padding: 14px 16px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     border-bottom: 1px solid var(--color-border-default);
     background: var(--color-fill-1);
@@ -97,13 +256,53 @@
   }
   .stat-label { font-size: 11px; color: var(--color-text-3); }
   .stat-value { margin-top: 6px; font-size: 20px; font-weight: 700; color: var(--color-text-1); }
+  .stat-value.warning { color: var(--color-warning-6); }
+  .stat-value.danger { color: var(--color-danger-6); }
+  .stat-value.success { color: var(--color-success-6); }
   .filters {
-    padding: 10px 16px;
+    padding: 12px 16px 10px;
     display: flex;
     gap: 8px;
     border-bottom: 1px solid var(--color-border-default);
     overflow-x: auto;
     background: var(--color-fill-1);
+  }
+  .priority-inline {
+    margin: 10px 16px 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #FFF8EE;
+    border: 1px solid #F3DFC2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .priority-inline-main {
+    min-width: 0;
+  }
+  .priority-inline-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9A5A00;
+  }
+  .priority-inline-text {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-2);
+  }
+  .priority-inline-btn {
+    flex: 0 0 auto;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: none;
+    background: #FFE7C7;
+    color: #9A5A00;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
   }
   .chip {
     flex: 0 0 auto;
@@ -115,21 +314,37 @@
     display: inline-flex;
     align-items: center;
     font-size: 12px;
+    transition: all 0.2s ease;
   }
+  .chip:hover { background: var(--color-fill-3-hover); }
   .chip.active { background: var(--color-primary-1); color: var(--color-primary-6); font-weight: 600; }
+  .chip.more { background: transparent; border: 1px dashed var(--color-border-default); }
+  .section-label {
+    padding: 10px 16px 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--color-text-3);
+    background: var(--color-fill-1);
+  }
   .list {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 12px 88px;
+    padding: 12px 12px 84px;
     background: var(--color-fill-2);
     display: grid;
-    gap: 10px;
+    gap: 12px;
   }
   .card {
     background: var(--color-fill-1);
     border-radius: 14px;
-    padding: 14px;
+    padding: 16px;
     border: 1px solid var(--color-border-default);
+    transition: all 0.2s ease;
+  }
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
   }
   .card-top {
     display: flex;
@@ -137,7 +352,17 @@
     justify-content: space-between;
     gap: 8px;
   }
+  .customer-info {
+    flex: 1;
+  }
+  .customer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
   .customer { font-size: 14px; font-weight: 700; color: var(--color-text-1); }
+  .customer-meta { font-size: 11px; color: var(--color-text-3); margin-top: 2px; }
   .tag {
     display: inline-flex;
     align-items: center;
@@ -149,12 +374,38 @@
   }
   .tag.p1 { background: var(--color-danger-1); color: var(--color-danger-6); }
   .tag.p2 { background: var(--color-warning-1); color: var(--color-warning-6); }
+  .tag.p3 { background: var(--color-info-1); color: var(--color-info-6); }
   .tag.done { background: var(--color-success-1); color: var(--color-success-6); }
-  .desc { margin-top: 10px; font-size: 13px; line-height: 20px; color: var(--color-text-2); }
-  .meta { margin-top: 8px; font-size: 12px; line-height: 18px; color: var(--color-text-3); }
-  .strategy {
+  .card-brief {
     margin-top: 10px;
-    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--color-text-2);
+  }
+  .card-brief strong {
+    color: var(--color-text-1);
+  }
+  .desc { margin-top: 12px; font-size: 13px; line-height: 20px; color: var(--color-text-2); }
+  .meta {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .meta-label {
+    color: var(--color-text-4);
+  }
+  .strategy {
+    margin-top: 12px;
+    padding: 12px 14px;
     border-radius: 10px;
     background: linear-gradient(180deg, #F8FBFA 0%, #F2F7F5 100%);
     border: 1px solid #E6EFEB;
@@ -163,6 +414,13 @@
     font-size: 12px;
     font-weight: 700;
     color: #2F6B5F;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .strategy-title::before {
+    content: "💡";
+    font-size: 14px;
   }
   .strategy-text {
     margin-top: 6px;
@@ -171,186 +429,593 @@
     color: var(--color-text-2);
   }
   .actions {
-    margin-top: 12px;
+    margin-top: 14px;
     display: flex;
     gap: 8px;
   }
   .btn {
     flex: 1;
-    height: 32px;
+    height: 34px;
     border-radius: var(--radius-btn);
     border: none;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
+    transition: all 0.2s ease;
   }
   .btn-primary { background: var(--color-primary-6); color: white; }
+  .btn-primary:hover { background: var(--color-primary-7); }
   .btn-secondary { background: var(--color-fill-3); color: var(--color-text-1); }
-  .footer {
-    position: absolute;
-    bottom: 0;
-    width: 360px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.96);
-    border-top: 1px solid var(--color-border-default);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-note { font-size: 12px; color: var(--color-text-3); }
-  .footer-link { font-size: 12px; color: var(--color-primary-6); }
-
-  .bottom-nav {
-    position: absolute;
-    bottom: 0;
-    width: 360px;
-    padding: 8px 10px;
-    background: rgba(255,255,255,0.98);
-    border-top: 1px solid var(--color-border-default);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    height: 44px;
-    border-radius: 10px;
-    color: var(--color-text-3);
-    font-size: 11px;
-  }
-  .nav-item.active {
-    background: var(--color-primary-1);
+  .btn-secondary:hover { background: var(--color-fill-3-hover); }
+  .btn-outline {
+    background: transparent;
     color: var(--color-primary-6);
+    border: 1px solid var(--color-primary-6);
+  }
+  .btn-outline:hover {
+    background: var(--color-primary-1);
+  }
+
+  /* 新增：客户价值标签 */
+  .value-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+  .value-tag.high { background: #FFF3CD; color: #856404; }
+  .value-tag.medium { background: #E2F0FB; color: #004085; }
+  .value-tag.low { background: #F8F9FA; color: #6C757D; }
+
+  /* 新增：预警时间提醒 */
+  .time-warning {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--color-danger-6);
+    margin-top: 6px;
+  }
+  .card-more {
+    margin-top: 12px;
+    border-top: 1px dashed var(--color-border-default);
+    padding-top: 12px;
+  }
+  .card-more summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 12px;
     font-weight: 600;
+    color: var(--color-primary-6);
+  }
+  .card-more summary::-webkit-details-marker { display: none; }
+  .card-more summary::after {
+    content: "展开详情";
+  }
+  .card-more[open] summary::after {
+    content: "收起详情";
+  }
+  .done-group {
+    border-radius: 14px;
+    background: rgba(255,255,255,0.72);
+    border: 1px dashed #D8DFE4;
+    padding: 14px 16px;
+  }
+  .done-group summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-2);
+  }
+  .done-group summary::-webkit-details-marker { display: none; }
+  .done-group-note {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+  .done-item {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--color-border-default);
+  }
+  .done-item-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .done-item-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-1);
+  }
+  .done-item-text {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-text-3);
   }
 </style>
 </head>
 <body>
-  <div class="page-title">销售预警企微工作台</div>
-  <div class="page-subtitle">面向一线销售，处理待跟进、异议超时、问卷后未承接等动作型提醒</div>
+  <button class="prd-toggle" onclick="togglePRD()">
+    <span class="dot"></span>PRD 标注
+  </button>
 
-  <div style="position: relative;">
+  <div class="page-title">销售过程预警工作台</div>
+  <div class="page-subtitle">面向一线销售，承接监控报表下发的预警，处理领卡/问卷/付款各阶段待办</div>
+
+  <div class="phone-shell">
     <div class="workbench">
       <div class="header">
         <div class="header-top">
-          <div class="header-title">我的待处理预警</div>
-          <div class="header-role">销售工作台</div>
+          <div class="header-title" id="headerTitle">我的待处理预警</div>
         </div>
-        <div class="header-summary">今天有 6 条高优先级提醒，其中 2 条已超过处理时限，建议优先按客户价值顺序处理。当前页作为企微工作台中的一个功能页，可与现有能力切换。</div>
+      </div>
+
+      <div class="hero-summary">
+        <div class="hero-summary-top">
+          <div class="hero-summary-title" id="heroSummaryTitle">本期缺口概览</div>
+          <div class="period-switch">
+            <button class="period-chip active" id="periodTrigger" type="button">本期</button>
+            <div class="period-menu" id="periodMenu">
+              <button class="period-option active" type="button" data-period-key="current" data-period-label="本期">本期（9体149）</button>
+              <button class="period-option" type="button" data-period-key="148" data-period-label="9体148">9体148</button>
+              <button class="period-option" type="button" data-period-key="147" data-period-label="9体147">9体147</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-summary-main" id="heroSummaryMain">还差 <span style="color:var(--color-warning-6);">3 单问卷</span>、<span style="color:var(--color-danger-6);">1 单付款</span></div>
+        <div class="hero-summary-sub" id="heroSummarySub">先处理「问卷后未承接」和「已超时」客户，今天优先把黄金跟进窗口内的高价值客户承接掉。</div>
       </div>
 
       <div class="stats">
-        <div class="stat"><div class="stat-label">待处理</div><div class="stat-value">11</div></div>
-        <div class="stat"><div class="stat-label">超时</div><div class="stat-value">2</div></div>
-        <div class="stat"><div class="stat-label">已完成</div><div class="stat-value">7</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel1">待处理</div><div class="stat-value danger" id="statValue1">8</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel2">已超时</div><div class="stat-value warning" id="statValue2">2</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel3">今日完成</div><div class="stat-value success" id="statValue3">5</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel4">执行完成率</div><div class="stat-value" id="statValue4">88%</div></div>
+      </div>
+
+      <div class="priority-inline">
+        <div class="priority-inline-main">
+          <div class="priority-inline-label" id="priorityLabel">今日优先</div>
+          <div class="priority-inline-text" id="priorityText">先补问卷后未承接，再清 2 条已超时。</div>
+        </div>
       </div>
 
       <div class="filters">
-        <div class="chip active">全部</div>
-        <div class="chip">P1</div>
-        <div class="chip">问卷后未跟进</div>
-        <div class="chip">异议超时</div>
-        <div class="chip">进群未激活</div>
+        <div class="chip active" id="filterChipAll">全部 (8)</div>
+        <div class="chip" id="filterChipPriority">高优先 (4)</div>
+        <div class="chip" id="filterChipTimeout">已超时 (2)</div>
       </div>
 
       <div class="list">
-        <div class="card">
-          <div class="card-top">
-          <div class="customer">有余</div>
-          <div class="tag p1">P1 高潜未跟进</div>
-          </div>
-          <div class="desc">客户已添加好友 3 天，仍未领卡、未填问卷，且当前没有新的人工跟进。</div>
-          <div class="meta">来源：KOC导流 · 最近跟进：04-03 20:30 · 建议动作：先补领卡和问卷承接</div>
-          <div class="strategy">
-            <div class="strategy-title">跟进策略建议</div>
-            <div class="strategy-text">先确认客户是否还记得领取权益入口，再用一句话说明问卷价值，优先把“领卡 + 填问卷”两步一次性推进，完成后立即约首轮需求沟通。</div>
-          </div>
-          <div class="actions">
-            <button class="btn btn-secondary">查看客户</button>
-            <button class="btn btn-primary">立即联系</button>
-          </div>
-        </div>
 
-        <div class="card">
+        <!-- P1：问卷后未承接（已超时） -->
+        <div class="card" data-filter="priority timeout">
           <div class="card-top">
-          <div class="customer">阿森</div>
-          <div class="tag p2">问卷后未跟进</div>
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">志远</div>
+                <div class="value-tag high">高价值</div>
+              </div>
+              <div class="time-warning">⏰ 问卷完成已超 28 小时</div>
+            </div>
+            <div class="tag p1">问卷后未承接</div>
           </div>
-          <div class="desc">客户已完成问卷 24 小时，但还没有销售承接动作，存在高潜流失风险。</div>
-          <div class="meta">来源：直播导流 · 问卷完成：今天 09:20 · 建议动作：优先做方向确认和约下一步</div>
-          <div class="strategy">
-            <div class="strategy-title">跟进策略建议</div>
-            <div class="strategy-text">先复述问卷里最明确的需求点建立被理解感，再只追问一个预算或时间点，最后明确约定下一步动作，避免把首次承接聊成信息收集。</div>
-          </div>
+          <div class="card-brief"><strong>关键原因：</strong>昨天 18:10 完成问卷，至今无人承接，已经错过黄金跟进窗口。</div>
           <div class="actions">
+            <button class="btn btn-primary">立即跟进</button>
             <button class="btn btn-secondary">查看问卷</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>KOC导流 · 星球编号 #10238</div>
+              <div class="meta-item"><span class="meta-label">问卷意向：</span>高（预算 ≥ 5k）</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>今日内完成首次承接</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">先复述问卷里最明确的需求点建立被理解感，再只追问一个预算或时间节点，最后约定下一步动作。不要把首次承接聊成信息收集，直接进入方案方向讨论。</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- P1：付款推进 -->
+        <div class="card" data-filter="priority">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">晓雨</div>
+                <div class="value-tag high">高价值</div>
+              </div>
+              <div class="customer-meta">3 天未付款，卡在内部审批</div>
+            </div>
+            <div class="tag p1">付款推进</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>意向明确但 3 天未付款，是本期付款目标差额的关键单。</div>
+          <div class="actions">
+            <button class="btn btn-primary">确认进度</button>
+            <button class="btn btn-secondary">沟通记录</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>深海圈AI编程 · 星球编号 #10219</div>
+              <div class="meta-item"><span class="meta-label">首次沟通：</span>04-19 14:30</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>确认审批进度，提供付款材料</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">询问审批环节卡在哪，主动提供合同/发票等材料降低对方的操作成本。可提供本期截止日期做轻度时效提示，但不要催促。</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- P2：领卡未问卷 -->
+        <div class="card" data-filter="priority timeout">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">阿朗</div>
+                <div class="value-tag medium">中价值</div>
+              </div>
+              <div class="time-warning">⏰ 已超时 1.5 小时</div>
+            </div>
+            <div class="tag p2">领卡未问卷</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>领卡 72 小时仍未填问卷，已经成为当前漏斗最大流失断点。</div>
+          <div class="actions">
+            <button class="btn btn-primary">去引导问卷</button>
+            <button class="btn btn-secondary">查看客户</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>索引站 · 星球编号 #10251</div>
+              <div class="meta-item"><span class="meta-label">领卡时间：</span>04-19 10:15</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>一句话说明问卷价值并引导完成</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">发一条简短消息说明问卷只需 3 分钟，且完成后有专属方案推荐。不要发长文或催促语气，重点是降低客户的行动门槛。</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- P2：问卷后未承接 -->
+        <div class="card" data-filter="priority">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">小燕</div>
+                <div class="value-tag medium">中价值</div>
+              </div>
+              <div class="customer-meta">今天 09:20 完成问卷，仍未承接</div>
+            </div>
+            <div class="tag p2">问卷后未承接</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>仍处在 24 小时黄金窗口内，今天跟进成功率最高。</div>
+          <div class="actions">
             <button class="btn btn-primary">去跟进</button>
+            <button class="btn btn-secondary">查看问卷</button>
           </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>公众号/订阅号 · 星球编号 #10244</div>
+              <div class="meta-item"><span class="meta-label">问卷意向：</span>中（关注效果案例）</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>今日内完成首次承接</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">公众号来源客户通常已有初步了解，可直接切入需求确认。复述问卷中提到的 1-2 个关键需求点，引导进入方向讨论，不要再介绍产品概述。</div>
+            </div>
+          </details>
         </div>
 
-        <div class="card">
+        <!-- P3：进群未激活 -->
+        <div class="card" data-filter="">
           <div class="card-top">
-          <div class="customer">小万</div>
-          <div class="tag p2">异议超时</div>
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">陈墨</div>
+                <div class="value-tag low">低价值</div>
+              </div>
+              <div class="customer-meta">进群 48 小时仍未领卡</div>
+            </div>
+            <div class="tag p3">进群未激活</div>
           </div>
-          <div class="desc">客户提出价格相关异议后，已超过 6 小时没有新的人工回应。</div>
-          <div class="meta">来源：内容投放 · 异议类型：价格高 / 价值感知不足 · 建议动作：发送标准异议承接话术</div>
-          <div class="strategy">
-            <div class="strategy-title">跟进策略建议</div>
-            <div class="strategy-text">不要直接重复报价，先确认客户卡点是预算、效果还是决策人，再补一个相似案例或阶段性方案，把对话从“贵不贵”拉回“值不值、怎么开始”。</div>
-          </div>
+          <div class="card-brief"><strong>关键原因：</strong>属于低优先激活任务，可放在前面高优先客户之后处理。</div>
           <div class="actions">
-            <button class="btn btn-secondary">查看原话</button>
-            <button class="btn btn-primary">已承接</button>
+            <button class="btn btn-primary">去激活</button>
+            <button class="btn btn-secondary">查看群聊</button>
           </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>矩阵服务号 · 星球编号 #10233</div>
+              <div class="meta-item"><span class="meta-label">进群时间：</span>04-20 14:20</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>发送群内价值提醒 + 引导领卡</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">先在群内@客户发一条有价值的内容，再私聊说明领卡权益的具体好处。若 24h 内仍无响应，转入低频培育节奏，不重复提醒。</div>
+            </div>
+          </details>
         </div>
 
-        <div class="card">
-          <div class="card-top">
-          <div class="customer">陈墨</div>
-          <div class="tag done">已完成</div>
+        <details class="done-group">
+          <summary><span id="doneSummaryLabel">已处理（1）</span><span>查看</span></summary>
+          <div class="done-group-note" id="doneGroupNote">已完成项收纳到这里，避免挤占待处理列表。</div>
+          <div class="done-item">
+            <div class="done-item-title">
+              <div class="done-item-name">有余</div>
+              <div class="tag done">已完成</div>
+            </div>
+            <div class="done-item-text">今天 10:42 已处理「领卡未问卷」，客户已完成问卷，下一步进入付款跟进。</div>
+            <div class="actions">
+              <button class="btn btn-secondary">查看记录</button>
+              <button class="btn btn-outline">继续跟进付款</button>
+            </div>
           </div>
-          <div class="desc">该客户的“进群未激活”提醒已由销售在 10:42 关闭，后台可继续追踪关闭后是否转化。</div>
-          <div class="meta">关闭方式：手动处理 · 关闭人：秋秋 · 后续状态：待观察</div>
-          <div class="strategy">
-            <div class="strategy-title">跟进策略建议</div>
-            <div class="strategy-text">若 24 小时内仍未激活，可补发一次群内高价值内容入口，并私聊说明群内能获得的具体收益；若已激活，则转入常规培育节奏，无需重复提醒。</div>
-          </div>
-          <div class="actions">
-            <button class="btn btn-secondary">查看记录</button>
-            <button class="btn btn-secondary">再次跟进</button>
-          </div>
-        </div>
+        </details>
+
       </div>
     </div>
 
-    <div class="footer">
-      <div class="footer-note">企微侧只承担提醒与处理，不承担团队经营分析。</div>
-      <div class="footer-link">查看全部历史</div>
+  </div>
+
+  <div class="prd-panel-fixed prd-panel" data-prd-key="sales-warning-wecom-workbench">
+    <p class="prd-title">销售预警企微工作台 PRD <span style="font-size:11px;font-weight:400;color:var(--color-text-3);">v1.0 · 2026-04-22</span></p>
+    <div class="prd-context-hint">一线销售使用的企微侧任务处理页，对应 [PRD_销售预警企微工作台.md]</div>
+
+    <div class="prd-section">
+      <div class="prd-section-title orange">1. 页面定位</div>
+      <div class="prd-item">服务对象是<strong>一线销售</strong>，不是负责人或运营</div>
+      <div class="prd-item">目标是帮助销售在企微侧边栏里快速判断<strong>先处理谁、为什么处理、下一步做什么</strong></div>
+      <div class="prd-item">不承担团队经营分析、规则配置、复杂批量管理</div>
     </div>
 
-    <div class="bottom-nav">
-      <div class="nav-item">
-        <div>👤</div>
-        <div>客户画像</div>
-      </div>
-      <div class="nav-item active">
-        <div>⚠️</div>
-        <div>过程预警</div>
-      </div>
-      <div class="nav-item">
-        <div>📝</div>
-        <div>跟进记录</div>
-      </div>
-      <div class="nav-item">
-        <div>📦</div>
-        <div>订单列表</div>
-      </div>
+    <div class="prd-section">
+      <div class="prd-section-title green">2. 信息架构</div>
+      <div class="prd-item">Header：我的待处理预警（无摘要文案，避免与缺口概览重复）</div>
+      <div class="prd-item">缺口概览：一句话说明当前还差什么 + 期次切换</div>
+      <div class="prd-item">轻量统计：待处理 / 已超时 / 今日完成 / 执行完成率</div>
+      <div class="prd-item">今日优先：一句话摘要 + 查看策略入口</div>
+      <div class="prd-item">分类筛选：全部 / 高优先 / 已超时（点击联动列表与标题）</div>
+      <div class="prd-item">预警卡片列表 + 已处理归档区</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title green">3. 顶部概览区</div>
+      <div class="prd-label">缺口概览</div>
+      <div class="prd-item">展示当前最核心短板，如“还差 3 单问卷、1 单付款”</div>
+      <div class="prd-item">文案只保留一个主判断，不展开复杂解释</div>
+      <div class="prd-label">轻量统计</div>
+      <div class="prd-item">辅助判断当前工作盘子大小，不替代任务列表</div>
+      <div class="prd-item">已超时、待处理需带风险语义</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title blue">4. 筛选规则</div>
+      <div class="prd-item"><strong>全部</strong>：所有待处理卡片，标题「最紧急待处理」</div>
+      <div class="prd-item"><strong>高优先</strong>：P1 或已超时或高价值黄金窗口内，标题「高优先待处理」</div>
+      <div class="prd-item"><strong>已超时</strong>：超过处理时限的任务，标题「已超时待处理」</div>
+      <div class="prd-item">切换筛选后列表标题同步更新，无关卡片隐藏</div>
+      <div class="prd-item">默认可见筛选项不超过 4 个</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title blue">5. 卡片设计</div>
+      <div class="prd-item">默认态只展示：客户名、价值标签、预警类型、关键原因、主按钮、次按钮</div>
+      <div class="prd-item">关键原因优先说明“为什么现在要处理”</div>
+      <div class="prd-item">来源、时间、建议动作、策略建议通过“展开详情”呈现</div>
+      <div class="prd-item">每张卡片必须有明确主按钮，如“立即跟进 / 确认进度 / 去引导问卷”</div>
+    </div>
+
+    <div class=”prd-section”>
+      <div class=”prd-section-title orange”>6. 已处理归档</div>
+      <div class="prd-item">已完成项默认折叠进"已处理（N）"区，不与待处理争夺首屏焦点</div>
+      <div class="prd-item">展开后展示客户名、完成状态、处理结果摘要、后续动作入口</div>
+      <div class="prd-item">若任务虽已完成但仍有下一步，应保留继续跟进入口</div>
+      <div class="prd-item">已处理区不受筛选影响，始终在列表底部保持折叠</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title red">7. 验收标准</div>
+      <div class="prd-item">3 秒内能看懂当前缺口和第一优先处理方向</div>
+      <div class="prd-item">首屏可见 1-2 张待处理卡片，不被说明模块挤压</div>
+      <div class="prd-item">单卡默认信息量可扫读，不需要展开才能理解</div>
+      <div class="prd-item">点击高优先 / 已超时后，列表内容和标题同步更新，无关卡片隐藏</div>
     </div>
   </div>
+
+  <script>
+    function togglePRD() {
+      document.body.classList.toggle('prd-on');
+    }
+
+    // 筛选功能
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        // 移除所有激活状态
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        // 添加当前激活状态
+        this.classList.add('active');
+        // 这里可以添加筛选逻辑
+        console.log('筛选:', this.textContent.trim());
+      });
+    });
+
+    const periodSwitch = document.querySelector('.period-switch');
+    const periodTrigger = document.getElementById('periodTrigger');
+    const periodMenu = document.getElementById('periodMenu');
+
+    if (periodSwitch && periodTrigger && periodMenu) {
+      const periodCopyMap = {
+        current: {
+          headerTitle: '我的待处理预警',
+          headerSummary: '问卷还差 3 单、付款还差 1 单，执行率 88%/目标 92%。优先清掉问卷后未承接，再推已领卡未问卷的高潜客户。',
+          heroTitle: '本期缺口概览',
+          heroMain: '还差 <span style="color:var(--color-warning-6);">3 单问卷</span>、<span style="color:var(--color-danger-6);">1 单付款</span>',
+          heroSub: '先处理「问卷后未承接」和「已超时」客户，今天优先把黄金跟进窗口内的高价值客户承接掉。',
+          stats: [
+            ['待处理', '8'],
+            ['已超时', '2'],
+            ['今日完成', '5'],
+            ['执行完成率', '88%']
+          ],
+          priorityLabel: '今日优先',
+          priorityText: '先补问卷后未承接，再清 2 条已超时。',
+          priorityButton: '查看策略',
+          filters: ['全部 (8)', '高优先 (4)', '已超时 (2)'],
+          sectionLabel: '最紧急待处理',
+          doneSummaryLabel: '已处理（1）',
+          doneGroupNote: '已完成项收纳到这里，避免挤占待处理列表。'
+        },
+        '148': {
+          headerTitle: '9体148 预警记录',
+          headerSummary: '该期问卷与付款缺口已基本收口，当前更适合回看当期哪些高优先预警处理得慢、哪些客户在黄金窗口内被错过。',
+          heroTitle: '该期处理情况',
+          heroMain: '当期累计触发 <span style="color:var(--color-warning-6);">11 条预警</span>，其中 <span style="color:var(--color-danger-6);">3 条超时</span>',
+          heroSub: '往期页面以复盘和查看处理情况为主，不再强调“今天待处理”。',
+          stats: [
+            ['预警总数', '11'],
+            ['超时记录', '3'],
+            ['已处理', '9'],
+            ['处理完成率', '82%']
+          ],
+          priorityLabel: '当期重点',
+          priorityText: '重点回看问卷后未承接和付款推进两类记录的处理时效。',
+          priorityButton: '查看复盘',
+          filters: ['全部记录 (11)', '高优先记录 (5)', '超时记录 (3)'],
+          sectionLabel: '重点预警记录',
+          doneSummaryLabel: '处理结果（9）',
+          doneGroupNote: '往期以查看处理结果为主，默认收起。'
+        },
+        '147': {
+          headerTitle: '9体147 预警记录',
+          headerSummary: '该期整体处理节奏较稳，主要用于对照本期判断哪些问题是延续型断点，哪些属于阶段性异常。',
+          heroTitle: '该期处理情况',
+          heroMain: '当期累计触发 <span style="color:var(--color-warning-6);">9 条预警</span>，其中 <span style="color:var(--color-danger-6);">1 条超时</span>',
+          heroSub: '建议结合本期对照查看，识别问卷承接和付款推进上的连续问题。',
+          stats: [
+            ['预警总数', '9'],
+            ['超时记录', '1'],
+            ['已处理', '8'],
+            ['处理完成率', '89%']
+          ],
+          priorityLabel: '当期重点',
+          priorityText: '重点查看高价值客户是否在承接窗口内被及时跟进。',
+          priorityButton: '查看复盘',
+          filters: ['全部记录 (9)', '高优先记录 (3)', '超时记录 (1)'],
+          sectionLabel: '重点预警记录',
+          doneSummaryLabel: '处理结果（8）',
+          doneGroupNote: '该期以历史处理记录查看为主，不再按当前待办口径展示。'
+        }
+      };
+
+      function applyPeriodCopy(periodKey) {
+        const config = periodCopyMap[periodKey] || periodCopyMap.current;
+        document.getElementById('headerTitle').textContent = config.headerTitle;
+        document.getElementById('headerSummary').textContent = config.headerSummary;
+        document.getElementById('heroSummaryTitle').textContent = config.heroTitle;
+        document.getElementById('heroSummaryMain').innerHTML = config.heroMain;
+        document.getElementById('heroSummarySub').textContent = config.heroSub;
+        document.getElementById('statLabel1').textContent = config.stats[0][0];
+        document.getElementById('statValue1').textContent = config.stats[0][1];
+        document.getElementById('statLabel2').textContent = config.stats[1][0];
+        document.getElementById('statValue2').textContent = config.stats[1][1];
+        document.getElementById('statLabel3').textContent = config.stats[2][0];
+        document.getElementById('statValue3').textContent = config.stats[2][1];
+        document.getElementById('statLabel4').textContent = config.stats[3][0];
+        document.getElementById('statValue4').textContent = config.stats[3][1];
+        document.getElementById('priorityLabel').textContent = config.priorityLabel;
+        document.getElementById('priorityText').textContent = config.priorityText;
+        document.getElementById('priorityButton').textContent = config.priorityButton;
+        document.getElementById('filterChipAll').textContent = config.filters[0];
+        document.getElementById('filterChipPriority').textContent = config.filters[1];
+        document.getElementById('filterChipTimeout').textContent = config.filters[2];
+        document.getElementById('sectionLabel').textContent = config.sectionLabel;
+        document.getElementById('doneSummaryLabel').textContent = config.doneSummaryLabel;
+        document.getElementById('doneGroupNote').textContent = config.doneGroupNote;
+      }
+
+      periodTrigger.addEventListener('click', function(event) {
+        event.stopPropagation();
+        periodSwitch.classList.toggle('open');
+      });
+
+      periodMenu.querySelectorAll('.period-option').forEach(option => {
+        option.addEventListener('click', function(event) {
+          event.stopPropagation();
+          periodMenu.querySelectorAll('.period-option').forEach(item => item.classList.remove('active'));
+          this.classList.add('active');
+          periodTrigger.textContent = this.dataset.periodLabel;
+          applyPeriodCopy(this.dataset.periodKey);
+          periodSwitch.classList.remove('open');
+          console.log('期数切换:', this.dataset.periodLabel);
+        });
+      });
+
+      document.addEventListener('click', function() {
+        periodSwitch.classList.remove('open');
+      });
+    }
+
+    // 筛选联动
+    const filterSectionLabel = document.getElementById('sectionLabel');
+    const filterLabelMap = {
+      all: '最紧急待处理',
+      priority: '高优先待处理',
+      timeout: '已超时待处理'
+    };
+
+    function applyFilter(type) {
+      document.querySelectorAll('.filters .chip:not(.more)').forEach(c => c.classList.remove('active'));
+      const chipMap = { all: 'filterChipAll', priority: 'filterChipPriority', timeout: 'filterChipTimeout' };
+      document.getElementById(chipMap[type]).classList.add('active');
+
+      document.querySelectorAll('.list .card[data-filter]').forEach(card => {
+        if (type === 'all') {
+          card.style.display = '';
+        } else {
+          const tags = card.dataset.filter.split(' ');
+          card.style.display = tags.includes(type) ? '' : 'none';
+        }
+      });
+
+      filterSectionLabel.textContent = filterLabelMap[type] || filterLabelMap.all;
+    }
+
+    document.getElementById('filterChipAll').addEventListener('click', () => applyFilter('all'));
+    document.getElementById('filterChipPriority').addEventListener('click', () => applyFilter('priority'));
+    document.getElementById('filterChipTimeout').addEventListener('click', () => applyFilter('timeout'));
+
+    // 批量操作功能
+    document.querySelectorAll('.priority-inline-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        console.log('查看策略:', this.textContent.trim());
+      });
+    });
+
+    // 按钮点击事件
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        console.log('操作:', this.textContent.trim());
+        // 这里可以添加按钮点击逻辑
+      });
+    });
+  </script>
 </body>
 </html>
