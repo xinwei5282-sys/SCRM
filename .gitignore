@@ -17,3 +17,4 @@ progress.json
 # Node (future)
 node_modules/
 dist/
+*.xlsx
