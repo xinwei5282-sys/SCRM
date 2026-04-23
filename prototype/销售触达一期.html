@@ -1377,10 +1377,10 @@
                   <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
                 </div>
                 <div class="field">
-                  <label class="required">执行人范围</label>
+                  <label class="required">所属鱼丸</label>
                   <div class="radio-group">
-                    <span class="radio-chip">全部销售</span>
-                    <span class="radio-chip active">指定销售</span>
+                    <span class="radio-chip">全部鱼丸</span>
+                    <span class="radio-chip active">部分鱼丸</span>
                   </div>
                 </div>
                 <div class="field full">
@@ -1399,7 +1399,6 @@
                         </div>
                       </div>
                       <div class="channel-desc">通过企业微信官方 API 发送，消息来源可见、客户体验稳定，有回执记录。</div>
-                      <div class="channel-limits">每账号每日 200 条 · 同一客户每月最多收 4 条 · 适合通知类批量触达</div>
                     </div>
                     <div class="channel-card" data-channel="xingyun">
                       <div class="channel-header">
@@ -1410,7 +1409,6 @@
                         </div>
                       </div>
                       <div class="channel-desc">通过星云工具发送，支持更自由的内容格式，适合个性化话术和高价值客户触达。</div>
-                      <div class="channel-limits">建议用于 A 类 / 高意向客户 · 控制单账号日发量 · 注意发送频率</div>
                     </div>
                   </div>
                 </div>
@@ -1536,17 +1534,16 @@
                   <textarea class="textarea">Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
                   <div class=”field-note”>建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
                 </div>
-                <div class="field">
+                <div class="field full">
                   <label class="required">发送方式</label>
-                  <div class="radio-group">
-                    <span class="radio-chip">立即发送</span>
-                    <span class="radio-chip active">定时发送</span>
+                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;">
+                    <span class="radio-chip" id="chip-immediate">立即发送</span>
+                    <span class="radio-chip active" id="chip-scheduled">定时发送</span>
+                    <div id="send-time-wrapper" style="display:flex;align-items:center;gap:8px;">
+                      <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM" style="width:176px;">
+                      <span class="time-range-hint" style="margin-top:0;"><span class="dot"></span>09:00 – 21:00</span>
+                    </div>
                   </div>
-                </div>
-                <div class="field">
-                  <label class="required">发送时间</label>
-                  <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM">
-                  <div class="time-range-hint"><span class="dot"></span>仅允许 09:00 – 21:00 发送，超出时段任务将被拦截</div>
                   <div class="field-error" id="time-error">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
                 </div>
                 <div class="field full">
@@ -1854,7 +1851,7 @@
                   <div class="summary-item"><span>发送方式</span><strong>立即发送</strong></div>
                   <div class="summary-item"><span>创建时间</span><strong>2026-04-22 16:46</strong></div>
                   <div class="summary-item"><span>计划时间</span><strong>2026-04-22 16:50</strong></div>
-                  <div class="summary-item"><span>执行人范围</span><strong>华东销售组</strong></div>
+                  <div class="summary-item"><span>选择鱼丸</span><strong>华东销售组</strong></div>
                   <div class="summary-item"><span>推送内容</span><strong>试用即将到期，邀请完成演示与下一步沟通。</strong></div>
                 </div>
               </div>
@@ -2227,6 +2224,24 @@
     document.querySelectorAll(".toggle-switch:not([style*='cursor:not-allowed'])").forEach(sw => {
       sw.addEventListener("click", () => sw.classList.toggle("on"));
     });
+
+    /* ---- 发送方式切换 ---- */
+    const chipImmediate = document.getElementById("chip-immediate");
+    const chipScheduled = document.getElementById("chip-scheduled");
+    const sendTimeWrapper = document.getElementById("send-time-wrapper");
+
+    function setSendMode(mode) {
+      const isScheduled = mode === "scheduled";
+      chipImmediate.classList.toggle("active", !isScheduled);
+      chipScheduled.classList.toggle("active", isScheduled);
+      sendTimeWrapper.style.display = isScheduled ? "flex" : "none";
+      if (!isScheduled && timeError) timeError.classList.remove("visible");
+      if (!isScheduled && timeInput) timeInput.classList.remove("error");
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    if (chipImmediate) chipImmediate.addEventListener("click", () => setSendMode("immediate"));
+    if (chipScheduled) chipScheduled.addEventListener("click", () => setSendMode("scheduled"));
 
     /* ---- Send time validation (09:00–21:00) ---- */
     const timeInput = document.getElementById("send-time-input");
