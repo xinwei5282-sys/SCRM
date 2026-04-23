@@ -316,6 +316,11 @@
     border-color: transparent;
   }
 
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
   .btn.warn {
     color: var(--color-danger-6);
     border-color: #ffd8cf;
@@ -1169,6 +1174,106 @@
   .channel-card.selected .channel-icon { background: #b8e4d4; }
   .channel-card.selected .channel-icon.xingyun { background: #d8e0ff; }
 
+  /* ---- Toggle Switch ---- */
+  .antispam-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    background: var(--color-fill-1);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-info { flex: 1; }
+
+  .toggle-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-1);
+    margin-bottom: 2px;
+  }
+
+  .toggle-desc {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .toggle-switch {
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--color-fill-3);
+    border: 1px solid var(--color-border-default);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 150ms, border-color 150ms;
+  }
+
+  .toggle-switch.on {
+    background: var(--color-primary-6);
+    border-color: var(--color-primary-7);
+  }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 150ms;
+  }
+
+  .toggle-switch.on .toggle-thumb { transform: translateX(16px); }
+
+  /* ---- Time field error ---- */
+  .input.error {
+    border-color: var(--color-danger-6);
+    box-shadow: 0 0 0 3px rgba(245,74,69,0.1);
+  }
+
+  .field-error {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--color-danger-6);
+    display: none;
+  }
+
+  .field-error.visible { display: block; }
+
+  .time-range-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+    margin-top: 6px;
+  }
+
+  .time-range-hint .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-success-6);
+    flex-shrink: 0;
+  }
+
   .channel-name-row {
     display: flex;
     align-items: center;
@@ -1429,7 +1534,9 @@
                 </div>
                 <div class="field">
                   <label class="required">发送时间</label>
-                  <input class="input" value="2026-04-24 19:30">
+                  <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM">
+                  <div class="time-range-hint"><span class="dot"></span>仅允许 09:00 – 21:00 发送，超出时段任务将被拦截</div>
+                  <div class="field-error" id="time-error">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
                 </div>
                 <div class="field">
                   <label class="required">执行人范围</label>
@@ -1445,6 +1552,46 @@
                 <div class="field full">
                   <label>备注</label>
                   <input class="input" value="第二波触达，重点关注近 15 天新增线索。">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">
+                <div>
+                  <h2>防骚扰设置</h2>
+                  <div class="section-copy">以下规则默认开启，系统在提交执行时自动排除不符合条件的客户。</div>
+                </div>
+                <span style="font-size:12px;color:var(--color-text-3);">可按需关闭，关闭后命中人数可能增加</span>
+              </div>
+              <div class="antispam-group">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">冷静期保护</span>
+                    <span class="toggle-desc">72 小时内已被本系统触达过的客户自动排除</span>
+                  </div>
+                  <div class="toggle-switch on" data-toggle="cooldown"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">周频次上限</span>
+                    <span class="toggle-desc">同一客户每自然周最多触达 2 次，超出则排除</span>
+                  </div>
+                  <div class="toggle-switch on" data-toggle="weekly-limit"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">本活动去重</span>
+                    <span class="toggle-desc">本次活动已触达过的客户不重复发送</span>
+                  </div>
+                  <div class="toggle-switch on" data-toggle="dedup"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <span class="toggle-label">拉黑 / 删除客户过滤</span>
+                    <span class="toggle-desc">已将销售删除或拉黑的客户始终排除（不可关闭）</span>
+                  </div>
+                  <div class="toggle-switch on" style="opacity:0.45;cursor:not-allowed;" data-toggle="blocked"><div class="toggle-thumb"></div></div>
                 </div>
               </div>
             </div>
@@ -2075,6 +2222,37 @@
     document.querySelectorAll(".chip-del").forEach(del => {
       del.addEventListener("click", () => del.parentElement.remove());
     });
+
+    /* ---- Toggle switches ---- */
+    document.querySelectorAll(".toggle-switch:not([style*='cursor:not-allowed'])").forEach(sw => {
+      sw.addEventListener("click", () => sw.classList.toggle("on"));
+    });
+
+    /* ---- Send time validation (09:00–21:00) ---- */
+    const timeInput = document.getElementById("send-time-input");
+    const timeError = document.getElementById("time-error");
+    const submitBtn = document.querySelector(".footer-actions .btn.primary");
+
+    function validateTime() {
+      if (!timeInput) return true;
+      const val = timeInput.value.trim();
+      const match = val.match(/(\d{2}):(\d{2})$/);
+      if (!match) return true;
+      const h = parseInt(match[1], 10);
+      const m = parseInt(match[2], 10);
+      const mins = h * 60 + m;
+      const ok = mins >= 9 * 60 && mins <= 21 * 60;
+      timeInput.classList.toggle("error", !ok);
+      timeError.classList.toggle("visible", !ok);
+      if (submitBtn) submitBtn.disabled = !ok;
+      return ok;
+    }
+
+    if (timeInput) {
+      timeInput.addEventListener("input", validateTime);
+      timeInput.addEventListener("blur", validateTime);
+      validateTime();
+    }
 
     /* ---- 数据按钮：跳到详情页并激活客户明细 tab ---- */
     document.addEventListener("click", (e) => {
