@@ -775,7 +775,7 @@
 
   </div>
 
-  <div class="prd-panel-fixed prd-panel" data-prd-key="sales-warning-wecom-workbench">
+  <div class="prd-panel-fixed prd-panel" data-prd-key="sales-warning-wecom-workbench" data-prd-version="20260424b">
     <p class="prd-title">销售预警企微工作台 PRD <span style="font-size:11px;font-weight:400;color:var(--color-text-3);">v1.0 · 2026-04-22</span></p>
     <div class="prd-context-hint">一线销售使用的企微侧任务处理页，对应 [PRD_销售预警企微工作台.md]</div>
 
@@ -813,6 +813,34 @@
       <div class="prd-item"><strong>已超时</strong>：超过处理时限的任务，标题「已超时待处理」</div>
       <div class="prd-item">切换筛选后列表标题同步更新，无关卡片隐藏</div>
       <div class="prd-item">默认可见筛选项不超过 4 个</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title red">4a. 高优先判断条件</div>
+      <div class="prd-label">满足以下任一条件即标记为高优先</div>
+      <div class="prd-item">预警优先级为 <strong>P1</strong>（系统定义的最高级别预警）</div>
+      <div class="prd-item">客户处于 <strong>黄金跟进窗口</strong>：问卷完成后 24h 内未承接</div>
+      <div class="prd-item">客户 <strong>主动发起咨询</strong>超过 30 分钟未回复</div>
+      <div class="prd-item">商机阶段停留超过 <strong>SLA 的 80%</strong>（即将触发超时）</div>
+      <div class="prd-item">客户价值标签为 <strong>高价值</strong> 且待处理超过 12h</div>
+      <div class="prd-label">展示规则</div>
+      <div class="prd-item">卡片左侧显示红色竖条，标题行出现「高优先」红色 tag</div>
+      <div class="prd-item">高优先卡片始终置顶，同优先级内按预警触发时间升序排列</div>
+    </div>
+
+    <div class="prd-section">
+      <div class="prd-section-title red">4b. 已超时判断条件</div>
+      <div class="prd-label">满足以下任一条件即标记为已超时</div>
+      <div class="prd-item">预警触发后超过 <strong>处理时限</strong>仍未处理（各预警类型时限不同）</div>
+      <div class="prd-sub">问卷后未承接：触发后 <strong>2h</strong> 未处理</div>
+      <div class="prd-sub">沉默客户唤醒：触发后 <strong>24h</strong> 未处理</div>
+      <div class="prd-sub">商机推进跟进：超过阶段 <strong>SLA 100%</strong> 未推进</div>
+      <div class="prd-sub">主动咨询未回复：触发后 <strong>1h</strong> 未回复</div>
+      <div class="prd-item">任务状态为「执行中」超过预计执行时长 <strong>2 倍</strong>仍未完成</div>
+      <div class="prd-label">展示规则</div>
+      <div class="prd-item">时间信息变红，显示「⏰ 已超时 Xh」</div>
+      <div class="prd-item">已超时任务不自动消失，需人工处理或主管手动归档</div>
+      <div class="prd-item">同时满足高优先 + 已超时时，两个 tag 并列展示，卡片置顶</div>
     </div>
 
     <div class="prd-section">

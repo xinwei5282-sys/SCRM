@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>销售触达一期 - SCRM 原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="prd-editor.css">
 <script src="scrm-sidebar.js"></script>
+<script src="prd-editor.js"></script>
 <style>
   :root {
     --color-primary-1: #E9FFF8;
@@ -39,12 +43,19 @@
     --radius-xs: 4px;
     --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
     --shadow-soft: 0 10px 24px rgba(23, 32, 38, 0.06);
+    --create-border: #d7e4df;
+    --create-border-strong: #b8d8ce;
+    --create-text-muted: #68817b;
+    --create-text-dark: #25312e;
+    --create-surface: #f5faf8;
+    --create-surface-card: #fbfefd;
+    --create-fill-1: #fdfefd;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    font-family: "Noto Sans SC", "PingFang SC", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 22px;
     color: var(--color-text-1);
@@ -110,7 +121,7 @@
     color: var(--color-text-4);
     transition: transform 200ms;
   }
-  .menu-group { }
+
   .menu-group.open > .menu-item .arrow { transform: rotate(90deg); }
   .menu-sub {
     overflow: hidden;
@@ -178,6 +189,370 @@
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     overflow: hidden;
+  }
+
+  .page[data-page="create"] {
+    gap: 20px;
+  }
+
+  .page[data-page="create"] .page-card {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at top right, rgba(54,165,144,0.1), transparent 26%),
+      linear-gradient(180deg, #fbfffd 0%, #ffffff 22%);
+    box-shadow: 0 16px 34px rgba(31, 52, 45, 0.06);
+  }
+
+  .page[data-page="create"] .page-title-bar {
+    padding: 18px 24px 14px;
+    background:
+      linear-gradient(180deg, rgba(233,255,248,0.96) 0%, rgba(255,255,255,0.98) 78%);
+    border-bottom: none;
+  }
+
+  .page[data-page="create"] .page-title h1 {
+    font-size: 24px;
+    line-height: 32px;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .page[data-page="create"] .page-title p {
+    font-size: 12px;
+    color: var(--create-text-muted);
+  }
+
+  .create-workbench {
+    display: flex;
+    justify-content: center;
+    padding: 8px 24px 6px;
+  }
+
+  .workbench-flow,
+  .workbench-snapshot {
+    border: 1px solid rgba(193, 220, 212, 0.92);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.88);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.94);
+  }
+
+  .workbench-flow {
+    width: min(100%, 980px);
+    padding: 10px 0 8px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .workbench-flow-head,
+  .workbench-snapshot-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .workbench-flow-head strong,
+  .workbench-snapshot-head strong {
+    font-size: 13px;
+    color: var(--create-text-dark);
+  }
+
+  .workbench-flow-head span,
+  .workbench-snapshot-head span {
+    font-size: 12px;
+    color: var(--create-text-muted);
+  }
+
+  .workbench-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .workbench-step {
+    position: relative;
+    padding: 8px 12px 8px 50px;
+    border: none;
+    border-radius: 14px;
+    background: transparent;
+    min-height: 56px;
+    transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+  }
+
+  .workbench-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--create-text-muted);
+    background: var(--create-surface);
+    border: 1px solid var(--create-border);
+    z-index: 1;
+  }
+
+  .workbench-step::after {
+    content: "";
+    position: absolute;
+    left: calc(100% - 10px);
+    top: 22px;
+    width: 30px;
+    height: 1px;
+    background: var(--create-border);
+  }
+
+  .workbench-step:last-child::after {
+    display: none;
+  }
+
+  .workbench-step strong {
+    display: block;
+    font-size: 13px;
+    color: #273431;
+    margin-bottom: 3px;
+  }
+
+  .workbench-step span {
+    display: block;
+    font-size: 11px;
+    line-height: 15px;
+    color: #72857f;
+  }
+
+  .workbench-step.active {
+    background: linear-gradient(180deg, rgba(236,250,245,0.98) 0%, rgba(244,252,248,0.88) 100%);
+    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.8);
+  }
+
+  .workbench-step.active::before {
+    color: #fff;
+    background: var(--color-primary-6);
+    border-color: var(--color-primary-6);
+  }
+
+  .workbench-step.done::before {
+    content: "✓";
+    color: #fff;
+    background: #78c9af;
+    border-color: #78c9af;
+  }
+
+  .workbench-step.done::after {
+    background: #9ed8c8;
+  }
+
+  .workbench-step {
+    cursor: pointer;
+  }
+
+  .workbench-step.locked {
+    opacity: 0.62;
+  }
+
+  .workbench-step.active strong {
+    color: #1d6f60;
+  }
+
+  .workbench-snapshot {
+    padding: 14px 16px;
+  }
+
+  .snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .snapshot-item {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f8fcfa 0%, #ffffff 100%);
+    border: 1px solid #dbe8e3;
+  }
+
+  .snapshot-item span {
+    display: block;
+    font-size: 11px;
+    color: #72857f;
+    margin-bottom: 4px;
+  }
+
+  .snapshot-item strong {
+    display: block;
+    font-size: 16px;
+    line-height: 22px;
+    color: #24322f;
+  }
+
+  .snapshot-item strong.emphasis {
+    color: var(--color-primary-6);
+  }
+
+  .page[data-page="create"] .section {
+    padding: 16px 24px;
+    border-top: none;
+  }
+
+  .create-step-panel {
+    display: none;
+    flex-direction: column;
+  }
+
+  .create-step-panel.active {
+    display: flex;
+  }
+
+  .page[data-page="create"] .section:nth-of-type(odd) { background: transparent; }
+
+  .page[data-page="create"] .section-title {
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+
+  .create-section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-index {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-primary-6);
+    background: linear-gradient(180deg, #ecfaf5 0%, #dff4ec 100%);
+    border: 1px solid #c9e7dc;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  .section-status {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #5d786f;
+    background: #f2f7f5;
+    border: 1px solid #d7e3df;
+  }
+
+  .section-status.active {
+    color: var(--color-primary-6);
+    background: #eefaf5;
+    border-color: #bfe2d6;
+  }
+
+  .page[data-page="create"] .section-title h2 {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .page[data-page="create"] .section-copy,
+  .page[data-page="create"] .section-title span {
+    color: var(--create-text-muted);
+  }
+
+  .page[data-page="create"] .form-grid {
+    gap: 12px 16px;
+  }
+
+  .page[data-page="create"] .field {
+    padding: 8px 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .page[data-page="create"] .field.full {
+    grid-column: 1 / -1;
+  }
+
+  .page[data-page="create"] .field label {
+    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: #4f6660;
+    font-weight: 700;
+  }
+
+  .page[data-page="create"] .field-note {
+    margin-top: 6px;
+    color: #6e827d;
+    font-size: 11px;
+  }
+
+  .page[data-page="create"] .input,
+  .page[data-page="create"] .select,
+  .page[data-page="create"] .textarea {
+    border-radius: 12px;
+    border-color: var(--create-border);
+    background: linear-gradient(180deg, var(--create-fill-1) 0%, var(--create-surface-card) 100%);
+    box-shadow: none;
+  }
+
+  .page[data-page="create"] .input:hover,
+  .page[data-page="create"] .select:hover,
+  .page[data-page="create"] .textarea:hover {
+    border-color: #bfd9d1;
+  }
+
+  .page[data-page="create"] .input:focus,
+  .page[data-page="create"] .select:focus,
+  .page[data-page="create"] .textarea:focus {
+    border-color: #87cbb8;
+    box-shadow: 0 0 0 4px rgba(54,165,144,0.1);
+  }
+
+  .page[data-page="create"] .input,
+  .page[data-page="create"] .select {
+    height: 38px;
+  }
+
+  .page[data-page="create"] .textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .page[data-page="create"] .radio-group {
+    gap: 10px;
+  }
+
+  .page[data-page="create"] .radio-chip {
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbfa 100%);
+    border-color: #d9e4e0;
+    color: #556d67;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+  }
+
+  .page[data-page="create"] .radio-chip.active {
+    border-color: #bfe3d7;
+    background: linear-gradient(180deg, #f4fdf9 0%, #ebf8f3 100%);
+    box-shadow: 0 6px 14px rgba(54,165,144,0.1);
   }
 
   .page-title-bar {
@@ -913,77 +1288,57 @@
     color: var(--color-text-2);
   }
 
-  .logic-toggle {
-    display: inline-flex;
-    background: var(--color-fill-3);
-    border-radius: 6px;
-    padding: 2px;
-    gap: 2px;
-  }
-
-  .logic-btn {
-    height: 26px;
-    padding: 0 10px;
-    border: none;
-    background: transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    color: var(--color-text-3);
-  }
-
-  .logic-btn.active {
-    background: var(--color-fill-1);
-    color: var(--color-primary-6);
-    font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-
   .builder-conditions {
     display: flex;
     flex-direction: column;
   }
 
-  .condition-connector {
+  .rb-logic-connector {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 14px;
-    height: 24px;
-    background: var(--color-fill-2);
-    border-bottom: 1px solid var(--color-border-default);
+    margin: 4px 0 4px 16px;
+    font-size: 11px;
+    color: var(--color-text-4);
   }
 
-  .connector-line {
+  .rb-logic-connector::before,
+  .rb-logic-connector::after {
+    content: '';
     flex: 1;
     height: 1px;
     background: var(--color-border-default);
+    max-width: 40px;
   }
 
-  .connector-badge {
-    display: inline-flex;
-    align-items: center;
-    height: 20px;
-    padding: 0 8px;
-    border-radius: 4px;
+  .rb-logic-connector-select {
+    height: 22px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    padding: 0 6px;
     font-size: 11px;
     font-weight: 600;
-    background: var(--color-fill-1);
-    border: 1px solid var(--color-border-default);
     color: var(--color-text-3);
-    letter-spacing: 0.5px;
+    background: var(--color-fill-1);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    padding-right: 18px;
+    min-width: 48px;
+    text-align: center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
   }
 
-  .connector-badge.and {
-    color: var(--color-primary-6);
-    border-color: #c0e8da;
-    background: var(--color-primary-1);
+  .rb-logic-connector-select:hover {
+    border-color: var(--color-primary-6);
   }
 
-  .connector-badge.or {
-    color: var(--color-info-6);
-    border-color: #d5e7ff;
-    background: var(--color-info-1);
+  .rb-logic-connector-select.connector-not {
+    color: var(--color-danger-6);
+    border-color: rgba(245, 74, 69, 0.3);
+    background-color: var(--color-danger-1);
   }
 
   .condition-row {
@@ -995,8 +1350,8 @@
 
   .condition-row:last-child { border-bottom: none; }
 
-  .cond-select { width: 120px; min-width: 120px; flex-shrink: 0; }
-  .op-select   { width: 90px;  min-width: 90px;  flex-shrink: 0; }
+  .cond-select { width: 164px; min-width: 164px; flex-shrink: 0; }
+  .op-select   { width: 112px; min-width: 112px; flex-shrink: 0; }
 
   .tag-value-area {
     flex: 1;
@@ -1051,6 +1406,16 @@
   }
 
   .tag-input::placeholder { color: var(--color-text-4); }
+
+  .value-select {
+    min-width: 140px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    color: var(--color-text-2);
+    height: 28px;
+  }
 
   .btn-icon {
     width: 28px;
@@ -1326,9 +1691,516 @@
   .channel-card.selected .channel-limits {
     background: rgba(54,165,144,0.07);
   }
+
+  .page[data-page="create"] .tag-builder {
+    border-color: var(--create-border);
+    border-radius: 16px;
+    background: linear-gradient(180deg, var(--create-surface-card) 0%, var(--create-surface) 100%);
+    box-shadow: 0 10px 22px rgba(32, 54, 47, 0.04);
+  }
+
+  .page[data-page="create"] .builder-header {
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(233,255,248,0.72) 0%, rgba(247,249,250,0.92) 100%);
+    border-bottom-color: var(--create-border);
+  }
+
+  .page[data-page="create"] .logic-btn {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.76);
+    border-color: #d8e4e0;
+  }
+
+  .page[data-page="create"] .logic-btn.active {
+    background: linear-gradient(180deg, #eefbf6 0%, #e6f6f0 100%);
+    border-color: #bfe2d6;
+    box-shadow: none;
+  }
+
+  .page[data-page="create"] .condition-row {
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.72);
+  }
+
+  .page[data-page="create"] .condition-row + .condition-row {
+    border-top: 1px solid rgba(223, 232, 228, 0.6);
+  }
+
+  .page[data-page="create"] .condition-connector {
+    height: 22px;
+    padding: 0 14px;
+    background: rgba(244, 249, 247, 0.95);
+    border-bottom-color: rgba(214, 228, 223, 0.82);
+  }
+
+  .page[data-page="create"] .builder-footer {
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(247,250,249,0.94) 0%, rgba(255,255,255,0.96) 100%);
+    border-top-color: #d6e4df;
+  }
+
+  .page[data-page="create"] .mini-stat {
+    height: 24px;
+    border-radius: 999px;
+    padding: 0 10px;
+    background: #ffffff;
+    color: #60756f;
+    border-color: #d8e4e0;
+  }
+
+  .page[data-page="create"] .channel-cards {
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .page[data-page="create"] .channel-card {
+    min-height: 78px;
+    border-width: 1px;
+    border-color: #d7e3df;
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+    box-shadow: 0 6px 14px rgba(32, 54, 47, 0.04);
+    transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  }
+
+  .page[data-page="create"] .channel-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(32, 54, 47, 0.08);
+    border-color: #b8d8ce;
+  }
+
+  .page[data-page="create"] .channel-card.selected {
+    border-color: #81c9b8;
+    background:
+      radial-gradient(circle at top right, rgba(54,165,144,0.12), transparent 34%),
+      linear-gradient(180deg, #f6fffb 0%, #eef9f5 100%);
+    box-shadow: 0 10px 20px rgba(54,165,144,0.1);
+  }
+
+  .page[data-page="create"] .channel-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    font-size: 9px;
+  }
+
+  .page[data-page="create"] .channel-header {
+    gap: 7px;
+    margin-bottom: 4px;
+  }
+
+  .page[data-page="create"] .channel-name-row {
+    gap: 5px;
+  }
+
+  .page[data-page="create"] .channel-name-row strong {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .page[data-page="create"] .channel-badge {
+    height: 16px;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+
+  .page[data-page="create"] .channel-desc {
+    margin-bottom: 0;
+    font-size: 10px;
+    line-height: 14px;
+    color: #667a74;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .page[data-page="create"] .antispam-group {
+    border-color: #d6e4df;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fbfefd 0%, #ffffff 100%);
+    box-shadow: 0 10px 20px rgba(34, 53, 47, 0.04);
+  }
+
+  .page[data-page="create"] .toggle-row {
+    padding: 10px 14px;
+  }
+
+  .page[data-page="create"] .preview-panel {
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 12px;
+  }
+
+  .page[data-page="create"] .preview-box {
+    border-color: #d3e1dc;
+    border-radius: 16px;
+    padding: 12px 14px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,252,250,0.96) 100%);
+    box-shadow: 0 12px 24px rgba(34, 53, 47, 0.05);
+  }
+
+  .page[data-page="create"] .metric-item {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f5faf8 0%, #edf6f2 100%);
+  }
+
+  .page[data-page="create"] .risk-alert {
+    border-color: #ffd8b0;
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, #fffaf3 0%, #fff5e8 100%);
+  }
+
+  .page[data-page="create"] .footer-actions {
+    margin-top: auto;
+    padding: 12px 24px 14px;
+    border-top-color: rgba(191, 219, 210, 0.9);
+    background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, #ffffff 100%);
+  }
+
+  .page[data-page="create"] .metric-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .page[data-page="create"] .metric-item strong {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .page[data-page="create"] .progress-stack {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .page[data-page="create"] .progress-item {
+    grid-template-columns: 84px 1fr 34px;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .page[data-page="create"] .preview-head {
+    margin-bottom: 10px;
+  }
+
+  .page[data-page="create"] .preview-head h3 {
+    font-size: 13px;
+  }
+
+  .page[data-page="create"] .tag-group {
+    gap: 6px;
+  }
+
+  .page[data-page="create"] .timeline-item {
+    padding: 10px 12px;
+  }
+
+  .create-step-panel[data-create-step="3"].active {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 12px 16px;
+    padding: 0 0 6px;
+    align-items: start;
+  }
+
+  .create-step-panel[data-create-step="3"] .section {
+    padding: 0;
+    background: transparent;
+  }
+
+  .create-step-panel[data-create-step="3"] .section:nth-of-type(1) {
+    grid-column: 1;
+    margin: 16px 0 0 16px;
+    padding: 18px;
+    background: linear-gradient(180deg, #f7fdfa 0%, #f0f8f4 100%);
+    border: 1.5px solid #c5ddd6;
+    border-radius: 14px;
+  }
+
+  .create-step-panel[data-create-step="3"] .section:nth-of-type(1) .form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .create-step-panel[data-create-step="3"] .section:nth-of-type(2) {
+    grid-column: 1;
+    padding: 0 0 16px 16px;
+  }
+
+  .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    padding: 16px 20px 16px 0;
+  }
+
+  .create-footer-meta {
+    margin-right: auto;
+    color: #66807a;
+    font-size: 12px;
+  }
+
+  .page[data-page="create"] .btn {
+    border-radius: 10px;
+  }
+
+  .page[data-page="create"] .btn.primary {
+    box-shadow: 0 10px 18px rgba(54,165,144,0.18);
+  }
+
+  @media (max-width: 1280px) {
+    .page[data-page="create"] .preview-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .create-step-panel[data-create-step="3"].active {
+      grid-template-columns: 1fr;
+      padding: 0;
+    }
+
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .workbench-steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
+      padding: 12px 16px;
+    }
+  }
+
+  /* ---- Create page enhancements ---- */
+
+  /* Selected channel card: checkmark indicator */
+  .page[data-page="create"] .channel-card {
+    position: relative;
+  }
+  .page[data-page="create"] .channel-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-primary-6);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(54,165,144,0.3);
+  }
+
+  /* Condition connector: pill-style select */
+  .rb-logic-connector-select {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid #c8dcd7;
+    border-radius: 999px;
+    padding: 0 14px;
+    height: 22px;
+    font-size: 11px;
+    font-weight: 600;
+    background: linear-gradient(180deg, #f2f8f5 0%, #eaf4ef 100%);
+    color: #3f6059;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 150ms, background 150ms, box-shadow 150ms;
+  }
+  .rb-logic-connector-select:hover {
+    background: linear-gradient(180deg, #e8f5f0 0%, #ddf0e8 100%);
+    border-color: #a0cec4;
+  }
+  .rb-logic-connector-select:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 3px rgba(54,165,144,0.12);
+  }
+
+  /* Active step: add outer glow for stronger affordance */
+  .workbench-step.active {
+    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.9), 0 6px 16px rgba(54,165,144,0.1);
+  }
+
+  /* ---- P1: button.radio-chip browser-default reset ---- */
+  button.radio-chip {
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  button.radio-chip:focus-visible {
+    outline: 2px solid var(--color-primary-6);
+    outline-offset: 2px;
+  }
+
+  /* ---- P1: focus-visible for all custom interactive elements ---- */
+  .workbench-step:focus-visible,
+  .channel-card:focus-visible,
+  .toggle-switch:focus-visible,
+  .btn:focus-visible,
+  .add-cond-btn:focus-visible {
+    outline: 2px solid var(--color-primary-6);
+    outline-offset: 2px;
+  }
+  /* Remove browser default outline only for mouse users */
+  .workbench-step:focus:not(:focus-visible),
+  .channel-card:focus:not(:focus-visible),
+  .toggle-switch:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* ---- P1: workbench-step keyboard accessibility ---- */
+
+  /* ---- P2: 768px responsive breakpoint ---- */
+  @media (max-width: 768px) {
+    .channel-cards {
+      grid-template-columns: 1fr;
+    }
+    .page[data-page="create"] .channel-cards {
+      grid-template-columns: 1fr;
+    }
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .field.full { grid-column: 1; }
+    .page[data-page="create"] .workbench-steps {
+      grid-template-columns: 1fr;
+    }
+    .create-step-panel[data-create-step="3"].active {
+      grid-template-columns: 1fr;
+    }
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
+    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
+      grid-column: auto;
+      grid-row: auto;
+      padding: 12px 16px;
+    }
+  }
+
+  /* ---- P2: touch targets — mobile minimum 44px ---- */
+  @media (max-width: 768px) {
+    .btn { height: 44px; padding: 0 16px; }
+    .page[data-page="create"] .radio-chip { height: 44px; padding: 0 16px; }
+    .toggle-switch { width: 48px; height: 26px; }
+    .toggle-switch .toggle-thumb { width: 18px; height: 18px; }
+    .toggle-switch.on .toggle-thumb { transform: translateX(22px); }
+    .input, .select { height: 44px; }
+    .page[data-page="create"] .input,
+    .page[data-page="create"] .select { height: 44px; }
+  }
+
+  /* ---- P2: prefers-reduced-motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+
+  /* ---- P3: distill — reduce inset 1px white highlight overuse ---- */
+  /* Keep only on the highest-value elements, remove from inputs */
+  .page[data-page="create"] .input,
+  .page[data-page="create"] .select,
+  .page[data-page="create"] .textarea {
+    box-shadow: none;
+  }
+  .page[data-page="create"] .input:focus,
+  .page[data-page="create"] .select:focus,
+  .page[data-page="create"] .textarea:focus {
+    border-color: #87cbb8;
+    box-shadow: 0 0 0 4px rgba(54,165,144,0.1);
+  }
+
+  /* ---- P3: distill — preview metric items ---- */
+  .page[data-page="create"] .metric-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(54,165,144,0.06);
+    border: 1px solid rgba(54,165,144,0.12);
+  }
+  .page[data-page="create"] .metric-item strong {
+    display: block;
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    color: var(--color-text-1);
+    margin-bottom: 2px;
+  }
+  .page[data-page="create"] .metric-item span {
+    display: block;
+    font-size: 11px;
+    color: var(--color-text-3);
+    line-height: 14px;
+  }
+
+  /* ======== PRD Panel ======== */
+  .prd-toggle {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 900;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--color-accent-orange-6);
+    border-radius: var(--radius-btn);
+    background: #FFF7E9;
+    color: var(--color-accent-orange-6);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    box-shadow: 0 2px 8px rgba(255,125,0,0.15);
+  }
+  .prd-toggle:hover { background: var(--color-accent-orange-6); color: #fff; }
+  .prd-toggle .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-orange-6); }
+  .prd-toggle:hover .dot { background: #fff; }
+  body.prd-on .prd-toggle { background: var(--color-accent-orange-6); color: #fff; }
+  body.prd-on .prd-toggle .dot { background: #fff; }
+  body.prd-on .prd-toggle { right: 396px; }
+
+  .prd-panel {
+    display: none;
+    position: fixed;
+    top: 48px;
+    right: 0;
+    width: 380px;
+    height: calc(100vh - 48px);
+    background: #FFFDF7;
+    border-left: 1px solid #F0E6CC;
+    z-index: 500;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.05);
+  }
+  body.prd-on .prd-panel { display: block; }
+  body.prd-on .main { margin-right: 380px; }
 </style>
 </head>
 <body>
+
+<button class="prd-toggle" onclick="togglePRD()">
+  <span class="dot"></span>PRD 标注
+</button>
+
   <div class="layout">
     <aside class="sidebar" id="scrm-sidebar"><script>renderSCRMPrototypeSidebar(document.currentScript.parentElement, "sales-touch");</script></aside>
 
@@ -1354,48 +2226,67 @@
               </div>
             </div>
 
+            <div class="create-workbench">
+              <div class="workbench-flow">
+                <div class="workbench-steps">
+                  <div class="workbench-step active" data-step="1" role="button" tabindex="0" aria-current="step" aria-label="第 1 步：基础设置（当前步骤）">
+                    <strong>基础设置</strong>
+                    <span>确认场景、归属鱼丸和发送通道。</span>
+                  </div>
+                  <div class="workbench-step" data-step="2" role="button" tabindex="0" aria-label="第 2 步：人群圈选">
+                    <strong>人群圈选</strong>
+                    <span>组合条件并快速看到命中规模。</span>
+                  </div>
+                  <div class="workbench-step locked" data-step="3" role="button" tabindex="-1" aria-disabled="true" aria-label="第 3 步：内容与风控（未解锁）">
+                    <strong>内容与风控</strong>
+                    <span>填写文案、发送设置并完成风控复核。</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <div class="create-step-panel active" data-create-step="1">
             <div class="section">
               <div class="section-title">
-                <div>
+                <div class="create-section-head">
+                  <div>
                   <h2>任务基础信息</h2>
-                  <div class="section-copy">定义任务名称、目标人群与发送通道。</div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-grid">
                 <div class="field full">
-                  <label class="required">任务名称</label>
-                  <input class="input" value="4月直播邀约第二批">
+                  <label class="required" for="task-name">任务名称</label>
+                  <input class="input" id="task-name" value="4月直播邀约第二批">
                   <div class="field-note">建议包含活动名/批次，方便列表复盘</div>
                 </div>
                 <div class="field">
-                  <label class="required">触达场景</label>
-                  <div class="radio-group">
-                    <span class="radio-chip">新线索首触达</span>
-                    <span class="radio-chip">沉默客户唤醒</span>
-                    <span class="radio-chip">商机推进跟进</span>
-                    <span class="radio-chip active">活动通知</span>
+                  <label class="required" id="label-scene">触达场景</label>
+                  <div class="radio-group" role="group" aria-labelledby="label-scene">
+                    <button class="radio-chip" type="button">新线索首触达</button>
+                    <button class="radio-chip" type="button">沉默客户唤醒</button>
+                    <button class="radio-chip" type="button">商机推进跟进</button>
+                    <button class="radio-chip active" type="button">活动通知</button>
                   </div>
                   <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
                 </div>
-                </div>
                 <div class="field full">
-                  <label class="required">所属鱼丸</label>
-                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;">
-                    <span class="radio-chip" id="chip-all-sales">全部鱼丸</span>
-                    <span class="radio-chip active" id="chip-designated">部分鱼丸</span>
+                  <label class="required" id="label-member">所属鱼丸</label>
+                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;" role="group" aria-labelledby="label-member">
+                    <button class="radio-chip" type="button" id="chip-all-sales">全部鱼丸</button>
+                    <button class="radio-chip active" type="button" id="chip-designated">部分鱼丸</button>
                     <div id="member-wrapper" style="display:flex;align-items:center;gap:8px;">
-                      <input class="input" id="member-input" value="华东一组、华南一组、直播线索组" style="width:260px;">
+                      <input class="input" id="member-input" value="华东一组、华南一组、直播线索组" style="width:260px;" aria-label="选定鱼丸成员">
                     </div>
                   </div>
                 </div>
                 <div class="field full">
-                  <label class="required">发送通道</label>
-                  <div class="channel-cards" id="channel-cards">
-                    <div class="channel-card selected" data-channel="wecom">
+                  <label class="required" id="label-channel">发送通道</label>
+                  <div class="channel-cards" id="channel-cards" role="group" aria-labelledby="label-channel">
+                    <div class="channel-card selected" data-channel="wecom" role="button" tabindex="0" aria-pressed="true" aria-label="企微官方群发（合规）">
                       <div class="channel-header">
-                        <div class="channel-icon">企微</div>
+                        <div class="channel-icon" aria-hidden="true">企微</div>
                         <div class="channel-name-row">
                           <strong>企微官方群发</strong>
                           <span class="channel-badge safe">合规</span>
@@ -1403,9 +2294,9 @@
                       </div>
                       <div class="channel-desc">通过企业微信官方 API 发送，消息来源可见、客户体验稳定，有回执记录。</div>
                     </div>
-                    <div class="channel-card" data-channel="xingyun">
+                    <div class="channel-card" data-channel="xingyun" role="button" tabindex="0" aria-pressed="false" aria-label="星云（谨慎使用）">
                       <div class="channel-header">
-                        <div class="channel-icon xingyun">星云</div>
+                        <div class="channel-icon xingyun" aria-hidden="true">星云</div>
                         <div class="channel-name-row">
                           <strong>星云</strong>
                           <span class="channel-badge caution">谨慎使用</span>
@@ -1415,32 +2306,40 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            </div>
 
+            <div class="create-step-panel" data-create-step="2">
+            <div class="section">
                 <div class="field full">
                   <label class="required">目标人群</label>
                   <div class="tag-builder">
                     <div class="builder-header">
                       <span>客户需满足</span>
-                      <div class="logic-toggle" id="logic-toggle">
-                        <button class="logic-btn active" data-logic="all">所有条件（且）</button>
-                        <button class="logic-btn" data-logic="any">任一条件（或）</button>
-                      </div>
+                      <span style="color:var(--color-text-4);font-size:12px;">条件之间可分别设置为 且 / 或 / 非</span>
                       <span style="color:var(--color-text-4);font-size:12px;margin-left:auto;">防骚扰规则在提交后自动叠加，不影响此处估算</span>
                     </div>
 
                     <div class="builder-conditions" id="builder-conditions">
                       <div class="condition-row">
                         <select class="select cond-select">
-                          <option selected>活动标签</option>
-                          <option>客户层级</option>
-                          <option>客户状态</option>
-                          <option>加粉时长</option>
-                          <option>最近互动</option>
+                          <option selected>企微标签</option>
+                          <option>客户等级</option>
+                          <option>是否加入企微群聊</option>
+                          <option>体验营期数</option>
+                          <option>首次加入时间</option>
                           <option>所属销售</option>
+                          <option>添加好友时间</option>
+                          <option>浏览文章时长</option>
+                          <option>观看直播</option>
+                          <option>是否分销</option>
+                          <option>分销人</option>
                         </select>
                         <select class="select op-select">
-                          <option selected>包含</option>
-                          <option>不包含</option>
+                          <option selected>满足任一</option>
+                          <option>同时满足</option>
+                          <option>全部不满足</option>
                         </select>
                         <div class="tag-value-area">
                           <span class="tag-chip">4月直播邀约<span class="chip-del">×</span></span>
@@ -1449,58 +2348,44 @@
                         <button class="btn-icon" title="删除此条件">×</button>
                       </div>
 
-                      <div class="condition-connector" data-connector="and">
-                        <div class="connector-line"></div>
-                        <span class="connector-badge and">且</span>
-                        <div class="connector-line"></div>
+                      <div class="rb-logic-connector" data-connector="and">
+                        <select class="rb-logic-connector-select" aria-label="条件连接关系">
+                          <option value="and" selected>且</option>
+                          <option value="or">或</option>
+                          <option value="not">非</option>
+                        </select>
                       </div>
 
                       <div class="condition-row">
                         <select class="select cond-select">
-                          <option>活动标签</option>
-                          <option selected>客户状态</option>
-                          <option>客户层级</option>
-                          <option>加粉时长</option>
-                          <option>最近互动</option>
+                          <option>企微标签</option>
+                          <option>客户等级</option>
+                          <option>是否加入企微群聊</option>
+                          <option>体验营期数</option>
+                          <option>首次加入时间</option>
                           <option>所属销售</option>
-                        </select>
-                        <select class="select op-select">
-                          <option selected>包含</option>
-                          <option>不包含</option>
-                        </select>
-                        <div class="tag-value-area">
-                          <span class="tag-chip">潜在客户<span class="chip-del">×</span></span>
-                          <span class="tag-chip">意向客户<span class="chip-del">×</span></span>
-                          <input class="tag-input" placeholder="继续输入标签...">
-                        </div>
-                        <button class="btn-icon" title="删除此条件">×</button>
-                      </div>
-
-                      <div class="condition-connector" data-connector="and">
-                        <div class="connector-line"></div>
-                        <span class="connector-badge and">且</span>
-                        <div class="connector-line"></div>
-                      </div>
-
-                      <div class="condition-row">
-                        <select class="select cond-select">
-                          <option>活动标签</option>
-                          <option>客户状态</option>
-                          <option selected>最近互动</option>
-                          <option>客户层级</option>
-                          <option>加粉时长</option>
-                          <option>所属销售</option>
+                          <option>添加好友时间</option>
+                          <option>浏览文章时长</option>
+                          <option>观看直播</option>
+                          <option>是否分销</option>
+                          <option selected>分销人</option>
                         </select>
                         <select class="select op-select">
                           <option>包含</option>
-                          <option selected>不包含</option>
+                          <option>不包含</option>
+                          <option>大于</option>
+                          <option>小于</option>
+                          <option>大于等于</option>
+                          <option>小于等于</option>
+                          <option>等于</option>
+                          <option selected>不等于</option>
                         </select>
                         <div class="tag-value-area">
-                          <span class="tag-chip neg">30天内已回复<span class="chip-del">×</span></span>
                           <input class="tag-input" placeholder="继续输入标签...">
                         </div>
                         <button class="btn-icon" title="删除此条件">×</button>
                       </div>
+
                     </div>
 
                     <div class="builder-footer">
@@ -1517,91 +2402,70 @@
                       </div>
                     </div>
                   </div>
-                  <div class="field-note">条件之间逻辑关系（且 / 或）可在上方切换；"不包含"条件将排除命中的客户。</div>
+                  <div class="field-note">条件之间可分别设置为 且 / 或 / 非；筛选运算符支持包含、比较和等值判断。</div>
                 </div>
-              </div>
+            </div>
             </div>
 
+            <div class="create-step-panel" data-create-step="3">
             <div class="section">
-              <div class="section-title">
-                <div>
-                  <h2>触达内容与执行设置</h2>
-                  <div class="section-copy">一期先不接模板变量，发送内容直接按任务快照保存。</div>
-                </div>
-                <span>一期只支持手动填写内容，不走模板变量渲染</span>
-              </div>
-
               <div class="form-grid">
                 <div class="field full">
-                  <label class="required">推送内容</label>
-                  <textarea class="textarea">Hi，明晚 20:00 我们会做一场“从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
-                  <div class=”field-note”>建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
+                  <label class="required" for="push-content">推送内容</label>
+                  <textarea class="textarea" id="push-content">Hi，明晚 20:00 我们会做一场”从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
+                  <div class="field-note">建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
                 </div>
                 <div class="field full">
-                  <label class="required">发送方式</label>
-                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;">
-                    <span class="radio-chip" id="chip-immediate">立即发送</span>
-                    <span class="radio-chip active" id="chip-scheduled">定时发送</span>
+                  <label class="required" id="label-send-mode">发送方式</label>
+                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;" role="group" aria-labelledby="label-send-mode">
+                    <button class="radio-chip" type="button" id="chip-immediate">立即发送</button>
+                    <button class="radio-chip active" type="button" id="chip-scheduled">定时发送</button>
                     <div id="send-time-wrapper" style="display:flex;align-items:center;gap:8px;">
-                      <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM" style="width:176px;">
-                      <span class="time-range-hint" style="margin-top:0;"><span class="dot"></span>09:00 – 21:00</span>
+                      <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM" style="width:176px;" aria-label="定时发送时间" aria-describedby="time-hint time-error">
+                      <span class="time-range-hint" id="time-hint" style="margin-top:0;"><span class="dot" aria-hidden="true"></span>09:00 – 21:00</span>
                     </div>
                   </div>
-                  <div class="field-error" id="time-error">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
+                  <div class="field-error" id="time-error" role="alert">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
                 </div>
               </div>
             </div>
 
             <div class="section">
-              <div class="section-title">
-                <div>
-                  <h2>防骚扰设置</h2>
-                  <div class="section-copy">以下规则默认开启，系统在提交执行时自动排除不符合条件的客户。</div>
-                </div>
-                <span style="font-size:12px;color:var(--color-text-3);">可按需关闭，关闭后命中人数可能增加</span>
-              </div>
               <div class="antispam-group">
                 <div class="toggle-row">
                   <div class="toggle-info">
-                    <span class="toggle-label">冷静期保护</span>
+                    <span class="toggle-label" id="lbl-cooldown">冷静期保护</span>
                     <span class="toggle-desc">72 小时内已被本系统触达过的客户自动排除</span>
                   </div>
-                  <div class="toggle-switch on" data-toggle="cooldown"><div class="toggle-thumb"></div></div>
+                  <div class="toggle-switch on" data-toggle="cooldown" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-cooldown"><div class="toggle-thumb" aria-hidden="true"></div></div>
                 </div>
                 <div class="toggle-row">
                   <div class="toggle-info">
-                    <span class="toggle-label">周频次上限</span>
+                    <span class="toggle-label" id="lbl-weekly">周频次上限</span>
                     <span class="toggle-desc">同一客户每自然周最多触达 2 次，超出则排除</span>
                   </div>
-                  <div class="toggle-switch on" data-toggle="weekly-limit"><div class="toggle-thumb"></div></div>
+                  <div class="toggle-switch on" data-toggle="weekly-limit" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-weekly"><div class="toggle-thumb" aria-hidden="true"></div></div>
                 </div>
                 <div class="toggle-row">
                   <div class="toggle-info">
-                    <span class="toggle-label">本活动去重</span>
+                    <span class="toggle-label" id="lbl-dedup">本活动去重</span>
                     <span class="toggle-desc">本次活动已触达过的客户不重复发送</span>
                   </div>
-                  <div class="toggle-switch on" data-toggle="dedup"><div class="toggle-thumb"></div></div>
+                  <div class="toggle-switch on" data-toggle="dedup" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-dedup"><div class="toggle-thumb" aria-hidden="true"></div></div>
                 </div>
                 <div class="toggle-row">
                   <div class="toggle-info">
-                    <span class="toggle-label">拉黑 / 删除客户过滤</span>
+                    <span class="toggle-label" id="lbl-blocked">拉黑 / 删除客户过滤</span>
                     <span class="toggle-desc">已将销售删除或拉黑的客户始终排除（不可关闭）</span>
                   </div>
-                  <div class="toggle-switch on" style="opacity:0.45;cursor:not-allowed;" data-toggle="blocked"><div class="toggle-thumb"></div></div>
+                  <div class="toggle-switch on" style="opacity:0.45;cursor:not-allowed;" data-toggle="blocked" role="switch" tabindex="-1" aria-checked="true" aria-disabled="true" aria-labelledby="lbl-blocked"><div class="toggle-thumb" aria-hidden="true"></div></div>
                 </div>
               </div>
             </div>
 
             <div class="section">
-              <div class="section-title">
-                <div>
-                  <h2>人群预览与防骚扰排除</h2>
-                  <div class="section-copy">先看命中人数，再看被排除的人和排除原因，避免“为什么少了几百人”无法解释。</div>
-                </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn ghost">重新计算</button>
-                  <button class="btn primary">预览人数</button>
-                </div>
+              <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:18px;">
+                <button class="btn ghost">重新计算</button>
               </div>
 
               <div class="preview-panel">
@@ -1649,30 +2513,18 @@
                   </div>
                 </div>
 
-                <div class="preview-box">
-                  <div class="preview-head">
-                    <h3>风险提示</h3>
-                    <span class="status-pill warning">中风险</span>
-                  </div>
-                  <div class="risk-alert">当前排除人数占比 14.9%，系统建议保持该批次发送时间不晚于 20:30，并优先在活动前 24 小时触达。</div>
-                  <div style="margin-top:12px;" class="timeline">
-                    <div class="timeline-item">
-                      <small>频控提醒</small>
-                      活动通知近 7 天已发送 1 次，建议不要重复追加第三批。
-                    </div>
-                    <div class="timeline-item">
-                      <small>内容提醒</small>
-                      当前文案偏邀约式，适合活动通知场景，不建议复用于沉默唤醒。
-                    </div>
-                  </div>
-                </div>
+
               </div>
+            </div>
             </div>
 
             <div class="footer-actions">
-              <button class="btn">取消</button>
+              <button class="btn nav-back" data-target="list">取消</button>
               <button class="btn ghost">保存草稿</button>
-              <button class="btn primary">提交执行</button>
+              <div style="flex:1"></div>
+              <button class="btn" id="create-prev-btn" style="display:none;">上一步</button>
+              <button class="btn primary" id="create-next-btn">下一步</button>
+              <button class="btn primary" id="create-submit-btn" style="display:none;">提交执行</button>
             </div>
           </div>
         </section>
@@ -1684,14 +2536,6 @@
                 <h1>销售触达</h1>
                 <p>管理触达任务，查看执行状态、命中人数与回复效果。</p>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div class="nav-switcher">
-                  <button class="list-subtab active" data-subtab="tasks">任务列表</button>
-                  <button class="list-subtab" data-subtab="blocks">拦截记录</button>
-                </div>
-                <button class="btn ghost" id="export-btn">导出</button>
-                <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
-              </div>
             </div>
 
             <div class="section">
@@ -1702,16 +2546,15 @@
                   <span class="tag">已完成 11</span>
                   <span class="tag danger">部分失败 2</span>
                 </div>
-                <div class="toolbar-right">
-                  <button class="btn ghost">批量导出</button>
-                  <button class="btn">任务设置</button>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button class="btn ghost" id="export-btn">导出</button>
+                  <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
                 </div>
               </div>
               <div class="filters">
+                <input class="input" placeholder="搜索任务名称">
                 <select class="select"><option>全部场景</option><option>新线索首触达</option><option>沉默客户唤醒</option><option>商机推进跟进</option><option selected>活动通知</option></select>
                 <select class="select"><option>全部状态</option><option>草稿</option><option>待执行</option><option selected>执行中</option><option>已完成</option></select>
-                <input class="input" value="最近30天">
-                <input class="input" placeholder="搜索任务名称">
                 <button class="btn">重置</button>
               </div>
             </div>
@@ -2117,59 +2960,134 @@
       });
     });
 
-    /* ---- Logic toggle (且 / 或) ---- */
-    function currentLogic() {
-      const active = document.querySelector("#logic-toggle .logic-btn.active");
-      return active ? active.dataset.logic : "all";
+    /* ---- Condition connector (且 / 或 / 非) ---- */
+    function getConditionOperatorOptions(field) {
+      if (field === "企微标签") {
+        return ["满足任一", "同时满足", "全部不满足"];
+      }
+      if (field === "客户等级") {
+        return ["等于", "不等于"];
+      }
+      if (field === "是否加入企微群聊") {
+        return ["是", "否"];
+      }
+      if (field === "体验营期数") {
+        return ["等于", "不等于"];
+      }
+      if (field === "首次加入时间") {
+        return ["等于", "开始于", "结束于", "为空", "不为空"];
+      }
+      if (field === "所属销售" || field === "分销人") {
+        return ["等于", "不等于", "包含"];
+      }
+      if (field === "添加好友时间") {
+        return ["等于", "开始于", "结束于", "为空", "不为空"];
+      }
+      if (field === "是否分销") {
+        return ["是", "否"];
+      }
+      if (field === "观看直播") {
+        return ["大于", "小于", "大于等于", "小于等于", "为空", "不为空"];
+      }
+      return ["包含", "不包含", "大于", "小于", "大于等于", "小于等于", "等于", "不等于"];
     }
 
-    function updateConnectors() {
-      const logic = currentLogic();
-      const label = logic === "all" ? "且" : "或";
-      const cls = logic === "all" ? "and" : "or";
-      document.querySelectorAll(".condition-connector").forEach(c => {
-        const badge = c.querySelector(".connector-badge");
-        badge.textContent = label;
-        badge.className = "connector-badge " + cls;
-        c.dataset.connector = logic === "all" ? "and" : "or";
-      });
+    function getValueAreaHTML(field, operator) {
+      if (field === "客户等级") {
+        return `<select class="value-select" aria-label="客户等级"><option selected>S</option><option>A</option><option>B</option><option>C</option></select>`;
+      }
+      if (field === "是否加入企微群聊") {
+        return ``;
+      }
+      if (field === "体验营期数") {
+        return `<select class="value-select" aria-label="体验营期数"><option selected>1期</option><option>2期</option><option>3期</option><option>4期</option><option>5期</option></select>`;
+      }
+      if (field === "首次加入时间") {
+        if (operator === "为空" || operator === "不为空") return ``;
+        return `<input class="tag-input" placeholder="选择日期，如 2026-04-24">`;
+      }
+      if (field === "所属销售" || field === "分销人") {
+        return `<select class="value-select" aria-label="${field}"><option selected>明策</option><option>王怡</option><option>刘倩</option><option>陈颖</option></select>`;
+      }
+      if (field === "添加好友时间") {
+        if (operator === "为空" || operator === "不为空") return ``;
+        return `<input class="tag-input" placeholder="选择日期，如 2026-04-24">`;
+      }
+      if (field === "是否分销") {
+        return ``;
+      }
+      if (field === "观看直播") {
+        if (operator === "为空" || operator === "不为空") return ``;
+        return `<input class="tag-input" placeholder="输入观看时长，如 30 分钟">`;
+      }
+      return `<input class="tag-input" placeholder="输入标签名...">`;
     }
 
-    document.getElementById("logic-toggle").addEventListener("click", (e) => {
-      const btn = e.target.closest(".logic-btn");
-      if (!btn) return;
-      btn.parentElement.querySelectorAll(".logic-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      updateConnectors();
-    });
+    function syncConditionValueArea(row) {
+      const condSel = row.querySelector(".cond-select");
+      const opSel = row.querySelector(".op-select");
+      const valueArea = row.querySelector(".tag-value-area");
+      if (!condSel || !opSel || !valueArea) return;
+      const currentChips = Array.from(valueArea.querySelectorAll(".tag-chip")).map((chip) => chip.outerHTML).join("");
+      valueArea.innerHTML = currentChips + getValueAreaHTML(condSel.value, opSel.value);
+    }
+
+    function syncConditionOperator(row, preferredValue) {
+      const condSel = row.querySelector(".cond-select");
+      const opSel = row.querySelector(".op-select");
+      if (!condSel || !opSel) return;
+      const options = getConditionOperatorOptions(condSel.value);
+      const nextValue = options.includes(preferredValue) ? preferredValue : options[0];
+      opSel.innerHTML = options.map(value => `<option${value === nextValue ? " selected" : ""}>${value}</option>`).join("");
+    }
+
+    function bindConnector(connector) {
+      const select = connector.querySelector(".rb-logic-connector-select");
+      if (!select) return;
+      const sync = () => {
+        connector.dataset.connector = select.value;
+        select.classList.toggle("connector-not", select.value === "not");
+      };
+      select.addEventListener("change", sync);
+      sync();
+    }
 
     /* ---- Add condition row ---- */
     document.getElementById("add-cond-btn").addEventListener("click", () => {
       const container = document.getElementById("builder-conditions");
-      const logic = currentLogic();
-      const label = logic === "all" ? "且" : "或";
-      const cls = logic === "all" ? "and" : "or";
 
       const connector = document.createElement("div");
-      connector.className = "condition-connector";
-      connector.dataset.connector = cls;
-      connector.innerHTML = `<div class="connector-line"></div><span class="connector-badge ${cls}">${label}</span><div class="connector-line"></div>`;
+      connector.className = "rb-logic-connector";
+      connector.dataset.connector = "and";
+      connector.innerHTML = `<select class="rb-logic-connector-select" aria-label="条件连接关系"><option value="and" selected>且</option><option value="or">或</option><option value="not">非</option></select>`;
       container.appendChild(connector);
+      bindConnector(connector);
 
       const row = document.createElement("div");
       row.className = "condition-row";
       row.innerHTML = `
         <select class="select cond-select">
-          <option selected>活动标签</option>
-          <option>客户层级</option>
-          <option>客户状态</option>
-          <option>加粉时长</option>
-          <option>最近互动</option>
+          <option selected>企微标签</option>
+          <option>客户等级</option>
+          <option>是否加入企微群聊</option>
+          <option>体验营期数</option>
+          <option>首次加入时间</option>
           <option>所属销售</option>
+          <option>添加好友时间</option>
+          <option>浏览文章时长</option>
+          <option>观看直播</option>
+          <option>是否分销</option>
+          <option>分销人</option>      
         </select>
         <select class="select op-select">
           <option selected>包含</option>
           <option>不包含</option>
+          <option>大于</option>
+          <option>小于</option>
+          <option>大于等于</option>
+          <option>小于等于</option>
+          <option>等于</option>
+          <option>不等于</option>
         </select>
         <div class="tag-value-area">
           <input class="tag-input" placeholder="输入标签名...">
@@ -2177,42 +3095,61 @@
         <button class="btn-icon" title="删除此条件">×</button>`;
       container.appendChild(row);
       bindConditionRow(row, connector);
-      row.querySelector(".tag-input").focus();
+      const input = row.querySelector(".tag-input");
+      const select = row.querySelector(".value-select");
+      if (input) input.focus();
+      if (select) select.focus();
     });
 
     /* ---- Remove condition row ---- */
     function bindConditionRow(row, connectorBefore) {
+      const condSel = row.querySelector(".cond-select");
+      const opSel = row.querySelector(".op-select");
+      if (condSel && opSel) {
+        syncConditionOperator(row, opSel.value);
+        syncConditionValueArea(row);
+        condSel.addEventListener("change", () => {
+          syncConditionOperator(row);
+          syncConditionValueArea(row);
+        });
+        opSel.addEventListener("change", () => syncConditionValueArea(row));
+      }
+
       row.querySelector(".btn-icon").addEventListener("click", () => {
         if (document.querySelectorAll(".condition-row").length > 1) {
           if (connectorBefore) connectorBefore.remove();
           else {
             const next = row.nextElementSibling;
-            if (next && next.classList.contains("condition-connector")) next.remove();
+            if (next && next.classList.contains("rb-logic-connector")) next.remove();
           }
           row.remove();
         }
       });
       /* Enter key adds chip in tag-value-area */
-      row.querySelector(".tag-input").addEventListener("keydown", (e) => {
-        if (e.key !== "Enter" && e.key !== ",") return;
-        e.preventDefault();
-        const val = e.target.value.trim();
-        if (!val) return;
-        const opSel = row.querySelector(".op-select");
-        const isNeg = opSel.value === "不包含";
-        const chip = document.createElement("span");
-        chip.className = "tag-chip" + (isNeg ? " neg" : "");
-        chip.innerHTML = `${val}<span class="chip-del">×</span>`;
-        chip.querySelector(".chip-del").addEventListener("click", () => chip.remove());
-        e.target.parentElement.insertBefore(chip, e.target);
-        e.target.value = "";
-      });
+      const input = row.querySelector(".tag-input");
+      if (input) {
+        input.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" && e.key !== ",") return;
+          e.preventDefault();
+          const val = e.target.value.trim();
+          if (!val) return;
+          const opSel = row.querySelector(".op-select");
+          const isNeg = opSel.value === "不包含" || opSel.value === "全部不满足";
+          const chip = document.createElement("span");
+          chip.className = "tag-chip" + (isNeg ? " neg" : "");
+          chip.innerHTML = `${val}<span class="chip-del">×</span>`;
+          chip.querySelector(".chip-del").addEventListener("click", () => chip.remove());
+          e.target.parentElement.insertBefore(chip, e.target);
+          e.target.value = "";
+        });
+      }
     }
 
     /* bind existing rows + chip delete */
+    document.querySelectorAll(".rb-logic-connector").forEach(bindConnector);
     document.querySelectorAll(".condition-row").forEach(row => {
       const prev = row.previousElementSibling;
-      const connector = prev && prev.classList.contains("condition-connector") ? prev : null;
+      const connector = prev && prev.classList.contains("rb-logic-connector") ? prev : null;
       bindConditionRow(row, connector);
     });
     document.querySelectorAll(".chip-del").forEach(del => {
@@ -2236,7 +3173,7 @@
       sendTimeWrapper.style.display = isScheduled ? "flex" : "none";
       if (!isScheduled && timeError) timeError.classList.remove("visible");
       if (!isScheduled && timeInput) timeInput.classList.remove("error");
-      if (submitBtn) submitBtn.disabled = false;
+      validateTime();
     }
 
     if (chipImmediate) chipImmediate.addEventListener("click", () => setSendMode("immediate"));
@@ -2257,22 +3194,104 @@
     if (chipAllSales) chipAllSales.addEventListener("click", () => setMemberMode("all"));
     if (chipDesignated) chipDesignated.addEventListener("click", () => setMemberMode("designated"));
 
+    /* ---- Create flow steps ---- */
+    const createFlowCopy = document.getElementById("create-flow-copy");
+    const createFooterMeta = document.getElementById("create-footer-meta");
+    const createPrevBtn = document.getElementById("create-prev-btn");
+    const createNextBtn = document.getElementById("create-next-btn");
+    const createSubmitBtn = document.getElementById("create-submit-btn");
+    const createPanels = Array.from(document.querySelectorAll(".create-step-panel"));
+    const createSteps = Array.from(document.querySelectorAll(".workbench-step"));
+    const createStepMeta = {
+      1: {
+        flow: "当前聚焦在“基础设置”",
+        title: "第 1 步：基础设置",
+        hint: "先确认任务场景、归属鱼丸和发送通道。",
+      },
+      2: {
+        flow: "当前聚焦在“人群圈选”",
+        title: "第 2 步：目标人群",
+        hint: "圈选客户条件，确认命中规模是否合理。",
+      },
+      3: {
+        flow: "当前聚焦在“内容与风控”",
+        title: "第 3 步：内容与风控",
+        hint: "最后确认发送内容、时机与风险提示。",
+      }
+    };
+    let currentCreateStep = 1;
+
+    function setCreateStep(step) {
+      currentCreateStep = Math.max(1, Math.min(3, step));
+      createPanels.forEach(panel => panel.classList.toggle("active", Number(panel.dataset.createStep) === currentCreateStep));
+      createSteps.forEach(stepEl => {
+        const stepNum = Number(stepEl.dataset.step);
+        stepEl.classList.toggle("active", stepNum === currentCreateStep);
+        stepEl.classList.toggle("done", stepNum < currentCreateStep);
+        stepEl.classList.toggle("locked", stepNum > currentCreateStep);
+      });
+
+      const meta = createStepMeta[currentCreateStep];
+      if (createFlowCopy) createFlowCopy.textContent = meta.flow;
+      if (createFooterMeta) createFooterMeta.textContent = meta.footer;
+
+      if (createPrevBtn) createPrevBtn.style.display = currentCreateStep === 1 ? "none" : "inline-flex";
+      if (createNextBtn) createNextBtn.style.display = currentCreateStep === 3 ? "none" : "inline-flex";
+      if (createSubmitBtn) createSubmitBtn.style.display = currentCreateStep === 3 ? "inline-flex" : "none";
+    }
+
+    createSteps.forEach(stepEl => {
+      stepEl.addEventListener("click", () => setCreateStep(Number(stepEl.dataset.step)));
+    });
+    if (createPrevBtn) createPrevBtn.addEventListener("click", () => setCreateStep(currentCreateStep - 1));
+    if (createNextBtn) createNextBtn.addEventListener("click", () => setCreateStep(currentCreateStep + 1));
+    setCreateStep(1);
+
     /* ---- Send time validation (09:00–21:00) ---- */
     const timeInput = document.getElementById("send-time-input");
     const timeError = document.getElementById("time-error");
-    const submitBtn = document.querySelector(".footer-actions .btn.primary");
+    const submitBtn = document.getElementById("create-submit-btn");
+
+    function setTimeValidationState({ invalid = false, message = "" } = {}) {
+      if (timeInput) timeInput.classList.toggle("error", invalid);
+      if (timeError) {
+        timeError.textContent = message;
+        timeError.classList.toggle("visible", invalid && Boolean(message));
+      }
+    }
 
     function validateTime() {
       if (!timeInput) return true;
+      const isScheduled = chipScheduled && chipScheduled.classList.contains("active");
       const val = timeInput.value.trim();
+
+      if (!isScheduled) {
+        setTimeValidationState();
+        if (submitBtn) submitBtn.disabled = false;
+        return true;
+      }
+
+      if (!val) {
+        setTimeValidationState();
+        if (submitBtn) submitBtn.disabled = true;
+        return false;
+      }
+
       const match = val.match(/(\d{2}):(\d{2})$/);
-      if (!match) return true;
+      if (!match) {
+        setTimeValidationState();
+        if (submitBtn) submitBtn.disabled = true;
+        return false;
+      }
+
       const h = parseInt(match[1], 10);
       const m = parseInt(match[2], 10);
       const mins = h * 60 + m;
       const ok = mins >= 9 * 60 && mins <= 21 * 60;
-      timeInput.classList.toggle("error", !ok);
-      timeError.classList.toggle("visible", !ok);
+      setTimeValidationState({
+        invalid: !ok,
+        message: ok ? "" : "发送时间超出允许范围（09:00 – 21:00），请重新设置",
+      });
       if (submitBtn) submitBtn.disabled = !ok;
       return ok;
     }
@@ -2299,5 +3318,142 @@
       card.classList.add("selected");
     });
   </script>
+
+<!-- ======== PRD Annotation Panel ======== -->
+<div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260424a">
+
+  <!-- Section 1: 需求概述 -->
+  <div class="prd-section" id="prd-s1">
+    <div class="prd-section-title orange">1. 需求概述</div>
+    <div class="prd-label">背景</div>
+    <div class="prd-item">当前无统一触达入口，任务创建与执行分散</div>
+    <div class="prd-item">无固定场景人群自动命中能力</div>
+    <div class="prd-item">无基础防骚扰机制，容易重复打扰客户</div>
+    <div class="prd-item">无结果回收与复盘页面，无法评估触达效果</div>
+    <div class="prd-label">一期目标</div>
+    <div class="prd-item">固定场景触达任务创建（4 个场景）</div>
+    <div class="prd-item">系统自动命中人群 + 防骚扰排除</div>
+    <div class="prd-item">手动填写内容 + 立即/定时发送</div>
+    <div class="prd-item">任务列表、结果详情、拦截记录</div>
+    <div class="prd-label">Out of Scope</div>
+    <div class="prd-item">人群规则配置器、模板变量渲染、A/B 测试、审批流</div>
+  </div>
+
+  <!-- Section 2: 固定场景 -->
+  <div class="prd-section" id="prd-s2">
+    <div class="prd-section-title green">2. 固定场景（4 个）</div>
+    <div class="prd-item"><strong>新线索首触达</strong> — 线索导入后首次接触</div>
+    <div class="prd-item"><strong>沉默客户唤醒</strong> — 长期未互动客户激活</div>
+    <div class="prd-item"><strong>商机推进跟进</strong> — 推动商机阶段流转</div>
+    <div class="prd-item"><strong>活动通知</strong> — 批量活动信息推送</div>
+    <div class="prd-label">规则说明</div>
+    <div class="prd-item">人群规则由服务端固定计算，前台不支持配置</div>
+    <div class="prd-item">选择场景后自动展示场景说明文字</div>
+  </div>
+
+  <!-- Section 3: 创建任务 — 步骤1 基础设置 -->
+  <div class="prd-section" id="prd-s3">
+    <div class="prd-section-title orange">3. 创建任务 · 步骤1 基础设置</div>
+    <div class="prd-label">必填字段</div>
+    <div class="prd-item"><strong>任务名称</strong> — 手动填写，建议含活动名+日期</div>
+    <div class="prd-item"><strong>触达场景</strong> — 4 个固定场景单选</div>
+    <div class="prd-item"><strong>所属鱼丸</strong> — 全部 / 按鱼丸选择</div>
+    <div class="prd-item"><strong>发送通道</strong> — 企微官方数发 / 星云</div>
+    <div class="prd-label">交互规则</div>
+    <div class="prd-item">选择场景后系统展示命中规则说明</div>
+    <div class="prd-item">发送通道至少选一个，可多选</div>
+    <div class="prd-item">鱼丸选择支持多选，默认全部</div>
+  </div>
+
+  <!-- Section 4: 创建任务 — 步骤2 人群圈选 -->
+  <div class="prd-section" id="prd-s4">
+    <div class="prd-section-title green">4. 创建任务 · 步骤2 人群圈选</div>
+    <div class="prd-label">展示内容</div>
+    <div class="prd-item">命中人数（原始）</div>
+    <div class="prd-item">排除人数（防骚扰）</div>
+    <div class="prd-item">最终可触达人数</div>
+    <div class="prd-item">排除原因分布（最近已触达/冷静期/本活动已触达/已拉黑删除）</div>
+    <div class="prd-label">操作</div>
+    <div class="prd-item">点击「预览人数」异步拉取计算结果，响应 &lt; 5s</div>
+    <div class="prd-item">排除人数过高时展示风险提示</div>
+    <div class="prd-item">支持点击进入拦截记录查看明细</div>
+  </div>
+
+  <!-- Section 5: 创建任务 — 步骤3 内容与风控 -->
+  <div class="prd-section" id="prd-s5">
+    <div class="prd-section-title orange">5. 创建任务 · 步骤3 内容与风控</div>
+    <div class="prd-label">推送内容</div>
+    <div class="prd-item">手动填写文本，建议控制在 2000 字以内</div>
+    <div class="prd-item">内容快照会完整存档到任务详情页</div>
+    <div class="prd-label">发送方式</div>
+    <div class="prd-item"><strong>立即发送</strong> — 提交后立即执行</div>
+    <div class="prd-item"><strong>定时发送</strong> — 必填发送时间，限 09:00–21:00</div>
+    <div class="prd-label">防骚扰设置（固定，不可自定义）</div>
+    <div class="prd-item">冷静期保护：72h 内已触达自动排除</div>
+    <div class="prd-item">周频次上限：同客户每周最多 2 次</div>
+    <div class="prd-item">本活动去重：同活动不重复发送</div>
+    <div class="prd-item">拉黑/删除客户过滤：始终排除，不可关闭</div>
+    <div class="prd-label">按钮</div>
+    <div class="prd-item">保存草稿 / 提交执行</div>
+    <div class="prd-item">推送内容为空时不允许提交</div>
+  </div>
+
+  <!-- Section 6: 高优先 & 已超时判断 -->
+  <div class="prd-section" id="prd-s6">
+    <div class="prd-section-title orange">6. 高优先 &amp; 已超时判断</div>
+    <div class="prd-label">🔴 高优先（High Priority）触发条件</div>
+    <div class="prd-item"><strong>定时任务距发送时间 ≤ 2 小时</strong>，仍处于「待执行」状态</div>
+    <div class="prd-item"><strong>草稿超过 48 小时</strong>未提交执行</div>
+    <div class="prd-item"><strong>命中人数 ≥ 500</strong> 且状态为「待执行」</div>
+    <div class="prd-item">场景为「新线索首触达」且线索创建时间距今 ≤ 24h</div>
+    <div class="prd-label">展示规则</div>
+    <div class="prd-item">列表行左侧显示红色竖条标记</div>
+    <div class="prd-item">任务名称旁显示「高优先」tag（红底白字）</div>
+    <div class="prd-item">列表默认按「高优先在前」排序，同优先级内按计划时间升序</div>
+    <div class="prd-label">⏰ 已超时（Overdue）触发条件</div>
+    <div class="prd-item"><strong>定时任务计划发送时间已过</strong>，状态仍为「待执行」或「执行中」</div>
+    <div class="prd-item"><strong>执行中任务超过 4 小时</strong>未完成（系统卡住或异常）</div>
+    <div class="prd-item"><strong>草稿超过 7 天</strong>未提交</div>
+    <div class="prd-label">展示规则</div>
+    <div class="prd-item">任务名称旁显示「已超时」tag（橙底白字）</div>
+    <div class="prd-item">计划时间列文字变红并加删除线展示过期时间</div>
+    <div class="prd-item">超时任务支持「重新执行」操作，不可直接继续原任务</div>
+    <div class="prd-label">优先级冲突处理</div>
+    <div class="prd-item">同时满足高优先 + 已超时时，展示「已超时」tag，高优先标记保留</div>
+    <div class="prd-item">已取消/已完成任务不触发任何标记</div>
+  </div>
+
+  <!-- Section 7: 任务列表 -->
+  <div class="prd-section" id="prd-s7">
+    <div class="prd-section-title green">7. 任务列表</div>
+    <div class="prd-label">列表字段</div>
+    <div class="prd-item">任务名称 / 场景类型 / 创建人 / 发送方式 / 计划时间</div>
+    <div class="prd-item">任务状态：草稿 / 待执行 / 执行中 / 已完成 / 已取消</div>
+    <div class="prd-item">命中人数 / 排除人数 / 实际触达人数 / 回复人数 / 回复率</div>
+    <div class="prd-label">筛选项</div>
+    <div class="prd-item">场景类型 / 任务状态 / 创建人 / 时间范围</div>
+    <div class="prd-label">操作项</div>
+    <div class="prd-item">查看详情 / 复制任务 / 取消任务 / 重新执行</div>
+  </div>
+
+  <!-- Section 8: 结果详情 -->
+  <div class="prd-section" id="prd-s8">
+    <div class="prd-section-title orange">7. 结果详情</div>
+    <div class="prd-label">顶部指标</div>
+    <div class="prd-item">命中 / 排除 / 实际触达 / 成功 / 失败 / 回复人数 / 回复率</div>
+    <div class="prd-label">页签</div>
+    <div class="prd-item"><strong>客户明细</strong>：客户名/ID/所属销售/触达状态/是否回复/排除原因</div>
+    <div class="prd-item"><strong>成员执行明细</strong>：销售姓名/分配/已执行/未执行/回复人数</div>
+    <div class="prd-item"><strong>任务日志</strong>：时间/日志类型/日志内容/操作人</div>
+  </div>
+
+</div><!-- /prd-panel -->
+
+<script>
+  function togglePRD() {
+    document.body.classList.toggle('prd-on');
+  }
+</script>
+
 </body>
 </html>
