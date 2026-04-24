@@ -333,14 +333,14 @@
   }
 
   .workbench-step.active {
-    background: linear-gradient(180deg, rgba(236,250,245,0.98) 0%, rgba(244,252,248,0.88) 100%);
-    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.8);
+    background: transparent;
   }
 
   .workbench-step.active::before {
     color: #fff;
     background: var(--color-primary-6);
     border-color: var(--color-primary-6);
+    box-shadow: 0 2px 8px rgba(54,165,144,0.32);
   }
 
   .workbench-step.done::before {
@@ -364,6 +364,7 @@
 
   .workbench-step.active strong {
     color: #1d6f60;
+    font-weight: 700;
   }
 
   .workbench-snapshot {
@@ -2031,10 +2032,6 @@
     box-shadow: 0 0 0 3px rgba(54,165,144,0.12);
   }
 
-  /* Active step: add outer glow for stronger affordance */
-  .workbench-step.active {
-    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.9), 0 6px 16px rgba(54,165,144,0.1);
-  }
 
   /* ---- P1: button.radio-chip browser-default reset ---- */
   button.radio-chip {
@@ -2193,6 +2190,120 @@
   }
   body.prd-on .prd-panel { display: block; }
   body.prd-on .main { margin-right: 380px; }
+
+  /* ── Style polish ── */
+
+  /* List page: stronger header */
+  .page[data-page="list"] .page-title-bar {
+    background: linear-gradient(180deg, #f5fdf9 0%, #ffffff 100%);
+    border-bottom-color: #d0e9e1;
+    padding: 18px 24px;
+  }
+
+  .page[data-page="list"] .page-title h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a4a40;
+    letter-spacing: -0.02em;
+  }
+
+  .page[data-page="list"] .page-title p {
+    font-size: 13px;
+    color: #6b8880;
+    margin-top: 2px;
+  }
+
+  /* List page: section padding */
+  .page[data-page="list"] .section {
+    padding: 14px 24px;
+  }
+
+  /* Task names: primary content weight, not a washed-out link */
+  td .tiny-link {
+    color: #1c3d36;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+
+  td .tiny-link:hover {
+    color: var(--color-primary-6);
+    text-decoration: underline;
+  }
+
+  /* Table: stronger header, better density */
+  th {
+    color: #4e6661;
+    font-size: 12px;
+    letter-spacing: 0.025em;
+    padding: 10px 14px;
+    background: #f4f9f7;
+    border-bottom: 1.5px solid #d8e9e3;
+  }
+
+  td {
+    font-size: 13px;
+    color: var(--color-text-1);
+  }
+
+  /* More visible row hover */
+  tr:hover td {
+    background: #f2faf6 !important;
+  }
+
+  /* Toolbar status tags: stronger visual group */
+  .page[data-page="list"] .tag-group .tag {
+    font-weight: 600;
+    font-size: 12px;
+    height: 28px;
+    padding: 0 11px;
+  }
+
+  /* Create page: section heading accent */
+  .create-section-head .section-title h2,
+  .page[data-page="create"] .section-title h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a3d34;
+  }
+
+  .create-section-head h2::before {
+    content: "";
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--color-primary-6);
+    margin-right: 8px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* Detail page: title bar consistent with list */
+  .page[data-page="detail"] .page-title-bar {
+    background: linear-gradient(180deg, #f5fdf9 0%, #ffffff 100%);
+    border-bottom-color: #d0e9e1;
+    padding: 16px 24px;
+  }
+
+  /* Filters: tighten spacing */
+  .filters {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .filters .input,
+  .filters .select {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Create page: toolbar/step footer */
+  .workbench-footer {
+    border-top-color: #d8e9e3;
+  }
 </style>
 </head>
 <body>
