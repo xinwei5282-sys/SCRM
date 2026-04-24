@@ -333,14 +333,14 @@
   }
 
   .workbench-step.active {
-    background: transparent;
+    background: linear-gradient(180deg, rgba(236,250,245,0.98) 0%, rgba(244,252,248,0.88) 100%);
+    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.8);
   }
 
   .workbench-step.active::before {
     color: #fff;
     background: var(--color-primary-6);
     border-color: var(--color-primary-6);
-    box-shadow: 0 2px 8px rgba(54,165,144,0.32);
   }
 
   .workbench-step.done::before {
@@ -364,7 +364,6 @@
 
   .workbench-step.active strong {
     color: #1d6f60;
-    font-weight: 700;
   }
 
   .workbench-snapshot {
@@ -1859,11 +1858,20 @@
     background: linear-gradient(180deg, #fffaf3 0%, #fff5e8 100%);
   }
 
-  .page[data-page="create"] .footer-actions {
-    margin-top: auto;
+  .create-page-footer {
+    display: none;
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
     padding: 12px 24px 14px;
     border-top-color: rgba(191, 219, 210, 0.9);
-    background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, #ffffff 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #ffffff 100%);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  }
+
+  .content:has(.page[data-page="create"].active) .create-page-footer {
+    display: flex;
   }
 
   .page[data-page="create"] .metric-row {
@@ -2032,6 +2040,10 @@
     box-shadow: 0 0 0 3px rgba(54,165,144,0.12);
   }
 
+  /* Active step: add outer glow for stronger affordance */
+  .workbench-step.active {
+    box-shadow: inset 0 0 0 1px rgba(191,226,214,0.9), 0 6px 16px rgba(54,165,144,0.1);
+  }
 
   /* ---- P1: button.radio-chip browser-default reset ---- */
   button.radio-chip {
@@ -2190,120 +2202,6 @@
   }
   body.prd-on .prd-panel { display: block; }
   body.prd-on .main { margin-right: 380px; }
-
-  /* ── Style polish ── */
-
-  /* List page: stronger header */
-  .page[data-page="list"] .page-title-bar {
-    background: linear-gradient(180deg, #f5fdf9 0%, #ffffff 100%);
-    border-bottom-color: #d0e9e1;
-    padding: 18px 24px;
-  }
-
-  .page[data-page="list"] .page-title h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #1a4a40;
-    letter-spacing: -0.02em;
-  }
-
-  .page[data-page="list"] .page-title p {
-    font-size: 13px;
-    color: #6b8880;
-    margin-top: 2px;
-  }
-
-  /* List page: section padding */
-  .page[data-page="list"] .section {
-    padding: 14px 24px;
-  }
-
-  /* Task names: primary content weight, not a washed-out link */
-  td .tiny-link {
-    color: #1c3d36;
-    font-weight: 600;
-    font-size: 13px;
-    text-decoration: none;
-    transition: color 120ms ease;
-  }
-
-  td .tiny-link:hover {
-    color: var(--color-primary-6);
-    text-decoration: underline;
-  }
-
-  /* Table: stronger header, better density */
-  th {
-    color: #4e6661;
-    font-size: 12px;
-    letter-spacing: 0.025em;
-    padding: 10px 14px;
-    background: #f4f9f7;
-    border-bottom: 1.5px solid #d8e9e3;
-  }
-
-  td {
-    font-size: 13px;
-    color: var(--color-text-1);
-  }
-
-  /* More visible row hover */
-  tr:hover td {
-    background: #f2faf6 !important;
-  }
-
-  /* Toolbar status tags: stronger visual group */
-  .page[data-page="list"] .tag-group .tag {
-    font-weight: 600;
-    font-size: 12px;
-    height: 28px;
-    padding: 0 11px;
-  }
-
-  /* Create page: section heading accent */
-  .create-section-head .section-title h2,
-  .page[data-page="create"] .section-title h2 {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1a3d34;
-  }
-
-  .create-section-head h2::before {
-    content: "";
-    display: inline-block;
-    width: 3px;
-    height: 14px;
-    border-radius: 2px;
-    background: var(--color-primary-6);
-    margin-right: 8px;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-  }
-
-  /* Detail page: title bar consistent with list */
-  .page[data-page="detail"] .page-title-bar {
-    background: linear-gradient(180deg, #f5fdf9 0%, #ffffff 100%);
-    border-bottom-color: #d0e9e1;
-    padding: 16px 24px;
-  }
-
-  /* Filters: tighten spacing */
-  .filters {
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .filters .input,
-  .filters .select {
-    height: 34px;
-    font-size: 13px;
-  }
-
-  /* Create page: toolbar/step footer */
-  .workbench-footer {
-    border-top-color: #d8e9e3;
-  }
 </style>
 </head>
 <body>
@@ -2629,16 +2527,16 @@
             </div>
             </div>
 
-            <div class="footer-actions">
-              <button class="btn nav-back" data-target="list">取消</button>
-              <button class="btn ghost">保存草稿</button>
-              <div style="flex:1"></div>
-              <button class="btn" id="create-prev-btn" style="display:none;">上一步</button>
-              <button class="btn primary" id="create-next-btn">下一步</button>
-              <button class="btn primary" id="create-submit-btn" style="display:none;">提交执行</button>
-            </div>
           </div>
         </section>
+        <div class="footer-actions create-page-footer">
+          <button class="btn nav-back" data-target="list">取消</button>
+          <button class="btn ghost">保存草稿</button>
+          <div style="flex:1"></div>
+          <button class="btn" id="create-prev-btn" style="display:none;">上一步</button>
+          <button class="btn primary" id="create-next-btn">下一步</button>
+          <button class="btn primary" id="create-submit-btn" style="display:none;">提交执行</button>
+        </div>
 
         <section class="page active" data-page="list">
           <div class="page-card">
@@ -3494,7 +3392,7 @@
   <div class="prd-section" id="prd-s5">
     <div class="prd-section-title orange">5. 创建任务 · 步骤3 内容与风控</div>
     <div class="prd-label">推送内容</div>
-    <div class="prd-item">手动填写文本，建议控制在 2000 字以内</div>
+    <div class="prd-item">手动填写文本，建议控制在 1000 字以内</div>
     <div class="prd-item">内容快照会完整存档到任务详情页</div>
     <div class="prd-label">发送方式</div>
     <div class="prd-item"><strong>立即发送</strong> — 提交后立即执行</div>
@@ -3514,7 +3412,6 @@
     <div class="prd-section-title orange">6. 高优先 &amp; 已超时判断</div>
     <div class="prd-label">🔴 高优先（High Priority）触发条件</div>
     <div class="prd-item"><strong>定时任务距发送时间 ≤ 2 小时</strong>，仍处于「待执行」状态</div>
-    <div class="prd-item"><strong>草稿超过 48 小时</strong>未提交执行</div>
     <div class="prd-item"><strong>命中人数 ≥ 500</strong> 且状态为「待执行」</div>
     <div class="prd-item">场景为「新线索首触达」且线索创建时间距今 ≤ 24h</div>
     <div class="prd-label">展示规则</div>
