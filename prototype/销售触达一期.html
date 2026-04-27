@@ -138,6 +138,74 @@
     color: var(--color-text-4);
   }
 
+  .attach-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .attach-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .attach-item:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-card);
+  }
+
+  .attach-item-label {
+    min-width: 0;
+    color: var(--color-text-2);
+    font-size: 13px;
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .attach-item-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text-3);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+  }
+
+  .attach-item:hover .attach-item-remove {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .attach-item-remove:hover {
+    background: var(--color-danger-1);
+    color: var(--color-danger-6);
+  }
+
+  .attach-limit-note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
   .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
   .header {
@@ -2228,7 +2296,6 @@
                 <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
                 <div class="page-title">
                   <h1>新建触达任务</h1>
-                  <p>设置目标人群、发送通道与触达内容。</p>
                 </div>
               </div>
             </div>
@@ -2418,9 +2485,31 @@
             <div class="section">
               <div class="form-grid">
                 <div class="field full">
-                  <label class="required" for="push-content">推送内容</label>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                    <label class="required" for="push-content" style="margin-bottom:0;">推送内容</label>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;">
+                      <a href="#" class="tiny-link push-token-link" data-token="【a链接】">a链接</a>
+                      <a href="#" class="tiny-link push-token-link" data-token="【昵称】">昵称</a>
+                      <a href="#" class="tiny-link push-token-link" data-token="【备注】">备注</a>
+                    </div>
+                  </div>
                   <textarea class="textarea" id="push-content">Hi，明晚 20:00 我们会做一场”从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
                   <div class="field-note">建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
+                </div>
+                <div class="field full">
+                  <div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <button class="btn ghost" type="button" id="attach-btn-image">上传图片</button>
+                      <button class="btn ghost" type="button" id="attach-btn-video">上传视频</button>
+                      <button class="btn ghost" type="button" id="attach-btn-link">添加链接</button>
+                      <button class="btn ghost" type="button" id="attach-btn-miniapp">添加小程序</button>
+                      <button class="btn ghost" type="button" id="attach-btn-channel">添加视频号</button>
+                    </div>
+                    <input type="file" id="attach-image-input" accept="image/*" multiple hidden>
+                    <input type="file" id="attach-video-input" accept="video/*" multiple hidden>
+                    <div class="attach-list" id="attach-preview-list"></div>
+                    <div class="attach-limit-note" id="attach-limit-note">最多上传 9 个附件</div>
+                  </div>
                 </div>
                 <div class="field full">
                   <label class="required" id="label-send-mode">发送方式</label>
@@ -2428,7 +2517,7 @@
                     <button class="radio-chip" type="button" id="chip-immediate">立即发送</button>
                     <button class="radio-chip active" type="button" id="chip-scheduled">定时发送</button>
                     <div id="send-time-wrapper" style="display:flex;align-items:center;gap:8px;">
-                      <input class="input" id="send-time-input" value="2026-04-24 19:30" placeholder="YYYY-MM-DD HH:MM" style="width:176px;" aria-label="定时发送时间" aria-describedby="time-hint time-error">
+                      <input class="input" type="datetime-local" id="send-time-input" value="2026-04-24T19:30" step="60" style="width:190px;" aria-label="定时发送时间" aria-describedby="time-hint time-error">
                       <span class="time-range-hint" id="time-hint" style="margin-top:0;"><span class="dot" aria-hidden="true"></span>09:00 – 21:00</span>
                     </div>
                   </div>
@@ -2439,27 +2528,6 @@
 
             <div class="section">
               <div class="antispam-group">
-                <div class="toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label" id="lbl-cooldown">冷静期保护</span>
-                    <span class="toggle-desc">72 小时内已被本系统触达过的客户自动排除</span>
-                  </div>
-                  <div class="toggle-switch on" data-toggle="cooldown" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-cooldown"><div class="toggle-thumb" aria-hidden="true"></div></div>
-                </div>
-                <div class="toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label" id="lbl-weekly">周频次上限</span>
-                    <span class="toggle-desc">同一客户每自然周最多触达 2 次，超出则排除</span>
-                  </div>
-                  <div class="toggle-switch on" data-toggle="weekly-limit" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-weekly"><div class="toggle-thumb" aria-hidden="true"></div></div>
-                </div>
-                <div class="toggle-row">
-                  <div class="toggle-info">
-                    <span class="toggle-label" id="lbl-dedup">本活动去重</span>
-                    <span class="toggle-desc">本次活动已触达过的客户不重复发送</span>
-                  </div>
-                  <div class="toggle-switch on" data-toggle="dedup" role="switch" tabindex="0" aria-checked="true" aria-labelledby="lbl-dedup"><div class="toggle-thumb" aria-hidden="true"></div></div>
-                </div>
                 <div class="toggle-row">
                   <div class="toggle-info">
                     <span class="toggle-label" id="lbl-blocked">拉黑 / 删除客户过滤</span>
@@ -2475,53 +2543,7 @@
                 <button class="btn ghost">重新计算</button>
               </div>
 
-              <div class="preview-panel">
-                <div class="preview-box">
-                  <div class="preview-head">
-                    <h3>本次任务人群预览</h3>
-                    <span class="tag primary">活动通知</span>
-                  </div>
-                  <div class="metric-row">
-                    <div class="metric-item">
-                      <strong>1,248</strong>
-                      <span>原始命中人数</span>
-                    </div>
-                    <div class="metric-item">
-                      <strong>186</strong>
-                      <span>防骚扰排除人数</span>
-                    </div>
-                    <div class="metric-item">
-                      <strong>1,062</strong>
-                      <span>最终可触达人数</span>
-                    </div>
-                  </div>
-                  <div class="tag-group">
-                    <span class="tag info">最近已触达 93</span>
-                    <span class="tag warn">冷静期 48</span>
-                    <span class="tag danger">本活动已触达 27</span>
-                    <span class="tag">已拉黑/已删除 18</span>
-                  </div>
-                  <div class="progress-stack">
-                    <div class="progress-item">
-                      <span>最近已触达</span>
-                      <div class="progress-track"><div class="progress-bar" style="width:50%;"></div></div>
-                      <strong>93</strong>
-                    </div>
-                    <div class="progress-item">
-                      <span>冷静期</span>
-                      <div class="progress-track"><div class="progress-bar warn" style="width:26%;"></div></div>
-                      <strong>48</strong>
-                    </div>
-                    <div class="progress-item">
-                      <span>本活动已触达</span>
-                      <div class="progress-track"><div class="progress-bar danger" style="width:15%;"></div></div>
-                      <strong>27</strong>
-                    </div>
-                  </div>
-                </div>
 
-
-              </div>
             </div>
             </div>
 
@@ -2540,8 +2562,7 @@
           <div class="page-card">
             <div class="page-title-bar">
               <div class="page-title">
-                <h1>销售触达</h1>
-                <p>管理触达任务，查看执行状态、命中人数与回复效果。</p>
+                <h1>群发/私戳</h1>
               </div>
             </div>
 
@@ -2554,7 +2575,6 @@
                   <span class="tag danger">部分失败 2</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;">
-                  <button class="btn ghost" id="export-btn">导出</button>
                   <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
                 </div>
               </div>
@@ -2575,8 +2595,7 @@
                     <th>发送方式</th>
                     <th>计划时间</th>
                     <th>状态</th>
-                    <th>命中人数</th>
-                    <th>排除人数</th>
+                    <th>预计触达</th>
                     <th>实际触达</th>
                     <th>回复人数</th>
                     <th>回复率</th>
@@ -2592,11 +2611,14 @@
                     <td>04-24 19:30</td>
                     <td><span class="status-pill info">待执行</span></td>
                     <td>1,248</td>
-                    <td>186</td>
                     <td>1,062</td>
                     <td>--</td>
                     <td>--</td>
-                    <td><button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="list">复制</button></td>
+                    <td><div style="display:flex;gap:6px;">
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="create">修改</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;color:#f53f3f;border-color:#fdd;background:#fff5f5;">删除</button>
+                    </div></td>
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">沉默客户唤醒-报价后7天</a></td>
@@ -2606,13 +2628,13 @@
                     <td>04-23 10:12</td>
                     <td><span class="status-pill warning">执行中</span></td>
                     <td>486</td>
-                    <td>71</td>
                     <td>415</td>
                     <td>63</td>
                     <td>15.2%</td>
                     <td><div style="display:flex;gap:6px;">
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
                   <tr>
@@ -2623,13 +2645,13 @@
                     <td>04-22 16:50</td>
                     <td><span class="status-pill success">已完成</span></td>
                     <td>302</td>
-                    <td>24</td>
                     <td>278</td>
                     <td>82</td>
                     <td>29.5%</td>
                     <td><div style="display:flex;gap:6px;">
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
                   <tr>
@@ -2640,13 +2662,13 @@
                     <td>04-22 09:30</td>
                     <td><span class="status-pill danger">部分失败</span></td>
                     <td>560</td>
-                    <td>39</td>
                     <td>521</td>
                     <td>111</td>
                     <td>21.3%</td>
                     <td><div style="display:flex;gap:6px;">
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
                 </tbody>
@@ -3304,6 +3326,18 @@
     }
 
     if (timeInput) {
+      const openTimePicker = () => {
+        if (typeof timeInput.showPicker === "function") {
+          try {
+            timeInput.showPicker();
+          } catch (err) {
+            // Ignore browsers that block programmatic picker opening.
+          }
+        }
+      };
+
+      timeInput.addEventListener("click", openTimePicker);
+      timeInput.addEventListener("focus", openTimePicker);
       timeInput.addEventListener("input", validateTime);
       timeInput.addEventListener("blur", validateTime);
       validateTime();
@@ -3324,7 +3358,295 @@
       document.querySelectorAll(".channel-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
     });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const pushContentInput = document.getElementById("push-content");
+      document.querySelectorAll(".push-token-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (!pushContentInput) return;
+
+          const token = link.dataset.token || "";
+          const start = pushContentInput.selectionStart ?? pushContentInput.value.length;
+          const end = pushContentInput.selectionEnd ?? pushContentInput.value.length;
+          const nextValue = pushContentInput.value.slice(0, start) + token + pushContentInput.value.slice(end);
+
+          pushContentInput.value = nextValue;
+          pushContentInput.focus();
+          const nextCursor = start + token.length;
+          pushContentInput.setSelectionRange(nextCursor, nextCursor);
+        });
+      });
+
+      /* ---- Attachment handling (Step 3) ---- */
+      const MAX_ATTACH = 9;
+      let attachments = [];
+      const attachTypeLabelMap = {
+        image: "图片",
+        video: "视频",
+        link: "链接",
+        miniapp: "小程序",
+        channel: "视频号"
+      };
+
+      function updateAttachUI() {
+        const list = document.getElementById("attach-preview-list");
+        const note = document.getElementById("attach-limit-note");
+        if (!list) return;
+        list.innerHTML = "";
+
+        attachments.forEach((att, idx) => {
+          const item = document.createElement("div");
+          item.className = "attach-item";
+
+          const label = document.createElement("div");
+          label.className = "attach-item-label";
+          label.textContent = "[" + attachTypeLabelMap[att.type] + "] " + att.name;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "attach-item-remove";
+          removeBtn.textContent = "×";
+          removeBtn.title = "删除";
+          removeBtn.addEventListener("click", () => {
+            attachments.splice(idx, 1);
+            updateAttachUI();
+          });
+
+          item.appendChild(label);
+          item.appendChild(removeBtn);
+          list.appendChild(item);
+        });
+
+        if (note) note.textContent = "最多上传 9 个附件" + (attachments.length ? "，当前 " + attachments.length + " 个" : "");
+        const disabled = attachments.length >= MAX_ATTACH;
+        ["attach-btn-image","attach-btn-video","attach-btn-link","attach-btn-miniapp","attach-btn-channel"].forEach((id) => {
+          const btn = document.getElementById(id);
+          if (btn) btn.disabled = disabled;
+        });
+      }
+
+      function addAttachment(type, name) {
+        if (!name || attachments.length >= MAX_ATTACH) return false;
+        attachments.push({ type, name });
+        updateAttachUI();
+        return true;
+      }
+
+      function bindCoverPicker(buttonId, inputId, textId, placeholder) {
+        const button = document.getElementById(buttonId);
+        const input = document.getElementById(inputId);
+        const text = document.getElementById(textId);
+        if (!button || !input || !text) return;
+
+        button.addEventListener("click", () => input.click());
+        input.addEventListener("change", () => {
+          const file = input.files && input.files[0];
+          text.textContent = file ? file.name : placeholder;
+        });
+      }
+
+      const imageInput = document.getElementById("attach-image-input");
+      const videoInput = document.getElementById("attach-video-input");
+      document.getElementById("attach-btn-image").addEventListener("click", () => imageInput.click());
+      document.getElementById("attach-btn-video").addEventListener("click", () => videoInput.click());
+      imageInput.addEventListener("change", () => {
+        Array.from(imageInput.files).forEach((file) => {
+          addAttachment("image", file.name);
+        });
+        imageInput.value = "";
+      });
+      videoInput.addEventListener("change", () => {
+        Array.from(videoInput.files).forEach((file) => {
+          addAttachment("video", file.name);
+        });
+        videoInput.value = "";
+      });
+
+      document.getElementById("attach-btn-link").addEventListener("click", () => {
+        document.getElementById("modal-link").style.display = "flex";
+        document.getElementById("link-title-input").value = "";
+        document.getElementById("link-subtitle-input").value = "";
+        document.getElementById("link-url-input").value = "";
+        document.getElementById("link-cover-input").value = "";
+        document.getElementById("link-cover-name").textContent = "未选择封面";
+        document.getElementById("link-title-input").focus();
+      });
+      document.getElementById("modal-link-cancel").addEventListener("click", () => {
+        document.getElementById("modal-link").style.display = "none";
+      });
+      document.getElementById("modal-link-confirm").addEventListener("click", () => {
+        const title = document.getElementById("link-title-input").value.trim();
+        const subtitle = document.getElementById("link-subtitle-input").value.trim();
+        const url = document.getElementById("link-url-input").value.trim();
+        addAttachment("link", title || subtitle || url);
+        document.getElementById("modal-link").style.display = "none";
+      });
+
+      document.getElementById("attach-btn-miniapp").addEventListener("click", () => {
+        document.getElementById("modal-miniapp").style.display = "flex";
+        document.getElementById("miniapp-title-input").value = "";
+        document.getElementById("miniapp-name-input").value = "";
+        document.getElementById("miniapp-appid-input").value = "";
+        document.getElementById("miniapp-path-input").value = "";
+        document.getElementById("miniapp-cover-input").value = "";
+        document.getElementById("miniapp-cover-name").textContent = "未选择封面";
+        document.getElementById("miniapp-title-input").focus();
+      });
+      document.getElementById("modal-miniapp-cancel").addEventListener("click", () => {
+        document.getElementById("modal-miniapp").style.display = "none";
+      });
+      document.getElementById("modal-miniapp-confirm").addEventListener("click", () => {
+        const title = document.getElementById("miniapp-title-input").value.trim();
+        const name = document.getElementById("miniapp-name-input").value.trim();
+        const appid = document.getElementById("miniapp-appid-input").value.trim();
+        const path = document.getElementById("miniapp-path-input").value.trim();
+        if (!path) {
+          document.getElementById("miniapp-path-input").focus();
+          return;
+        }
+        addAttachment("miniapp", title || name || appid || path);
+        document.getElementById("modal-miniapp").style.display = "none";
+      });
+
+      document.getElementById("attach-btn-channel").addEventListener("click", () => {
+        document.getElementById("modal-channel").style.display = "flex";
+        document.getElementById("channel-video-title-input").value = "";
+        document.getElementById("channel-video-id-input").value = "";
+        document.getElementById("channel-name-input").value = "";
+        document.getElementById("channel-desc-input").value = "";
+        document.getElementById("channel-cover-input").value = "";
+        document.getElementById("channel-cover-name").textContent = "未选择封面";
+        document.getElementById("channel-video-title-input").focus();
+      });
+      document.getElementById("modal-channel-cancel").addEventListener("click", () => {
+        document.getElementById("modal-channel").style.display = "none";
+      });
+      document.getElementById("modal-channel-confirm").addEventListener("click", () => {
+        const title = document.getElementById("channel-video-title-input").value.trim();
+        const videoId = document.getElementById("channel-video-id-input").value.trim();
+        const name = document.getElementById("channel-name-input").value.trim();
+        const desc = document.getElementById("channel-desc-input").value.trim();
+        addAttachment("channel", title || videoId || name || desc);
+        document.getElementById("modal-channel").style.display = "none";
+      });
+
+      ["modal-link","modal-miniapp","modal-channel"].forEach(id => {
+        document.getElementById(id).addEventListener("click", (e) => {
+          if (e.target.id === id) document.getElementById(id).style.display = "none";
+        });
+      });
+
+      bindCoverPicker("link-cover-btn", "link-cover-input", "link-cover-name", "未选择封面");
+      bindCoverPicker("miniapp-cover-btn", "miniapp-cover-input", "miniapp-cover-name", "未选择封面");
+      bindCoverPicker("channel-cover-btn", "channel-cover-input", "channel-cover-name", "未选择封面");
+
+      updateAttachUI();
+    });
   </script>
+
+<!-- Modal: 链接 -->
+<div id="modal-link" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 16px 40px rgba(0,0,0,0.12);">
+    <div style="font-size:15px;font-weight:600;color:var(--color-text-1);margin-bottom:18px;">添加链接</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">标题</label>
+      <input class="input" id="link-title-input" placeholder="请输入标题" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">副标题</label>
+      <input class="input" id="link-subtitle-input" placeholder="请输入副标题" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">链接封面</label>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn ghost" type="button" id="link-cover-btn">本地上传</button>
+        <span id="link-cover-name" style="font-size:12px;color:var(--color-text-3);">未选择封面</span>
+      </div>
+      <input type="file" id="link-cover-input" accept="image/*" hidden>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">链接地址</label>
+      <input class="input" id="link-url-input" placeholder="https://" style="width:100%;">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn ghost" id="modal-link-cancel">取消</button>
+      <button class="btn primary" id="modal-link-confirm">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 小程序 -->
+<div id="modal-miniapp" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 16px 40px rgba(0,0,0,0.12);">
+    <div style="font-size:15px;font-weight:600;color:var(--color-text-1);margin-bottom:18px;">添加小程序</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">标题</label>
+      <input class="input" id="miniapp-title-input" placeholder="请输入标题" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">小程序封面</label>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn ghost" type="button" id="miniapp-cover-btn">本地上传</button>
+        <span id="miniapp-cover-name" style="font-size:12px;color:var(--color-text-3);">未选择封面</span>
+      </div>
+      <div style="margin-top:6px;font-size:12px;color:var(--color-text-3);">建议上传尺寸 353*282px，大小 2M 以内</div>
+      <input type="file" id="miniapp-cover-input" accept="image/*" hidden>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">小程序名称</label>
+      <input class="input" id="miniapp-name-input" placeholder="请输入小程序名称" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">AppID</label>
+      <input class="input" id="miniapp-appid-input" placeholder="wx..." style="width:100%;">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">页面路径（必填）</label>
+      <input class="input" id="miniapp-path-input" placeholder="pages/index/index" style="width:100%;">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn ghost" id="modal-miniapp-cancel">取消</button>
+      <button class="btn primary" id="modal-miniapp-confirm">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 视频号 -->
+<div id="modal-channel" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 16px 40px rgba(0,0,0,0.12);">
+    <div style="font-size:15px;font-weight:600;color:var(--color-text-1);margin-bottom:18px;">添加视频号</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">视频标题</label>
+      <input class="input" id="channel-video-title-input" placeholder="请输入视频标题" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">视频ID</label>
+      <input class="input" id="channel-video-id-input" placeholder="请输入视频ID" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">视频号名称</label>
+      <input class="input" id="channel-name-input" placeholder="请输入视频号" style="width:100%;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">视频描述</label>
+      <input class="input" id="channel-desc-input" placeholder="请输入视频描述" style="width:100%;">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:13px;color:var(--color-text-2);margin-bottom:5px;">视频封面</label>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn ghost" type="button" id="channel-cover-btn">本地上传</button>
+        <span id="channel-cover-name" style="font-size:12px;color:var(--color-text-3);">未选择封面</span>
+      </div>
+      <div style="margin-top:6px;font-size:12px;color:var(--color-text-3);">建议上传尺寸 353*282px，大小 2M 以内</div>
+      <input type="file" id="channel-cover-input" accept="image/*" hidden>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn ghost" id="modal-channel-cancel">取消</button>
+      <button class="btn primary" id="modal-channel-confirm">确定</button>
+    </div>
+  </div>
+</div>
 
 <!-- ======== PRD Annotation Panel ======== -->
 <div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260424a">
@@ -3392,6 +3714,7 @@
     <div class="prd-label">推送内容</div>
     <div class="prd-item">手动填写文本，建议控制在 1000 字以内</div>
     <div class="prd-item">内容快照会完整存档到任务详情页</div>
+    <div class="prd-item">图片和视频从本地上传；链接、小程序、视频号通过弹窗录入相关信息</div>
     <div class="prd-label">发送方式</div>
     <div class="prd-item"><strong>立即发送</strong> — 提交后立即执行</div>
     <div class="prd-item"><strong>定时发送</strong> — 必填发送时间，限 09:00–21:00</div>
