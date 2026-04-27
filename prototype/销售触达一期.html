@@ -288,6 +288,41 @@
     letter-spacing: -0.02em;
   }
 
+  .page[data-page="create"] .page-back-icon,
+  .page[data-page="detail"] .page-back-icon,
+  .page[data-page="blocks"] .page-back-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    padding: 0;
+    border-radius: 50% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(193, 220, 212, 0.92);
+    color: #46625b;
+    box-shadow: 0 6px 16px rgba(31, 52, 45, 0.06);
+  }
+
+  .page[data-page="create"] .page-back-icon:hover,
+  .page[data-page="detail"] .page-back-icon:hover,
+  .page[data-page="blocks"] .page-back-icon:hover {
+    background: #ffffff;
+    border-color: #b8d9cf;
+    color: #235f53;
+  }
+
+  .page[data-page="create"] .page-back-icon svg,
+  .page[data-page="detail"] .page-back-icon svg,
+  .page[data-page="blocks"] .page-back-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
   .page[data-page="create"] .page-title p {
     font-size: 12px;
     color: var(--create-text-muted);
@@ -337,104 +372,6 @@
     color: var(--create-text-muted);
   }
 
-  .workbench-steps {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .workbench-step {
-    position: relative;
-    padding: 8px 12px 8px 50px;
-    border: none;
-    border-radius: 14px;
-    background: transparent;
-    min-height: 56px;
-    transition: background 150ms ease, color 150ms ease, transform 150ms ease;
-  }
-
-  .workbench-step::before {
-    content: attr(data-step);
-    position: absolute;
-    left: 0;
-    top: 8px;
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--create-text-muted);
-    background: var(--create-surface);
-    border: 1px solid var(--create-border);
-    z-index: 1;
-  }
-
-  .workbench-step::after {
-    content: "";
-    position: absolute;
-    left: calc(100% - 10px);
-    top: 22px;
-    width: 30px;
-    height: 1px;
-    background: var(--create-border);
-  }
-
-  .workbench-step:last-child::after {
-    display: none;
-  }
-
-  .workbench-step strong {
-    display: block;
-    font-size: 13px;
-    color: #273431;
-    margin-bottom: 3px;
-  }
-
-  .workbench-step span {
-    display: block;
-    font-size: 11px;
-    line-height: 15px;
-    color: #72857f;
-  }
-
-  .workbench-step.active {
-    background: transparent;
-  }
-
-  .workbench-step.active::before {
-    color: #fff;
-    background: var(--color-primary-6);
-    border-color: var(--color-primary-6);
-    box-shadow: 0 2px 8px rgba(54,165,144,0.32);
-  }
-
-  .workbench-step.done::before {
-    content: "✓";
-    color: #fff;
-    background: #78c9af;
-    border-color: #78c9af;
-  }
-
-  .workbench-step.done::after {
-    background: #9ed8c8;
-  }
-
-  .workbench-step {
-    cursor: pointer;
-  }
-
-  .workbench-step.locked {
-    opacity: 0.62;
-  }
-
-  .workbench-step.active strong {
-    color: #1d6f60;
-    font-weight: 700;
-  }
-
   .workbench-snapshot {
     padding: 14px 16px;
   }
@@ -473,15 +410,6 @@
   .page[data-page="create"] .section {
     padding: 16px 24px;
     border-top: none;
-  }
-
-  .create-step-panel {
-    display: none;
-    flex-direction: column;
-  }
-
-  .create-step-panel.active {
-    display: flex;
   }
 
   .page[data-page="create"] .section:nth-of-type(odd) { background: transparent; }
@@ -1086,6 +1014,58 @@
 
   .table-wrap { overflow-x: auto; }
 
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px 16px;
+    border-top: 1px solid var(--color-border-default);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
+    flex-wrap: wrap;
+  }
+
+  .pagination-meta {
+    color: var(--color-text-3);
+    font-size: 12px;
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pagination-pages {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    background: var(--color-fill-1);
+    color: var(--color-text-2);
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .page-btn.active {
+    border-color: var(--color-primary-6);
+    background: var(--color-primary-6);
+    color: #fff;
+  }
+
+  .page-btn:disabled {
+    cursor: default;
+    opacity: 0.45;
+  }
+
   .toolbar {
     display: flex;
     align-items: center;
@@ -1141,9 +1121,7 @@
 
   .detail-top {
     padding: 16px 20px;
-    display: grid;
-    grid-template-columns: 1.3fr .7fr;
-    gap: 18px;
+    display: block;
     border-bottom: 1px solid var(--color-border-default);
   }
 
@@ -1155,7 +1133,7 @@
 
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px 16px;
     margin-top: 12px;
   }
@@ -1171,6 +1149,77 @@
     margin-top: 2px;
     font-size: 13px;
     color: var(--color-text-1);
+  }
+
+  .customer-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #e8f6f0 0%, #d7eee5 100%);
+    color: #2d7a6a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .customer-meta,
+  .member-meta {
+    min-width: 0;
+  }
+
+  .customer-name-main,
+  .member-name-main {
+    display: block;
+    color: var(--color-text-1);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .customer-name-sub,
+  .member-name-sub {
+    display: block;
+    margin-top: 2px;
+    color: var(--color-text-3);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .detail-summary-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .detail-summary-meta {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .detail-summary-title {
+    font-size: 18px;
+    line-height: 26px;
+    margin: 0;
   }
 
   .detail-aside {
@@ -1931,16 +1980,56 @@
     display: none;
     position: sticky;
     bottom: 0;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-items: center;
     z-index: 20;
     padding: 12px 24px 14px;
     border-top-color: rgba(191, 219, 210, 0.9);
     background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #ffffff 100%);
     backdrop-filter: blur(8px);
     box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .create-footer-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .create-footer-preview strong {
+    color: var(--color-text-1);
+    white-space: nowrap;
+  }
+
+  .create-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
   }
 
   .content:has(.page[data-page="create"].active) .create-page-footer {
     display: flex;
+  }
+
+  @media (max-width: 960px) {
+    .create-page-footer {
+      justify-content: center;
+    }
+
+    .create-footer-preview,
+    .create-footer-actions {
+      width: 100%;
+      justify-content: center;
+    }
   }
 
   .page[data-page="create"] .metric-row {
@@ -1980,48 +2069,20 @@
     padding: 10px 12px;
   }
 
-  .create-step-panel[data-create-step="3"].active {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 12px 16px;
-    padding: 0 0 6px;
-    align-items: start;
+  /* ---- Step 2: 推送内容区样式 ---- */
+  .page[data-page="create"] .section.section-push-content {
+    border-top: none;
   }
 
-  .create-step-panel[data-create-step="3"] .section {
-    padding: 0;
-    background: transparent;
-  }
-
-  .create-step-panel[data-create-step="3"] .section:nth-of-type(1) {
-    grid-column: 1;
-    margin: 16px 0 0 16px;
-    padding: 18px;
-    background: linear-gradient(180deg, #f7fdfa 0%, #f0f8f4 100%);
-    border: 1.5px solid #c5ddd6;
-    border-radius: 14px;
-  }
-
-  .create-step-panel[data-create-step="3"] .section:nth-of-type(1) .form-grid {
+  .page[data-page="create"] .section.section-push-content .form-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
 
-  .create-step-panel[data-create-step="3"] .section:nth-of-type(2) {
-    grid-column: 1;
-    padding: 0 0 16px 16px;
-  }
-
-  .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    padding: 16px 20px 16px 0;
-  }
-
-  .create-footer-meta {
-    margin-right: auto;
-    color: #66807a;
-    font-size: 12px;
+  .page[data-page="create"] .section.section-antispam {
+    border-top: none;
+    padding: 4px 16px 16px 16px;
+    background: transparent !important;
   }
 
   .page[data-page="create"] .btn {
@@ -2037,27 +2098,6 @@
       grid-template-columns: 1fr;
     }
 
-    .create-step-panel[data-create-step="3"].active {
-      grid-template-columns: 1fr;
-      padding: 0;
-    }
-
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
-      grid-column: auto;
-      grid-row: auto;
-    }
-
-    .workbench-steps {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
-      padding: 12px 16px;
-    }
   }
 
   /* ---- Create page enhancements ---- */
@@ -2123,7 +2163,6 @@
   }
 
   /* ---- P1: focus-visible for all custom interactive elements ---- */
-  .workbench-step:focus-visible,
   .channel-card:focus-visible,
   .toggle-switch:focus-visible,
   .btn:focus-visible,
@@ -2132,13 +2171,10 @@
     outline-offset: 2px;
   }
   /* Remove browser default outline only for mouse users */
-  .workbench-step:focus:not(:focus-visible),
   .channel-card:focus:not(:focus-visible),
   .toggle-switch:focus:not(:focus-visible) {
     outline: none;
   }
-
-  /* ---- P1: workbench-step keyboard accessibility ---- */
 
   /* ---- P2: 768px responsive breakpoint ---- */
   @media (max-width: 768px) {
@@ -2152,19 +2188,6 @@
       grid-template-columns: 1fr;
     }
     .field.full { grid-column: 1; }
-    .page[data-page="create"] .workbench-steps {
-      grid-template-columns: 1fr;
-    }
-    .create-step-panel[data-create-step="3"].active {
-      grid-template-columns: 1fr;
-    }
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(1),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(2),
-    .create-step-panel[data-create-step="3"] .section:nth-of-type(3) {
-      grid-column: auto;
-      grid-row: auto;
-      padding: 12px 16px;
-    }
   }
 
   /* ---- P2: touch targets — mobile minimum 44px ---- */
@@ -2293,57 +2316,22 @@
           <div class="page-card">
             <div class="page-title-bar">
               <div style="display:flex;align-items:center;gap:12px;">
-                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <button class="btn ghost nav-back page-back-icon" type="button" data-target="list" aria-label="返回列表" title="返回列表">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M9.5 3.5L5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
                 <div class="page-title">
                   <h1>新建触达任务</h1>
                 </div>
               </div>
             </div>
 
-            <div class="create-workbench">
-              <div class="workbench-flow">
-                <div class="workbench-steps">
-                  <div class="workbench-step active" data-step="1" role="button" tabindex="0" aria-current="step" aria-label="第 1 步：基础设置（当前步骤）">
-                    <strong>基础设置</strong>
-                    <span>确认场景、归属鱼丸和发送通道。</span>
-                  </div>
-                  <div class="workbench-step" data-step="2" role="button" tabindex="0" aria-label="第 2 步：人群圈选">
-                    <strong>人群圈选</strong>
-                    <span>组合条件并快速看到命中规模。</span>
-                  </div>
-                  <div class="workbench-step locked" data-step="3" role="button" tabindex="-1" aria-disabled="true" aria-label="第 3 步：内容与风控（未解锁）">
-                    <strong>内容与风控</strong>
-                    <span>填写文案、发送设置并完成风控复核。</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="create-step-panel active" data-create-step="1">
             <div class="section">
-              <div class="section-title">
-                <div class="create-section-head">
-                  <div>
-                  <h2>任务基础信息</h2>
-                  </div>
-                </div>
-              </div>
-
               <div class="form-grid">
                 <div class="field full">
                   <label class="required" for="task-name">任务名称</label>
                   <input class="input" id="task-name" value="4月直播邀约第二批">
-                  <div class="field-note">建议包含活动名/批次，方便列表复盘</div>
-                </div>
-                <div class="field">
-                  <label class="required" id="label-scene">触达场景</label>
-                  <div class="radio-group" role="group" aria-labelledby="label-scene">
-                    <button class="radio-chip" type="button">新线索首触达</button>
-                    <button class="radio-chip" type="button">沉默客户唤醒</button>
-                    <button class="radio-chip" type="button">商机推进跟进</button>
-                    <button class="radio-chip active" type="button">活动通知</button>
-                  </div>
-                  <div class="field-note">场景决定防骚扰规则，人群由下方标签条件自由圈定</div>
                 </div>
                 <div class="field full">
                   <label class="required" id="label-member">所属鱼丸</label>
@@ -2382,17 +2370,13 @@
                 </div>
               </div>
             </div>
-            </div>
-
-            <div class="create-step-panel" data-create-step="2">
             <div class="section">
+              <div class="form-grid">
                 <div class="field full">
                   <label class="required">目标人群</label>
                   <div class="tag-builder">
                     <div class="builder-header">
                       <span>客户需满足</span>
-                      <span style="color:var(--color-text-4);font-size:12px;">条件之间可分别设置为 且 / 或 / 非</span>
-                      <span style="color:var(--color-text-4);font-size:12px;margin-left:auto;">防骚扰规则在提交后自动叠加，不影响此处估算</span>
                     </div>
 
                     <div class="builder-conditions" id="builder-conditions">
@@ -2464,37 +2448,24 @@
 
                     <div class="builder-footer">
                       <button class="add-cond-btn" id="add-cond-btn">＋ 添加条件</button>
-                      <div class="builder-preview-inline">
-                        <strong>预计命中：<span style="color:var(--color-primary-6);">1,248 人</span></strong>
-                        <div class="mini-stat-tags">
-                          <span class="mini-stat">华东 493</span>
-                          <span class="mini-stat">华南 361</span>
-                          <span class="mini-stat">华北 244</span>
-                          <span class="mini-stat">直播线索 150</span>
-                        </div>
-                        <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
-                      </div>
                     </div>
                   </div>
-                  <div class="field-note">条件之间可分别设置为 且 / 或 / 非；筛选运算符支持包含、比较和等值判断。</div>
                 </div>
-            </div>
+              </div>
             </div>
 
-            <div class="create-step-panel" data-create-step="3">
-            <div class="section">
+            <div class="section section-push-content">
               <div class="form-grid">
                 <div class="field full">
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                     <label class="required" for="push-content" style="margin-bottom:0;">推送内容</label>
                     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;">
-                      <a href="#" class="tiny-link push-token-link" data-token="【a链接】">a链接</a>
                       <a href="#" class="tiny-link push-token-link" data-token="【昵称】">昵称</a>
                       <a href="#" class="tiny-link push-token-link" data-token="【备注】">备注</a>
                     </div>
                   </div>
-                  <textarea class="textarea" id="push-content">Hi，明晚 20:00 我们会做一场”从线索到成交的销售动作拆解”直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
-                  <div class="field-note">建议控制在 2000 字以内，内容快照会完整存档到任务详情页</div>
+                  <textarea class="textarea" id="push-content">Hi，明晚 20:00 我们会做一场"从线索到成交的销售动作拆解"直播，里面会重点讲到企微跟进、沉默客户唤醒和成交推进的具体做法。如果你方便，我把直播预约链接发你。</textarea>
+                  <div class="field-note">建议控制在 1000 字以内</div>
                 </div>
                 <div class="field full">
                   <div>
@@ -2518,7 +2489,7 @@
                     <button class="radio-chip active" type="button" id="chip-scheduled">定时发送</button>
                     <div id="send-time-wrapper" style="display:flex;align-items:center;gap:8px;">
                       <input class="input" type="datetime-local" id="send-time-input" value="2026-04-24T19:30" step="60" style="width:190px;" aria-label="定时发送时间" aria-describedby="time-hint time-error">
-                      <span class="time-range-hint" id="time-hint" style="margin-top:0;"><span class="dot" aria-hidden="true"></span>09:00 – 21:00</span>
+                      <span class="time-range-hint" id="time-hint" style="margin-top:0;"><span class="dot" aria-hidden="true"></span>发送时间范围09:00 – 21:00</span>
                     </div>
                   </div>
                   <div class="field-error" id="time-error" role="alert">发送时间超出允许范围（09:00 – 21:00），请重新设置</div>
@@ -2526,7 +2497,7 @@
               </div>
             </div>
 
-            <div class="section">
+            <div class="section section-antispam">
               <div class="antispam-group">
                 <div class="toggle-row">
                   <div class="toggle-info">
@@ -2537,25 +2508,17 @@
                 </div>
               </div>
             </div>
-
-            <div class="section">
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:18px;">
-                <button class="btn ghost">重新计算</button>
-              </div>
-
-
-            </div>
-            </div>
-
-          </div>
         </section>
         <div class="footer-actions create-page-footer">
-          <button class="btn nav-back" data-target="list">取消</button>
-          <button class="btn ghost">保存草稿</button>
-          <div style="flex:1"></div>
-          <button class="btn" id="create-prev-btn" style="display:none;">上一步</button>
-          <button class="btn primary" id="create-next-btn">下一步</button>
-          <button class="btn primary" id="create-submit-btn" style="display:none;">提交执行</button>
+          <div class="create-footer-preview">
+            <strong>预计命中：<span style="color:var(--color-primary-6);">1,248 人</span></strong>
+            <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
+          </div>
+          <div class="create-footer-actions">
+            <button class="btn nav-back" data-target="list">取消</button>
+            <button class="btn ghost">保存草稿</button>
+            <button class="btn primary" id="create-submit-btn">保 存</button>
+          </div>
         </div>
 
         <section class="page active" data-page="list">
@@ -2580,7 +2543,6 @@
               </div>
               <div class="filters">
                 <input class="input" placeholder="搜索任务名称">
-                <select class="select"><option>全部场景</option><option>新线索首触达</option><option>沉默客户唤醒</option><option>商机推进跟进</option><option selected>活动通知</option></select>
                 <select class="select"><option>全部状态</option><option>草稿</option><option>待执行</option><option selected>执行中</option><option>已完成</option></select>
                 <button class="btn">重置</button>
               </div>
@@ -2590,7 +2552,6 @@
                 <thead>
                   <tr>
                     <th>任务名称</th>
-                    <th>场景类型</th>
                     <th>创建人</th>
                     <th>发送方式</th>
                     <th>计划时间</th>
@@ -2605,7 +2566,6 @@
                 <tbody>
                   <tr>
                     <td><a href="#" class="tiny-link">4月直播邀约第二批</a></td>
-                    <td>活动通知</td>
                     <td>明策</td>
                     <td>定时发送</td>
                     <td>04-24 19:30</td>
@@ -2622,7 +2582,6 @@
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">沉默客户唤醒-报价后7天</a></td>
-                    <td>沉默客户唤醒</td>
                     <td>王怡</td>
                     <td>立即发送</td>
                     <td>04-23 10:12</td>
@@ -2639,7 +2598,6 @@
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">商机推进-试用到期提醒</a></td>
-                    <td>商机推进跟进</td>
                     <td>刘倩</td>
                     <td>立即发送</td>
                     <td>04-22 16:50</td>
@@ -2656,7 +2614,6 @@
                   </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">新线索首触达-表单导入</a></td>
-                    <td>新线索首触达</td>
                     <td>陈颖</td>
                     <td>立即发送</td>
                     <td>04-22 09:30</td>
@@ -2674,6 +2631,22 @@
                 </tbody>
               </table>
             </div>
+            <div class="pagination-bar">
+              <div class="pagination-meta">共 20 条，当前第 1-10 条</div>
+              <div class="pagination-controls">
+                <button class="btn ghost" disabled>上一页</button>
+                <div class="pagination-pages">
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">2</button>
+                </div>
+                <button class="btn ghost">下一页</button>
+                <select class="select" style="width:110px;">
+                  <option selected>10 条/页</option>
+                  <option>20 条/页</option>
+                  <option>50 条/页</option>
+                </select>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2681,37 +2654,23 @@
           <div class="page-card">
             <div class="page-title-bar">
               <div style="display:flex;align-items:center;gap:12px;">
-                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <button class="btn ghost nav-back page-back-icon" type="button" data-target="list" aria-label="返回列表" title="返回列表">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M9.5 3.5L5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
                 <div class="page-title">
-                  <h1>任务结果详情</h1>
-                  <p>查看客户级执行结果、成员执行情况与完整日志，所有指标均基于任务快照统计。</p>
+                  <h1>数据</h1>
                 </div>
-              </div>
-              <div class="nav-switcher">
-                <button class="tab-btn active" data-tab="customers">客户明细</button>
-                <button class="tab-btn" data-tab="members">成员执行</button>
-                <button class="tab-btn" data-tab="logs">任务日志</button>
-              </div>
-            </div>
-
-            <div class="detail-banner">
-              <div>
-                <h3>本次任务表现优于同类场景均值</h3>
-                <p>回复率 29.5%，高于本月“商机推进跟进”均值 6.1pct。建议复用当前发送节奏，并保留后续跟进窗口。</p>
-              </div>
-              <div class="banner-grade">
-                <strong>A-</strong>
-                <span style="color:var(--color-text-3); font-size:12px;">质量评分</span>
               </div>
             </div>
 
             <div class="detail-top">
               <div class="detail-summary">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <div>
-                    <h2 style="font-size:18px; margin-bottom:4px;">商机推进-试用到期提醒</h2>
+                <div class="detail-summary-head">
+                  <div class="detail-summary-meta">
+                    <h2 class="detail-summary-title">商机推进-试用到期提醒</h2>
                     <div class="tag-group">
-                      <span class="tag primary">商机推进跟进</span>
                       <span class="status-pill success">已完成</span>
                     </div>
                   </div>
@@ -2726,33 +2685,13 @@
                   <div class="summary-item"><span>推送内容</span><strong>试用即将到期，邀请完成演示与下一步沟通。</strong></div>
                 </div>
               </div>
-
-              <div class="detail-aside">
-                <div class="mini-card">
-                  <h3>结果概览</h3>
-                  <div class="timeline">
-                    <div class="timeline-item"><small>命中人数</small>302</div>
-                    <div class="timeline-item"><small>排除人数</small>24</div>
-                    <div class="timeline-item"><small>实际触达人数</small>278</div>
-                    <div class="timeline-item"><small>回复人数</small>82，回复率 29.5%</div>
-                  </div>
-                </div>
-                <div class="mini-card">
-                  <h3>主要排除原因</h3>
-                  <div class="tag-group">
-                    <span class="tag info">最近已触达 11</span>
-                    <span class="tag warn">冷静期 8</span>
-                    <span class="tag danger">超周频 5</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div class="kpi-grid" style="padding-bottom:16px;">
-              <div class="kpi-card"><div class="kpi-label">命中人数</div><div class="kpi-value">302</div><div class="kpi-note">任务创建时固化</div></div>
-              <div class="kpi-card"><div class="kpi-label">排除人数</div><div class="kpi-value">24</div><div class="kpi-note">防骚扰拦截</div></div>
+              <div class="kpi-card"><div class="kpi-label">命中人数</div><div class="kpi-value">302</div></div>
+              <div class="kpi-card"><div class="kpi-label">排除人数</div><div class="kpi-value">24</div></div>
               <div class="kpi-card"><div class="kpi-label">成功人数</div><div class="kpi-value">266</div><div class="kpi-note">发送成功率 95.7%</div></div>
-              <div class="kpi-card primary"><div class="kpi-label">回复人数</div><div class="kpi-value">82</div><div class="kpi-note">高于本月均值 6.1pct</div></div>
+              <div class="kpi-card primary"><div class="kpi-label">回复人数</div><div class="kpi-value">82</div></div>
             </div>
 
             <div class="tab-panel active" data-panel="customers">
@@ -2760,7 +2699,7 @@
                 <div class="filters" style="margin-bottom:0;">
                   <select class="select"><option>全部触达状态</option><option selected>成功</option><option>失败</option><option>已拦截</option></select>
                   <select class="select"><option>全部回复状态</option><option selected>已回复</option><option>未回复</option></select>
-                  <input class="input" placeholder="搜索客户名称 / 客户ID">
+                  <input class="input" placeholder="搜索客户昵称 / 星球编号">
                 </div>
                 <div class="toolbar-right">
                   <span class="tag primary">已回复 82</span>
@@ -2771,8 +2710,8 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>客户名称</th>
-                      <th>客户ID</th>
+                      <th>客户昵称</th>
+                      <th>星球编号</th>
                       <th>所属销售</th>
                       <th>触达状态</th>
                       <th>是否回复</th>
@@ -2781,10 +2720,94 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr><td>杭州·王晨</td><td>C_100281</td><td>刘倩</td><td><span class="status-pill success">成功</span></td><td>是</td><td>04-22 18:12</td><td>--</td></tr>
-                    <tr><td>深圳·林可</td><td>C_100429</td><td>刘倩</td><td><span class="status-pill success">成功</span></td><td>是</td><td>04-22 19:06</td><td>--</td></tr>
-                    <tr><td>上海·赵清</td><td>C_100563</td><td>周岚</td><td><span class="status-pill danger">失败</span></td><td>否</td><td>--</td><td>--</td></tr>
-                    <tr><td>苏州·何然</td><td>C_100612</td><td>周岚</td><td><span class="status-pill warning">已拦截</span></td><td>否</td><td>--</td><td>最近已触达、冷静期</td></tr>
+                    <tr>
+                      <td>
+                        <div class="customer-identity">
+                          <span class="customer-avatar">王</span>
+                          <div class="customer-meta">
+                            <span class="customer-name-main">杭州·王晨</span>
+                            <span class="customer-name-sub">138 1024 7781</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>C_100281</td>
+                      <td>
+                        <div class="member-meta">
+                          <span class="member-name-main">刘倩</span>
+                          <span class="member-name-sub">鱼丸号：YW-LQ-017</span>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success">成功</span></td>
+                      <td>是</td>
+                      <td>04-22 18:12</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="customer-identity">
+                          <span class="customer-avatar">林</span>
+                          <div class="customer-meta">
+                            <span class="customer-name-main">深圳·林可</span>
+                            <span class="customer-name-sub">-</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>C_100429</td>
+                      <td>
+                        <div class="member-meta">
+                          <span class="member-name-main">刘倩</span>
+                          <span class="member-name-sub">鱼丸号：YW-LQ-017</span>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success">成功</span></td>
+                      <td>是</td>
+                      <td>04-22 19:06</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="customer-identity">
+                          <span class="customer-avatar">赵</span>
+                          <div class="customer-meta">
+                            <span class="customer-name-main">上海·赵清</span>
+                            <span class="customer-name-sub">136 8890 2413</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>C_100563</td>
+                      <td>
+                        <div class="member-meta">
+                          <span class="member-name-main">周岚</span>
+                          <span class="member-name-sub">鱼丸号：YW-ZL-024</span>
+                        </div>
+                      </td>
+                      <td><span class="status-pill danger">失败</span></td>
+                      <td>否</td>
+                      <td>--</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="customer-identity">
+                          <span class="customer-avatar">何</span>
+                          <div class="customer-meta">
+                            <span class="customer-name-main">苏州·何然</span>
+                            <span class="customer-name-sub">-</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>C_100612</td>
+                      <td>
+                        <div class="member-meta">
+                          <span class="member-name-main">周岚</span>
+                          <span class="member-name-sub">鱼丸号：YW-ZL-024</span>
+                        </div>
+                      </td>
+                      <td><span class="status-pill warning">已拦截</span></td>
+                      <td>否</td>
+                      <td>--</td>
+                      <td>已触达，到达上限</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -2835,7 +2858,11 @@
           <div class="page-card">
             <div class="page-title-bar">
               <div style="display:flex;align-items:center;gap:12px;">
-                <button class="btn ghost nav-back" data-target="list">← 返回列表</button>
+                <button class="btn ghost nav-back page-back-icon" type="button" data-target="list" aria-label="返回列表" title="返回列表">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M9.5 3.5L5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
                 <div class="page-title">
                   <h1>拦截记录</h1>
                   <p>统一查看哪些客户被系统排除，以及拦截原因分布，便于运营理解命中人数变化。</p>
@@ -2897,7 +2924,6 @@
                 <thead>
                   <tr>
                     <th>任务名称</th>
-                    <th>场景类型</th>
                     <th>客户名称</th>
                     <th>所属销售</th>
                     <th>拦截原因</th>
@@ -3222,59 +3248,6 @@
 
     if (chipAllSales) chipAllSales.addEventListener("click", () => setMemberMode("all"));
     if (chipDesignated) chipDesignated.addEventListener("click", () => setMemberMode("designated"));
-
-    /* ---- Create flow steps ---- */
-    const createFlowCopy = document.getElementById("create-flow-copy");
-    const createFooterMeta = document.getElementById("create-footer-meta");
-    const createPrevBtn = document.getElementById("create-prev-btn");
-    const createNextBtn = document.getElementById("create-next-btn");
-    const createSubmitBtn = document.getElementById("create-submit-btn");
-    const createPanels = Array.from(document.querySelectorAll(".create-step-panel"));
-    const createSteps = Array.from(document.querySelectorAll(".workbench-step"));
-    const createStepMeta = {
-      1: {
-        flow: "当前聚焦在“基础设置”",
-        title: "第 1 步：基础设置",
-        hint: "先确认任务场景、归属鱼丸和发送通道。",
-      },
-      2: {
-        flow: "当前聚焦在“人群圈选”",
-        title: "第 2 步：目标人群",
-        hint: "圈选客户条件，确认命中规模是否合理。",
-      },
-      3: {
-        flow: "当前聚焦在“内容与风控”",
-        title: "第 3 步：内容与风控",
-        hint: "最后确认发送内容、时机与风险提示。",
-      }
-    };
-    let currentCreateStep = 1;
-
-    function setCreateStep(step) {
-      currentCreateStep = Math.max(1, Math.min(3, step));
-      createPanels.forEach(panel => panel.classList.toggle("active", Number(panel.dataset.createStep) === currentCreateStep));
-      createSteps.forEach(stepEl => {
-        const stepNum = Number(stepEl.dataset.step);
-        stepEl.classList.toggle("active", stepNum === currentCreateStep);
-        stepEl.classList.toggle("done", stepNum < currentCreateStep);
-        stepEl.classList.toggle("locked", stepNum > currentCreateStep);
-      });
-
-      const meta = createStepMeta[currentCreateStep];
-      if (createFlowCopy) createFlowCopy.textContent = meta.flow;
-      if (createFooterMeta) createFooterMeta.textContent = meta.footer;
-
-      if (createPrevBtn) createPrevBtn.style.display = currentCreateStep === 1 ? "none" : "inline-flex";
-      if (createNextBtn) createNextBtn.style.display = currentCreateStep === 3 ? "none" : "inline-flex";
-      if (createSubmitBtn) createSubmitBtn.style.display = currentCreateStep === 3 ? "inline-flex" : "none";
-    }
-
-    createSteps.forEach(stepEl => {
-      stepEl.addEventListener("click", () => setCreateStep(Number(stepEl.dataset.step)));
-    });
-    if (createPrevBtn) createPrevBtn.addEventListener("click", () => setCreateStep(currentCreateStep - 1));
-    if (createNextBtn) createNextBtn.addEventListener("click", () => setCreateStep(currentCreateStep + 1));
-    setCreateStep(1);
 
     /* ---- Send time validation (09:00–21:00) ---- */
     const timeInput = document.getElementById("send-time-input");
@@ -3680,37 +3653,33 @@
     <div class="prd-item">选择场景后自动展示场景说明文字</div>
   </div>
 
-  <!-- Section 3: 创建任务 — 步骤1 基础设置 -->
+  <!-- Section 3: 创建任务 — 基础设置 -->
   <div class="prd-section" id="prd-s3">
-    <div class="prd-section-title orange">3. 创建任务 · 步骤1 基础设置</div>
+    <div class="prd-section-title orange">3. 创建任务 · 基础设置</div>
     <div class="prd-label">必填字段</div>
     <div class="prd-item"><strong>任务名称</strong> — 手动填写，建议含活动名+日期</div>
-    <div class="prd-item"><strong>触达场景</strong> — 4 个固定场景单选</div>
     <div class="prd-item"><strong>所属鱼丸</strong> — 全部 / 按鱼丸选择</div>
     <div class="prd-item"><strong>发送通道</strong> — 企微官方数发 / 星云</div>
     <div class="prd-label">交互规则</div>
-    <div class="prd-item">选择场景后系统展示命中规则说明</div>
+    <div class="prd-item">新建页采用单页表单，不再展示步骤条</div>
     <div class="prd-item">发送通道至少选一个，可多选</div>
     <div class="prd-item">鱼丸选择支持多选，默认全部</div>
   </div>
 
-  <!-- Section 4: 创建任务 — 步骤2 人群圈选 -->
+  <!-- Section 4: 创建任务 — 目标人群 -->
   <div class="prd-section" id="prd-s4">
-    <div class="prd-section-title green">4. 创建任务 · 步骤2 人群圈选</div>
+    <div class="prd-section-title green">4. 创建任务 · 目标人群</div>
     <div class="prd-label">展示内容</div>
-    <div class="prd-item">命中人数（原始）</div>
-    <div class="prd-item">排除人数（防骚扰）</div>
-    <div class="prd-item">最终可触达人数</div>
-    <div class="prd-item">排除原因分布（最近已触达/冷静期/本活动已触达/已拉黑删除）</div>
+    <div class="prd-item">条件编辑区：字段 / 运算符 / 标签值 / 且或非连接关系</div>
+    <div class="prd-item">底部仅保留「添加条件」操作</div>
     <div class="prd-label">操作</div>
-    <div class="prd-item">点击「预览人数」异步拉取计算结果，响应 &lt; 5s</div>
-    <div class="prd-item">排除人数过高时展示风险提示</div>
-    <div class="prd-item">支持点击进入拦截记录查看明细</div>
+    <div class="prd-item">预计命中人数移至 footer 展示</div>
+    <div class="prd-item">footer 展示命中人数与「刷新估算」按钮</div>
   </div>
 
-  <!-- Section 5: 创建任务 — 步骤3 内容与风控 -->
+  <!-- Section 5: 创建任务 — 推送与风控 -->
   <div class="prd-section" id="prd-s5">
-    <div class="prd-section-title orange">5. 创建任务 · 步骤3 内容与风控</div>
+    <div class="prd-section-title orange">5. 创建任务 · 推送与风控</div>
     <div class="prd-label">推送内容</div>
     <div class="prd-item">手动填写文本，建议控制在 1000 字以内</div>
     <div class="prd-item">内容快照会完整存档到任务详情页</div>
@@ -3723,8 +3692,8 @@
     <div class="prd-item">周频次上限：同客户每周最多 2 次</div>
     <div class="prd-item">本活动去重：同活动不重复发送</div>
     <div class="prd-item">拉黑/删除客户过滤：始终排除，不可关闭</div>
-    <div class="prd-label">按钮</div>
-    <div class="prd-item">保存草稿 / 提交执行</div>
+    <div class="prd-label">footer</div>
+    <div class="prd-item">按钮居中展示：取消 / 保存草稿 / 保存</div>
     <div class="prd-item">推送内容为空时不允许提交</div>
   </div>
 
@@ -3756,22 +3725,27 @@
   <div class="prd-section" id="prd-s7">
     <div class="prd-section-title green">7. 任务列表</div>
     <div class="prd-label">列表字段</div>
-    <div class="prd-item">任务名称 / 场景类型 / 创建人 / 发送方式 / 计划时间</div>
+    <div class="prd-item">任务名称  / 创建人 / 发送方式 / 计划时间</div>
     <div class="prd-item">任务状态：草稿 / 待执行 / 执行中 / 已完成 / 已取消</div>
     <div class="prd-item">命中人数 / 排除人数 / 实际触达人数 / 回复人数 / 回复率</div>
     <div class="prd-label">筛选项</div>
-    <div class="prd-item">场景类型 / 任务状态 / 创建人 / 时间范围</div>
+    <div class="prd-item"> 任务状态 / 创建人 / 时间范围</div>
     <div class="prd-label">操作项</div>
     <div class="prd-item">查看详情 / 复制任务 / 取消任务 / 重新执行</div>
   </div>
 
-  <!-- Section 8: 结果详情 -->
+  <!-- Section 8: 数据详情 -->
   <div class="prd-section" id="prd-s8">
-    <div class="prd-section-title orange">7. 结果详情</div>
+    <div class="prd-section-title orange">8. 数据详情</div>
     <div class="prd-label">顶部指标</div>
-    <div class="prd-item">命中 / 排除 / 实际触达 / 成功 / 失败 / 回复人数 / 回复率</div>
-    <div class="prd-label">页签</div>
-    <div class="prd-item"><strong>客户明细</strong>：客户名/ID/所属销售/触达状态/是否回复/排除原因</div>
+    <div class="prd-item">标题与状态同一行：任务名称 / 已完成</div>
+    <div class="prd-item">摘要字段一行 4 个：创建人 / 发送方式 / 创建时间 / 计划时间 / 选择鱼丸 / 推送内容</div>
+    <div class="prd-item">KPI：命中人数 / 排除人数 / 成功人数 / 回复人数</div>
+    <div class="prd-label">客户明细</div>
+    <div class="prd-item">字段：客户昵称 / 星球编号 / 所属销售 / 触达状态 / 是否回复 / 回复时间 / 排除原因</div>
+    <div class="prd-item">客户昵称列展示头像、客户名称，第二行展示手机号；无手机号显示 -</div>
+    <div class="prd-item">所属销售列第二行展示鱼丸号</div>
+    <div class="prd-label">其他信息</div>
     <div class="prd-item"><strong>成员执行明细</strong>：销售姓名/分配/已执行/未执行/回复人数</div>
     <div class="prd-item"><strong>任务日志</strong>：时间/日志类型/日志内容/操作人</div>
   </div>
