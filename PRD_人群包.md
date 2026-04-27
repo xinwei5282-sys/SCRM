@@ -1,3 +1,17 @@
+---
+tags:
+  - task
+projects: "[[../../../TaskNotes/Views/relationships.base]]"
+status: open
+priority:
+due:
+scheduled:
+contexts:
+blockedBy:
+recurrence:
+complete_instances:
+dateModified: 2026-04-24T21:13:03.317+08:00
+---
 # PRD：MA 人群包
 
 > **版本**：v4.0 | **状态**：草稿 | **日期**：2026-03-25

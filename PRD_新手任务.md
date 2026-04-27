@@ -1,3 +1,18 @@
+---
+tags:
+  - task
+projects: "[[../../../TaskNotes/Views/relationships.base]]"
+status: done
+priority:
+due:
+scheduled:
+contexts:
+blockedBy:
+recurrence:
+complete_instances:
+dateModified: 2026-04-24T21:12:46.813+08:00
+completedDate: 2026-04-24
+---
 # 新手任务系统 产品需求文档
 
 **版本**：v2.0

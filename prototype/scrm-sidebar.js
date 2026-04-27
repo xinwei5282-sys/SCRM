@@ -15,7 +15,7 @@
           key: "reach",
           label: "触达",
           items: [
-            { key: "sales-touch", label: "销售触达", href: "销售触达一期.html" }
+            { key: "sales-touch", label: "群发/私戳", href: "销售触达一期.html" }
           ]
         },
         {
