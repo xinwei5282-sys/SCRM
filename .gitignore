@@ -18,4 +18,3 @@ progress.json
 node_modules/
 dist/
 *.xlsx
-.gstack/
