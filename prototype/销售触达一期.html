@@ -260,31 +260,49 @@
   }
 
   .page[data-page="create"] {
-    gap: 20px;
+    gap: 14px;
+  }
+
+  .content:has(.page[data-page="create"].active) {
+    overflow: hidden;
+  }
+
+  .page[data-page="create"].active {
+    height: 100%;
+    min-height: 0;
   }
 
   .page[data-page="create"] .page-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    min-height: 0;
     border: none;
-    border-radius: 20px;
+    border-radius: 16px;
     background:
       radial-gradient(circle at top right, rgba(54,165,144,0.1), transparent 26%),
       linear-gradient(180deg, #fbfffd 0%, #ffffff 22%);
-    box-shadow: 0 16px 34px rgba(31, 52, 45, 0.06);
+    box-shadow: 0 12px 26px rgba(31, 52, 45, 0.05);
+  }
+
+  .create-page-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 0;
   }
 
   .page[data-page="create"] .page-title-bar {
-    padding: 18px 24px 14px;
+    padding: 14px 20px 10px;
     background:
       linear-gradient(180deg, rgba(233,255,248,0.96) 0%, rgba(255,255,255,0.98) 78%);
     border-bottom: none;
   }
 
   .page[data-page="create"] .page-title h1 {
-    font-size: 24px;
-    line-height: 32px;
-    margin-bottom: 6px;
+    font-size: 22px;
+    line-height: 28px;
+    margin-bottom: 2px;
     letter-spacing: -0.02em;
   }
 
@@ -408,7 +426,7 @@
   }
 
   .page[data-page="create"] .section {
-    padding: 16px 24px;
+    padding: 12px 20px;
     border-top: none;
   }
 
@@ -471,11 +489,11 @@
   }
 
   .page[data-page="create"] .form-grid {
-    gap: 12px 16px;
+    gap: 8px 14px;
   }
 
   .page[data-page="create"] .field {
-    padding: 8px 0;
+    padding: 4px 0;
     border: none;
     border-radius: 0;
     background: transparent;
@@ -487,7 +505,7 @@
   }
 
   .page[data-page="create"] .field label {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-size: 12px;
     letter-spacing: 0.02em;
     color: #4f6660;
@@ -495,7 +513,7 @@
   }
 
   .page[data-page="create"] .field-note {
-    margin-top: 6px;
+    margin-top: 4px;
     color: #6e827d;
     font-size: 11px;
   }
@@ -1071,7 +1089,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .toolbar-right {
@@ -1083,7 +1101,7 @@
   .filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
 
   .filters .input,
@@ -1120,7 +1138,7 @@
   }
 
   .detail-top {
-    padding: 16px 20px;
+    padding: 12px 16px;
     display: block;
     border-bottom: 1px solid var(--color-border-default);
   }
@@ -1128,14 +1146,14 @@
   .detail-summary {
     border: 1px solid var(--color-border-default);
     border-radius: 10px;
-    padding: 14px 16px;
+    padding: 12px 14px;
   }
 
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px 16px;
-    margin-top: 12px;
+    gap: 8px 12px;
+    margin-top: 10px;
   }
 
   .summary-item span {
@@ -1154,13 +1172,13 @@
   .customer-identity {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
   }
 
   .customer-avatar {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: linear-gradient(180deg, #e8f6f0 0%, #d7eee5 100%);
     color: #2d7a6a;
@@ -1205,7 +1223,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .detail-summary-meta {
@@ -1604,17 +1622,196 @@
     border: 1px solid var(--color-border-default);
   }
 
+  .member-picker-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23757980' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  .member-picker {
+    width: 360px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 4px 8px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-btn);
+    background: var(--color-fill-1);
+    cursor: pointer;
+  }
+
+  .member-picker-placeholder {
+    color: var(--color-text-4);
+    font-size: 12px;
+  }
+
+  .member-picker-trigger {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 4px;
+    border: 1px dashed #c0e8da;
+    background: #f7fcfa;
+    color: var(--color-primary-6);
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .org-picker-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.35);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .org-picker-dialog {
+    width: 760px;
+    max-width: 92vw;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+
+  .org-picker-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  .org-picker-head h3 {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--color-text-1);
+  }
+
+  .org-picker-head p {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .org-picker-body {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 0;
+    flex: 1;
+  }
+
+  .org-tree-panel,
+  .org-member-panel {
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 20px;
+  }
+
+  .org-tree-panel {
+    background: #fbfcfc;
+    border-right: 1px solid var(--color-border-default);
+  }
+
+  .org-tree-title,
+  .org-member-title {
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .org-tree-list,
+  .org-member-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .org-tree-item,
+  .org-member-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .org-tree-item input,
+  .org-member-item input {
+    margin: 0;
+  }
+
+  .org-tree-meta strong,
+  .org-member-meta strong {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text-1);
+  }
+
+  .org-tree-meta span,
+  .org-member-meta span {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  .org-member-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #e8f6f0 0%, #d7eee5 100%);
+    color: #2d7a6a;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .org-picker-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px 18px;
+    border-top: 1px solid var(--color-border-default);
+    background: #fff;
+  }
+
+  .org-picker-summary {
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
   /* ---- Channel Cards ---- */
   .channel-cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 
   .channel-card {
     border: 2px solid var(--color-border-default);
     border-radius: 10px;
-    padding: 14px 16px;
+    padding: 12px 14px;
     cursor: pointer;
     background: var(--color-fill-1);
     transition: border-color 150ms, background 150ms;
@@ -1672,7 +1869,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 12px 14px;
+    padding: 10px 12px;
     background: var(--color-fill-1);
     border-bottom: 1px solid var(--color-border-default);
   }
@@ -1812,13 +2009,13 @@
 
   .page[data-page="create"] .tag-builder {
     border-color: var(--create-border);
-    border-radius: 16px;
+    border-radius: 14px;
     background: linear-gradient(180deg, var(--create-surface-card) 0%, var(--create-surface) 100%);
-    box-shadow: 0 10px 22px rgba(32, 54, 47, 0.04);
+    box-shadow: 0 8px 18px rgba(32, 54, 47, 0.035);
   }
 
   .page[data-page="create"] .builder-header {
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: linear-gradient(180deg, rgba(233,255,248,0.72) 0%, rgba(247,249,250,0.92) 100%);
     border-bottom-color: var(--create-border);
   }
@@ -1838,7 +2035,7 @@
   }
 
   .page[data-page="create"] .condition-row {
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: rgba(255,255,255,0.72);
   }
 
@@ -1854,7 +2051,7 @@
   }
 
   .page[data-page="create"] .builder-footer {
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: linear-gradient(180deg, rgba(247,250,249,0.94) 0%, rgba(255,255,255,0.96) 100%);
     border-top-color: #d6e4df;
   }
@@ -1871,16 +2068,17 @@
   .page[data-page="create"] .channel-cards {
     gap: 10px;
     align-items: stretch;
+    width: min(100%, 880px);
   }
 
   .page[data-page="create"] .channel-card {
-    min-height: 78px;
+    min-height: 70px;
     border-width: 1px;
     border-color: #d7e3df;
-    border-radius: 12px;
-    padding: 10px 12px;
+    border-radius: 10px;
+    padding: 9px 11px;
     background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
-    box-shadow: 0 6px 14px rgba(32, 54, 47, 0.04);
+    box-shadow: 0 4px 10px rgba(32, 54, 47, 0.035);
     transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
   }
 
@@ -1984,7 +2182,7 @@
     justify-content: space-between;
     align-items: center;
     z-index: 20;
-    padding: 12px 24px 14px;
+    padding: 12px 20px 14px;
     border-top-color: rgba(191, 219, 210, 0.9);
     background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #ffffff 100%);
     backdrop-filter: blur(8px);
@@ -2077,6 +2275,13 @@
   .page[data-page="create"] .section.section-push-content .form-grid {
     grid-template-columns: 1fr;
     gap: 14px;
+    width: min(100%, 880px);
+  }
+
+  .page[data-page="create"] .section.section-push-content .textarea,
+  .page[data-page="create"] .section.section-push-content .attach-list,
+  .page[data-page="create"] .section.section-push-content #label-send-mode + div {
+    max-width: 880px;
   }
 
   .page[data-page="create"] .section.section-antispam {
@@ -2091,6 +2296,11 @@
 
   .page[data-page="create"] .btn.primary {
     box-shadow: 0 10px 18px rgba(54,165,144,0.18);
+  }
+
+  .page[data-page="create"] .field.full > .tag-builder,
+  .page[data-page="create"] .antispam-group {
+    width: min(100%, 880px);
   }
 
   @media (max-width: 1280px) {
@@ -2314,6 +2524,7 @@
       <div class="content">
         <section class="page" data-page="create">
           <div class="page-card">
+            <div class="create-page-body">
             <div class="page-title-bar">
               <div style="display:flex;align-items:center;gap:12px;">
                 <button class="btn ghost nav-back page-back-icon" type="button" data-target="list" aria-label="返回列表" title="返回列表">
@@ -2326,7 +2537,6 @@
                 </div>
               </div>
             </div>
-
             <div class="section">
               <div class="form-grid">
                 <div class="field full">
@@ -2339,7 +2549,13 @@
                     <button class="radio-chip" type="button" id="chip-all-sales">全部鱼丸</button>
                     <button class="radio-chip active" type="button" id="chip-designated">部分鱼丸</button>
                     <div id="member-wrapper" style="display:flex;align-items:center;gap:8px;">
-                      <input class="input" id="member-input" value="华东一组、华南一组、直播线索组" style="width:260px;" aria-label="选定鱼丸成员">
+                      <div class="member-picker" id="member-picker" role="button" tabindex="0" aria-label="选择推送企微">
+                        <span class="tag-chip">华东一组<span class="chip-del">×</span></span>
+                        <span class="tag-chip">华南一组<span class="chip-del">×</span></span>
+                        <span class="tag-chip">直播线索组<span class="chip-del">×</span></span>
+                        <span class="member-picker-trigger">选择推送企微</span>
+                      </div>
+                      <input class="input member-picker-input" id="member-input" value="华东一组、华南一组、直播线索组" style="display:none;" aria-label="选定鱼丸成员" readonly>
                     </div>
                   </div>
                 </div>
@@ -2383,16 +2599,18 @@
                       <div class="condition-row">
                         <select class="select cond-select">
                           <option selected>企微标签</option>
-                          <option>客户等级</option>
-                          <option>是否加入企微群聊</option>
-                          <option>体验营期数</option>
-                          <option>首次加入时间</option>
-                          <option>所属销售</option>
-                          <option>添加好友时间</option>
-                          <option>浏览文章时长</option>
-                          <option>观看直播</option>
-                          <option>是否分销</option>
-                          <option>分销人</option>
+                            <option>客户等级</option>
+                            <option>是否加入企微群聊</option>
+                            <option>是否领卡</option>
+                            <option>是否是官网会员</option>
+                            <option>体验营期数</option>
+                            <option>首次加入时间</option>
+                            <option>所属销售</option>
+                            <option>添加好友时间</option>
+                            <option>浏览文章时长</option>
+                            <option>是否观看直播</option>
+                            <option>是否分销</option>
+                            <option>分销人</option> 
                         </select>
                         <select class="select op-select">
                           <option selected>满足任一</option>
@@ -2400,7 +2618,6 @@
                           <option>全部不满足</option>
                         </select>
                         <div class="tag-value-area">
-                          <span class="tag-chip">4月直播邀约<span class="chip-del">×</span></span>
                           <input class="tag-input" placeholder="继续输入标签...">
                         </div>
                         <button class="btn-icon" title="删除此条件">×</button>
@@ -2416,17 +2633,19 @@
 
                       <div class="condition-row">
                         <select class="select cond-select">
-                          <option>企微标签</option>
-                          <option>客户等级</option>
-                          <option>是否加入企微群聊</option>
-                          <option>体验营期数</option>
-                          <option>首次加入时间</option>
-                          <option>所属销售</option>
-                          <option>添加好友时间</option>
-                          <option>浏览文章时长</option>
-                          <option>观看直播</option>
-                          <option>是否分销</option>
-                          <option selected>分销人</option>
+                          <option selected>企微标签</option>
+                            <option>客户等级</option>
+                            <option>是否加入企微群聊</option>
+                            <option>是否领卡</option>
+                            <option>是否是官网会员</option>
+                            <option>体验营期数</option>
+                            <option>首次加入时间</option>
+                            <option>所属销售</option>
+                            <option>添加好友时间</option>
+                            <option>浏览文章时长</option>
+                            <option>是否观看直播</option>
+                            <option>是否分销</option>
+                            <option>分销人</option> 
                         </select>
                         <select class="select op-select">
                           <option>包含</option>
@@ -2508,18 +2727,20 @@
                 </div>
               </div>
             </div>
+            <div class="footer-actions create-page-footer">
+              <div class="create-footer-preview">
+                <strong>预计命中：<span style="color:var(--color-primary-6);">1,248 人</span></strong>
+                <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
+              </div>
+              <div class="create-footer-actions">
+                <button class="btn nav-back" data-target="list">取消</button>
+                <button class="btn ghost">保存草稿</button>
+                <button class="btn primary" id="create-submit-btn">保 存</button>
+              </div>
+            </div>
+            </div>
+          </div>
         </section>
-        <div class="footer-actions create-page-footer">
-          <div class="create-footer-preview">
-            <strong>预计命中：<span style="color:var(--color-primary-6);">1,248 人</span></strong>
-            <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
-          </div>
-          <div class="create-footer-actions">
-            <button class="btn nav-back" data-target="list">取消</button>
-            <button class="btn ghost">保存草稿</button>
-            <button class="btn primary" id="create-submit-btn">保 存</button>
-          </div>
-        </div>
 
         <section class="page active" data-page="list">
           <div class="page-card">
@@ -3023,8 +3244,14 @@
       if (field === "客户等级") {
         return ["等于", "不等于"];
       }
-      if (field === "是否加入企微群聊") {
-        return ["是", "否"];
+      if (
+        field === "是否领卡" ||
+        field === "是否是官网会员" ||
+        field === "是否加入企微群聊" ||
+        field === "是否观看直播" ||
+        field === "是否分销"
+      ) {
+        return ["等于"];
       }
       if (field === "体验营期数") {
         return ["等于", "不等于"];
@@ -3051,8 +3278,14 @@
       if (field === "客户等级") {
         return `<select class="value-select" aria-label="客户等级"><option selected>S</option><option>A</option><option>B</option><option>C</option></select>`;
       }
-      if (field === "是否加入企微群聊") {
-        return ``;
+      if (
+        field === "是否领卡" ||
+        field === "是否是官网会员" ||
+        field === "是否加入企微群聊" ||
+        field === "是否观看直播" ||
+        field === "是否分销"
+      ) {
+        return `<select class="value-select" aria-label="${field}"><option selected>是</option><option>否</option></select>`;
       }
       if (field === "体验营期数") {
         return `<select class="value-select" aria-label="体验营期数"><option selected>1期</option><option>2期</option><option>3期</option><option>4期</option><option>5期</option></select>`;
@@ -3067,13 +3300,6 @@
       if (field === "添加好友时间") {
         if (operator === "为空" || operator === "不为空") return ``;
         return `<input class="tag-input" placeholder="选择日期，如 2026-04-24">`;
-      }
-      if (field === "是否分销") {
-        return ``;
-      }
-      if (field === "观看直播") {
-        if (operator === "为空" || operator === "不为空") return ``;
-        return `<input class="tag-input" placeholder="输入观看时长，如 30 分钟">`;
       }
       return `<input class="tag-input" placeholder="输入标签名...">`;
     }
@@ -3094,6 +3320,7 @@
       const options = getConditionOperatorOptions(condSel.value);
       const nextValue = options.includes(preferredValue) ? preferredValue : options[0];
       opSel.innerHTML = options.map(value => `<option${value === nextValue ? " selected" : ""}>${value}</option>`).join("");
+      opSel.disabled = options.length === 1;
     }
 
     function bindConnector(connector) {
@@ -3125,14 +3352,16 @@
           <option selected>企微标签</option>
           <option>客户等级</option>
           <option>是否加入企微群聊</option>
+          <option>是否领卡</option>
+          <option>是否是官网会员</option>
           <option>体验营期数</option>
           <option>首次加入时间</option>
           <option>所属销售</option>
           <option>添加好友时间</option>
           <option>浏览文章时长</option>
-          <option>观看直播</option>
+          <option>是否观看直播</option>
           <option>是否分销</option>
-          <option>分销人</option>      
+          <option>分销人</option>     
         </select>
         <select class="select op-select">
           <option selected>包含</option>
@@ -3248,6 +3477,101 @@
 
     if (chipAllSales) chipAllSales.addEventListener("click", () => setMemberMode("all"));
     if (chipDesignated) chipDesignated.addEventListener("click", () => setMemberMode("designated"));
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const memberPicker = document.getElementById("member-picker");
+      const memberInput = document.getElementById("member-input");
+      const orgPickerModal = document.getElementById("org-picker-modal");
+      const orgPickerSummary = document.getElementById("org-picker-summary");
+
+      function getSelectedOrgOptions() {
+        return Array.from(document.querySelectorAll(".org-picker-option:checked")).map((input) => input.value);
+      }
+
+      function renderMemberPicker() {
+        if (!memberPicker || !memberInput) return;
+        const selected = getSelectedOrgOptions();
+        memberInput.value = selected.join("、");
+        memberPicker.innerHTML = "";
+
+        if (!selected.length) {
+          const placeholder = document.createElement("span");
+          placeholder.className = "member-picker-placeholder";
+          placeholder.textContent = "请选择推送企微";
+          memberPicker.appendChild(placeholder);
+        }
+
+        selected.forEach((value) => {
+          const chip = document.createElement("span");
+          chip.className = "tag-chip";
+          chip.innerHTML = `${value}<span class="chip-del">×</span>`;
+          chip.querySelector(".chip-del").addEventListener("click", (e) => {
+            e.stopPropagation();
+            const target = document.querySelector(`.org-picker-option[value="${value}"]`);
+            if (target) target.checked = false;
+            syncOrgPickerSummary();
+            renderMemberPicker();
+          });
+          memberPicker.appendChild(chip);
+        });
+
+        const trigger = document.createElement("span");
+        trigger.className = "member-picker-trigger";
+        trigger.textContent = "选择推送企微";
+        memberPicker.appendChild(trigger);
+      }
+
+      function syncOrgPickerSummary() {
+        if (!orgPickerSummary) return;
+        const selected = getSelectedOrgOptions();
+        orgPickerSummary.textContent = "已选择 " + selected.length + " 个推送企微";
+      }
+
+      function openOrgPicker() {
+        if (!chipDesignated || !chipDesignated.classList.contains("active") || !orgPickerModal) return;
+        orgPickerModal.style.display = "flex";
+        syncOrgPickerSummary();
+      }
+
+      function closeOrgPicker() {
+        if (orgPickerModal) orgPickerModal.style.display = "none";
+      }
+
+      if (memberPicker) {
+        memberPicker.addEventListener("click", openOrgPicker);
+        memberPicker.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openOrgPicker();
+          }
+        });
+      }
+
+      document.querySelectorAll(".org-picker-option").forEach((input) => {
+        input.addEventListener("change", syncOrgPickerSummary);
+      });
+
+      const orgPickerConfirm = document.getElementById("org-picker-confirm");
+      if (orgPickerConfirm) {
+        orgPickerConfirm.addEventListener("click", () => {
+          renderMemberPicker();
+          closeOrgPicker();
+        });
+      }
+
+      ["org-picker-cancel", "org-picker-cancel-top"].forEach((id) => {
+        const button = document.getElementById(id);
+        if (button) button.addEventListener("click", closeOrgPicker);
+      });
+
+      if (orgPickerModal) {
+        orgPickerModal.addEventListener("click", (e) => {
+          if (e.target === orgPickerModal) closeOrgPicker();
+        });
+      }
+
+      renderMemberPicker();
+    });
 
     /* ---- Send time validation (09:00–21:00) ---- */
     const timeInput = document.getElementById("send-time-input");
@@ -3621,6 +3945,98 @@
   </div>
 </div>
 
+<!-- Modal: 企微组织架构 -->
+<div class="org-picker-modal" id="org-picker-modal">
+  <div class="org-picker-dialog">
+    <div class="org-picker-head">
+      <div>
+        <h3>选择推送企微</h3>
+        <p>从企微组织架构中选择需要参与本次推送的鱼丸或部门。</p>
+      </div>
+      <button class="btn ghost" type="button" id="org-picker-cancel-top">关闭</button>
+    </div>
+    <div class="org-picker-body">
+      <div class="org-tree-panel">
+        <div class="org-tree-title">部门</div>
+        <div class="org-tree-list">
+          <label class="org-tree-item">
+            <input type="checkbox" class="org-picker-option" value="华东一组">
+            <div class="org-tree-meta">
+              <strong>华东一组</strong>
+              <span>18 位企微成员</span>
+            </div>
+          </label>
+          <label class="org-tree-item">
+            <input type="checkbox" class="org-picker-option" value="华南一组">
+            <div class="org-tree-meta">
+              <strong>华南一组</strong>
+              <span>14 位企微成员</span>
+            </div>
+          </label>
+          <label class="org-tree-item">
+            <input type="checkbox" class="org-picker-option" value="直播线索组">
+            <div class="org-tree-meta">
+              <strong>直播线索组</strong>
+              <span>9 位企微成员</span>
+            </div>
+          </label>
+          <label class="org-tree-item">
+            <input type="checkbox" class="org-picker-option" value="私域运营组">
+            <div class="org-tree-meta">
+              <strong>私域运营组</strong>
+              <span>11 位企微成员</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="org-member-panel">
+        <div class="org-member-title">企微成员</div>
+        <div class="org-member-list">
+          <label class="org-member-item">
+            <input type="checkbox" class="org-picker-option" value="明策">
+            <span class="org-member-avatar">明</span>
+            <div class="org-member-meta">
+              <strong>明策</strong>
+              <span>华东一组 · 企微号 `mingce`</span>
+            </div>
+          </label>
+          <label class="org-member-item">
+            <input type="checkbox" class="org-picker-option" value="王怡">
+            <span class="org-member-avatar">王</span>
+            <div class="org-member-meta">
+              <strong>王怡</strong>
+              <span>华南一组 · 企微号 `wangyi`</span>
+            </div>
+          </label>
+          <label class="org-member-item">
+            <input type="checkbox" class="org-picker-option" value="刘倩">
+            <span class="org-member-avatar">刘</span>
+            <div class="org-member-meta">
+              <strong>刘倩</strong>
+              <span>直播线索组 · 企微号 `liuqian`</span>
+            </div>
+          </label>
+          <label class="org-member-item">
+            <input type="checkbox" class="org-picker-option" value="陈颖">
+            <span class="org-member-avatar">陈</span>
+            <div class="org-member-meta">
+              <strong>陈颖</strong>
+              <span>私域运营组 · 企微号 `chenying`</span>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="org-picker-foot">
+      <div class="org-picker-summary" id="org-picker-summary">已选择 3 个推送企微</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" type="button" id="org-picker-cancel">取消</button>
+        <button class="btn primary" type="button" id="org-picker-confirm">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ======== PRD Annotation Panel ======== -->
 <div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260424a">
 
@@ -3663,7 +4079,9 @@
     <div class="prd-label">交互规则</div>
     <div class="prd-item">新建页采用单页表单，不再展示步骤条</div>
     <div class="prd-item">发送通道至少选一个，可多选</div>
-    <div class="prd-item">鱼丸选择支持多选，默认全部</div>
+    <div class="prd-item">所属鱼丸支持「全部鱼丸 / 部分鱼丸」切换；选择部分鱼丸时，点击输入区域打开企微组织架构弹层</div>
+    <div class="prd-item">已选鱼丸以 tag 展示，支持逐个删除；删除后同步取消组织架构内对应勾选</div>
+    <div class="prd-item">发送通道、目标人群、推送内容、拉黑/删除过滤内容区收窄展示，保持左对齐</div>
   </div>
 
   <!-- Section 4: 创建任务 — 目标人群 -->
@@ -3672,6 +4090,7 @@
     <div class="prd-label">展示内容</div>
     <div class="prd-item">条件编辑区：字段 / 运算符 / 标签值 / 且或非连接关系</div>
     <div class="prd-item">底部仅保留「添加条件」操作</div>
+    <div class="prd-item">布尔型字段（是否领卡 / 是否是官网会员 / 是否加入企微群聊 / 是否观看直播 / 是否分销）固定使用「等于」+「是/否」单选值</div>
     <div class="prd-label">操作</div>
     <div class="prd-item">预计命中人数移至 footer 展示</div>
     <div class="prd-item">footer 展示命中人数与「刷新估算」按钮</div>
@@ -3694,6 +4113,7 @@
     <div class="prd-item">拉黑/删除客户过滤：始终排除，不可关闭</div>
     <div class="prd-label">footer</div>
     <div class="prd-item">按钮居中展示：取消 / 保存草稿 / 保存</div>
+    <div class="prd-item">footer 固定在新建页底部；顶部标题跟随内容滚动，超出一屏时仅中间内容区滚动</div>
     <div class="prd-item">推送内容为空时不允许提交</div>
   </div>
 
