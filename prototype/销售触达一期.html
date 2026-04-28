@@ -307,8 +307,7 @@
   }
 
   .page[data-page="create"] .page-back-icon,
-  .page[data-page="detail"] .page-back-icon,
-  .page[data-page="blocks"] .page-back-icon {
+  .page[data-page="data"] .page-back-icon {
     width: 36px;
     height: 36px;
     min-width: 36px;
@@ -326,16 +325,14 @@
   }
 
   .page[data-page="create"] .page-back-icon:hover,
-  .page[data-page="detail"] .page-back-icon:hover,
-  .page[data-page="blocks"] .page-back-icon:hover {
+  .page[data-page="data"] .page-back-icon:hover {
     background: #ffffff;
     border-color: #b8d9cf;
     color: #235f53;
   }
 
   .page[data-page="create"] .page-back-icon svg,
-  .page[data-page="detail"] .page-back-icon svg,
-  .page[data-page="blocks"] .page-back-icon svg {
+  .page[data-page="data"] .page-back-icon svg {
     width: 16px;
     height: 16px;
     display: block;
@@ -2298,6 +2295,41 @@
     box-shadow: 0 10px 18px rgba(54,165,144,0.18);
   }
 
+  .page[data-page="create"].readonly .input,
+  .page[data-page="create"].readonly .select,
+  .page[data-page="create"].readonly .textarea,
+  .page[data-page="create"].readonly .tag-input,
+  .page[data-page="create"].readonly .value-select,
+  .page[data-page="create"].readonly .cond-select,
+  .page[data-page="create"].readonly .op-select {
+    pointer-events: none;
+    background: #f7f9fa;
+    color: #68716d;
+  }
+
+  .page[data-page="create"].readonly .radio-chip,
+  .page[data-page="create"].readonly .channel-card,
+  .page[data-page="create"].readonly .add-cond-btn,
+  .page[data-page="create"].readonly .btn-icon,
+  .page[data-page="create"].readonly .push-token-link,
+  .page[data-page="create"].readonly .member-picker,
+  .page[data-page="create"].readonly .toggle-switch,
+  .page[data-page="create"].readonly .attach-list + *,
+  .page[data-page="create"].readonly #attach-preview-list,
+  .page[data-page="create"].readonly #attach-limit-note {
+    pointer-events: none;
+  }
+
+  .page[data-page="create"].readonly .btn[data-role="draft"],
+  .page[data-page="create"].readonly .btn[data-role="submit"] {
+    display: none;
+  }
+
+  .page[data-page="create"].readonly .page-title-create,
+  .page[data-page="create"]:not(.readonly) .page-title-detail {
+    display: none;
+  }
+
   .page[data-page="create"] .field.full > .tag-builder,
   .page[data-page="create"] .antispam-group {
     width: min(100%, 880px);
@@ -2533,7 +2565,8 @@
                   </svg>
                 </button>
                 <div class="page-title">
-                  <h1>新建触达任务</h1>
+                  <h1 class="page-title-create">新建触达任务</h1>
+                  <h1 class="page-title-detail">触达任务详情</h1>
                 </div>
               </div>
             </div>
@@ -2733,9 +2766,9 @@
                 <button class="btn ghost" style="height:28px;font-size:12px;">刷新估算</button>
               </div>
               <div class="create-footer-actions">
-                <button class="btn nav-back" data-target="list">取消</button>
-                <button class="btn ghost">保存草稿</button>
-                <button class="btn primary" id="create-submit-btn">保 存</button>
+                <button class="btn nav-back" data-target="list" id="create-back-btn">取消</button>
+                <button class="btn ghost" data-role="draft">保存草稿</button>
+                <button class="btn primary" data-role="submit" id="create-submit-btn">保 存</button>
               </div>
             </div>
             </div>
@@ -2813,7 +2846,7 @@
                     <td>15.2%</td>
                     <td><div style="display:flex;gap:6px;">
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-task-detail" style="height:28px;font-size:12px;">详情</button>
                       <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
@@ -2829,7 +2862,7 @@
                     <td>29.5%</td>
                     <td><div style="display:flex;gap:6px;">
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-task-detail" style="height:28px;font-size:12px;">详情</button>
                       <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
@@ -2845,7 +2878,7 @@
                     <td>21.3%</td>
                     <td><div style="display:flex;gap:6px;">
                       <button class="btn ghost nav-to-detail-data" style="height:28px;font-size:12px;color:var(--color-primary-6);border-color:#c0e8da;background:var(--color-primary-1);">数据</button>
-                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="detail">详情</button>
+                      <button class="btn ghost nav-to-task-detail" style="height:28px;font-size:12px;">详情</button>
                       <button class="btn ghost" style="height:28px;font-size:12px;">复制</button>
                     </div></td>
                   </tr>
@@ -2871,7 +2904,7 @@
           </div>
         </section>
 
-        <section class="page" data-page="detail">
+        <section class="page" data-page="data">
           <div class="page-card">
             <div class="page-title-bar">
               <div style="display:flex;align-items:center;gap:12px;">
@@ -3075,131 +3108,47 @@
           </div>
         </section>
 
-        <section class="page" data-page="blocks">
-          <div class="page-card">
-            <div class="page-title-bar">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <button class="btn ghost nav-back page-back-icon" type="button" data-target="list" aria-label="返回列表" title="返回列表">
-                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M9.5 3.5L5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <div class="page-title">
-                  <h1>拦截记录</h1>
-                  <p>统一查看哪些客户被系统排除，以及拦截原因分布，便于运营理解命中人数变化。</p>
-                </div>
-              </div>
-              <div class="tag-group">
-                <span class="tag info">最近 30 天</span>
-                <span class="tag warn">总拦截 842</span>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="filters">
-                <select class="select"><option>全部场景</option><option>新线索首触达</option><option>沉默客户唤醒</option><option>商机推进跟进</option><option selected>活动通知</option></select>
-                <select class="select"><option>全部原因</option><option selected>最近已触达</option><option>冷静期</option><option>超周频</option></select>
-                <input class="input" value="最近30天">
-                <input class="input" placeholder="搜索客户名称 / 任务名称">
-                <button class="btn">重置</button>
-              </div>
-            </div>
-
-            <div class="section" style="padding-top:0;">
-              <div class="insight-grid">
-                <div class="insight-card">
-                  <h4>主要风险类型</h4>
-                  <p>“最近已触达”是第一大排除原因，说明批量任务之间的间隔仍然偏短。</p>
-                </div>
-                <div class="insight-card">
-                  <h4>业务影响</h4>
-                  <p>如果取消拦截，本批命中人数可提升 14.9%，但客户体验风险会同步上升。</p>
-                </div>
-                <div class="insight-card">
-                  <h4>建议动作</h4>
-                  <p>把活动通知与沉默唤醒做任务互斥，优先保证高意向客户只进入一条触达链路。</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="split-cards">
-                <div class="mini-card">
-                  <h3>拦截原因分布</h3>
-                  <div class="timeline">
-                    <div class="timeline-item"><small>最近已触达</small>412 人，占比 48.9%</div>
-                    <div class="timeline-item"><small>冷静期</small>203 人，占比 24.1%</div>
-                    <div class="timeline-item"><small>本活动已触达</small>128 人，占比 15.2%</div>
-                    <div class="timeline-item"><small>拉黑/删除/拒收</small>99 人，占比 11.8%</div>
-                  </div>
-                </div>
-                <div class="mini-card">
-                  <h3>运营建议</h3>
-                  <div class="empty-note">活动通知类任务的重复触达偏高，建议控制批次间隔，避免在同一周内追加第三批活动邀约。</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>任务名称</th>
-                    <th>客户名称</th>
-                    <th>所属销售</th>
-                    <th>拦截原因</th>
-                    <th>拦截时间</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>4月直播邀约第二批</td>
-                    <td>活动通知</td>
-                    <td>杭州·王晨</td>
-                    <td>李辰</td>
-                    <td><span class="tag info">最近已触达</span></td>
-                    <td>04-23 15:12</td>
-                    <td><a class="tiny-link" href="#">查看任务</a></td>
-                  </tr>
-                  <tr>
-                    <td>4月直播邀约第二批</td>
-                    <td>活动通知</td>
-                    <td>深圳·沈乔</td>
-                    <td>林夕</td>
-                    <td><span class="tag warn">冷静期</span> <span class="tag info">最近已触达</span></td>
-                    <td>04-23 15:12</td>
-                    <td><a class="tiny-link" href="#">查看任务</a></td>
-                  </tr>
-                  <tr>
-                    <td>沉默客户唤醒-报价后7天</td>
-                    <td>沉默客户唤醒</td>
-                    <td>苏州·刘楠</td>
-                    <td>王怡</td>
-                    <td><span class="tag danger">超周频</span></td>
-                    <td>04-23 10:09</td>
-                    <td><a class="tiny-link" href="#">查看任务</a></td>
-                  </tr>
-                  <tr>
-                    <td>商机推进-试用到期提醒</td>
-                    <td>商机推进跟进</td>
-                    <td>上海·徐青</td>
-                    <td>周岚</td>
-                    <td><span class="tag">已拉黑/已删除</span></td>
-                    <td>04-22 16:48</td>
-                    <td><a class="tiny-link" href="#">查看任务</a></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
   </div>
 
   <script>
     /* ---- Page navigation ---- */
+    const createPage = document.querySelector('.page[data-page="create"]');
+    const createBackBtn = document.getElementById("create-back-btn");
+
+    function setCreatePageMode(mode) {
+      if (!createPage) return;
+      const isReadonly = mode === "readonly";
+      createPage.classList.toggle("readonly", isReadonly);
+
+      if (createBackBtn) {
+        createBackBtn.textContent = isReadonly ? "返回列表" : "取消";
+      }
+
+      createPage.querySelectorAll("input, select, textarea, button").forEach((el) => {
+        if (
+          el.classList.contains("nav-back") ||
+          el.classList.contains("page-back-icon") ||
+          el.classList.contains("nav-to-task-detail") ||
+          el.classList.contains("nav-to-detail-data")
+        ) {
+          return;
+        }
+        if (el.dataset.role === "draft" || el.dataset.role === "submit") {
+          el.disabled = isReadonly;
+          return;
+        }
+        if (el.classList.contains("btn-icon") || el.classList.contains("add-cond-btn")) {
+          el.disabled = isReadonly;
+          return;
+        }
+        if (el.matches("input, select, textarea")) {
+          el.disabled = isReadonly;
+        }
+      });
+    }
+
     function gotoPage(target) {
       document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.dataset.page === target));
     }
@@ -3211,7 +3160,22 @@
       }
     });
 
-    /* ---- List sub-tabs: 任务列表 / 拦截记录 ---- */
+    document.addEventListener("click", (e) => {
+      if (e.target.closest('.btn.primary.nav-back[data-target="create"]')) {
+        setCreatePageMode("edit");
+      }
+
+      if (e.target.closest('.btn.ghost.nav-back[data-target="create"]')) {
+        setCreatePageMode("edit");
+      }
+
+      if (e.target.closest(".nav-to-task-detail")) {
+        setCreatePageMode("readonly");
+        gotoPage("create");
+      }
+    });
+
+    /* ---- List page ---- */
     document.querySelectorAll(".list-subtab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".list-subtab").forEach(b => b.classList.remove("active"));
@@ -3640,10 +3604,10 @@
       validateTime();
     }
 
-    /* ---- 数据按钮：跳到详情页并激活客户明细 tab ---- */
+    /* ---- 数据按钮：跳到数据页并激活客户明细 tab ---- */
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".nav-to-detail-data")) return;
-      gotoPage("detail");
+      gotoPage("data");
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === "customers"));
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel === "customers"));
     });
@@ -4038,21 +4002,19 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260424a">
+<div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260427b">
 
   <!-- Section 1: 需求概述 -->
   <div class="prd-section" id="prd-s1">
     <div class="prd-section-title orange">1. 需求概述</div>
     <div class="prd-label">背景</div>
     <div class="prd-item">当前无统一触达入口，任务创建与执行分散</div>
-    <div class="prd-item">无固定场景人群自动命中能力</div>
-    <div class="prd-item">无基础防骚扰机制，容易重复打扰客户</div>
-    <div class="prd-item">无结果回收与复盘页面，无法评估触达效果</div>
+    <div class="prd-item">当前原型聚焦群发/私戳任务创建、列表查看、数据结果与拦截记录回看</div>
+    <div class="prd-item">通过统一入口沉淀发送通道、目标人群、推送内容与基础风控能力</div>
     <div class="prd-label">一期目标</div>
-    <div class="prd-item">固定场景触达任务创建（4 个场景）</div>
-    <div class="prd-item">系统自动命中人群 + 防骚扰排除</div>
-    <div class="prd-item">手动填写内容 + 立即/定时发送</div>
-    <div class="prd-item">任务列表、结果详情、拦截记录</div>
+    <div class="prd-item">单页完成触达任务创建、修改与草稿保存</div>
+    <div class="prd-item">支持任务列表、数据页、拦截记录三类查看路径</div>
+    <div class="prd-item">在原型中明确呈现发送通道选择、人群圈选、内容录入、防骚扰过滤与结果回收</div>
     <div class="prd-label">Out of Scope</div>
     <div class="prd-item">人群规则配置器、模板变量渲染、A/B 测试、审批流</div>
   </div>
@@ -4060,13 +4022,10 @@
   <!-- Section 2: 固定场景 -->
   <div class="prd-section" id="prd-s2">
     <div class="prd-section-title green">2. 固定场景（4 个）</div>
-    <div class="prd-item"><strong>新线索首触达</strong> — 线索导入后首次接触</div>
-    <div class="prd-item"><strong>沉默客户唤醒</strong> — 长期未互动客户激活</div>
-    <div class="prd-item"><strong>商机推进跟进</strong> — 推动商机阶段流转</div>
-    <div class="prd-item"><strong>活动通知</strong> — 批量活动信息推送</div>
-    <div class="prd-label">规则说明</div>
-    <div class="prd-item">人群规则由服务端固定计算，前台不支持配置</div>
-    <div class="prd-item">选择场景后自动展示场景说明文字</div>
+    <div class="prd-item"><strong>新线索首触达</strong> / <strong>沉默客户唤醒</strong> / <strong>商机推进跟进</strong> / <strong>活动通知</strong></div>
+    <div class="prd-label">原型现状</div>
+    <div class="prd-item">当前页面未单独提供场景选择器，列表与数据示例数据覆盖以上场景</div>
+    <div class="prd-item">固定场景主要体现在任务名称、数据页内容与拦截记录统计口径中</div>
   </div>
 
   <!-- Section 3: 创建任务 — 基础设置 -->
@@ -4078,9 +4037,9 @@
     <div class="prd-item"><strong>发送通道</strong> — 企微官方数发 / 星云</div>
     <div class="prd-label">交互规则</div>
     <div class="prd-item">新建页采用单页表单，不再展示步骤条</div>
-    <div class="prd-item">发送通道至少选一个，可多选</div>
+    <div class="prd-item">发送通道以卡片形式展示，当前原型默认单选态呈现</div>
     <div class="prd-item">所属鱼丸支持「全部鱼丸 / 部分鱼丸」切换；选择部分鱼丸时，点击输入区域打开企微组织架构弹层</div>
-    <div class="prd-item">已选鱼丸以 tag 展示，支持逐个删除；删除后同步取消组织架构内对应勾选</div>
+    <div class="prd-item">组织架构弹层同时展示部门与企微成员；已选鱼丸以 tag 展示，支持逐个删除；删除后同步取消组织架构内对应勾选</div>
     <div class="prd-item">发送通道、目标人群、推送内容、拉黑/删除过滤内容区收窄展示，保持左对齐</div>
   </div>
 
@@ -4090,7 +4049,14 @@
     <div class="prd-label">展示内容</div>
     <div class="prd-item">条件编辑区：字段 / 运算符 / 标签值 / 且或非连接关系</div>
     <div class="prd-item">底部仅保留「添加条件」操作</div>
-    <div class="prd-item">布尔型字段（是否领卡 / 是否是官网会员 / 是否加入企微群聊 / 是否观看直播 / 是否分销）固定使用「等于」+「是/否」单选值</div>
+    <div class="prd-item">当前可选字段穷举：企微标签、客户等级、是否加入企微群聊、是否领卡、是否是官网会员、体验营期数、首次加入时间、所属销售、添加好友时间、浏览文章时长、是否观看直播、是否分销、分销人</div>
+    <div class="prd-item"><strong>企微标签</strong>：运算符为「满足任一 / 同时满足 / 全部不满足」，值区为标签输入</div>
+    <div class="prd-item"><strong>客户等级</strong>：运算符为「等于 / 不等于」，值区为等级单选</div>
+    <div class="prd-item"><strong>是否领卡 / 是否是官网会员 / 是否加入企微群聊 / 是否观看直播 / 是否分销</strong>：固定「等于」，值区为「是 / 否」单选</div>
+    <div class="prd-item"><strong>体验营期数</strong>：运算符为「等于 / 不等于」，值区为期数单选</div>
+    <div class="prd-item"><strong>首次加入时间 / 添加好友时间</strong>：值区为日期输入</div>
+    <div class="prd-item"><strong>所属销售 / 分销人</strong>：值区为人员输入</div>
+    <div class="prd-item"><strong>浏览文章时长</strong>：值区为数值/时长输入</div>
     <div class="prd-label">操作</div>
     <div class="prd-item">预计命中人数移至 footer 展示</div>
     <div class="prd-item">footer 展示命中人数与「刷新估算」按钮</div>
@@ -4102,61 +4068,52 @@
     <div class="prd-label">推送内容</div>
     <div class="prd-item">手动填写文本，建议控制在 1000 字以内</div>
     <div class="prd-item">内容快照会完整存档到任务详情页</div>
-    <div class="prd-item">图片和视频从本地上传；链接、小程序、视频号通过弹窗录入相关信息</div>
+    <div class="prd-item">支持上传图片、视频，以及通过弹窗录入链接、小程序、视频号信息</div>
+    <div class="prd-item">顶部快捷变量入口展示「昵称 / 备注」两个可插入占位符</div>
     <div class="prd-label">发送方式</div>
     <div class="prd-item"><strong>立即发送</strong> — 提交后立即执行</div>
     <div class="prd-item"><strong>定时发送</strong> — 必填发送时间，限 09:00–21:00</div>
     <div class="prd-label">防骚扰设置（固定，不可自定义）</div>
-    <div class="prd-item">冷静期保护：72h 内已触达自动排除</div>
-    <div class="prd-item">周频次上限：同客户每周最多 2 次</div>
-    <div class="prd-item">本活动去重：同活动不重复发送</div>
-    <div class="prd-item">拉黑/删除客户过滤：始终排除，不可关闭</div>
+    <div class="prd-item">原型页当前显式展示「拉黑/删除客户过滤」且始终开启、不可关闭</div>
     <div class="prd-label">footer</div>
     <div class="prd-item">按钮居中展示：取消 / 保存草稿 / 保存</div>
-    <div class="prd-item">footer 固定在新建页底部；顶部标题跟随内容滚动，超出一屏时仅中间内容区滚动</div>
+    <div class="prd-item">footer 固定在新建页底部，且与内容区底边对齐</div>
+    <div class="prd-item">顶部标题不固定，跟随内容区一起滚动</div>
+    <div class="prd-item">新建页最大展示高度为一屏，超出内容仅在中间内容区滚动</div>
     <div class="prd-item">推送内容为空时不允许提交</div>
   </div>
 
   <!-- Section 6: 高优先 & 已超时判断 -->
   <div class="prd-section" id="prd-s6">
     <div class="prd-section-title orange">6. 高优先 &amp; 已超时判断</div>
-    <div class="prd-label">🔴 高优先（High Priority）触发条件</div>
-    <div class="prd-item"><strong>定时任务距发送时间 ≤ 2 小时</strong>，仍处于「待执行」状态</div>
-    <div class="prd-item"><strong>命中人数 ≥ 500</strong> 且状态为「待执行」</div>
-    <div class="prd-item">场景为「新线索首触达」且线索创建时间距今 ≤ 24h</div>
-    <div class="prd-label">展示规则</div>
-    <div class="prd-item">列表行左侧显示红色竖条标记</div>
-    <div class="prd-item">任务名称旁显示「高优先」tag（红底白字）</div>
-    <div class="prd-item">列表默认按「高优先在前」排序，同优先级内按计划时间升序</div>
-    <div class="prd-label">⏰ 已超时（Overdue）触发条件</div>
-    <div class="prd-item"><strong>定时任务计划发送时间已过</strong>，状态仍为「待执行」或「执行中」</div>
-    <div class="prd-item"><strong>执行中任务超过 4 小时</strong>未完成（系统卡住或异常）</div>
-    <div class="prd-item"><strong>草稿超过 7 天</strong>未提交</div>
-    <div class="prd-label">展示规则</div>
-    <div class="prd-item">任务名称旁显示「已超时」tag（橙底白字）</div>
-    <div class="prd-item">计划时间列文字变红并加删除线展示过期时间</div>
-    <div class="prd-item">超时任务支持「重新执行」操作，不可直接继续原任务</div>
-    <div class="prd-label">优先级冲突处理</div>
-    <div class="prd-item">同时满足高优先 + 已超时时，展示「已超时」tag，高优先标记保留</div>
-    <div class="prd-item">已取消/已完成任务不触发任何标记</div>
+    <div class="prd-label">当前原型状态</div>
+    <div class="prd-item">页面未显式展示高优先、已超时标签和排序规则</div>
+    <div class="prd-item">本节保留为后续补充项，尚未在群发/私戳原型主界面落地</div>
   </div>
 
   <!-- Section 7: 任务列表 -->
   <div class="prd-section" id="prd-s7">
     <div class="prd-section-title green">7. 任务列表</div>
+    <div class="prd-label">页面入口</div>
+    <div class="prd-item">页头右上提供「＋ 新建任务」入口，进入新建触达任务页</div>
     <div class="prd-label">列表字段</div>
-    <div class="prd-item">任务名称  / 创建人 / 发送方式 / 计划时间</div>
-    <div class="prd-item">任务状态：草稿 / 待执行 / 执行中 / 已完成 / 已取消</div>
-    <div class="prd-item">命中人数 / 排除人数 / 实际触达人数 / 回复人数 / 回复率</div>
+    <div class="prd-item">任务名称 / 创建人 / 发送方式 / 计划时间 / 状态 / 预计触达 / 实际触达 / 回复人数 / 回复率</div>
+    <div class="prd-item">当前示例状态覆盖：待执行 / 执行中 / 已完成 / 部分失败</div>
     <div class="prd-label">筛选项</div>
-    <div class="prd-item"> 任务状态 / 创建人 / 时间范围</div>
+    <div class="prd-item">顶部状态统计 tag：待执行 / 执行中 / 已完成 / 部分失败</div>
+    <div class="prd-item">筛选栏：搜索任务名称 + 状态筛选 + 重置</div>
     <div class="prd-label">操作项</div>
-    <div class="prd-item">查看详情 / 复制任务 / 取消任务 / 重新执行</div>
+    <div class="prd-item">列表操作按任务状态展示：修改 / 数据 / 详情 / 复制 / 删除</div>
+    <div class="prd-item">其中「数据」进入结果数据页，「详情」当前原型也指向数据页查看路径</div>
+    <div class="prd-item">底部提供分页区：上一页 / 页码 / 下一页 / 每页条数</div>
   </div>
 
   <!-- Section 8: 数据详情 -->
   <div class="prd-section" id="prd-s8">
     <div class="prd-section-title orange">8. 数据详情</div>
+    <div class="prd-label">页面结构</div>
+    <div class="prd-item">页头展示统一返回 icon、页面标题「数据」以及顶部「复制任务」按钮</div>
+    <div class="prd-item">页面主体由摘要区、KPI 区、客户明细区、成员执行明细、执行观察、任务日志组成</div>
     <div class="prd-label">顶部指标</div>
     <div class="prd-item">标题与状态同一行：任务名称 / 已完成</div>
     <div class="prd-item">摘要字段一行 4 个：创建人 / 发送方式 / 创建时间 / 计划时间 / 选择鱼丸 / 推送内容</div>
@@ -4165,9 +4122,11 @@
     <div class="prd-item">字段：客户昵称 / 星球编号 / 所属销售 / 触达状态 / 是否回复 / 回复时间 / 排除原因</div>
     <div class="prd-item">客户昵称列展示头像、客户名称，第二行展示手机号；无手机号显示 -</div>
     <div class="prd-item">所属销售列第二行展示鱼丸号</div>
+    <div class="prd-item">客户明细工具栏支持触达状态筛选、回复状态筛选、昵称/星球编号搜索，以及导出客户明细</div>
     <div class="prd-label">其他信息</div>
-    <div class="prd-item"><strong>成员执行明细</strong>：销售姓名/分配/已执行/未执行/回复人数</div>
-    <div class="prd-item"><strong>任务日志</strong>：时间/日志类型/日志内容/操作人</div>
+    <div class="prd-item"><strong>成员执行明细</strong>：销售姓名 / 分配人数 / 已执行 / 回复人数</div>
+    <div class="prd-item"><strong>执行观察</strong>：完成率、高回复成员、失败集中原因</div>
+    <div class="prd-item"><strong>任务日志</strong>：按时间线展示创建、命中计算、执行开始、执行完成、结果回流</div>
   </div>
 
 </div><!-- /prd-panel -->
