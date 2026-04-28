@@ -2781,25 +2781,24 @@
               <div class="page-title">
                 <h1>群发/私戳</h1>
               </div>
+              <div class="page-title-actions">
+                <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
+              </div>
             </div>
 
             <div class="section">
-              <div class="toolbar">
-                <div class="tag-group">
-                  <span class="tag primary">待执行 4</span>
-                  <span class="tag info">执行中 3</span>
-                  <span class="tag">已完成 11</span>
-                  <span class="tag danger">部分失败 2</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;">
-                  <button class="btn primary nav-back" data-target="create">＋ 新建任务</button>
-                </div>
-              </div>
               <div class="filters">
                 <input class="input" placeholder="搜索任务名称">
-                <select class="select"><option>全部状态</option><option>草稿</option><option>待执行</option><option selected>执行中</option><option>已完成</option></select>
                 <button class="btn">重置</button>
               </div>
+            </div>
+            <div class="tabbar" id="list-tabbar">
+              <button class="tab-btn active" data-list-tab="all">全部</button>
+              <button class="tab-btn" data-list-tab="draft">草稿</button>
+              <button class="tab-btn" data-list-tab="pending">待执行</button>
+              <button class="tab-btn" data-list-tab="running">执行中</button>
+              <button class="tab-btn" data-list-tab="done">已完成</button>
+              <button class="tab-btn" data-list-tab="partial">部分失败</button>
             </div>
             <div class="table-wrap">
               <table>
@@ -2818,6 +2817,21 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td><a href="#" class="tiny-link">5月活动通知-草稿</a></td>
+                    <td>明策</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><span class="status-pill" style="background:var(--color-fill-3);color:var(--color-text-3);">草稿</span></td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><div style="display:flex;gap:6px;">
+                      <button class="btn ghost nav-back" style="height:28px;font-size:12px;" data-target="create">修改</button>
+                      <button class="btn ghost" style="height:28px;font-size:12px;color:#f53f3f;border-color:#fdd;background:#fff5f5;">删除</button>
+                    </div></td>
+                  </tr>
                   <tr>
                     <td><a href="#" class="tiny-link">4月直播邀约第二批</a></td>
                     <td>明策</td>
@@ -2946,6 +2960,12 @@
               <div class="kpi-card"><div class="kpi-label">排除人数</div><div class="kpi-value">24</div></div>
               <div class="kpi-card"><div class="kpi-label">成功人数</div><div class="kpi-value">266</div><div class="kpi-note">发送成功率 95.7%</div></div>
               <div class="kpi-card primary"><div class="kpi-label">回复人数</div><div class="kpi-value">82</div></div>
+            </div>
+
+            <div class="tabbar">
+              <button class="tab-btn active" data-tab="customers">客户明细</button>
+              <button class="tab-btn" data-tab="members">成员明细</button>
+              <button class="tab-btn" data-tab="logs">任务日志</button>
             </div>
 
             <div class="tab-panel active" data-panel="customers">
@@ -3175,23 +3195,21 @@
       }
     });
 
-    /* ---- List page ---- */
-    document.querySelectorAll(".list-subtab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".list-subtab").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const subtab = btn.dataset.subtab;
-        if (subtab === "blocks") {
-          gotoPage("blocks");
-        } else {
-          gotoPage("list");
-        }
+    /* ---- List tab filter ---- */
+    const listTabbar = document.getElementById("list-tabbar");
+    if (listTabbar) {
+      listTabbar.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          listTabbar.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
       });
-    });
+    }
 
     /* ---- Detail tab switcher ---- */
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    const tabPanels = document.querySelectorAll(".tab-panel");
+    const dataPage = document.querySelector('.page[data-page="data"]');
+    const tabButtons = dataPage ? dataPage.querySelectorAll(".tab-btn") : [];
+    const tabPanels = dataPage ? dataPage.querySelectorAll(".tab-panel") : [];
     tabButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const target = button.dataset.tab;
@@ -4002,35 +4020,27 @@
 </div>
 
 <!-- ======== PRD Annotation Panel ======== -->
-<div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260427b">
+<div class="prd-panel" data-prd-key="sales-touch-v1" data-prd-version="20260428a">
 
   <!-- Section 1: 需求概述 -->
   <div class="prd-section" id="prd-s1">
     <div class="prd-section-title orange">1. 需求概述</div>
     <div class="prd-label">背景</div>
     <div class="prd-item">当前无统一触达入口，任务创建与执行分散</div>
-    <div class="prd-item">当前原型聚焦群发/私戳任务创建、列表查看、数据结果与拦截记录回看</div>
+    <div class="prd-item">当前原型聚焦群发/私戳任务创建、列表查看与数据结果回看</div>
     <div class="prd-item">通过统一入口沉淀发送通道、目标人群、推送内容与基础风控能力</div>
     <div class="prd-label">一期目标</div>
     <div class="prd-item">单页完成触达任务创建、修改与草稿保存</div>
-    <div class="prd-item">支持任务列表、数据页、拦截记录三类查看路径</div>
+    <div class="prd-item">支持任务列表、数据页两类查看路径</div>
     <div class="prd-item">在原型中明确呈现发送通道选择、人群圈选、内容录入、防骚扰过滤与结果回收</div>
     <div class="prd-label">Out of Scope</div>
     <div class="prd-item">人群规则配置器、模板变量渲染、A/B 测试、审批流</div>
+    <div class="prd-item">拦截记录页（已从一期删除，后续排期）</div>
   </div>
 
-  <!-- Section 2: 固定场景 -->
+  <!-- Section 2: 创建任务 — 基础设置 -->
   <div class="prd-section" id="prd-s2">
-    <div class="prd-section-title green">2. 固定场景（4 个）</div>
-    <div class="prd-item"><strong>新线索首触达</strong> / <strong>沉默客户唤醒</strong> / <strong>商机推进跟进</strong> / <strong>活动通知</strong></div>
-    <div class="prd-label">原型现状</div>
-    <div class="prd-item">当前页面未单独提供场景选择器，列表与数据示例数据覆盖以上场景</div>
-    <div class="prd-item">固定场景主要体现在任务名称、数据页内容与拦截记录统计口径中</div>
-  </div>
-
-  <!-- Section 3: 创建任务 — 基础设置 -->
-  <div class="prd-section" id="prd-s3">
-    <div class="prd-section-title orange">3. 创建任务 · 基础设置</div>
+    <div class="prd-section-title orange">2. 创建任务 · 基础设置</div>
     <div class="prd-label">必填字段</div>
     <div class="prd-item"><strong>任务名称</strong> — 手动填写，建议含活动名+日期</div>
     <div class="prd-item"><strong>所属鱼丸</strong> — 全部 / 按鱼丸选择</div>
@@ -4041,30 +4051,40 @@
     <div class="prd-item">所属鱼丸支持「全部鱼丸 / 部分鱼丸」切换；选择部分鱼丸时，点击输入区域打开企微组织架构弹层</div>
     <div class="prd-item">组织架构弹层同时展示部门与企微成员；已选鱼丸以 tag 展示，支持逐个删除；删除后同步取消组织架构内对应勾选</div>
     <div class="prd-item">发送通道、目标人群、推送内容、拉黑/删除过滤内容区收窄展示，保持左对齐</div>
+    <div class="prd-label">任务详情（只读模式）</div>
+    <div class="prd-item">列表「详情」入口复用创建页，切换为只读态：所有输入控件禁用，footer「保存草稿」与「保存」按钮同步禁用</div>
+    <div class="prd-item">只读态下顶部返回按钮文案改为「返回列表」，编辑态下显示为「取消」</div>
+    <div class="prd-item">只读态与编辑态共用同一页面，通过模式标记切换，不新增独立路由</div>
   </div>
 
   <!-- Section 4: 创建任务 — 目标人群 -->
-  <div class="prd-section" id="prd-s4">
-    <div class="prd-section-title green">4. 创建任务 · 目标人群</div>
+  <div class="prd-section" id="prd-s3">
+    <div class="prd-section-title green">3. 创建任务 · 目标人群</div>
     <div class="prd-label">展示内容</div>
     <div class="prd-item">条件编辑区：字段 / 运算符 / 标签值 / 且或非连接关系</div>
     <div class="prd-item">底部仅保留「添加条件」操作</div>
-    <div class="prd-item">当前可选字段穷举：企微标签、客户等级、是否加入企微群聊、是否领卡、是否是官网会员、体验营期数、首次加入时间、所属销售、添加好友时间、浏览文章时长、是否观看直播、是否分销、分销人</div>
-    <div class="prd-item"><strong>企微标签</strong>：运算符为「满足任一 / 同时满足 / 全部不满足」，值区为标签输入</div>
-    <div class="prd-item"><strong>客户等级</strong>：运算符为「等于 / 不等于」，值区为等级单选</div>
-    <div class="prd-item"><strong>是否领卡 / 是否是官网会员 / 是否加入企微群聊 / 是否观看直播 / 是否分销</strong>：固定「等于」，值区为「是 / 否」单选</div>
-    <div class="prd-item"><strong>体验营期数</strong>：运算符为「等于 / 不等于」，值区为期数单选</div>
-    <div class="prd-item"><strong>首次加入时间 / 添加好友时间</strong>：值区为日期输入</div>
-    <div class="prd-item"><strong>所属销售 / 分销人</strong>：值区为人员输入</div>
-    <div class="prd-item"><strong>浏览文章时长</strong>：值区为数值/时长输入</div>
+    <div class="prd-item">可选字段共 13 个，见下方穷举</div>
+    <div class="prd-item"><strong>企微标签</strong>：运算符「满足任一 / 同时满足 / 全部不满足」；值区为标签自由输入（支持多个，chip 展示）</div>
+    <div class="prd-item"><strong>客户等级</strong>：运算符「等于 / 不等于」；值区下拉单选：S / A / B / C</div>
+    <div class="prd-item"><strong>是否领卡</strong>：运算符固定「等于」（不可更改）；值区下拉单选：是 / 否</div>
+    <div class="prd-item"><strong>是否是官网会员</strong>：运算符固定「等于」（不可更改）；值区下拉单选：是 / 否</div>
+    <div class="prd-item"><strong>是否加入企微群聊</strong>：运算符固定「等于」（不可更改）；值区下拉单选：是 / 否</div>
+    <div class="prd-item"><strong>是否观看直播</strong>：运算符固定「等于」（不可更改）；值区下拉单选：是 / 否</div>
+    <div class="prd-item"><strong>是否分销</strong>：运算符固定「等于」（不可更改）；值区下拉单选：是 / 否</div>
+    <div class="prd-item"><strong>体验营期数</strong>：运算符「等于 / 不等于」；值区下拉单选：1期 / 2期 / 3期 / 4期 / 5期</div>
+    <div class="prd-item"><strong>首次加入时间</strong>：运算符「等于 / 开始于 / 结束于 / 为空 / 不为空」；值区为日期输入（YYYY-MM-DD）；选「为空 / 不为空」时值区隐藏</div>
+    <div class="prd-item"><strong>添加好友时间</strong>：运算符「等于 / 开始于 / 结束于 / 为空 / 不为空」；值区为日期输入（YYYY-MM-DD）；选「为空 / 不为空」时值区隐藏</div>
+    <div class="prd-item"><strong>所属销售</strong>：运算符「等于 / 不等于 / 包含」；值区为销售人员下拉（系统成员列表）</div>
+    <div class="prd-item"><strong>分销人</strong>：运算符「等于 / 不等于 / 包含」；值区为销售人员下拉（系统成员列表）</div>
+    <div class="prd-item"><strong>浏览文章时长</strong>：运算符「大于 / 小于 / 大于等于 / 小于等于 / 等于 / 不等于」；值区为数值输入（单位：分钟）</div>
     <div class="prd-label">操作</div>
     <div class="prd-item">预计命中人数移至 footer 展示</div>
     <div class="prd-item">footer 展示命中人数与「刷新估算」按钮</div>
   </div>
 
   <!-- Section 5: 创建任务 — 推送与风控 -->
-  <div class="prd-section" id="prd-s5">
-    <div class="prd-section-title orange">5. 创建任务 · 推送与风控</div>
+  <div class="prd-section" id="prd-s4">
+    <div class="prd-section-title orange">4. 创建任务 · 推送与风控</div>
     <div class="prd-label">推送内容</div>
     <div class="prd-item">手动填写文本，建议控制在 1000 字以内</div>
     <div class="prd-item">内容快照会完整存档到任务详情页</div>
@@ -4084,36 +4104,42 @@
   </div>
 
   <!-- Section 6: 高优先 & 已超时判断 -->
-  <div class="prd-section" id="prd-s6">
-    <div class="prd-section-title orange">6. 高优先 &amp; 已超时判断</div>
+  <div class="prd-section" id="prd-s5">
+    <div class="prd-section-title orange">5. 高优先 &amp; 已超时判断</div>
     <div class="prd-label">当前原型状态</div>
     <div class="prd-item">页面未显式展示高优先、已超时标签和排序规则</div>
     <div class="prd-item">本节保留为后续补充项，尚未在群发/私戳原型主界面落地</div>
   </div>
 
   <!-- Section 7: 任务列表 -->
-  <div class="prd-section" id="prd-s7">
-    <div class="prd-section-title green">7. 任务列表</div>
+  <div class="prd-section" id="prd-s6">
+    <div class="prd-section-title green">6. 任务列表</div>
     <div class="prd-label">页面入口</div>
     <div class="prd-item">页头右上提供「＋ 新建任务」入口，进入新建触达任务页</div>
     <div class="prd-label">列表字段</div>
     <div class="prd-item">任务名称 / 创建人 / 发送方式 / 计划时间 / 状态 / 预计触达 / 实际触达 / 回复人数 / 回复率</div>
-    <div class="prd-item">当前示例状态覆盖：待执行 / 执行中 / 已完成 / 部分失败</div>
     <div class="prd-label">筛选项</div>
-    <div class="prd-item">顶部状态统计 tag：待执行 / 执行中 / 已完成 / 部分失败</div>
-    <div class="prd-item">筛选栏：搜索任务名称 + 状态筛选 + 重置</div>
-    <div class="prd-label">操作项</div>
-    <div class="prd-item">列表操作按任务状态展示：修改 / 数据 / 详情 / 复制 / 删除</div>
-    <div class="prd-item">其中「数据」进入结果数据页，「详情」当前原型也指向数据页查看路径</div>
+    <div class="prd-item">筛选栏：搜索任务名称 + 重置（状态筛选已改为下方 Tab）</div>
+    <div class="prd-item">Tab 筛选（搜索栏下方）：全部 / 草稿 / 待执行 / 执行中 / 已完成 / 部分失败</div>
+    <div class="prd-label">操作项（按状态区分）</div>
+    <div class="prd-item"><strong>草稿</strong>：修改 / 删除</div>
+    <div class="prd-item"><strong>待执行</strong>：修改 / 复制 / 删除</div>
+    <div class="prd-item"><strong>执行中 / 已完成 / 部分失败</strong>：数据 / 详情 / 复制</div>
+    <div class="prd-item">「数据」进入结果数据页；「详情」进入任务详情只读页（复用创建页只读态）</div>
     <div class="prd-item">底部提供分页区：上一页 / 页码 / 下一页 / 每页条数</div>
   </div>
 
   <!-- Section 8: 数据详情 -->
-  <div class="prd-section" id="prd-s8">
-    <div class="prd-section-title orange">8. 数据详情</div>
+  <div class="prd-section" id="prd-s7">
+    <div class="prd-section-title orange">7. 数据详情</div>
     <div class="prd-label">页面结构</div>
     <div class="prd-item">页头展示统一返回 icon、页面标题「数据」以及顶部「复制任务」按钮</div>
-    <div class="prd-item">页面主体由摘要区、KPI 区、客户明细区、成员执行明细、执行观察、任务日志组成</div>
+    <div class="prd-item">页面主体由摘要区、KPI 区（常驻）+ 三个 Tab（客户明细 / 成员明细 / 任务日志）组成</div>
+    <div class="prd-label">Tab 结构</div>
+    <div class="prd-item"><strong>客户明细</strong>（默认展示）：客户列表 + 筛选工具栏 + 导出</div>
+    <div class="prd-item"><strong>成员明细</strong>：成员执行明细表 + 执行观察（两个子模块同 Tab 展示）</div>
+    <div class="prd-item"><strong>任务日志</strong>：按时间线展示关键节点</div>
+    <div class="prd-item">Tab 切换时摘要区与 KPI 区保持常驻，仅下方面板内容切换</div>
     <div class="prd-label">顶部指标</div>
     <div class="prd-item">标题与状态同一行：任务名称 / 已完成</div>
     <div class="prd-item">摘要字段一行 4 个：创建人 / 发送方式 / 创建时间 / 计划时间 / 选择鱼丸 / 推送内容</div>
