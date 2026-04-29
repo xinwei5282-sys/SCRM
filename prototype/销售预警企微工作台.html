@@ -500,7 +500,10 @@
     content: "收起详情";
   }
   .done-group {
-    display: contents;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.72);
+    border: 1px dashed #D8DFE4;
+    padding: 14px 16px;
   }
   .done-group summary {
     list-style: none;
@@ -508,103 +511,37 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 4px;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--color-text-3);
+    color: var(--color-text-2);
   }
   .done-group summary::-webkit-details-marker { display: none; }
-  .done-group-note { display: none; }
-  .done-cards {
-    display: grid;
-    gap: 12px;
+  .done-group-note {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
   }
-  .close-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.36);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 950;
-    padding: 20px;
+  .done-item {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--color-border-default);
   }
-  .close-modal.open {
+  .done-item-title {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
-  .close-panel {
-    width: 320px;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-    padding: 16px;
-  }
-  .close-panel-title {
-    font-size: 15px;
+  .done-item-name {
+    font-size: 13px;
     font-weight: 700;
     color: var(--color-text-1);
   }
-  .close-panel-sub {
-    margin-top: 4px;
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--color-text-3);
-  }
-  .close-reason-list {
-    margin-top: 12px;
-    display: grid;
-    gap: 8px;
-  }
-  .close-reason-item {
-    padding: 10px 12px;
-    border: 1px solid var(--color-border-default);
-    border-radius: 10px;
-    background: var(--color-fill-2);
-    font-size: 12px;
-    color: var(--color-text-2);
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .close-reason-item.selected {
-    border-color: var(--color-primary-6);
-    background: var(--color-primary-1);
-    color: var(--color-primary-6);
-  }
-  .close-note {
-    margin-top: 12px;
-  }
-  .close-note-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-text-2);
-  }
-  .close-note-box {
+  .done-item-text {
     margin-top: 6px;
-    width: 100%;
-    box-sizing: border-box;
-    min-height: 72px;
-    padding: 10px 12px;
-    border: 1px solid var(--color-border-default);
-    border-radius: 10px;
-    background: #fff;
     font-size: 12px;
     line-height: 18px;
-    color: var(--color-text-1);
-    resize: none;
-    outline: none;
-    font-family: inherit;
-  }
-  .close-note-box::placeholder {
     color: var(--color-text-3);
-  }
-  .close-note-box:focus {
-    border-color: var(--color-primary-6);
-  }
-  .close-panel-actions {
-    margin-top: 14px;
-    display: flex;
-    gap: 8px;
   }
 </style>
 </head>
@@ -614,28 +551,7 @@
   </button>
 
   <div class="page-title">销售预警工作台</div>
-  <div class="page-subtitle">面向一线销售，提醒客户未响应、激活断点、问卷未跟进与鱼丸未添加等高风险跟进事项</div>
-
-  <div class="close-modal" id="closeModal">
-    <div class="close-panel">
-      <div class="close-panel-title">关闭预警</div>
-      <div class="close-panel-sub">点击“已关闭”后，业务需先填写关闭原因，系统再归档该预警。</div>
-      <div class="close-reason-list">
-        <div class="close-reason-item">已线下处理</div>
-        <div class="close-reason-item">误报 / 重复提醒</div>
-        <div class="close-reason-item">无需继续跟进</div>
-        <div class="close-reason-item">客户已转交他人</div>
-      </div>
-      <div class="close-note">
-        <div class="close-note-label">关闭原因备注</div>
-        <textarea class="close-note-box" placeholder="例如：客户已在电话中确认延期，本周不再继续催付。"></textarea>
-      </div>
-      <div class="close-panel-actions">
-        <button class="btn btn-secondary" id="closeModalCancel">取消</button>
-        <button class="btn btn-primary">确认关闭</button>
-      </div>
-    </div>
-  </div>
+  <div class="page-subtitle">面向一线销售，提醒客户未响应、付款停滞、激活断点与异议未闭环等高风险跟进事项</div>
 
   <div class="phone-shell">
     <div class="workbench">
@@ -657,13 +573,13 @@
             </div>
           </div>
         </div>
-        <div class="hero-summary-main" id="heroSummaryMain">当前有 <span style="color:var(--color-danger-6);">2 条客户未响应</span>、<span style="color:var(--color-warning-6);">1 条付费未激活</span>、<span style="color:var(--color-warning-6);">1 条鱼丸未添加</span></div>
-        <div class="hero-summary-sub" id="heroSummarySub">先回客户消息，再处理付费未激活，鱼丸未添加尽快跟进，避免服务断点。</div>
+        <div class="hero-summary-main" id="heroSummaryMain">当前有 <span style="color:var(--color-danger-6);">2 条客户未响应</span>、<span style="color:var(--color-warning-6);">1 条付款停滞</span>、<span style="color:var(--color-warning-6);">1 条异议待闭环</span></div>
+        <div class="hero-summary-sub" id="heroSummarySub">先回客户消息，再处理高价值付款停滞和异议未闭环客户，避免服务降温和转化流失。</div>
       </div>
 
       <div class="stats">
-        <div class="stat"><div class="stat-label" id="statLabel1">待处理</div><div class="stat-value danger" id="statValue1">4</div></div>
-        <div class="stat"><div class="stat-label" id="statLabel2">已超时</div><div class="stat-value warning" id="statValue2">2</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel1">待处理</div><div class="stat-value danger" id="statValue1">6</div></div>
+        <div class="stat"><div class="stat-label" id="statLabel2">已超时</div><div class="stat-value warning" id="statValue2">3</div></div>
         <div class="stat"><div class="stat-label" id="statLabel3">今日完成</div><div class="stat-value success" id="statValue3">5</div></div>
         <div class="stat"><div class="stat-label" id="statLabel4">执行完成率</div><div class="stat-value" id="statValue4">83%</div></div>
       </div>
@@ -671,21 +587,21 @@
       <div class="priority-inline">
         <div class="priority-inline-main">
           <div class="priority-inline-label" id="priorityLabel">今日优先</div>
-          <div class="priority-inline-text" id="priorityText">先回客户消息，再处理付费未激活，然后补加鱼丸。</div>
+          <div class="priority-inline-text" id="priorityText">先回客户消息，再推进高价值付款停滞和异议未闭环。</div>
         </div>
       </div>
 
       <div class="filters">
-        <div class="chip active" id="filterChipAll">待处理 (4)</div>
-        <div class="chip" id="filterChipTimeout">已超时 (2)</div>
-        <div class="chip" id="filterChipDone">已处理 (1)</div>
+        <div class="chip active" id="filterChipAll">全部 (6)</div>
+        <div class="chip" id="filterChipPriority">高优先 (4)</div>
+        <div class="chip" id="filterChipTimeout">已超时 (3)</div>
       </div>
 
       <div class="list">
         <div class="section-label" id="sectionLabel">最紧急待处理</div>
 
         <!-- P1：客户消息未响应 -->
-        <div class="card" data-filter="priority">
+        <div class="card" data-filter="priority timeout">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
@@ -700,7 +616,6 @@
           <div class="actions">
             <button class="btn btn-primary">立即回复</button>
             <button class="btn btn-secondary">查看对话</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
           </div>
           <details class="card-more">
             <summary></summary>
@@ -716,8 +631,39 @@
           </details>
         </div>
 
-        <!-- P1：付费未激活 -->
+        <!-- P1：高价值客户付款停滞 -->
         <div class="card" data-filter="priority">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">晓雨</div>
+                <div class="value-tag high">高价值</div>
+              </div>
+              <div class="customer-meta">3 天未推进付款</div>
+            </div>
+            <div class="tag p1">付款停滞</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>高价值客户已明确付款意向，但 3 天没有新推进动作，是本期转化目标的关键单。</div>
+          <div class="actions">
+            <button class="btn btn-primary">确认进度</button>
+            <button class="btn btn-secondary">沟通记录</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>深海圈 AI 编程 · 星球编号 #10219</div>
+              <div class="meta-item"><span class="meta-label">首次沟通：</span>04-19 14:30</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>确认审批卡点并主动补付款材料</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">确认审批卡点，再主动提供合同、付款说明或发票信息。强调协助推进，不要单纯催款，让客户感受到你在帮他把流程走完。</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- P1：付费未激活 -->
+        <div class="card" data-filter="priority timeout">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
@@ -732,7 +678,6 @@
           <div class="actions">
             <button class="btn btn-primary">协助绑定</button>
             <button class="btn btn-secondary">查看订单</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
           </div>
           <details class="card-more">
             <summary></summary>
@@ -764,7 +709,6 @@
           <div class="actions">
             <button class="btn btn-primary">去跟进</button>
             <button class="btn btn-secondary">查看问卷</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
           </div>
           <details class="card-more">
             <summary></summary>
@@ -780,122 +724,80 @@
           </details>
         </div>
 
-        <!-- P2：付款后未加服务鱼丸 -->
+        <!-- P3：领卡未填问卷 -->
         <div class="card" data-filter="">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
-                <div class="customer">晓琳</div>
-                <div class="value-tag medium">中价值</div>
+                <div class="customer">陈墨</div>
+                <div class="value-tag low">低价值</div>
               </div>
-              <div class="customer-meta">付款已满 3 天，鱼丸未添加</div>
+              <div class="customer-meta">领卡 48 小时仍未填写问卷</div>
             </div>
-            <div class="tag p2">鱼丸未添加</div>
+            <div class="tag p3">领卡未问卷</div>
           </div>
-          <div class="card-brief"><strong>关键原因：</strong>客户 3 天前已付款，但服务鱼丸尚未添加，影响后续服务连续性。</div>
+          <div class="card-brief"><strong>关键原因：</strong>客户已领卡但未补充需求信息，转化推进缺少基础信息，可在高优先客户后处理。</div>
           <div class="actions">
-            <button class="btn btn-primary">添加鱼丸</button>
-            <button class="btn btn-secondary">查看订单</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
+            <button class="btn btn-primary">引导填问卷</button>
+            <button class="btn btn-secondary">查看客户</button>
           </div>
           <details class="card-more">
             <summary></summary>
             <div class="meta">
-              <div class="meta-item"><span class="meta-label">来源：</span>索引站 · 订单号 #A25187</div>
-              <div class="meta-item"><span class="meta-label">付款时间：</span>04-25 11:30</div>
-              <div class="meta-item"><span class="meta-label">建议动作：</span>确认客户微信后直接添加鱼丸，并告知后续服务安排</div>
+              <div class="meta-item"><span class="meta-label">来源：</span>矩阵服务号 · 星球编号 #10233</div>
+              <div class="meta-item"><span class="meta-label">领卡时间：</span>04-20 14:20</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>一句话说明问卷价值并降低填写门槛</div>
             </div>
             <div class="strategy">
               <div class="strategy-title">跟进策略建议</div>
-              <div class="strategy-text">添加鱼丸后主动告知客户后续服务节奏和联系方式，让客户感受到付款后的服务连续性，避免因服务断层产生不满。</div>
+              <div class="strategy-text">不要发长文。用一句话说明问卷只需几分钟、填写后能得到什么具体帮助，重点是降低行动门槛，而不是施压催促。</div>
             </div>
           </details>
         </div>
 
-        <!-- 已超时专属：客户消息未响应超时 -->
-        <div class="card" data-filter="timeout">
+        <!-- P1：客户异议未闭环 -->
+        <div class="card" data-filter="priority timeout">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
-                <div class="customer">阿明</div>
+                <div class="customer">沐晴</div>
                 <div class="value-tag high">高价值</div>
               </div>
-              <div class="time-warning">⏰ 已超时 2.5 小时未回复</div>
+              <div class="time-warning">⏰ 价格异议已超 19 小时未闭环</div>
             </div>
-            <div class="tag p1">客户未响应</div>
+            <div class="tag p1">异议未闭环</div>
           </div>
-          <div class="card-brief"><strong>关键原因：</strong>客户昨晚发消息询问续费方案，超过 1 小时处理时限仍未回复，高价值客户流失风险高。</div>
+          <div class="card-brief"><strong>关键原因：</strong>客户昨天明确提出价格顾虑，至今没有处理结论或下一步安排，存在明显流失风险。</div>
           <div class="actions">
-            <button class="btn btn-primary">立即回复</button>
-            <button class="btn btn-secondary">查看对话</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
+            <button class="btn btn-primary">处理异议</button>
+            <button class="btn btn-secondary">查看记录</button>
           </div>
           <details class="card-more">
             <summary></summary>
             <div class="meta">
-              <div class="meta-item"><span class="meta-label">来源：</span>企微私聊 · 星球编号 #10201</div>
-              <div class="meta-item"><span class="meta-label">客户问题：</span>"续费有没有优惠？想了解一下方案。"</div>
-              <div class="meta-item"><span class="meta-label">建议动作：</span>先致歉延迟，直接给出续费方案</div>
+              <div class="meta-item"><span class="meta-label">来源：</span>企微私聊 · 客户阶段：报价后</div>
+              <div class="meta-item"><span class="meta-label">异议类型：</span>价格异议 / 对比竞品</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>先确认顾虑，再给可执行的方案路径</div>
             </div>
             <div class="strategy">
               <div class="strategy-title">跟进策略建议</div>
-              <div class="strategy-text">先简短致歉回复慢了，再直接给续费方案，不要绕。高价值客户对响应速度敏感，简洁高效比解释原因更重要。</div>
-            </div>
-          </details>
-        </div>
-
-        <!-- 已超时专属：付费未激活超时 -->
-        <div class="card" data-filter="timeout">
-          <div class="card-top">
-            <div class="customer-info">
-              <div class="customer-row">
-                <div class="customer">小峰</div>
-                <div class="value-tag medium">中价值</div>
-              </div>
-              <div class="time-warning">⏰ 付款后 36 小时仍未激活</div>
-            </div>
-            <div class="tag p1">付费未激活</div>
-          </div>
-          <div class="card-brief"><strong>关键原因：</strong>已超过 24 小时处理时限，客户付款后迟迟未完成激活，服务断点风险上升。</div>
-          <div class="actions">
-            <button class="btn btn-primary">协助激活</button>
-            <button class="btn btn-secondary">查看订单</button>
-            <button class="btn btn-outline close-trigger">已关闭</button>
-          </div>
-          <details class="card-more">
-            <summary></summary>
-            <div class="meta">
-              <div class="meta-item"><span class="meta-label">来源：</span>索引站 · 订单号 #A25114</div>
-              <div class="meta-item"><span class="meta-label">付款时间：</span>昨天 20:45</div>
-              <div class="meta-item"><span class="meta-label">建议动作：</span>主动发激活指引，确认是否卡在手机号绑定步骤</div>
-            </div>
-            <div class="strategy">
-              <div class="strategy-title">跟进策略建议</div>
-              <div class="strategy-text">已超时说明客户可能遇到了操作障碍或忘记了。主动联系，先问一句"激活有没有碰到问题"，再一步步引导，避免只发链接不跟进。</div>
+              <div class="strategy-text">先确认客户真实顾虑是预算、价值感还是内部审批，再给出对应方案，不要直接重复报价。异议处理的目标是推进下一步，而不是只解释产品。</div>
             </div>
           </details>
         </div>
 
         <details class="done-group">
-          <summary><span id="doneSummaryLabel">已处理（1）</span><span>查看 ›</span></summary>
-          <div class="done-group-note" id="doneGroupNote"></div>
-          <div class="done-cards">
-            <div class="card">
-              <div class="card-top">
-                <div class="customer-info">
-                  <div class="customer-row">
-                    <div class="customer">有余</div>
-                    <div class="value-tag high">高价值</div>
-                  </div>
-                  <div class="customer-meta">今天 10:42 已处理</div>
-                </div>
-                <div class="tag done">已完成</div>
-              </div>
-              <div class="card-brief"><strong>处理结果：</strong>客户已收到报价说明，确认今晚继续沟通。</div>
-              <div class="actions">
-                <button class="btn btn-secondary">查看记录</button>
-                <button class="btn btn-outline">继续跟进报价</button>
-              </div>
+          <summary><span id="doneSummaryLabel">已处理（1）</span><span>查看</span></summary>
+          <div class="done-group-note" id="doneGroupNote">已完成项收纳到这里，避免挤占待处理列表。</div>
+          <div class="done-item">
+            <div class="done-item-title">
+              <div class="done-item-name">有余</div>
+              <div class="tag done">已完成</div>
+            </div>
+            <div class="done-item-text">今天 10:42 已处理「客户未响应」，客户已收到报价说明并确认今晚继续沟通。</div>
+            <div class="actions">
+              <button class="btn btn-secondary">查看记录</button>
+              <button class="btn btn-outline">继续跟进报价</button>
             </div>
           </div>
         </details>
@@ -913,7 +815,7 @@
       <div class="prd-section-title orange">1. 页面定位</div>
       <div class="prd-item">服务对象是<strong>一线销售</strong>，不是负责人或运营</div>
       <div class="prd-item">目标是帮助销售在企微侧边栏里快速判断<strong>先处理谁、为什么处理、下一步做什么</strong></div>
-      <div class="prd-item">本次预警口径聚焦客户未响应、激活断点、问卷未跟进、鱼丸未添加等业务风险</div>
+      <div class="prd-item">本次预警口径聚焦客户未响应、付款停滞、激活断点、异议未闭环等业务风险</div>
       <div class="prd-item">不承担团队经营分析、规则配置、复杂批量管理</div>
     </div>
 
@@ -923,14 +825,14 @@
       <div class="prd-item">缺口概览：一句话说明当前最危险的客户断点 + 期次切换</div>
       <div class="prd-item">轻量统计：待处理 / 已超时 / 今日完成 / 执行完成率</div>
       <div class="prd-item">今日优先：一句话摘要，告诉销售先处理哪类风险</div>
-      <div class="prd-item">分类筛选：待处理 / 已超时 / 已处理（点击联动列表与标题）</div>
+      <div class="prd-item">分类筛选：全部 / 待处理 / 已超时（点击联动列表与标题）</div>
       <div class="prd-item">预警卡片列表 + 已处理归档区</div>
     </div>
 
     <div class="prd-section">
       <div class="prd-section-title green">3. 顶部概览区</div>
       <div class="prd-label">缺口概览</div>
-      <div class=”prd-item”>展示当前最核心风险，如”2 条客户未响应、1 条付费未激活、1 条鱼丸未添加”</div>
+      <div class="prd-item">展示当前最核心风险，如“2 条客户未响应、1 条付款停滞、1 条异议待闭环”</div>
       <div class="prd-item">文案只保留一个主判断，不展开复杂经营解释</div>
       <div class="prd-label">轻量统计</div>
       <div class="prd-item">辅助判断当前工作盘子大小，不替代任务列表</div>
@@ -939,8 +841,8 @@
 
     <div class="prd-section">
       <div class="prd-section-title blue">4. 筛选规则</div>
-      <div class="prd-item"><strong>待处理</strong>：所有待处理卡片，标题「待处理预警」</div>
-      <div class="prd-item"><strong>已处理</strong>：已归档的已完成项，标题「已处理记录」</div>
+      <div class="prd-item"><strong>全部</strong>：所有待处理卡片，标题「最紧急待处理」</div>
+      <div class="prd-item"><strong>高优先</strong>：客户未响应 / 高价值付款停滞 / 异议未闭环 / 已超时，标题「高优先待处理」</div>
       <div class="prd-item"><strong>已超时</strong>：超过处理时限的任务，标题「已超时待处理」</div>
       <div class="prd-item">切换筛选后列表标题同步更新，无关卡片隐藏</div>
       <div class="prd-item">默认可见筛选项不超过 4 个</div>
@@ -951,7 +853,8 @@
       <div class="prd-label">满足以下任一条件即标记为高优先</div>
       <div class="prd-item">预警优先级为 <strong>P1</strong>（系统定义的最高级别预警）</div>
       <div class="prd-item">客户 <strong>主动发起咨询</strong>超过 30 分钟未回复</div>
-      <div class="prd-item">付费未激活且客户价值为<strong>高价值</strong></div>
+      <div class="prd-item">高价值客户进入付款阶段后超过 <strong>24h</strong> 未推进</div>
+      <div class="prd-item">客户异议超过 <strong>6h</strong> 未处理或无下一步动作</div>
       <div class="prd-item">客户价值标签为 <strong>高价值</strong> 且待处理超过 12h</div>
       <div class="prd-label">展示规则</div>
       <div class="prd-item">卡片左侧显示红色竖条，标题行出现「高优先」红色 tag</div>
@@ -964,12 +867,13 @@
       <div class="prd-item">预警触发后超过 <strong>处理时限</strong>仍未处理（各预警类型时限不同）</div>
       <div class="prd-sub">问卷提交未跟进：触发后 <strong>6h</strong> 未处理</div>
       <div class="prd-sub">付费未激活：触发后 <strong>24h</strong> 未处理</div>
+      <div class="prd-sub">高价值付款停滞：触发后 <strong>72h</strong> 未推进</div>
       <div class="prd-sub">主动咨询未回复：触发后 <strong>1h</strong> 未回复</div>
-      <div class="prd-sub">付款后未加鱼丸：付款后 <strong>72h</strong>（3天）未添加</div>
+      <div class="prd-sub">客户异议未闭环：触发后 <strong>24h</strong> 未闭环</div>
       <div class="prd-item">任务状态为「执行中」超过预计执行时长 <strong>2 倍</strong>仍未完成</div>
       <div class="prd-label">展示规则</div>
       <div class="prd-item">时间信息变红，显示「⏰ 已超时 Xh」</div>
-      <div class="prd-item">已超时任务不自动消失，需人工处理，业务点击「已关闭」并填写原因后才归档</div>
+      <div class="prd-item">已超时任务不自动消失，需人工处理或主管手动归档</div>
       <div class="prd-item">同时满足高优先 + 已超时时，两个 tag 并列展示，卡片置顶</div>
     </div>
 
@@ -978,24 +882,11 @@
       <div class="prd-item">默认态只展示：客户名、价值标签、预警类型、关键原因、主按钮、次按钮</div>
       <div class="prd-item">关键原因优先说明“为什么现在要处理”</div>
       <div class="prd-item">来源、时间、建议动作、策略建议通过“展开详情”呈现</div>
-      <div class="prd-item">每张卡片必须有明确主按钮，并支持业务点击「已关闭」后填写关闭原因再关闭预警</div>
+      <div class="prd-item">每张卡片必须有明确主按钮，如“立即回复 / 确认进度 / 协助激活 / 处理异议”</div>
     </div>
 
     <div class="prd-section">
-      <div class="prd-section-title orange">6. 系统完成条件</div>
-      <div class="prd-label">客户未响应</div>
-      <div class="prd-item">系统判断完成：销售已产生有效回复，或对话被标记为无需跟进</div>
-      <div class="prd-label">付费未激活</div>
-      <div class="prd-item">系统判断完成：已完成星球关联，或已完成核心激活动作，或订单退款/取消</div>
-      <div class="prd-label">问卷未跟进</div>
-      <div class="prd-item">系统判断完成：销售已产生首次有效跟进记录，或问卷被判定无效</div>
-      <div class="prd-label">付款后未加鱼丸</div>
-      <div class="prd-item">系统判断完成：销售已为客户添加服务鱼丸，或订单退款/取消</div>
-      <div class="prd-item">以上场景之外，业务也可手动点击「已关闭」，填写关闭原因后归档，系统需记录关闭人、关闭时间、关闭原因</div>
-    </div>
-
-    <div class="prd-section">
-      <div class="prd-section-title orange">7. 已处理归档</div>
+      <div class="prd-section-title orange">6. 已处理归档</div>
       <div class="prd-item">已完成项默认折叠进"已处理（N）"区，不与待处理争夺首屏焦点</div>
       <div class="prd-item">展开后展示客户名、完成状态、处理结果摘要、后续动作入口</div>
       <div class="prd-item">若任务虽已完成但仍有下一步，应保留继续跟进入口</div>
@@ -1003,7 +894,7 @@
     </div>
 
     <div class="prd-section">
-      <div class="prd-section-title red">8. 验收标准</div>
+      <div class="prd-section-title red">7. 验收标准</div>
       <div class="prd-item">3 秒内能看懂当前风险缺口和第一优先处理方向</div>
       <div class="prd-item">首屏可见 1-2 张待处理卡片，不被说明模块挤压</div>
       <div class="prd-item">单卡默认信息量可扫读，不需要展开才能理解</div>
@@ -1025,17 +916,17 @@
         current: {
           headerTitle: '我的待处理预警',
           heroTitle: '本期缺口概览',
-          heroMain: '当前有 <span style="color:var(--color-danger-6);">2 条客户未响应</span>、<span style="color:var(--color-warning-6);">1 条付费未激活</span>、<span style="color:var(--color-warning-6);">1 条鱼丸未添加</span>',
-          heroSub: '先回客户消息，再处理付费未激活，鱼丸未添加尽快跟进，避免服务断点。',
+          heroMain: '当前有 <span style="color:var(--color-danger-6);">2 条客户未响应</span>、<span style="color:var(--color-warning-6);">1 条付款停滞</span>、<span style="color:var(--color-warning-6);">1 条异议待闭环</span>',
+          heroSub: '先回客户消息，再处理高价值付款停滞和异议未闭环客户，避免服务降温和转化流失。',
           stats: [
-            ['待处理', '4'],
-            ['已超时', '2'],
+            ['待处理', '6'],
+            ['已超时', '3'],
             ['今日完成', '5'],
             ['执行完成率', '83%']
           ],
           priorityLabel: '今日优先',
-          priorityText: '先回客户消息，再处理付费未激活，然后补加鱼丸。',
-          filters: ['待处理 (4)', '已超时 (2)', '已处理 (1)'],
+          priorityText: '先回客户消息，再推进高价值付款停滞和异议未闭环。',
+          filters: ['全部 (6)', '高优先 (4)', '已超时 (3)'],
           sectionLabel: '最紧急待处理',
           doneSummaryLabel: '已处理（1）',
           doneGroupNote: '已完成项收纳到这里，避免挤占待处理列表。'
@@ -1044,7 +935,7 @@
           headerTitle: '9体148 预警记录',
           heroTitle: '该期处理情况',
           heroMain: '当期累计触发 <span style="color:var(--color-warning-6);">11 条业务预警</span>，其中 <span style="color:var(--color-danger-6);">3 条超时</span>',
-          heroSub: '往期以复盘客户未响应、付费未激活和鱼丸添加效率为主，不再强调”今天待处理”。',
+          heroSub: '往期以复盘客户未响应、付款停滞和异议闭环效率为主，不再强调“今天待处理”。',
           stats: [
             ['预警总数', '11'],
             ['超时记录', '3'],
@@ -1052,8 +943,8 @@
             ['处理完成率', '82%']
           ],
           priorityLabel: '当期重点',
-          priorityText: '重点回看客户未响应和鱼丸未添加两类记录的处理时效。',
-          filters: ['待处理记录 (11)', '超时记录 (3)', '已处理记录 (9)'],
+          priorityText: '重点回看客户未响应和付款停滞两类记录的处理时效。',
+          filters: ['全部记录 (11)', '高优先记录 (5)', '超时记录 (3)'],
           sectionLabel: '重点预警记录',
           doneSummaryLabel: '处理结果（9）',
           doneGroupNote: '往期以查看处理结果为主，默认收起。'
@@ -1071,7 +962,7 @@
           ],
           priorityLabel: '当期重点',
           priorityText: '重点查看高价值客户是否被及时响应和推进。',
-          filters: ['待处理记录 (9)', '超时记录 (1)', '已处理记录 (8)'],
+          filters: ['全部记录 (9)', '高优先记录 (3)', '超时记录 (1)'],
           sectionLabel: '重点预警记录',
           doneSummaryLabel: '处理结果（8）',
           doneGroupNote: '该期以历史处理记录查看为主，不再按当前待办口径展示。'
@@ -1095,8 +986,8 @@
         document.getElementById('priorityLabel').textContent = config.priorityLabel;
         document.getElementById('priorityText').textContent = config.priorityText;
         document.getElementById('filterChipAll').textContent = config.filters[0];
-        document.getElementById('filterChipTimeout').textContent = config.filters[1];
-        document.getElementById('filterChipDone').textContent = config.filters[2];
+        document.getElementById('filterChipPriority').textContent = config.filters[1];
+        document.getElementById('filterChipTimeout').textContent = config.filters[2];
         document.getElementById('sectionLabel').textContent = config.sectionLabel;
         document.getElementById('doneSummaryLabel').textContent = config.doneSummaryLabel;
         document.getElementById('doneGroupNote').textContent = config.doneGroupNote;
@@ -1127,76 +1018,33 @@
 
     // 筛选联动
     const filterSectionLabel = document.getElementById('sectionLabel');
-    const doneGroup = document.querySelector('.done-group');
     const filterLabelMap = {
-      all: '待处理预警',
-      timeout: '已超时待处理',
-      done: '已处理记录'
+      all: '最紧急待处理',
+      priority: '高优先待处理',
+      timeout: '已超时待处理'
     };
     function applyFilter(type) {
       document.querySelectorAll('.filters .chip').forEach(c => c.classList.remove('active'));
-      const chipMap = { all: 'filterChipAll', timeout: 'filterChipTimeout', done: 'filterChipDone' };
+      const chipMap = { all: 'filterChipAll', priority: 'filterChipPriority', timeout: 'filterChipTimeout' };
       document.getElementById(chipMap[type]).classList.add('active');
-      const isDone = type === 'done';
       document.querySelectorAll('.list .card[data-filter]').forEach(card => {
-        if (isDone) {
-          card.style.display = 'none';
-        } else {
-          const tags = card.dataset.filter.split(' ').filter(Boolean);
-          const isTimeout = tags.includes('timeout');
-          const match = type === 'timeout' ? isTimeout : !isTimeout;
-          card.style.display = match ? '' : 'none';
-        }
+        const tags = card.dataset.filter.split(' ').filter(Boolean);
+        const match = type === 'all' || tags.includes(type);
+        card.style.display = match ? '' : 'none';
       });
-      if (doneGroup) {
-        const doneSummary = doneGroup.querySelector('summary');
-        if (isDone) {
-          doneGroup.setAttribute('open', '');
-          if (doneSummary) doneSummary.style.display = 'none';
-        } else {
-          doneGroup.removeAttribute('open');
-          if (doneSummary) doneSummary.style.display = '';
-        }
-      }
       filterSectionLabel.textContent = filterLabelMap[type] || filterLabelMap.all;
     }
 
     document.getElementById('filterChipAll').addEventListener('click', () => {
       applyFilter('all');
     });
+    document.getElementById('filterChipPriority').addEventListener('click', () => {
+      applyFilter('priority');
+    });
     document.getElementById('filterChipTimeout').addEventListener('click', () => {
       applyFilter('timeout');
     });
-    document.getElementById('filterChipDone').addEventListener('click', () => {
-      applyFilter('done');
-    });
     applyFilter('all');
-
-    document.querySelectorAll('.close-reason-item').forEach(item => {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.close-reason-item').forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
-      });
-    });
-
-    const closeModal = document.getElementById('closeModal');
-    const closeModalCancel = document.getElementById('closeModalCancel');
-    document.querySelectorAll('.close-trigger').forEach(btn => {
-      btn.addEventListener('click', function(event) {
-        event.stopPropagation();
-        document.querySelectorAll('.close-reason-item').forEach(i => i.classList.remove('selected'));
-        document.querySelector('.close-note-box').value = '';
-        closeModal.classList.add('open');
-      });
-    });
-    closeModalCancel.addEventListener('click', function() {
-      closeModal.classList.remove('open');
-    });
-    closeModal.addEventListener('click', function(event) {
-      if (event.target === closeModal) {
-        closeModal.classList.remove('open');
-      }
-    });
 
     // 批量操作功能
     document.querySelectorAll('.priority-inline-btn').forEach(btn => {
