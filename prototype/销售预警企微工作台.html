@@ -500,10 +500,7 @@
     content: "收起详情";
   }
   .done-group {
-    border-radius: 14px;
-    background: rgba(255,255,255,0.72);
-    border: 1px dashed #D8DFE4;
-    padding: 14px 16px;
+    display: contents;
   }
   .done-group summary {
     list-style: none;
@@ -511,37 +508,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 13px;
+    padding: 6px 4px;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--color-text-2);
+    letter-spacing: 0.04em;
+    color: var(--color-text-3);
   }
   .done-group summary::-webkit-details-marker { display: none; }
-  .done-group-note {
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--color-text-3);
-  }
-  .done-item {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--color-border-default);
-  }
-  .done-item-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .done-item-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--color-text-1);
-  }
-  .done-item-text {
-    margin-top: 6px;
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--color-text-3);
+  .done-group-note { display: none; }
+  .done-cards {
+    display: grid;
+    gap: 12px;
   }
   .close-modal {
     position: fixed;
@@ -708,7 +685,7 @@
         <div class="section-label" id="sectionLabel">最紧急待处理</div>
 
         <!-- P1：客户消息未响应 -->
-        <div class="card" data-filter="priority timeout">
+        <div class="card" data-filter="priority">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
@@ -740,7 +717,7 @@
         </div>
 
         <!-- P1：付费未激活 -->
-        <div class="card" data-filter="priority timeout">
+        <div class="card" data-filter="priority">
           <div class="card-top">
             <div class="customer-info">
               <div class="customer-row">
@@ -835,18 +812,90 @@
           </details>
         </div>
 
-        <details class="done-group">
-          <summary><span id="doneSummaryLabel">已处理（1）</span><span>查看</span></summary>
-          <div class="done-group-note" id="doneGroupNote">已完成项收纳到这里，避免挤占待处理列表。</div>
-          <div class="done-item">
-            <div class="done-item-title">
-              <div class="done-item-name">有余</div>
-              <div class="tag done">已完成</div>
+        <!-- 已超时专属：客户消息未响应超时 -->
+        <div class="card" data-filter="timeout">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">阿明</div>
+                <div class="value-tag high">高价值</div>
+              </div>
+              <div class="time-warning">⏰ 已超时 2.5 小时未回复</div>
             </div>
-            <div class="done-item-text">今天 10:42 已处理「客户未响应」，客户已收到报价说明并确认今晚继续沟通。</div>
-            <div class="actions">
-              <button class="btn btn-secondary">查看记录</button>
-              <button class="btn btn-outline">继续跟进报价</button>
+            <div class="tag p1">客户未响应</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>客户昨晚发消息询问续费方案，超过 1 小时处理时限仍未回复，高价值客户流失风险高。</div>
+          <div class="actions">
+            <button class="btn btn-primary">立即回复</button>
+            <button class="btn btn-secondary">查看对话</button>
+            <button class="btn btn-outline close-trigger">已关闭</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>企微私聊 · 星球编号 #10201</div>
+              <div class="meta-item"><span class="meta-label">客户问题：</span>"续费有没有优惠？想了解一下方案。"</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>先致歉延迟，直接给出续费方案</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">先简短致歉回复慢了，再直接给续费方案，不要绕。高价值客户对响应速度敏感，简洁高效比解释原因更重要。</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 已超时专属：付费未激活超时 -->
+        <div class="card" data-filter="timeout">
+          <div class="card-top">
+            <div class="customer-info">
+              <div class="customer-row">
+                <div class="customer">小峰</div>
+                <div class="value-tag medium">中价值</div>
+              </div>
+              <div class="time-warning">⏰ 付款后 36 小时仍未激活</div>
+            </div>
+            <div class="tag p1">付费未激活</div>
+          </div>
+          <div class="card-brief"><strong>关键原因：</strong>已超过 24 小时处理时限，客户付款后迟迟未完成激活，服务断点风险上升。</div>
+          <div class="actions">
+            <button class="btn btn-primary">协助激活</button>
+            <button class="btn btn-secondary">查看订单</button>
+            <button class="btn btn-outline close-trigger">已关闭</button>
+          </div>
+          <details class="card-more">
+            <summary></summary>
+            <div class="meta">
+              <div class="meta-item"><span class="meta-label">来源：</span>索引站 · 订单号 #A25114</div>
+              <div class="meta-item"><span class="meta-label">付款时间：</span>昨天 20:45</div>
+              <div class="meta-item"><span class="meta-label">建议动作：</span>主动发激活指引，确认是否卡在手机号绑定步骤</div>
+            </div>
+            <div class="strategy">
+              <div class="strategy-title">跟进策略建议</div>
+              <div class="strategy-text">已超时说明客户可能遇到了操作障碍或忘记了。主动联系，先问一句"激活有没有碰到问题"，再一步步引导，避免只发链接不跟进。</div>
+            </div>
+          </details>
+        </div>
+
+        <details class="done-group">
+          <summary><span id="doneSummaryLabel">已处理（1）</span><span>查看 ›</span></summary>
+          <div class="done-group-note" id="doneGroupNote"></div>
+          <div class="done-cards">
+            <div class="card">
+              <div class="card-top">
+                <div class="customer-info">
+                  <div class="customer-row">
+                    <div class="customer">有余</div>
+                    <div class="value-tag high">高价值</div>
+                  </div>
+                  <div class="customer-meta">今天 10:42 已处理</div>
+                </div>
+                <div class="tag done">已完成</div>
+              </div>
+              <div class="card-brief"><strong>处理结果：</strong>客户已收到报价说明，确认今晚继续沟通。</div>
+              <div class="actions">
+                <button class="btn btn-secondary">查看记录</button>
+                <button class="btn btn-outline">继续跟进报价</button>
+              </div>
             </div>
           </div>
         </details>
@@ -1094,14 +1143,20 @@
           card.style.display = 'none';
         } else {
           const tags = card.dataset.filter.split(' ').filter(Boolean);
-          const match = type === 'all' || tags.includes(type);
+          const isTimeout = tags.includes('timeout');
+          const match = type === 'timeout' ? isTimeout : !isTimeout;
           card.style.display = match ? '' : 'none';
         }
       });
       if (doneGroup) {
-        doneGroup.style.display = isDone ? '' : '';
-        if (isDone) doneGroup.setAttribute('open', '');
-        else doneGroup.removeAttribute('open');
+        const doneSummary = doneGroup.querySelector('summary');
+        if (isDone) {
+          doneGroup.setAttribute('open', '');
+          if (doneSummary) doneSummary.style.display = 'none';
+        } else {
+          doneGroup.removeAttribute('open');
+          if (doneSummary) doneSummary.style.display = '';
+        }
       }
       filterSectionLabel.textContent = filterLabelMap[type] || filterLabelMap.all;
     }
