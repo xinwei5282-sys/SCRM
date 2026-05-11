@@ -2965,7 +2965,6 @@
             <div class="tabbar">
               <button class="tab-btn active" data-tab="customers">客户明细</button>
               <button class="tab-btn" data-tab="members">成员明细</button>
-              <button class="tab-btn" data-tab="logs">任务日志</button>
             </div>
 
             <div class="tab-panel active" data-panel="customers">
@@ -3101,27 +3100,6 @@
                       <tr><td>陈宇</td><td>64</td><td>64</td><td>17</td></tr>
                     </tbody>
                   </table>
-                </div>
-                <div class="mini-card">
-                  <h3>执行观察</h3>
-                  <div class="timeline">
-                    <div class="timeline-item"><small>执行完成率</small>100%，无成员未执行</div>
-                    <div class="timeline-item"><small>高回复成员</small>刘倩回复率 31.4%，可复用其后续跟进节奏</div>
-                    <div class="timeline-item"><small>失败集中原因</small>主要为通道回执失败，建议补偿重试</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-panel" data-panel="logs">
-              <div class="mini-card">
-                <h3>任务日志</h3>
-                <div class="timeline">
-                  <div class="timeline-item"><small>2026-04-22 16:46</small>刘倩创建任务，场景为商机推进跟进。</div>
-                  <div class="timeline-item"><small>2026-04-22 16:47</small>系统计算命中客户 302 人，防骚扰排除 24 人。</div>
-                  <div class="timeline-item"><small>2026-04-22 16:50</small>发送执行服务开始处理任务，状态切换为执行中。</div>
-                  <div class="timeline-item"><small>2026-04-22 17:08</small>全部客户处理完成，任务状态切换为已完成。</div>
-                  <div class="timeline-item"><small>2026-04-22 19:30</small>结果回流服务补充回复结果，当前回复人数更新为 82。</div>
                 </div>
               </div>
             </div>
@@ -4134,11 +4112,10 @@
     <div class="prd-section-title orange">7. 数据详情</div>
     <div class="prd-label">页面结构</div>
     <div class="prd-item">页头展示统一返回 icon、页面标题「数据」以及顶部「复制任务」按钮</div>
-    <div class="prd-item">页面主体由摘要区、KPI 区（常驻）+ 三个 Tab（客户明细 / 成员明细 / 任务日志）组成</div>
+    <div class="prd-item">页面主体由摘要区、KPI 区（常驻）+ 两个 Tab（客户明细 / 成员明细 ）组成</div>
     <div class="prd-label">Tab 结构</div>
     <div class="prd-item"><strong>客户明细</strong>（默认展示）：客户列表 + 筛选工具栏 + 导出</div>
     <div class="prd-item"><strong>成员明细</strong>：成员执行明细表 + 执行观察（两个子模块同 Tab 展示）</div>
-    <div class="prd-item"><strong>任务日志</strong>：按时间线展示关键节点</div>
     <div class="prd-item">Tab 切换时摘要区与 KPI 区保持常驻，仅下方面板内容切换</div>
     <div class="prd-label">顶部指标</div>
     <div class="prd-item">标题与状态同一行：任务名称 / 已完成</div>
@@ -4152,7 +4129,6 @@
     <div class="prd-label">其他信息</div>
     <div class="prd-item"><strong>成员执行明细</strong>：销售姓名 / 分配人数 / 已执行 / 回复人数</div>
     <div class="prd-item"><strong>执行观察</strong>：完成率、高回复成员、失败集中原因</div>
-    <div class="prd-item"><strong>任务日志</strong>：按时间线展示创建、命中计算、执行开始、执行完成、结果回流</div>
   </div>
 
 </div><!-- /prd-panel -->
